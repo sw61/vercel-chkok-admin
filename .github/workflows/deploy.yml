@@ -33,9 +33,9 @@ jobs:
         with:
           source-directory: 'output'
 
-          destination-github-username: [내 깃허브 계정 이름]
+          destination-github-username: sw61
 
-          destination-repository-name: [배포한 내 레포지토리 이름]
+          destination-repository-name: vercel-chkok-admin
 
           user-email: ${{ secrets.EMAIL }}
 
