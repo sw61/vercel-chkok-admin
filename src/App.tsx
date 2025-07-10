@@ -1,5 +1,4 @@
 import './App.css';
-import axiosInterceptor from './lib/axios-interceptors';
 import { LoginForm } from './auth/login-form';
 import MainPage from './Pages/MainPage';
 import UserTablePage from './users/UserTablePage';
