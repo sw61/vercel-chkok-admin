@@ -16,7 +16,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route
-            path="/"
+            path="/main"
             element={
               <PrivateComponent>
                 <MainPage />
@@ -32,7 +32,7 @@ function App() {
             }
           ></Route>
 
-          <Route path="/login" element={<LoginForm />}></Route>
+          <Route path="/" element={<LoginForm />}></Route>
         </Routes>
       </BrowserRouter>
       <Toaster />

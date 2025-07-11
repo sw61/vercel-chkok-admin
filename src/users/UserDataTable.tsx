@@ -44,7 +44,9 @@ interface User {
   updatedAt: string;
   role: string;
 }
-
+interface CustomColumnMeta {
+  label?: string;
+}
 interface UserDataTableProps {
   userData: User[];
 }
@@ -56,7 +58,7 @@ export function UserDataTable({ userData }: UserDataTableProps) {
   const [rowSelection, setRowSelection] = useState({});
 
   // columns 재정의: nickname, email, role, createdAt, updatedAt 순서
-  const columns: ColumnDef<User>[] = [
+  const columns: ColumnDef<User, unknown>[] = [
     {
       id: 'select',
       header: ({ table }) => (
@@ -82,52 +84,61 @@ export function UserDataTable({ userData }: UserDataTableProps) {
     {
       accessorKey: 'nickname',
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Nickname
-          <ArrowUpDown />
-        </Button>
+        <div>
+          <Button
+            variant="ghost"
+            className="has-[>svg]:px-0"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            닉네임
+            <ArrowUpDown />
+          </Button>
+        </div>
       ),
       cell: ({ row }) => <div>{row.getValue('nickname')}</div>,
+      meta: { label: '닉네임' } as CustomColumnMeta,
     },
     {
       accessorKey: 'email',
       header: ({ column }) => (
         <Button
           variant="ghost"
+          className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Email
+          이메일
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => (
         <div className="lowercase">{row.getValue('email')}</div>
       ),
+      meta: { label: '이메일' } as CustomColumnMeta,
     },
     {
       accessorKey: 'role',
       header: ({ column }) => (
         <Button
           variant="ghost"
+          className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Role
+          역할
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => <div>{row.getValue('role')}</div>,
+      meta: { label: '역할' } as CustomColumnMeta,
     },
     {
       accessorKey: 'createdAt',
       header: ({ column }) => (
         <Button
           variant="ghost"
+          className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Created At
+          생성일
           <ArrowUpDown />
         </Button>
       ),
@@ -136,15 +147,17 @@ export function UserDataTable({ userData }: UserDataTableProps) {
         const dateOnly = fullDate.split('T')[0];
         return <div>{dateOnly}</div>;
       },
+      meta: { label: '생성일' } as CustomColumnMeta,
     },
     {
       accessorKey: 'updatedAt',
       header: ({ column }) => (
         <Button
           variant="ghost"
+          className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Updated At
+          갱신일
           <ArrowUpDown />
         </Button>
       ),
@@ -153,6 +166,7 @@ export function UserDataTable({ userData }: UserDataTableProps) {
         const dateOnly = fullDate.split('T')[0];
         return <div>{dateOnly}</div>;
       },
+      meta: { label: '갱신일' } as CustomColumnMeta,
     },
     {
       id: 'actions',
@@ -187,11 +201,10 @@ export function UserDataTable({ userData }: UserDataTableProps) {
     },
   ];
   const table = useReactTable({
-    data: userData, // * 상위에서 받은 userData 사용
-    columns, // * 아래 재정의된 columns 사용
+    data: userData,
+    columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
-    // getPaginationRowModel 제거: 상위 pagination에 의존
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -219,7 +232,7 @@ export function UserDataTable({ userData }: UserDataTableProps) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
+              항목 <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -236,7 +249,8 @@ export function UserDataTable({ userData }: UserDataTableProps) {
                       column.toggleVisibility(!!value)
                     }
                   >
-                    {column.id}
+                    {(column.columnDef.meta as CustomColumnMeta)?.label ||
+                      column.id}
                   </DropdownMenuCheckboxItem>
                 );
               })}

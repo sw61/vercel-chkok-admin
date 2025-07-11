@@ -29,7 +29,9 @@ export default function UserTablePage() {
 
   const getUserTable = async (page: number = 0) => {
     try {
-      const response = await axiosInterceptor.get(`/users?page=${page}&size=5`);
+      const response = await axiosInterceptor.get(
+        `/users?page=${page}&size=10`,
+      );
       const userData = response.data.data;
       setUserData(userData.content);
       setPageData(userData.pagination);
@@ -55,8 +57,10 @@ export default function UserTablePage() {
 
   return (
     <>
-      <UserDataTable userData={userData} />
-      <PaginationDemo pageData={pageData} onPageChange={handlePageChange} />
+      <div className="px-10 pb-10">
+        <UserDataTable userData={userData} />
+        <PaginationDemo pageData={pageData} onPageChange={handlePageChange} />
+      </div>
     </>
   );
 }
