@@ -10,17 +10,19 @@
   ],
   "routes": [
     {
-      "src": "/assets/(.*)",
+      "src": "/assets/(.*\\.(js|css|ico|png|jpg|jpeg|svg|woff|woff2))",
       "dest": "/dist/assets/$1",
       "headers": {
-        "Content-Type": "application/javascript"
+        "Cache-Control": "public, max-age=31536000, immutable",
+        "Content-Type": "auto"
       }
     },
     {
       "src": "/(.*)",
       "dest": "/index.html",
       "headers": {
-        "Content-Type": "text/html"
+        "Content-Type": "text/html",
+        "Cache-Control": "no-cache"
       }
     }
   ]
