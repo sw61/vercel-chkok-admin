@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     port: 3000,
   },
-  base: "/",
+
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
@@ -16,7 +16,6 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "dist",
-    assetsDir: "assets",
+    outDir: "output",
   },
 });
