@@ -8,6 +8,7 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  base: '/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
@@ -15,6 +16,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'output', // 빌드 결과물이 output 디렉토리에 저장되도록 설정
+    outDir: 'dist',
+    assetsDir: 'assets',
   },
 });
