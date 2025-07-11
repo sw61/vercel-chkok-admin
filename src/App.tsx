@@ -1,10 +1,10 @@
-import './App.css';
-import { LoginForm } from './auth/login-form';
-import MainPage from './Pages/MainPage';
-import UserTablePage from './users/UserTablePage';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { PrivateComponent } from './auth/tokenCheck';
-import { Toaster } from './components/ui/sonner';
+import "./App.css";
+import { LoginForm } from "./auth/login-form";
+import MainPage from "./Pages/MainPage";
+import UserTablePage from "./users/UserTablePage";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { PrivateComponent } from "./auth/tokenCheck";
+import { Toaster } from "./components/ui/sonner";
 
 // 1. 이메일과 비밀번호 입력 필요
 // 2. HTTP 요청인데 POST 요청을 보내야 함
