@@ -31,11 +31,11 @@ export function SiteHeader() {
         <Breadcrumb className="hidden sm:block">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">CHKOK Admin Page</BreadcrumbLink>
+              <BreadcrumbLink href="/main">체험콕 관리자 페이지</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>User Table</BreadcrumbPage>
+              <BreadcrumbPage>사용자 목록</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>

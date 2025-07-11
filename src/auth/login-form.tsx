@@ -22,7 +22,7 @@ export function LoginForm({
     try {
       setIsLoading(true);
       await login(email, password);
-      window.location.href = '/'; // 로그인 성공 시 리다이렉트
+      window.location.href = '/main'; // 로그인 성공 시 리다이렉트
     } catch (error) {
     } finally {
       setIsLoading(false);
@@ -35,7 +35,7 @@ export function LoginForm({
         <div className={cn('flex flex-col gap-6', className)} {...props}>
           <Card>
             <CardHeader>
-              <CardTitle>체험콕 어드민 로그인</CardTitle>
+              <CardTitle>체험콕 관리자 로그인</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-6">

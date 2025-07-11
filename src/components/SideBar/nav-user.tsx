@@ -139,7 +139,7 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <BadgeCheck />
-                Account
+                계정 설정
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <CreditCard />
@@ -153,7 +153,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout}>
               <LogOut />
-              Log out
+              로그아웃
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
