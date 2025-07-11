@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "builds": [
     {
       "src": "package.json",
@@ -27,7 +26,4 @@
       }
     }
   ]
-=======
-  "rewrites": [{ "src": "/[^.]+", "dest": "/", "status": 200 }]
->>>>>>> main
 }
