@@ -21,7 +21,6 @@ import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-// test comment
 export const description = "A pie chart with a label";
 
 const chartData = [
