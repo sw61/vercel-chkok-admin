@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   type ColumnDef,
@@ -10,11 +10,11 @@ import {
   type SortingState,
   useReactTable,
   type VisibilityState,
-} from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from 'lucide-react';
+} from "@tanstack/react-table";
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -23,8 +23,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -32,9 +32,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { useState } from 'react';
-
+} from "@/components/ui/table";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 interface User {
   id: number;
   name: string;
@@ -56,16 +56,16 @@ export function UserDataTable({ userData }: UserDataTableProps) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-
+  const navigate = useNavigate();
   // columns 재정의: nickname, email, role, createdAt, updatedAt 순서
   const columns: ColumnDef<User, unknown>[] = [
     {
-      id: 'select',
+      id: "select",
       header: ({ table }) => (
         <Checkbox
           checked={
             table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
+            (table.getIsSomePageRowsSelected() && "indeterminate")
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
@@ -82,94 +82,111 @@ export function UserDataTable({ userData }: UserDataTableProps) {
       enableHiding: false,
     },
     {
-      accessorKey: 'nickname',
+      accessorKey: "id",
       header: ({ column }) => (
         <div>
           <Button
             variant="ghost"
             className="has-[>svg]:px-0"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            ID
+            <ArrowUpDown />
+          </Button>
+        </div>
+      ),
+      cell: ({ row }) => <div>{row.getValue("id")}</div>,
+      meta: { label: "id" } as CustomColumnMeta,
+    },
+    {
+      accessorKey: "nickname",
+      header: ({ column }) => (
+        <div>
+          <Button
+            variant="ghost"
+            className="has-[>svg]:px-0"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             닉네임
             <ArrowUpDown />
           </Button>
         </div>
       ),
-      cell: ({ row }) => <div>{row.getValue('nickname')}</div>,
-      meta: { label: '닉네임' } as CustomColumnMeta,
+      cell: ({ row }) => <div>{row.getValue("nickname")}</div>,
+      meta: { label: "닉네임" } as CustomColumnMeta,
     },
     {
-      accessorKey: 'email',
+      accessorKey: "email",
       header: ({ column }) => (
         <Button
           variant="ghost"
           className="has-[>svg]:px-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           이메일
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => (
-        <div className="lowercase">{row.getValue('email')}</div>
+        <div className="lowercase">{row.getValue("email")}</div>
       ),
-      meta: { label: '이메일' } as CustomColumnMeta,
+      meta: { label: "이메일" } as CustomColumnMeta,
     },
     {
-      accessorKey: 'role',
+      accessorKey: "role",
       header: ({ column }) => (
         <Button
           variant="ghost"
           className="has-[>svg]:px-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           역할
           <ArrowUpDown />
         </Button>
       ),
-      cell: ({ row }) => <div>{row.getValue('role')}</div>,
-      meta: { label: '역할' } as CustomColumnMeta,
+      cell: ({ row }) => <div>{row.getValue("role")}</div>,
+      meta: { label: "역할" } as CustomColumnMeta,
     },
     {
-      accessorKey: 'createdAt',
+      accessorKey: "createdAt",
       header: ({ column }) => (
         <Button
           variant="ghost"
           className="has-[>svg]:px-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           생성일
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => {
-        const fullDate = row.getValue('createdAt') as string;
-        const dateOnly = fullDate.split('T')[0];
+        const fullDate = row.getValue("createdAt") as string;
+        const dateOnly = fullDate.split("T")[0];
         return <div>{dateOnly}</div>;
       },
-      meta: { label: '생성일' } as CustomColumnMeta,
+      meta: { label: "생성일" } as CustomColumnMeta,
     },
     {
-      accessorKey: 'updatedAt',
+      accessorKey: "updatedAt",
       header: ({ column }) => (
         <Button
           variant="ghost"
           className="has-[>svg]:px-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           갱신일
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => {
-        const fullDate = row.getValue('updatedAt') as string;
-        const dateOnly = fullDate.split('T')[0];
+        const fullDate = row.getValue("updatedAt") as string;
+        const dateOnly = fullDate.split("T")[0];
         return <div>{dateOnly}</div>;
       },
-      meta: { label: '갱신일' } as CustomColumnMeta,
+      meta: { label: "갱신일" } as CustomColumnMeta,
     },
     {
-      id: 'actions',
+      id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
         const user = row.original as User;
@@ -184,16 +201,19 @@ export function UserDataTable({ userData }: UserDataTableProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() =>
-                  navigator.clipboard.writeText(user.id.toString())
+                  navigator.clipboard.writeText(user.email.toString())
                 }
               >
-                Copy user ID
+                이메일 복사하기
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>View user</DropdownMenuItem>
-              <DropdownMenuItem>View details</DropdownMenuItem>
+
+              <DropdownMenuItem onClick={() => navigate(`/users/${user.id}`)}>
+                사용자 상세 정보
+              </DropdownMenuItem>
+              <DropdownMenuItem>사용자 활성화 / 비활성화</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
@@ -220,12 +240,12 @@ export function UserDataTable({ userData }: UserDataTableProps) {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
+          placeholder="이메일 검색"
+          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn('email')?.setFilterValue(event.target.value)
+            table.getColumn("email")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -269,7 +289,7 @@ export function UserDataTable({ userData }: UserDataTableProps) {
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            header.getContext()
                           )}
                     </TableHead>
                   );
@@ -282,13 +302,13 @@ export function UserDataTable({ userData }: UserDataTableProps) {
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
+                  data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </TableCell>
                   ))}
@@ -309,7 +329,7 @@ export function UserDataTable({ userData }: UserDataTableProps) {
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="text-muted-foreground flex-1 text-sm">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
         <div className="space-x-2"></div>

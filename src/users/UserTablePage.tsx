@@ -1,8 +1,9 @@
-import { UserDataTable } from './UserDataTable';
-import { PaginationDemo } from './Pagination';
-import axiosInterceptor from '@/lib/axios-interceptors';
-import { useState, useEffect } from 'react';
-import PulseLoader from 'react-spinners/PulseLoader';
+import { UserDataTable } from "./UserDataTable";
+import { PaginationDemo } from "./Pagination";
+import axiosInterceptor from "@/lib/axios-interceptors";
+import { useState, useEffect } from "react";
+import PulseLoader from "react-spinners/PulseLoader";
+import { useNavigate } from "react-router-dom";
 
 interface User {
   id: number;
@@ -26,18 +27,21 @@ interface PaginationData {
 export default function UserTablePage() {
   const [userData, setUserData] = useState<User[]>();
   const [pageData, setPageData] = useState<PaginationData | null>();
+  const navigate = useNavigate();
 
   const getUserTable = async (page: number = 0) => {
     try {
       const response = await axiosInterceptor.get(
-        `/users?page=${page}&size=10`,
+        `/users?page=${page}&size=10`
       );
       const userData = response.data.data;
+      console.log(userData);
       setUserData(userData.content);
       setPageData(userData.pagination);
     } catch (error) {
       console.log(error);
-      alert(`${error}`);
+      navigate("/");
+      alert("로그인이 필요합니다.");
     }
   };
   useEffect(() => {
@@ -57,7 +61,7 @@ export default function UserTablePage() {
 
   return (
     <>
-      <div className="px-10 pb-10">
+      <div>
         <UserDataTable userData={userData} />
         <PaginationDemo pageData={pageData} onPageChange={handlePageChange} />
       </div>
