@@ -10,12 +10,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 interface User {
   id: number;
   nickname: string;
   email: string;
+  accountType: string;
   role: string;
+  active: boolean;
+  provider: string;
+  profileImg: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -35,6 +40,26 @@ export default function UserDetail() {
       alert("로그인이 필요합니다.");
     }
   };
+  const putUserStatus = async (id: number) => {
+    try {
+      const response = await axiosInterceptor.put(`/users/${id}/status`);
+      const updatedData = response.data.data;
+      setUserData(updatedData);
+      console.log(response.data.message);
+    } catch (error) {
+      console.log(error);
+      alert("상태 변경에 실패했습니다.");
+    }
+  };
+  const deleteUser = async (id: number) => {
+    try {
+      const response = await axiosInterceptor.delete(`/users/${id}`);
+
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     if (userId) {
       getUserDetail(userId);
@@ -49,8 +74,11 @@ export default function UserDetail() {
   }
   return (
     <>
-      <div className="grid grid-cols-[160px_1fr] gap-4">
-        <div className="w-40 h-60 bg-[url('./img/dog.png')] bg-cover"></div>
+      <div className="grid grid-cols-[180px_1fr] gap-4">
+        <img
+          className="w-60 h-60 bg-cover"
+          src="http://img1.kakaocdn.net/thumb/R640x640.q70/?fname=http://t1.kakaocdn.net/account_images/default_profile.jpeg"
+        ></img>
         <Table>
           <TableHeader>
             <TableRow>
@@ -58,6 +86,7 @@ export default function UserDetail() {
               <TableHead>닉네임</TableHead>
               <TableHead>이메일</TableHead>
               <TableHead>역할</TableHead>
+              <TableHead>활성화 상태</TableHead>
               <TableHead>생성일</TableHead>
               <TableHead>갱신일</TableHead>
             </TableRow>
@@ -68,17 +97,20 @@ export default function UserDetail() {
               <TableCell>{userData.nickname}</TableCell>
               <TableCell>{userData.email}</TableCell>
               <TableCell>{userData.role}</TableCell>
+              <TableCell>{userData.active ? "활성화" : "비활성화"}</TableCell>
               <TableCell>{userData.createdAt.split("T")[0]}</TableCell>
               <TableCell>{userData.updatedAt.split("T")[0]}</TableCell>
             </TableRow>
           </TableBody>
-          {/* <TableFooter>
-            <TableRow>
-              <TableCell>캠페인 지원 현황</TableCell>
-            </TableRow>
-          </TableFooter> */}
         </Table>
       </div>
+      <Button
+        className="cursor-pointer"
+        onClick={() => putUserStatus(userData.id)}
+      >
+        활성화/비활성화
+      </Button>
+      {/* <Button onClick={() => deleteUser(userData.id)}>사용자 삭제</Button> */}
       <div>캠페인지원현황</div>
       <div>회원 메모 입력 창</div>
     </>
