@@ -36,7 +36,7 @@ export default function UserDetail() {
       console.log(userData);
     } catch (error) {
       console.log(error);
-      navigate("/");
+      navigate("/login");
       alert("로그인이 필요합니다.");
     }
   };
@@ -104,6 +104,9 @@ export default function UserDetail() {
           </TableBody>
         </Table>
       </div>
+
+      <div>캠페인지원현황</div>
+      <div>회원 메모 입력 창</div>
       <Button
         className="cursor-pointer"
         onClick={() => putUserStatus(userData.id)}
@@ -111,8 +114,6 @@ export default function UserDetail() {
         활성화/비활성화
       </Button>
       {/* <Button onClick={() => deleteUser(userData.id)}>사용자 삭제</Button> */}
-      <div>캠페인지원현황</div>
-      <div>회원 메모 입력 창</div>
     </>
   );
 }
