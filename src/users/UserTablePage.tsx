@@ -40,7 +40,7 @@ export default function UserTablePage() {
       setPageData(userData.pagination);
     } catch (error) {
       console.log(error);
-      navigate("/");
+      navigate("/login");
       alert("로그인이 필요합니다.");
     }
   };

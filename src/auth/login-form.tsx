@@ -1,19 +1,19 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useStringInput } from '@/hooks/use-string-input';
-import { login } from '@/api/auth';
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useStringInput } from "@/hooks/use-string-input";
+import { login } from "@/api/auth";
 
 export function LoginForm({
   className,
   ...props
-}: React.ComponentProps<'div'>) {
-  const { value: email, handleValue: handleEmail } = useStringInput('');
-  const { value: password, handleValue: handlePassword } = useStringInput('');
+}: React.ComponentProps<"div">) {
+  const { value: email, handleValue: handleEmail } = useStringInput("");
+  const { value: password, handleValue: handlePassword } = useStringInput("");
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -22,7 +22,7 @@ export function LoginForm({
     try {
       setIsLoading(true);
       await login(email, password);
-      window.location.href = '/main'; // 로그인 성공 시 리다이렉트
+      window.location.href = "/"; // 로그인 성공 시 리다이렉트
     } catch (error) {
     } finally {
       setIsLoading(false);
@@ -32,7 +32,7 @@ export function LoginForm({
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
-        <div className={cn('flex flex-col gap-6', className)} {...props}>
+        <div className={cn("flex flex-col gap-6", className)} {...props}>
           <Card>
             <CardHeader>
               <CardTitle>체험콕 관리자 로그인</CardTitle>
@@ -68,7 +68,7 @@ export function LoginForm({
                   onClick={handleLogin}
                   disabled={isLoading}
                 >
-                  {isLoading ? '로그인 중입니다...' : '로그인'}
+                  {isLoading ? "로그인 중입니다..." : "로그인"}
                 </Button>
               </div>
             </CardContent>

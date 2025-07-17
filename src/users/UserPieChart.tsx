@@ -40,7 +40,7 @@ export function UserPieChart() {
       console.log(userStatus);
     } catch (error) {
       console.log(error);
-      navigate("/");
+      navigate("/login");
       alert("로그인이 필요합니다.");
     }
   };
