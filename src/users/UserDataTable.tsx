@@ -11,7 +11,13 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import {
+  ArrowUpDown,
+  ChevronDown,
+  MoreHorizontal,
+  Settings,
+  Copy,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -207,13 +213,15 @@ export function UserDataTable({ userData }: UserDataTableProps) {
                   navigator.clipboard.writeText(user.email.toString())
                 }
               >
+                <Copy />
                 이메일 복사하기
               </DropdownMenuItem>
 
               <DropdownMenuItem onClick={() => navigate(`/users/${user.id}`)}>
+                <Settings />
                 사용자 상세 정보
               </DropdownMenuItem>
-              <DropdownMenuItem>사용자 활성화 / 비활성화</DropdownMenuItem>
+              <DropdownMenuItem>임시 버튼</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );

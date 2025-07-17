@@ -3,7 +3,7 @@ import { LoginForm } from "./auth/login-form";
 import MainPage from "./Pages/MainPage";
 import UserTablePage from "./users/UserTablePage";
 import UserDetail from "./users/UserDetail";
-import UserStatus from "./users/UserStatus";
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PrivateComponent } from "./auth/tokenCheck";
 import { Toaster } from "./components/ui/sonner";
@@ -42,14 +42,6 @@ function App() {
               element={
                 <PrivateComponent>
                   <UserDetail />
-                </PrivateComponent>
-              }
-            ></Route>
-            <Route
-              path="/userStatus"
-              element={
-                <PrivateComponent>
-                  <UserStatus />
                 </PrivateComponent>
               }
             ></Route>
