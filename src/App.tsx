@@ -20,7 +20,7 @@ function App() {
         <Routes>
           <Route element={<SideBar />}>
             <Route
-              path="/main"
+              path="/"
               element={
                 <PrivateComponent>
                   <MainPage />
@@ -47,7 +47,7 @@ function App() {
             ></Route>
           </Route>
 
-          <Route path="/" element={<LoginForm />}></Route>
+          <Route path="/login" element={<LoginForm />}></Route>
         </Routes>
       </BrowserRouter>
       <Toaster />
