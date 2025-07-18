@@ -20,23 +20,28 @@ import {
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import PulseLoader from "react-spinners/PulseLoader";
 
 export const description = "A pie chart with a label";
 interface Status {
-  userCount: number;
-  clientCount: number;
-  activeUsers: number;
-  inactiveUsers: number;
+  totalUsers: number; // 등록된 전체 사용자 수
+  clientCount: number; // Client 권한 가진 사용자 수
+  userCount: number; // USER 권한 가진 사용자 수
+  activeUsers: number; // 활성화 상태인 사용자 수
+  inactiveUsers: number; // 비활성화 상태인 사용자 수
 }
 
 export function UserPieChart() {
   const [userStatus, setUserStatus] = useState<Status | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const getUserStatus = async () => {
     try {
+      setIsLoading(true);
       const response = await axiosInterceptor.get(`/users/stats`);
       const userStatus = response.data.data;
       setUserStatus(userStatus);
+      setIsLoading(false);
       console.log(userStatus);
     } catch (error) {
       console.log(error);
@@ -47,43 +52,63 @@ export function UserPieChart() {
   useEffect(() => {
     getUserStatus();
   }, []);
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <PulseLoader />
+      </div>
+    );
+  }
   const chartData = [
-    { status: "Total", userCount: userStatus?.userCount, fill: "#3B82F6" },
     {
-      status: "Clients",
-      userCount: userStatus?.clientCount,
+      status: "total",
+      visitors: userStatus?.totalUsers,
+      fill: "#9c3bf6",
+    },
+    {
+      status: "client",
+      visitors: userStatus?.clientCount,
       fill: "#10B981",
     },
     {
-      status: "Active",
-      userCount: userStatus?.activeUsers,
+      status: "userCount",
+      visitors: userStatus?.userCount,
       fill: "#F59E0B",
     },
     {
-      status: "Inactive",
-      userCount: userStatus?.inactiveUsers,
+      status: "active",
+      visitors: userStatus?.activeUsers,
+      fill: "#3B82F6",
+    },
+    {
+      status: "inactive",
+      visitors: userStatus?.inactiveUsers,
       fill: "#EF4444",
     },
   ];
   const chartConfig = {
-    value: {
-      label: "Value",
+    visitors: {
+      label: "Visitors",
+    },
+    total: {
+      label: "Total",
+      color: "var(--chart-1)",
+    },
+    client: {
+      label: "Client",
+      color: "var(--chart-2)",
     },
     userCount: {
       label: "UserCount",
-      color: "#3B82F6",
+      color: "var(--chart-3)",
     },
-    ClientUsers: {
-      label: "ClientUsers",
-      color: "#10B981",
+    active: {
+      label: "Active",
+      color: "var(--chart-4)",
     },
-    activeUsers: {
-      label: "ActiveUsers",
-      color: "#F59E0B",
-    },
-    inactiveUsers: {
-      label: "InActiveUsers",
-      color: "#EF4444",
+    inactive: {
+      label: "InActive",
+      color: "var(--chart-5)",
     },
   } satisfies ChartConfig;
 
@@ -100,11 +125,10 @@ export function UserPieChart() {
           >
             <PieChart>
               <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-              <Pie
-                data={chartData}
-                dataKey="userCount"
-                label
-                nameKey="status"
+              <Pie data={chartData} dataKey="visitors" label nameKey="status" />
+              <ChartLegend
+                content={<ChartLegendContent nameKey="status" />}
+                className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
               />
             </PieChart>
           </ChartContainer>
