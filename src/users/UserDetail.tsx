@@ -10,6 +10,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -108,43 +113,50 @@ export default function UserDetail() {
       </div>
     );
   }
+
   return (
     <>
-      <div className="grid grid-cols-[180px_1fr] gap-4 ">
-        <img className="w-60 h-60 bg-cover" src={userData.profileImg}></img>
-        <Table className="flex flex-row ">
-          <TableHeader>
-            <TableRow className="flex flex-col border-none">
-              <TableHead>ID</TableHead>
-              <TableHead>닉네임</TableHead>
-              <TableHead>이메일</TableHead>
-              <TableHead>전화번호</TableHead>
-              <TableHead>성별</TableHead>
-              <TableHead>나이</TableHead>
-              <TableHead>계정 서비스</TableHead>
-              <TableHead>역할</TableHead>
-              <TableHead>활성화 상태</TableHead>
-              <TableHead>생성일</TableHead>
-              <TableHead>갱신일</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody className="flex justify-center border-l-3 pl-4">
-            <TableRow className="flex flex-col">
-              <TableCell>{userData.id}</TableCell>
-              <TableCell>{userData.nickname}</TableCell>
-              <TableCell>{userData.email}</TableCell>
-              <TableCell>{userData.phone}</TableCell>
-              <TableCell>{userData.gender}</TableCell>
-              <TableCell>{userData.age}</TableCell>
-              <TableCell>{userData.provider}</TableCell>
-              <TableCell>{userData.role}</TableCell>
-              <TableCell>{userData.active ? "활성화" : "비활성화"}</TableCell>
-              <TableCell>{userData.createdAt.split("T")[0]}</TableCell>
-              <TableCell>{userData.updatedAt.split("T")[0]}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
+      <Table className="flex flex-row ">
+        <TableHeader>
+          <TableRow className="flex flex-col border-none">
+            <TableHead>ID</TableHead>
+            <TableHead>닉네임</TableHead>
+            <TableHead>이메일</TableHead>
+            <TableHead>프로필 이미지</TableHead>
+            <TableHead>전화번호</TableHead>
+            <TableHead>성별</TableHead>
+            <TableHead>나이</TableHead>
+            <TableHead>계정 서비스</TableHead>
+            <TableHead>역할</TableHead>
+            <TableHead>활성화 상태</TableHead>
+            <TableHead>생성일</TableHead>
+            <TableHead>갱신일</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody className="flex justify-center">
+          <TableRow className="flex flex-col">
+            <TableCell>{userData.id}</TableCell>
+            <TableCell>{userData.nickname}</TableCell>
+            <TableCell>{userData.email}</TableCell>
+            <TableCell>
+              <Tooltip>
+                <TooltipTrigger>{userData.profileImg}</TooltipTrigger>
+                <TooltipContent>
+                  <img src={userData.profileImg}></img>
+                </TooltipContent>
+              </Tooltip>
+            </TableCell>
+            <TableCell>{userData.phone}</TableCell>
+            <TableCell>{userData.gender}</TableCell>
+            <TableCell>{userData.age}</TableCell>
+            <TableCell>{userData.provider}</TableCell>
+            <TableCell>{userData.role}</TableCell>
+            <TableCell>{userData.active ? "활성화" : "비활성화"}</TableCell>
+            <TableCell>{userData.createdAt.split("T")[0]}</TableCell>
+            <TableCell>{userData.updatedAt.split("T")[0]}</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
 
       <div>캠페인지원현황</div>
       <div>회원 메모</div>
