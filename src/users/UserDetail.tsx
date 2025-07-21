@@ -73,7 +73,11 @@ export default function UserDetail() {
   };
   // 사용자 삭제
   const deleteUser = async (id: number) => {
-    if (window.confirm("확인 누르면 바로 지워지니까 누르시면 안됩니다!")) {
+    if (
+      window.confirm(
+        "사용자를 삭제하시겠습니까? (주의 : 이 작업은 되돌릴 수 없습니다)"
+      )
+    ) {
       try {
         const response = await axiosInterceptor.delete(`/users/${id}`);
         navigate("/userTable");
@@ -161,7 +165,7 @@ export default function UserDetail() {
         </TableBody>
       </Table>
       <div>회원 메모</div>
-      <div className="whitespace-normal break-words overflow-auto overflow-hidden max-h-40 w-400">
+      <div className="whitespace-normal break-words overflow-auto overflow-hidden max-h-40">
         {userData.memo}
       </div>
       {!hideMemo && (
