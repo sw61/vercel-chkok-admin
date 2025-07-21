@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useStringInput } from "@/hooks/use-string-input";
 import { login } from "@/api/auth";
+import { useNavigate } from "react-router-dom";
 
 export function LoginForm({
   className,
@@ -14,7 +15,7 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const { value: email, handleValue: handleEmail } = useStringInput("");
   const { value: password, handleValue: handlePassword } = useStringInput("");
-
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
   // 동기 함수
@@ -22,7 +23,7 @@ export function LoginForm({
     try {
       setIsLoading(true);
       await login(email, password);
-      window.location.href = "/"; // 로그인 성공 시 리다이렉트
+      navigate("/");
     } catch (error) {
     } finally {
       setIsLoading(false);

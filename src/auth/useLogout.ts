@@ -6,7 +6,7 @@ export const useLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     alert("로그아웃 되었습니다.");
-    navigate("/", { replace: true });
+    navigate("/login", { replace: true });
   };
   return logout;
 };
