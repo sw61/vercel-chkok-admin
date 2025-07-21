@@ -41,6 +41,7 @@ export default function UserDetail() {
   const { userId } = useParams<{ userId: string }>();
   const [userData, setUserData] = useState<User | null>(null);
   const [userMemo, setUserMemo] = useState<string>("");
+  const [hideMemo, setHideMemo] = useState<Boolean>(false);
 
   const handleTextAreaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setUserMemo(event.target.value);
@@ -95,12 +96,14 @@ export default function UserDetail() {
       );
       const updatedData = response.data.data;
       setUserData((prev) => ({ ...prev, ...updatedData }));
+      setHideMemo(false);
       alert("메모가 업데이트 되었습니다.");
     } catch (error) {
       alert("메모 업데이트에 실패했습니다.");
       console.log(error);
     }
   };
+
   useEffect(() => {
     if (userId) {
       getUserDetail(userId);
@@ -157,20 +160,30 @@ export default function UserDetail() {
           </TableRow>
         </TableBody>
       </Table>
-
-      <div>캠페인지원현황</div>
       <div>회원 메모</div>
-      <div>메모 내용 : {userData.memo}</div>
-      <Textarea
-        placeholder="텍스트를 입력하세요."
-        value={userMemo}
-        onChange={handleTextAreaChange}
-      />
-      <div className="flex justify-end">
-        <Button onClick={() => putMemoUpdate(userData.id, userMemo || "")}>
-          메모 업데이트
-        </Button>
+      <div className="whitespace-normal break-words overflow-auto overflow-hidden max-h-40 w-400">
+        {userData.memo}
       </div>
+      {!hideMemo && (
+        <div className="flex justify-end">
+          <Button onClick={() => setHideMemo(true)}>메모 수정</Button>
+        </div>
+      )}
+
+      {hideMemo && (
+        <div>
+          <Textarea
+            placeholder="텍스트를 입력하세요."
+            value={userMemo}
+            onChange={handleTextAreaChange}
+          />
+          <div className="flex justify-end">
+            <Button onClick={() => putMemoUpdate(userData.id, userMemo || "")}>
+              메모 업데이트
+            </Button>
+          </div>
+        </div>
+      )}
 
       <div className="flex justify-end gap-2 pt-4">
         <Button
