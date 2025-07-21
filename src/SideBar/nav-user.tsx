@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import {
   BadgeCheck,
   Bell,
@@ -6,9 +6,9 @@ import {
   CreditCard,
   LogOut,
   Sparkles,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,17 +17,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar';
-import axiosInterceptor from '@/lib/axios-interceptors';
-import { useLogout } from '@/auth/useLogout';
-import { toast } from 'sonner';
-import { useState, useEffect } from 'react';
+} from "@/components/ui/sidebar";
+import axiosInterceptor from "@/lib/axios-interceptors";
+import { useLogout } from "@/auth/useLogout";
+import { toast } from "sonner";
+import { useState, useEffect } from "react";
 
 interface AdminData {
   name: string;
@@ -50,10 +50,10 @@ export function NavUser({
   const logout = useLogout();
   const getUserMe = async () => {
     try {
-      const response = await axiosInterceptor.get('/auth/me');
+      const response = await axiosInterceptor.get("/auth/me");
       const data = response.data.data;
       setAdminData(data);
-      console.log(response.data.data);
+      // console.log(data);
     } catch (error) {
       console.log(error);
     }
@@ -83,7 +83,7 @@ export function NavUser({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? 'bottom' : 'right'}
+            side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
           >
@@ -91,8 +91,8 @@ export function NavUser({
               className="p-0 font-normal cursor-pointer"
               onClick={() => {
                 if (!adminData) {
-                  toast('관리자 정보 없음', {
-                    description: '불러오는 중이거나 실패했습니다.',
+                  toast("관리자 정보 없음", {
+                    description: "불러오는 중이거나 실패했습니다.",
                   });
                   return;
                 }
@@ -102,18 +102,18 @@ export function NavUser({
                     <p>이름: {adminData?.name}</p>
                     <p>이메일: {adminData?.email}</p>
                     <p>
-                      가입일:{' '}
+                      가입일:{" "}
                       {new Date(adminData?.createdAt).toLocaleDateString()}
                     </p>
                   </div>,
                   {
                     action: {
-                      label: '확인',
-                      onClick: () => console.log('확인 클릭됨'),
+                      label: "확인",
+                      onClick: () => console.log("확인 클릭됨"),
                     },
                     duration: Infinity,
-                    position: 'top-right',
-                  },
+                    position: "top-right",
+                  }
                 );
               }}
             >

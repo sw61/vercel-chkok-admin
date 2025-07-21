@@ -12,10 +12,10 @@ import {
   SquareTerminal,
 } from "lucide-react";
 
-import { NavMain } from "@/components/SideBar/nav-main";
-import { NavProjects } from "@/components/SideBar/nav-projects";
-import { NavSecondary } from "@/components/SideBar/nav-secondary";
-import { NavUser } from "@/components/SideBar/nav-user";
+import { NavMain } from "@/SideBar/nav-main";
+import { NavProjects } from "@/SideBar/nav-projects";
+import { NavSecondary } from "@/SideBar/nav-secondary";
+import { NavUser } from "@/SideBar/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -37,7 +37,6 @@ const data = {
       title: "사용자 목록",
       url: "/userTable",
       icon: SquareTerminal,
-      isActive: true,
       items: [
         {
           title: "History",
@@ -54,8 +53,8 @@ const data = {
       ],
     },
     {
-      title: "Models",
-      url: "#",
+      title: "캠페인 목록",
+      url: "/campaigns",
       icon: Bot,
       items: [
         {

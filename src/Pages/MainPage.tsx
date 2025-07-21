@@ -1,4 +1,5 @@
 import { UserPieChart } from "@/users/UserPieChart";
+import { CamapaignPieChart } from "@/campaigns/CampaignPieChart";
 import UserTablePage from "@/users/UserTablePage";
 export default function Page() {
   return (
@@ -9,7 +10,7 @@ export default function Page() {
             <UserPieChart />
           </div>
           <div className="bg-muted/50 aspect-video rounded-xl">
-            <UserPieChart />
+            <CamapaignPieChart />
           </div>
           <div className="bg-muted/50 aspect-video rounded-xl">
             <UserPieChart />

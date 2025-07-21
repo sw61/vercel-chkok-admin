@@ -1,5 +1,7 @@
-import { UserDataTable } from "./UserDataTable";
-import { PaginationDemo } from "./UserPagination";
+// page
+import { CampaignPagination } from "./CampaignPagination";
+import { CampaignDataTable } from "./CampaignDataTable";
+// ts, library
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
 import PulseLoader from "react-spinners/PulseLoader";
@@ -7,14 +9,14 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 
-interface User {
+interface Campaign {
   id: number;
-  name: string;
-  email: string;
-  nickname: string;
+  title: string;
+  campaignType: string;
+  approvalStatus: string;
+  approvalComment: string;
+  approvalDate: string;
   createdAt: string;
-  updatedAt: string;
-  role: string;
 }
 
 interface PaginationData {
@@ -26,22 +28,23 @@ interface PaginationData {
   totalPages: number;
 }
 
-export default function UserTablePage() {
-  const [userData, setUserData] = useState<User[]>();
+export default function CampaignTablePage() {
+  const [campaignData, setCampaignData] = useState<Campaign[]>();
   const [pageData, setPageData] = useState<PaginationData | null>();
   const navigate = useNavigate();
 
-  const getUserTable = async (page: number = 0) => {
+  const getCampaignTable = async (page: number = 0) => {
     try {
       const response = await axiosInterceptor.get(
-        `/users?page=${page}&size=10`
+        `/campaigns?page=${page}&size=10`
       );
-      const userData = response.data.data;
-      // console.log(userData);
-      setUserData(userData.content);
+      const campaignData = response.data;
+      console.log(campaignData);
 
-      setPageData(userData.pagination);
+      setCampaignData(campaignData.content);
+      setPageData(campaignData.pagination);
     } catch (error) {
+      console.log(error);
       const axiosError = error as AxiosError;
       if (axiosError.response) {
         switch (axiosError.response.status) {
@@ -66,9 +69,9 @@ export default function UserTablePage() {
     }
   };
   useEffect(() => {
-    getUserTable();
+    getCampaignTable();
   }, []);
-  if (!userData || !pageData) {
+  if (!campaignData || !pageData) {
     return (
       <div className="flex justify-center items-center h-64">
         <PulseLoader />
@@ -77,14 +80,17 @@ export default function UserTablePage() {
   }
 
   const handlePageChange = (page: number) => {
-    getUserTable(page);
+    getCampaignTable(page);
   };
 
   return (
     <>
       <div>
-        <UserDataTable userData={userData} />
-        <PaginationDemo pageData={pageData} onPageChange={handlePageChange} />
+        <CampaignDataTable campaignData={campaignData} />
+        <CampaignPagination
+          pageData={pageData}
+          onPageChange={handlePageChange}
+        />
       </div>
     </>
   );
