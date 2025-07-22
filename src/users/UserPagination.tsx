@@ -6,7 +6,7 @@ import {
   PaginationPrevious,
   PaginationNext,
   PaginationEllipsis,
-} from '@/components/ui/pagination';
+} from "@/components/ui/pagination";
 
 interface PaginationData {
   first: boolean;
@@ -50,7 +50,7 @@ export function PaginationDemo({
         >
           {i + 1}
         </PaginationLink>
-      </PaginationItem>,
+      </PaginationItem>
     );
   }
 
@@ -64,7 +64,7 @@ export function PaginationDemo({
               e.preventDefault();
               if (!first) onPageChange(pageNumber - 2);
             }}
-            className={first ? 'pointer-events-none opacity-50' : ''}
+            className={first ? "pointer-events-none opacity-50" : ""}
           />
         </PaginationItem>
         {pageItems}
@@ -80,7 +80,7 @@ export function PaginationDemo({
               e.preventDefault();
               if (!last) onPageChange(pageNumber);
             }}
-            className={last ? 'pointer-events-none opacity-50' : ''}
+            className={last ? "pointer-events-none opacity-50" : ""}
           />
         </PaginationItem>
       </PaginationContent>

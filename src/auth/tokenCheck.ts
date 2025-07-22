@@ -13,7 +13,7 @@ export const PrivateComponent: React.FC<PrivateComponentProps> = ({
   useEffect(() => {
     if (!tokenCheck()) {
       alert("로그인이 필요합니다.");
-      navigate("/", { replace: true });
+      navigate("/login", { replace: true });
     }
   }, [navigate]);
   return tokenCheck() ? children : null;

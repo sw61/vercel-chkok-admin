@@ -274,11 +274,11 @@ function ChartLegendContent({
       )}
     >
       {payload.map((item) => {
-        const key = `${nameKey || item.dataKey || "value"}`;
+        const key = `${nameKey || item?.dataKey || "value"}`;
         const itemConfig = getPayloadConfigFromPayload(config, item, key);
         return (
           <div
-            key={item.value}
+            key={item?.value}
             className={cn(
               "[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3"
             )}
@@ -289,7 +289,7 @@ function ChartLegendContent({
               <div
                 className="h-2 w-2 shrink-0 rounded-[2px]"
                 style={{
-                  backgroundColor: item.color,
+                  backgroundColor: item?.color,
                 }}
               />
             )}
