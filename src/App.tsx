@@ -1,17 +1,20 @@
+// css
 import "./App.css";
-import { LoginForm } from "./auth/login-form";
+import "react-toastify/dist/ReactToastify.css";
+// page
 import MainPage from "./Pages/MainPage";
 import UserTablePage from "./users/UserTablePage";
 import UserDetail from "./users/UserDetail";
-
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import CampaignTablePage from "./campaigns/CampaignTablePage";
+import CampaignDetail from "./campaigns/CampaignDetail";
+import SideBar from "./SideBar/SideBar";
+// ts
+import { LoginForm } from "./auth/login-form";
 import { PrivateComponent } from "./auth/tokenCheck";
+// library
 import { Toaster } from "./components/ui/sonner";
-import SideBar from "./components/SideBar/SideBar";
-
-// 1. 이메일과 비밀번호 입력 필요
-// 2. HTTP 요청인데 POST 요청을 보내야 함
-// 3. accessToken, refreshToken, email을 받는다
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -45,12 +48,29 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
+            <Route
+              path="/campaigns"
+              element={
+                <PrivateComponent>
+                  <CampaignTablePage />
+                </PrivateComponent>
+              }
+            ></Route>
+            <Route
+              path="/campaigns/:campaignId"
+              element={
+                <PrivateComponent>
+                  <CampaignDetail />
+                </PrivateComponent>
+              }
+            ></Route>
           </Route>
 
           <Route path="/login" element={<LoginForm />}></Route>
         </Routes>
       </BrowserRouter>
-      <Toaster />
+      <Toaster /> {/* shadcn/ui-sonner */}
+      <ToastContainer /> {/* react-toast */}
     </>
   );
 }

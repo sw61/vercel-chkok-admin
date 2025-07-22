@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
 
 interface User {
   id: number;
@@ -55,8 +57,27 @@ export default function UserDetail() {
       setUserMemo(userData.memo || "");
     } catch (error) {
       console.log(error);
-      navigate("/login");
-      alert("로그인이 필요합니다.");
+      const axiosError = error as AxiosError;
+      if (axiosError.response) {
+        switch (axiosError.response.status) {
+          case 400:
+            toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
+            break;
+          case 401:
+            toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
+            navigate("/login");
+            break;
+          case 403:
+            toast.error("접근 권한이 없습니다.");
+            break;
+          case 404:
+            toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");
+            break;
+          case 500:
+            toast.error("서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
+            break;
+        }
+      }
     }
   };
   // 사용자 활성화 / 비활성화
@@ -68,7 +89,7 @@ export default function UserDetail() {
       alert(response.data.message);
     } catch (error) {
       console.log(error);
-      alert("상태 변경에 실패했습니다.");
+      toast.error("상태 변경에 실패했습니다.");
     }
   };
   // 사용자 삭제
@@ -82,7 +103,7 @@ export default function UserDetail() {
         const response = await axiosInterceptor.delete(`/users/${id}`);
         navigate("/userTable");
         console.log(response);
-        alert("사용자가 삭제되었습니다.");
+        toast.success("사용자가 삭제되었습니다.");
       } catch (error) {
         console.log(error);
       }
@@ -101,9 +122,9 @@ export default function UserDetail() {
       const updatedData = response.data.data;
       setUserData((prev) => ({ ...prev, ...updatedData }));
       setHideMemo(false);
-      alert("메모가 업데이트 되었습니다.");
+      toast.success("메모가 업데이트 되었습니다.");
     } catch (error) {
-      alert("메모 업데이트에 실패했습니다.");
+      toast.error("메모 업데이트에 실패했습니다.");
       console.log(error);
     }
   };

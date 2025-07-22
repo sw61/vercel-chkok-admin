@@ -6,8 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useStringInput } from "@/hooks/use-string-input";
-import { login } from "@/api/auth";
+import { login } from "@/auth/auth";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
 
 export function LoginForm({
   className,
@@ -23,8 +25,32 @@ export function LoginForm({
     try {
       setIsLoading(true);
       await login(email, password);
+      toast.success("로그인 성공하였습니다.");
       navigate("/");
     } catch (error) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response) {
+        switch (axiosError.response.status) {
+          case 400:
+            toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
+            break;
+          case 401:
+            toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
+            navigate("/login");
+            break;
+          case 403:
+            toast.error("접근 권한이 없습니다.");
+            break;
+          case 429:
+            toast.error(
+              "로그인 시도 횟수를 초과했습니다. 15분 후 다시 시도해주세요"
+            );
+            break;
+          case 500:
+            toast.error("서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
+            break;
+        }
+      }
     } finally {
       setIsLoading(false);
     }

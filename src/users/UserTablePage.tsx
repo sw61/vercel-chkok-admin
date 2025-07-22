@@ -1,8 +1,10 @@
 import { UserDataTable } from "./UserDataTable";
-import { PaginationDemo } from "./Pagination";
+import { PaginationDemo } from "./UserPagination";
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
 import PulseLoader from "react-spinners/PulseLoader";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 
 interface User {
@@ -35,13 +37,32 @@ export default function UserTablePage() {
         `/users?page=${page}&size=10`
       );
       const userData = response.data.data;
-      console.log(userData);
+      // console.log(userData);
       setUserData(userData.content);
+
       setPageData(userData.pagination);
     } catch (error) {
-      console.log(error);
-      navigate("/login");
-      alert("로그인이 필요합니다.");
+      const axiosError = error as AxiosError;
+      if (axiosError.response) {
+        switch (axiosError.response.status) {
+          case 400:
+            toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
+            break;
+          case 401:
+            toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
+            navigate("/login");
+            break;
+          case 403:
+            toast.error("접근 권한이 없습니다.");
+            break;
+          case 404:
+            toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");
+            break;
+          case 500:
+            toast.error("서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
+            break;
+        }
+      }
     }
   };
   useEffect(() => {
