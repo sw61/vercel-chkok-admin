@@ -8,7 +8,14 @@ import PulseLoader from "react-spinners/PulseLoader";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
 interface Campaign {
   id: number;
   title: string;
@@ -29,18 +36,24 @@ interface PaginationData {
 }
 
 export default function CampaignTablePage() {
-  const [campaignData, setCampaignData] = useState<Campaign[]>();
+  const [campaignData, setCampaignData] = useState<Campaign[] | null>();
   const [pageData, setPageData] = useState<PaginationData | null>();
+  const [campaignType, setCampaignType] = useState<string>("ALL");
+  const [isLoading, setIsLoading] = useState<Boolean>(false);
   const navigate = useNavigate();
 
-  const getCampaignTable = async (page: number = 0) => {
+  const getCampaignTable = async (
+    page: number = 0,
+    type: typeof campaignType
+  ) => {
+    setIsLoading(true);
     try {
-      const response = await axiosInterceptor.get(
-        `/campaigns?page=${page}&size=10`
-      );
-      const campaignData = response.data;
-      console.log(campaignData);
-
+      const url =
+        campaignType === "ALL"
+          ? `/campaigns?page=${page}&size=10`
+          : `/campaigns?approvalStatus=${type}&page=${page}&size=10`;
+      const response = await axiosInterceptor.get(url);
+      const campaignData = response.data.data;
       setCampaignData(campaignData.content);
       setPageData(campaignData.pagination);
     } catch (error) {
@@ -66,26 +79,61 @@ export default function CampaignTablePage() {
             break;
         }
       }
+    } finally {
+      setIsLoading(false);
     }
   };
+
   useEffect(() => {
-    getCampaignTable();
-  }, []);
-  if (!campaignData || !pageData) {
+    getCampaignTable(0, campaignType);
+  }, [campaignType]);
+  if (!campaignData || !pageData || isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <PulseLoader />
       </div>
     );
   }
-
+  const typeValues = [
+    { type: "ALL", label: "전체 캠페인" },
+    { type: "PENDING", label: "승인 대기 캠페인" },
+    { type: "APPROVED", label: "승인된 캠페인" },
+    { type: "REJECTED", label: "거절된 캠페인" },
+    { type: "EXPIRED", label: "만료된 캠페인" },
+  ];
   const handlePageChange = (page: number) => {
-    getCampaignTable(page);
+    getCampaignTable(page, campaignType);
   };
+  const handleType = (type: typeof campaignType) => {
+    setCampaignType(type);
+  };
+  const currentLabel =
+    typeValues.find((item) => item.type === campaignType)?.label ||
+    "캠페인 필터";
 
   return (
     <>
       <div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              {currentLabel}
+              <ChevronDown />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {typeValues.map((item) => (
+              <DropdownMenuCheckboxItem
+                key={item.type}
+                checked={campaignType === item.type}
+                onClick={() => handleType(item.type)}
+              >
+                {item.label}
+              </DropdownMenuCheckboxItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         <CampaignDataTable campaignData={campaignData} />
         <CampaignPagination
           pageData={pageData}

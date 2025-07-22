@@ -139,7 +139,7 @@ export function CampaignDataTable({ campaignData }: CampaignDataTableProps) {
       meta: { label: "캠페인 유형" } as CustomColumnMeta,
     },
     {
-      accessorKey: "aprrovalStatus",
+      accessorKey: "approvalStatus",
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -151,6 +151,7 @@ export function CampaignDataTable({ campaignData }: CampaignDataTableProps) {
         </Button>
       ),
       cell: ({ row }) => <div>{row.getValue("approvalStatus")}</div>,
+
       meta: { label: "승인 상태" } as CustomColumnMeta,
     },
     {
@@ -269,10 +270,10 @@ export function CampaignDataTable({ campaignData }: CampaignDataTableProps) {
     <div className="w-full">
       <div className="flex items-center">
         <Input
-          placeholder="이메일 검색"
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="캠페인 이름 검색"
+          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("title")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
