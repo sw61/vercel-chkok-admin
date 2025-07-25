@@ -1,6 +1,6 @@
-import { UserPieChart } from "@/users/UserPieChart";
-import { CamapaignPieChart } from "@/campaigns/CampaignPieChart";
-import UserTablePage from "@/users/UserTablePage";
+import { UserPieChart } from "@/Users/UserPieChart";
+import { CamapaignPieChart } from "@/Campaigns/CampaignPieChart";
+import CampaignTablePage from "@/Campaigns/CampaignTablePage";
 export default function Page() {
   return (
     <>
@@ -17,7 +17,7 @@ export default function Page() {
           </div>
         </div>
         <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min p-4">
-          <UserTablePage />
+          <CampaignTablePage />
         </div>
       </div>
     </>

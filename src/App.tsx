@@ -3,11 +3,12 @@ import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
 // page
 import MainPage from "./Pages/MainPage";
-import UserTablePage from "./users/UserTablePage";
-import UserDetail from "./users/UserDetail";
-import CampaignTablePage from "./campaigns/CampaignTablePage";
-import CampaignDetail from "./campaigns/CampaignDetail";
+import UserTablePage from "./Users/UserTablePage";
+import UserDetail from "./Users/UserDetail";
+import CampaignTablePage from "./Campaigns/CampaignTablePage";
+import CampaignDetail from "./Campaigns/CampaignDetail";
 import SideBar from "./SideBar/SideBar";
+import BannersTable from "./Banners/BannersTable";
 // ts
 import { LoginForm } from "./auth/login-form";
 import { PrivateComponent } from "./auth/tokenCheck";
@@ -64,8 +65,15 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
+            <Route
+              path="/banners"
+              element={
+                <PrivateComponent>
+                  <BannersTable />
+                </PrivateComponent>
+              }
+            ></Route>
           </Route>
-
           <Route path="/login" element={<LoginForm />}></Route>
         </Routes>
       </BrowserRouter>

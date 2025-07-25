@@ -1,6 +1,6 @@
 // page
-import { CampaignPagination } from "./CampaignPagination";
-import { CampaignDataTable } from "./CampaignDataTable";
+import { CampaignPagination } from "@/Campaigns/CampaignPagination";
+import { CampaignTable } from "@/Campaigns/CampaignTable";
 // ts, library
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
@@ -70,6 +70,7 @@ export default function CampaignTablePage() {
             break;
           case 403:
             toast.error("접근 권한이 없습니다.");
+            navigate("/login");
             break;
           case 404:
             toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");
@@ -134,7 +135,7 @@ export default function CampaignTablePage() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <CampaignDataTable campaignData={campaignData} />
+        <CampaignTable campaignData={campaignData} />
         <CampaignPagination
           pageData={pageData}
           onPageChange={handlePageChange}

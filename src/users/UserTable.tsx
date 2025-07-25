@@ -57,7 +57,7 @@ interface UserDataTableProps {
   userData: User[];
 }
 
-export function UserDataTable({ userData }: UserDataTableProps) {
+export function UserTable({ userData }: UserDataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});

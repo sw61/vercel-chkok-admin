@@ -57,7 +57,7 @@ interface CampaignDataTableProps {
   campaignData: Campaign[];
 }
 
-export function CampaignDataTable({ campaignData }: CampaignDataTableProps) {
+export function CampaignTable({ campaignData }: CampaignDataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
