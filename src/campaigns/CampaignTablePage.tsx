@@ -56,6 +56,7 @@ export default function CampaignTablePage() {
       const campaignData = response.data.data;
       setCampaignData(campaignData.content);
       setPageData(campaignData.pagination);
+      console.log(campaignData);
     } catch (error) {
       console.log(error);
       const axiosError = error as AxiosError;

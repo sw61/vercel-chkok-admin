@@ -221,7 +221,7 @@ export function UserTable({ userData }: UserDataTableProps) {
                 <Settings />
                 사용자 상세 정보
               </DropdownMenuItem>
-              <DropdownMenuItem>임시 버튼</DropdownMenuItem>
+              {/* <DropdownMenuItem>임시 버튼</DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         );

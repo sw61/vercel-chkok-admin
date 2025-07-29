@@ -73,13 +73,54 @@ export default function CampaignDetail() {
     }
   };
 
-  // 캠페인 승인 / 거절
-  const putCampaignApproval = async (id: number) => {
+  // 캠페인 승인 처리
+  const approveCampaign = async (id: number) => {
     try {
-      const response = await axiosInterceptor.put(`/campaigns/${id}/approval`);
+      const response = await axiosInterceptor.put(`/campaigns/${id}/approval`, {
+        approvalStatus: "APPROVED",
+        comment: "모든 조건을 만족하여 승인합니다.",
+      });
       const updatedData = response.data.data;
       setCampaignData((prev) => ({ ...prev, ...updatedData }));
       alert(response.data.message);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+      const axiosError = error as AxiosError;
+      if (axiosError.response) {
+        switch (axiosError.response.status) {
+          case 400:
+            toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
+            break;
+          case 401:
+            toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
+            navigate("/login");
+            break;
+          case 403:
+            toast.error("접근 권한이 없습니다.");
+            navigate("/login");
+            break;
+          case 404:
+            toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");
+            break;
+          case 500:
+            toast.error("서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
+            break;
+        }
+      }
+    }
+  };
+  // 캠페인 거절 처리
+  const rejectCampaign = async (id: number) => {
+    try {
+      const response = await axiosInterceptor.put(`/campaigns/${id}/approval`, {
+        approvalStatus: "REJECTED",
+        comment: "모든 조건을 만족하여 거절합니다.",
+      });
+      const updatedData = response.data.data;
+      setCampaignData((prev) => ({ ...prev, ...updatedData }));
+      alert(response.data.message);
+      console.log(response);
     } catch (error) {
       console.log(error);
       const axiosError = error as AxiosError;
@@ -133,9 +174,9 @@ export default function CampaignDetail() {
             <TableHead>최대 지원자 수</TableHead>
             <TableHead>신청 시작일</TableHead>
             <TableHead>신청 종료일</TableHead>
-            <TableHead>승인 상태</TableHead>
-            <TableHead>승인 코멘트</TableHead>
-            <TableHead>승인일</TableHead>
+            <TableHead>처리 상태</TableHead>
+            <TableHead>처리 코멘트</TableHead>
+            <TableHead>처리일</TableHead>
             <TableHead>생성일</TableHead>
             <TableHead>리뷰 마감일</TableHead>
             <TableHead>선택일</TableHead>
@@ -160,14 +201,22 @@ export default function CampaignDetail() {
             <TableCell>{campaignData.recruitmentEndDate}</TableCell>
             <TableCell>{campaignData.approvalStatus}</TableCell>
             <TableCell>{campaignData.approvalComment}</TableCell>
-            <TableCell>{campaignData.approvalDate.split("T")[0]}</TableCell>
-            <TableCell>{campaignData.createdAt.split("T")[0]}</TableCell>
+            <TableCell>
+              {campaignData.approvalDate
+                ? campaignData.approvalDate.split("T")[0]
+                : ""}
+            </TableCell>
+            <TableCell>
+              {campaignData.createdAt
+                ? campaignData.createdAt.split("T")[0]
+                : ""}
+            </TableCell>
             <TableCell>{campaignData.reviewDeadlineDate}</TableCell>
             <TableCell>{campaignData.selectionDate}</TableCell>
           </TableRow>
         </TableBody>
       </Table>
-      <Accordion type="single" collapsible className="w-full">
+      <Accordion type="multiple" className="w-full">
         {campaignData.creator && (
           <AccordionItem value="item-1">
             <AccordionTrigger className="font-bold cursor-pointer">
@@ -200,9 +249,17 @@ export default function CampaignDetail() {
       <div className="flex justify-end gap-2 pt-4">
         <Button
           className="cursor-pointer"
-          onClick={() => putCampaignApproval(campaignData.id)}
+          onClick={() => approveCampaign(campaignData.id)}
         >
-          승인 / 거절
+          승인
+        </Button>
+      </div>
+      <div className="flex justify-end gap-2 pt-4">
+        <Button
+          className="cursor-pointer"
+          onClick={() => rejectCampaign(campaignData.id)}
+        >
+          거절
         </Button>
       </div>
     </>

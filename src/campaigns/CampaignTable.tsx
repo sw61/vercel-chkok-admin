@@ -146,31 +146,15 @@ export function CampaignTable({ campaignData }: CampaignDataTableProps) {
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          승인 상태
+          처리 상태
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => <div>{row.getValue("approvalStatus")}</div>,
 
-      meta: { label: "승인 상태" } as CustomColumnMeta,
+      meta: { label: "처리 상태" } as CustomColumnMeta,
     },
-    {
-      accessorKey: "approvalComment",
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          className="has-[>svg]:px-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          승인 코멘트
-          <ArrowUpDown />
-        </Button>
-      ),
-      cell: ({ row }) => {
-        <div>{row.getValue("approvalComment")}</div>;
-      },
-      meta: { label: "approvalComment" } as CustomColumnMeta,
-    },
+
     {
       accessorKey: "approvalDate",
       header: ({ column }) => (
@@ -179,16 +163,17 @@ export function CampaignTable({ campaignData }: CampaignDataTableProps) {
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          승인일
+          처리일
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => {
         const fullDate = row.getValue("approvalDate") as string;
-        const dateOnly = fullDate.split("T")[0];
+        const dateOnly =
+          typeof fullDate === "string" ? fullDate.split("T")[0] : "";
         return <div>{dateOnly}</div>;
       },
-      meta: { label: "승인일" } as CustomColumnMeta,
+      meta: { label: "처리일" } as CustomColumnMeta,
     },
     {
       accessorKey: "createdAt",
@@ -204,10 +189,26 @@ export function CampaignTable({ campaignData }: CampaignDataTableProps) {
       ),
       cell: ({ row }) => {
         const fullDate = row.getValue("createdAt") as string;
-        const dateOnly = fullDate.split("T")[0];
+        const dateOnly =
+          typeof fullDate === "string" ? fullDate.split("T")[0] : "";
         return <div>{dateOnly}</div>;
       },
       meta: { label: "생성일" } as CustomColumnMeta,
+    },
+    {
+      accessorKey: "approvalComment",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          className="has-[>svg]:px-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          처리 코멘트
+          <ArrowUpDown />
+        </Button>
+      ),
+      cell: ({ row }) => <div>{row.getValue("approvalComment")}</div>,
+      meta: { label: "처리 코멘트" } as CustomColumnMeta,
     },
     {
       id: "actions",
@@ -241,7 +242,7 @@ export function CampaignTable({ campaignData }: CampaignDataTableProps) {
                 <Settings />
                 캠페인 상세 정보
               </DropdownMenuItem>
-              <DropdownMenuItem>임시 버튼</DropdownMenuItem>
+              {/* <DropdownMenuItem>임시 버튼</DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         );
