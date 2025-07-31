@@ -1,4 +1,4 @@
-import { UserDataTable } from "./UserDataTable";
+import { UserTable } from "./UserTable";
 import { PaginationDemo } from "./UserPagination";
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
@@ -83,7 +83,7 @@ export default function UserTablePage() {
   return (
     <>
       <div>
-        <UserDataTable userData={userData} />
+        <UserTable userData={userData} />
         <PaginationDemo pageData={pageData} onPageChange={handlePageChange} />
       </div>
     </>

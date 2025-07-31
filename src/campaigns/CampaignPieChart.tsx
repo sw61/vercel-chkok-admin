@@ -37,7 +37,6 @@ export function CamapaignPieChart() {
       const campaignStatus = response.data.data;
       setCampaignStatus(campaignStatus);
       setIsLoading(false);
-      console.log(campaignStatus);
     } catch (error) {
       const axiosError = error as AxiosError;
       if (axiosError.response) {
@@ -51,6 +50,7 @@ export function CamapaignPieChart() {
             break;
           case 403:
             toast.error("접근 권한이 없습니다.");
+            navigate("/login");
             break;
           case 404:
             toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");

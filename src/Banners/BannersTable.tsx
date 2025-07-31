@@ -17,6 +17,7 @@ import {
   MoreHorizontal,
   Settings,
   Copy,
+  Trash2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -41,30 +42,38 @@ import {
 } from "@/components/ui/table";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-interface Campaign {
+
+interface Banner {
   id: number;
   title: string;
-  campaignType: string;
-  approvalStatus: string;
-  approvalComment: string;
-  approvalDate: string;
+  bannerUrl: string;
+  redirectUrl: string;
+  description: string;
+  position: string;
   createdAt: string;
+  updatedAt: string;
 }
+
 interface CustomColumnMeta {
   label?: string;
 }
-interface CampaignDataTableProps {
-  campaignData: Campaign[];
+interface BannerDataTableProps {
+  bannerData: Banner[];
+  onDelete: (id: number) => void;
 }
 
-export function CampaignDataTable({ campaignData }: CampaignDataTableProps) {
+export default function BannersTable({
+  bannerData,
+  onDelete,
+}: BannerDataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const navigate = useNavigate();
+
   // columns 재정의: id, title, campaignType, approvalStatus, approvalComment, approvalDate, createdAt 순서
-  const columns: ColumnDef<Campaign, unknown>[] = [
+  const columns: ColumnDef<Banner, unknown>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -113,82 +122,30 @@ export function CampaignDataTable({ campaignData }: CampaignDataTableProps) {
             className="has-[>svg]:px-0"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            캠페인 이름
+            배너 이름
             <ArrowUpDown />
           </Button>
         </div>
       ),
       cell: ({ row }) => <div>{row.getValue("title")}</div>,
-      meta: { label: "캠페인 이름" } as CustomColumnMeta,
+      meta: { label: "배너 이름" } as CustomColumnMeta,
     },
     {
-      accessorKey: "campaignType",
+      accessorKey: "position",
       header: ({ column }) => (
         <Button
           variant="ghost"
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          캠페인 유형
+          배너 위치
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => (
-        <div className="lowercase">{row.getValue("campaignType")}</div>
+        <div className="lowercase">{row.getValue("position")}</div>
       ),
-      meta: { label: "캠페인 유형" } as CustomColumnMeta,
-    },
-    {
-      accessorKey: "approvalStatus",
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          className="has-[>svg]:px-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          승인 상태
-          <ArrowUpDown />
-        </Button>
-      ),
-      cell: ({ row }) => <div>{row.getValue("approvalStatus")}</div>,
-
-      meta: { label: "승인 상태" } as CustomColumnMeta,
-    },
-    {
-      accessorKey: "approvalComment",
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          className="has-[>svg]:px-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          승인 코멘트
-          <ArrowUpDown />
-        </Button>
-      ),
-      cell: ({ row }) => {
-        <div>{row.getValue("approvalComment")}</div>;
-      },
-      meta: { label: "approvalComment" } as CustomColumnMeta,
-    },
-    {
-      accessorKey: "approvalDate",
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          className="has-[>svg]:px-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          승인일
-          <ArrowUpDown />
-        </Button>
-      ),
-      cell: ({ row }) => {
-        const fullDate = row.getValue("approvalDate") as string;
-        const dateOnly = fullDate.split("T")[0];
-        return <div>{dateOnly}</div>;
-      },
-      meta: { label: "승인일" } as CustomColumnMeta,
+      meta: { label: "배너 위치" } as CustomColumnMeta,
     },
     {
       accessorKey: "createdAt",
@@ -202,18 +159,51 @@ export function CampaignDataTable({ campaignData }: CampaignDataTableProps) {
           <ArrowUpDown />
         </Button>
       ),
+      cell: ({ row }) => <div>{row.getValue("createdAt")}</div>,
+
+      meta: { label: "생성일" } as CustomColumnMeta,
+    },
+
+    {
+      accessorKey: "updatedAt",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          className="has-[>svg]:px-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          업데이트일
+          <ArrowUpDown />
+        </Button>
+      ),
       cell: ({ row }) => {
-        const fullDate = row.getValue("createdAt") as string;
-        const dateOnly = fullDate.split("T")[0];
+        const fullDate = row.getValue("updatedAt") as string;
+        const dateOnly =
+          typeof fullDate === "string" ? fullDate.split("T")[0] : "";
         return <div>{dateOnly}</div>;
       },
-      meta: { label: "생성일" } as CustomColumnMeta,
+      meta: { label: "업데이트일" } as CustomColumnMeta,
+    },
+    {
+      accessorKey: "description",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          className="has-[>svg]:px-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          설명
+          <ArrowUpDown />
+        </Button>
+      ),
+      cell: ({ row }) => <div>{row.getValue("description")}</div>,
+      meta: { label: "설명" } as CustomColumnMeta,
     },
     {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const campaign = row.original as Campaign;
+        const banner = row.original as Banner;
 
         return (
           <DropdownMenu>
@@ -228,7 +218,7 @@ export function CampaignDataTable({ campaignData }: CampaignDataTableProps) {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() =>
-                  navigator.clipboard.writeText(campaign.title.toString())
+                  navigator.clipboard.writeText(banner.title.toString())
                 }
               >
                 <Copy />
@@ -236,12 +226,15 @@ export function CampaignDataTable({ campaignData }: CampaignDataTableProps) {
               </DropdownMenuItem>
 
               <DropdownMenuItem
-                onClick={() => navigate(`/campaigns/${campaign.id}`)}
+                onClick={() => navigate(`/banners/${banner.id}`)}
               >
                 <Settings />
-                캠페인 상세 정보
+                배너 상세 정보
               </DropdownMenuItem>
-              <DropdownMenuItem>임시 버튼</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onDelete(banner.id)}>
+                <Trash2 />
+                배너 이미지 삭제하기
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
@@ -249,7 +242,7 @@ export function CampaignDataTable({ campaignData }: CampaignDataTableProps) {
     },
   ];
   const table = useReactTable({
-    data: campaignData,
+    data: bannerData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -270,7 +263,7 @@ export function CampaignDataTable({ campaignData }: CampaignDataTableProps) {
     <div className="w-full">
       <div className="flex items-center">
         <Input
-          placeholder="캠페인 이름 검색"
+          placeholder="배너 이름 검색"
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("title")?.setFilterValue(event.target.value)
@@ -305,6 +298,7 @@ export function CampaignDataTable({ campaignData }: CampaignDataTableProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
