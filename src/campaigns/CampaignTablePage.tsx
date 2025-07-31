@@ -56,7 +56,6 @@ export default function CampaignTablePage() {
       const campaignData = response.data.data;
       setCampaignData(campaignData.content);
       setPageData(campaignData.pagination);
-      console.log(campaignData);
     } catch (error) {
       console.log(error);
       const axiosError = error as AxiosError;
@@ -66,12 +65,14 @@ export default function CampaignTablePage() {
             toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
             break;
           case 401:
-            toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
             navigate("/login");
+            toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
+
             break;
           case 403:
-            toast.error("접근 권한이 없습니다.");
             navigate("/login");
+            toast.error("접근 권한이 없습니다.");
+
             break;
           case 404:
             toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");

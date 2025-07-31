@@ -37,7 +37,6 @@ export function CamapaignPieChart() {
       const campaignStatus = response.data.data;
       setCampaignStatus(campaignStatus);
       setIsLoading(false);
-      console.log(campaignStatus);
     } catch (error) {
       const axiosError = error as AxiosError;
       if (axiosError.response) {

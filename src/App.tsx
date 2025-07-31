@@ -8,7 +8,8 @@ import UserDetail from "./Users/UserDetail";
 import CampaignTablePage from "./Campaigns/CampaignTablePage";
 import CampaignDetail from "./Campaigns/CampaignDetail";
 import SideBar from "./SideBar/SideBar";
-import BannersTable from "./Banners/BannersTable";
+import BannersTable from "./Banners/BannersTablePage";
+
 // ts
 import { LoginForm } from "./auth/login-form";
 import { PrivateComponent } from "./auth/tokenCheck";
@@ -16,6 +17,7 @@ import { PrivateComponent } from "./auth/tokenCheck";
 import { Toaster } from "./components/ui/sonner";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import BannersDetail from "./Banners/BannersDetail";
 
 function App() {
   return (
@@ -70,6 +72,14 @@ function App() {
               element={
                 <PrivateComponent>
                   <BannersTable />
+                </PrivateComponent>
+              }
+            ></Route>
+            <Route
+              path="/banners/:bannerId"
+              element={
+                <PrivateComponent>
+                  <BannersDetail />
                 </PrivateComponent>
               }
             ></Route>

@@ -38,9 +38,7 @@ export function UserPieChart() {
       const response = await axiosInterceptor.get(`/users/stats`);
       const userStatus = response.data.data;
       setUserStatus(userStatus);
-
       setIsLoading(false);
-      console.log(userStatus);
     } catch (error) {
       console.log(error);
       const axiosError = error as AxiosError;

@@ -72,8 +72,8 @@ const data = {
       ],
     },
     {
-      title: "Documentation",
-      url: "#",
+      title: "배너 목록",
+      url: "/banners",
       icon: BookOpen,
       items: [
         {

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 export const tokenCheck = (): boolean => {
   return !!localStorage.getItem("accessToken");
 };
@@ -12,7 +13,8 @@ export const PrivateComponent: React.FC<PrivateComponentProps> = ({
   const navigate = useNavigate();
   useEffect(() => {
     if (!tokenCheck()) {
-      alert("로그인이 필요합니다.");
+      toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요.");
+      alert("토큰이 만료되었습니다. 다시 로그인 해주세요.");
       navigate("/login", { replace: true });
     }
   }, [navigate]);

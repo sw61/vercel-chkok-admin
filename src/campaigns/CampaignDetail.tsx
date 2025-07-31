@@ -75,77 +75,89 @@ export default function CampaignDetail() {
 
   // 캠페인 승인 처리
   const approveCampaign = async (id: number) => {
-    try {
-      const response = await axiosInterceptor.put(`/campaigns/${id}/approval`, {
-        approvalStatus: "APPROVED",
-        comment: "모든 조건을 만족하여 승인합니다.",
-      });
-      const updatedData = response.data.data;
-      setCampaignData((prev) => ({ ...prev, ...updatedData }));
-      alert(response.data.message);
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-      const axiosError = error as AxiosError;
-      if (axiosError.response) {
-        switch (axiosError.response.status) {
-          case 400:
-            toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
-            break;
-          case 401:
-            toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
-            navigate("/login");
-            break;
-          case 403:
-            toast.error("접근 권한이 없습니다.");
-            navigate("/login");
-            break;
-          case 404:
-            toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");
-            break;
-          case 500:
-            toast.error("서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
-            break;
+    if (window.confirm("캠페인을 승인하시겠습니까?"))
+      try {
+        const response = await axiosInterceptor.put(
+          `/campaigns/${id}/approval`,
+          {
+            approvalStatus: "APPROVED",
+            comment: "모든 조건을 만족하여 승인합니다.",
+          }
+        );
+        const updatedData = response.data.data;
+        setCampaignData((prev) => ({ ...prev, ...updatedData }));
+        toast.success("캠페인이 승인되었습니다.");
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+        const axiosError = error as AxiosError;
+        if (axiosError.response) {
+          switch (axiosError.response.status) {
+            case 400:
+              toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
+              break;
+            case 401:
+              toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
+              navigate("/login");
+              break;
+            case 403:
+              toast.error("접근 권한이 없습니다.");
+              navigate("/login");
+              break;
+            case 404:
+              toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");
+              break;
+            case 500:
+              toast.error(
+                "서버 오류가 발생했습니다. 나중에 다시 시도해주세요."
+              );
+              break;
+          }
         }
       }
-    }
   };
-  // 캠페인 거절 처리
+  // 캠페인 반려 처리
   const rejectCampaign = async (id: number) => {
-    try {
-      const response = await axiosInterceptor.put(`/campaigns/${id}/approval`, {
-        approvalStatus: "REJECTED",
-        comment: "모든 조건을 만족하여 거절합니다.",
-      });
-      const updatedData = response.data.data;
-      setCampaignData((prev) => ({ ...prev, ...updatedData }));
-      alert(response.data.message);
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-      const axiosError = error as AxiosError;
-      if (axiosError.response) {
-        switch (axiosError.response.status) {
-          case 400:
-            toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
-            break;
-          case 401:
-            toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
-            navigate("/login");
-            break;
-          case 403:
-            toast.error("접근 권한이 없습니다.");
-            navigate("/login");
-            break;
-          case 404:
-            toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");
-            break;
-          case 500:
-            toast.error("서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
-            break;
+    if (window.confirm("캠페인을 반려하시겠습니까?"))
+      try {
+        const response = await axiosInterceptor.put(
+          `/campaigns/${id}/approval`,
+          {
+            approvalStatus: "REJECTED",
+            comment: "조건을 만족하지 못하여 반려되었습니다.",
+          }
+        );
+        const updatedData = response.data.data;
+        setCampaignData((prev) => ({ ...prev, ...updatedData }));
+        toast.success("캠페인이 반려되었습니다.");
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+        const axiosError = error as AxiosError;
+        if (axiosError.response) {
+          switch (axiosError.response.status) {
+            case 400:
+              toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
+              break;
+            case 401:
+              toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
+              navigate("/login");
+              break;
+            case 403:
+              toast.error("접근 권한이 없습니다.");
+              navigate("/login");
+              break;
+            case 404:
+              toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");
+              break;
+            case 500:
+              toast.error(
+                "서버 오류가 발생했습니다. 나중에 다시 시도해주세요."
+              );
+              break;
+          }
         }
       }
-    }
   };
 
   useEffect(() => {

@@ -63,6 +63,7 @@ export function CampaignTable({ campaignData }: CampaignDataTableProps) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const navigate = useNavigate();
+
   // columns 재정의: id, title, campaignType, approvalStatus, approvalComment, approvalDate, createdAt 순서
   const columns: ColumnDef<Campaign, unknown>[] = [
     {
@@ -306,6 +307,7 @@ export function CampaignTable({ campaignData }: CampaignDataTableProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>

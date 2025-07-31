@@ -1,118 +1,361 @@
-import axiosInterceptor from "@/lib/axios-interceptors";
-import { useState, useEffect } from "react";
-import axios from "axios";
+"use client";
 
-interface PresignedUrlType {
-  fileExtension: string;
+import {
+  type ColumnDef,
+  type ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+  type SortingState,
+  useReactTable,
+  type VisibilityState,
+} from "@tanstack/react-table";
+import {
+  ArrowUpDown,
+  ChevronDown,
+  MoreHorizontal,
+  Settings,
+  Copy,
+  Trash2,
+} from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+interface Banner {
+  id: number;
+  title: string;
+  bannerUrl: string;
+  redirectUrl: string;
+  description: string;
+  position: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export default function BannersTable() {
-  const [bannerData, setBannerData] = useState<any[]>([]); // bannerData 타입 지정
-  const [file, setFile] = useState<File | null>(null); // 파일 상태 추가
-  const [presignedUrl, setPresignedUrl] = useState<string | null>(null); // Presigned URL 상태 추가
+interface CustomColumnMeta {
+  label?: string;
+}
+interface BannerDataTableProps {
+  bannerData: Banner[];
+  onDelete: (id: number) => void;
+}
 
-  // PresignedUrl 발급
-  const postPresignedUrl = async (fileExtension: string): Promise<string> => {
-    try {
-      const response = await axiosInterceptor.post(
-        "/api/images/banners/presigned-url",
-        { fileExtension }
-      );
-      console.log("Presigned URL 응답:", response.data);
-      return response.data.url; // 응답에서 URL 추출 (Swagger 스펙에 따라 수정)
-    } catch (error) {
-      console.error("Presigned URL 발급 오류:", error);
-      throw error;
-    }
-  };
+export default function BannersTable({
+  bannerData,
+  onDelete,
+}: BannerDataTableProps) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
+  const navigate = useNavigate();
 
-  // 파일 선택 핸들러
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setFile(event.target.files[0]);
-    }
-  };
+  // columns 재정의: id, title, campaignType, approvalStatus, approvalComment, approvalDate, createdAt 순서
+  const columns: ColumnDef<Banner, unknown>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "id",
+      header: ({ column }) => (
+        <div>
+          <Button
+            variant="ghost"
+            className="has-[>svg]:px-0"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            ID
+            <ArrowUpDown />
+          </Button>
+        </div>
+      ),
+      cell: ({ row }) => <div>{row.getValue("id")}</div>,
+      meta: { label: "id" } as CustomColumnMeta,
+    },
+    {
+      accessorKey: "title",
+      header: ({ column }) => (
+        <div>
+          <Button
+            variant="ghost"
+            className="has-[>svg]:px-0"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            배너 이름
+            <ArrowUpDown />
+          </Button>
+        </div>
+      ),
+      cell: ({ row }) => <div>{row.getValue("title")}</div>,
+      meta: { label: "배너 이름" } as CustomColumnMeta,
+    },
+    {
+      accessorKey: "position",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          className="has-[>svg]:px-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          배너 위치
+          <ArrowUpDown />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue("position")}</div>
+      ),
+      meta: { label: "배너 위치" } as CustomColumnMeta,
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          className="has-[>svg]:px-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          생성일
+          <ArrowUpDown />
+        </Button>
+      ),
+      cell: ({ row }) => <div>{row.getValue("createdAt")}</div>,
 
-  // Presigned URL 발급 및 업로드 테스트
-  const handlePresignedUrlTest = async () => {
-    if (!file) {
-      alert("파일을 선택하세요.");
-      return;
-    }
+      meta: { label: "생성일" } as CustomColumnMeta,
+    },
 
-    try {
-      const fileExtension = file.name.split(".").pop()?.toLowerCase() || "jpg";
-      const url = await postPresignedUrl(fileExtension);
-      setPresignedUrl(url);
-    } catch (error) {
-      console.error("테스트 실패:", error);
-      alert("Presigned URL 테스트 실패");
-    }
-  };
+    {
+      accessorKey: "updatedAt",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          className="has-[>svg]:px-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          업데이트일
+          <ArrowUpDown />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const fullDate = row.getValue("updatedAt") as string;
+        const dateOnly =
+          typeof fullDate === "string" ? fullDate.split("T")[0] : "";
+        return <div>{dateOnly}</div>;
+      },
+      meta: { label: "업데이트일" } as CustomColumnMeta,
+    },
+    {
+      accessorKey: "description",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          className="has-[>svg]:px-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          설명
+          <ArrowUpDown />
+        </Button>
+      ),
+      cell: ({ row }) => <div>{row.getValue("description")}</div>,
+      meta: { label: "설명" } as CustomColumnMeta,
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const banner = row.original as Banner;
 
-  // 배너 이미지 목록 조회
-  const getBannersTable = async () => {
-    try {
-      const response = await axiosInterceptor.get("/api/banners");
-      const data = response.data.data;
-      setBannerData(data);
-      console.log("배너 목록:", data);
-    } catch (error) {
-      console.error("배너 목록 조회 오류:", error);
-      alert("배너 목록 조회 실패");
-    }
-  };
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() =>
+                  navigator.clipboard.writeText(banner.title.toString())
+                }
+              >
+                <Copy />
+                이름 복사하기
+              </DropdownMenuItem>
 
-  // 배너 이미지 생성
-  const createBanner = async () => {
-    try {
-      const response = await axiosInterceptor.post("/api/banners");
-      const data = response.data.data;
-      console.log("배너 생성:", data);
-    } catch (error) {
-      console.error("배너 생성 오류:", error);
-      alert("배너 생성 실패");
-    }
-  };
-
-  // 배너 이미지 수정
-  const editBanner = async (id: number) => {
-    try {
-      const response = await axiosInterceptor.put(`/api/banners/${id}`);
-      const data = response.data.data;
-      console.log("배너 수정:", data);
-    } catch (error) {
-      console.error("배너 수정 오류:", error);
-    }
-  };
-
-  // 배너 이미지 삭제
-  const deleteBanner = async (id: number) => {
-    try {
-      const response = await axiosInterceptor.delete(`/api/banners/${id}`);
-      const data = response.data.data;
-      console.log("배너 삭제:", data);
-    } catch (error) {
-      console.error("배너 삭제 오류:", error);
-    }
-  };
-
-  useEffect(() => {
-    getBannersTable();
-  }, []);
+              <DropdownMenuItem
+                onClick={() => navigate(`/banners/${banner.id}`)}
+              >
+                <Settings />
+                배너 상세 정보
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onDelete(banner.id)}>
+                <Trash2 />
+                배너 이미지 삭제하기
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+  const table = useReactTable({
+    data: bannerData,
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+    },
+  });
 
   return (
-    <>
-      <div>
-        <input type="file" onChange={handleFileChange} accept="image/*" />
-        <button onClick={handlePresignedUrlTest} disabled={!file}>
-          Presigned URL 발급 및 업로드 테스트
-        </button>
+    <div className="w-full">
+      <div className="flex items-center">
+        <Input
+          placeholder="배너 이름 검색"
+          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("title")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              항목 <ChevronDown />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {(column.columnDef.meta as CustomColumnMeta)?.label ||
+                      column.id}
+                  </DropdownMenuCheckboxItem>
+                );
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
-      <div onClick={getBannersTable}>목록 조회 버튼</div>
-      <div onClick={createBanner}>배너 이미지 생성 버튼</div>
-      {/* <div onClick={() => editBanner(id)}>배너 이미지 수정 버튼</div> */}
-      {/* <div onClick={() => deleteBanner(id)}>배너 이미지 삭제 버튼</div> */}
-    </>
+
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="text-muted-foreground flex-1 text-sm">
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
+        </div>
+        <div className="space-x-2"></div>
+      </div>
+    </div>
   );
 }
