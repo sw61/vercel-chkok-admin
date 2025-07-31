@@ -1,6 +1,6 @@
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import PulseLoader from "react-spinners/PulseLoader";
 import {
   Table,
@@ -27,7 +27,7 @@ interface BannerData {
   createdAt: string;
   updatedAt: string;
 }
-
+// 현재 내용 없음
 export default function BannersDetail() {
   const { bannerId } = useParams<{ bannerId: string }>();
   const [bannerData, setBannerData] = useState<BannerData>();
