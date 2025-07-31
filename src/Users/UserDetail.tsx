@@ -159,6 +159,7 @@ export default function UserDetail() {
             <TableHead>활성화 상태</TableHead>
             <TableHead>생성일</TableHead>
             <TableHead>갱신일</TableHead>
+            <TableHead>회원 메모</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="flex justify-center">
@@ -170,7 +171,7 @@ export default function UserDetail() {
               <Tooltip>
                 <TooltipTrigger>{userData.profileImg}</TooltipTrigger>
                 <TooltipContent>
-                  <img src={userData.profileImg}></img>
+                  <img src={userData.profileImg} className="w-80 h-80"></img>
                 </TooltipContent>
               </Tooltip>
             </TableCell>
@@ -182,19 +183,10 @@ export default function UserDetail() {
             <TableCell>{userData.active ? "활성화" : "비활성화"}</TableCell>
             <TableCell>{userData.createdAt.split("T")[0]}</TableCell>
             <TableCell>{userData.updatedAt.split("T")[0]}</TableCell>
+            <TableCell>{userData.memo}</TableCell>
           </TableRow>
         </TableBody>
       </Table>
-      <div>회원 메모</div>
-      <div className="whitespace-normal break-words overflow-auto overflow-hidden max-h-40">
-        {userData.memo}
-      </div>
-      {!hideMemo && (
-        <div className="flex justify-end">
-          <Button onClick={() => setHideMemo(true)}>메모 수정</Button>
-        </div>
-      )}
-
       {hideMemo && (
         <div>
           <Textarea
@@ -211,6 +203,12 @@ export default function UserDetail() {
       )}
 
       <div className="flex justify-end gap-2 pt-4">
+        {!hideMemo && (
+          <div>
+            <Button onClick={() => setHideMemo(true)}>메모 수정</Button>
+          </div>
+        )}
+
         <Button
           className="cursor-pointer"
           onClick={() => putUserStatus(userData.id)}
