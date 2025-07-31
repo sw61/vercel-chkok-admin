@@ -57,7 +57,7 @@ interface UserDataTableProps {
   userData: User[];
 }
 
-export function UserDataTable({ userData }: UserDataTableProps) {
+export function UserTable({ userData }: UserDataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -221,7 +221,7 @@ export function UserDataTable({ userData }: UserDataTableProps) {
                 <Settings />
                 사용자 상세 정보
               </DropdownMenuItem>
-              <DropdownMenuItem>임시 버튼</DropdownMenuItem>
+              {/* <DropdownMenuItem>임시 버튼</DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         );
