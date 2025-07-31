@@ -3,7 +3,7 @@ import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
 // page
 import MainPage from "./Pages/MainPage";
-import UserTablePage  from "./Users/UserTablePage";
+import UserTablePage from "./Users/UserTablePage";
 import UserDetail from "./Users/UserDetail";
 import CampaignTablePage from "./Campaigns/CampaignTablePage";
 import CampaignDetail from "./Campaigns/CampaignDetail";
