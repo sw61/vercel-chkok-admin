@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import BannersTable from "./BannersTable";
+import PulseLoader from "react-spinners/PulseLoader";
 interface BannerData {
   id: number;
   title: string;
@@ -106,7 +107,13 @@ export default function BannersTablePage() {
       console.log(error);
     }
   };
-
+  if (!bannerData) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <PulseLoader />
+      </div>
+    );
+  }
   useEffect(() => {
     getBannersTable();
   }, []);

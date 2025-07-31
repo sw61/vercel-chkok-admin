@@ -203,7 +203,10 @@ export default function CampaignDetail() {
               <Tooltip>
                 <TooltipTrigger>{campaignData.thumbnailUrl}</TooltipTrigger>
                 <TooltipContent>
-                  <img src={campaignData.thumbnailUrl}></img>
+                  <img
+                    src={campaignData.thumbnailUrl}
+                    className="w-80 h-80"
+                  ></img>
                 </TooltipContent>
               </Tooltip>
             </TableCell>
@@ -257,22 +260,23 @@ export default function CampaignDetail() {
           </AccordionItem>
         )}
       </Accordion>
-
-      <div className="flex justify-end gap-2 pt-4">
-        <Button
-          className="cursor-pointer"
-          onClick={() => approveCampaign(campaignData.id)}
-        >
-          승인
-        </Button>
-      </div>
-      <div className="flex justify-end gap-2 pt-4">
-        <Button
-          className="cursor-pointer"
-          onClick={() => rejectCampaign(campaignData.id)}
-        >
-          거절
-        </Button>
+      <div className="flex flex-column justify-end gap-4">
+        <div className="flex justify-end gap-2 pt-4">
+          <Button
+            className="cursor-pointer"
+            onClick={() => approveCampaign(campaignData.id)}
+          >
+            승인
+          </Button>
+        </div>
+        <div className="flex justify-end gap-2 pt-4">
+          <Button
+            className="cursor-pointer"
+            onClick={() => rejectCampaign(campaignData.id)}
+          >
+            거절
+          </Button>
+        </div>
       </div>
     </>
   );
