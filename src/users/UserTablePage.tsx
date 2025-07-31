@@ -26,7 +26,7 @@ interface PaginationData {
   totalPages: number;
 }
 
-export default function UserTablePage() {
+export function UserTablePage() {
   const [userData, setUserData] = useState<User[]>();
   const [pageData, setPageData] = useState<PaginationData | null>();
   const navigate = useNavigate();
