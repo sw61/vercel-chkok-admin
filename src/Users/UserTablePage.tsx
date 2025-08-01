@@ -6,6 +6,22 @@ import PulseLoader from "react-spinners/PulseLoader";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import {
+  type ColumnFiltersState,
+  type VisibilityState,
+} from "@tanstack/react-table";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ChevronDown } from "lucide-react";
 
 interface User {
   id: number;
@@ -29,7 +45,18 @@ interface PaginationData {
 export default function UserTablePage() {
   const [userData, setUserData] = useState<User[]>();
   const [pageData, setPageData] = useState<PaginationData | null>();
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const navigate = useNavigate();
+  const headerMenu = [
+    { id: "id", label: "ID" },
+    { id: "title", label: "캠페인 이름" },
+    { id: "campaignType", label: "캠페인 유형" },
+    { id: "approvalStatus", label: "처리 상태" },
+    { id: "approvalDate", label: "처리일" },
+    { id: "createdAt", label: "생성일" },
+    { id: "approvalComment", label: "처리 코멘트" },
+  ];
 
   const getUserTable = async (page: number = 0) => {
     try {
@@ -82,10 +109,55 @@ export default function UserTablePage() {
 
   return (
     <>
-      <div>
+      <div className="flex justify-between items-center mb-2">
+        <div>
+          {/* 테이블 헤더 카테고리 */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                항목 <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {headerMenu.map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={columnVisibility[column.id] !== false}
+                  onCheckedChange={(value) =>
+                    setColumnVisibility((prev) => ({
+                      ...prev,
+                      [column.id]: value,
+                    }))
+                  }
+                >
+                  {column.label}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* 검색창 */}
+        <Input
+          placeholder="사용자 이름 검색"
+          value={
+            (columnFilters.find((f) => f.id === "title")?.value as string) ?? ""
+          }
+          onChange={(event) =>
+            setColumnFilters((prev) => [
+              ...prev.filter((f) => f.id !== "title"),
+              { id: "title", value: event.target.value },
+            ])
+          }
+          className="pr-20"
+        />
+      </div>
+
+      <>
         <UserTable userData={userData} />
         <PaginationDemo pageData={pageData} onPageChange={handlePageChange} />
-      </div>
+      </>
     </>
   );
 }
