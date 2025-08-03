@@ -150,12 +150,12 @@ export function UserTable({
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          역할
+          권한
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => <div>{row.getValue("role")}</div>,
-      meta: { label: "역할" } as CustomColumnMeta,
+      meta: { label: "권한" } as CustomColumnMeta,
     },
     {
       accessorKey: "active",
@@ -165,14 +165,14 @@ export function UserTable({
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          활성화 상태
+          계정 상태
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => (
         <div>{row.getValue("active") ? "활성화" : "비활성화"}</div>
       ),
-      meta: { label: "활성화 상태" } as CustomColumnMeta,
+      meta: { label: "계정 상태" } as CustomColumnMeta,
     },
     {
       accessorKey: "createdAt",
@@ -201,7 +201,7 @@ export function UserTable({
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          갱신일
+          업데이트일
           <ArrowUpDown />
         </Button>
       ),
@@ -210,7 +210,7 @@ export function UserTable({
         const dateOnly = fullDate.split("T")[0];
         return <div>{dateOnly}</div>;
       },
-      meta: { label: "갱신일" } as CustomColumnMeta,
+      meta: { label: "업데이트일" } as CustomColumnMeta,
     },
     {
       id: "actions",

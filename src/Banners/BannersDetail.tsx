@@ -2,19 +2,7 @@ import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import PulseLoader from "react-spinners/PulseLoader";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 interface BannerData {
@@ -27,25 +15,93 @@ interface BannerData {
   createdAt: string;
   updatedAt: string;
 }
-// 현재 내용 없음
+
+interface BannerInfo {
+  key: string;
+  label: string;
+  value: string | number | undefined;
+}
+
 export default function BannersDetail() {
   const { bannerId } = useParams<{ bannerId: string }>();
-  const [bannerData, setBannerData] = useState<BannerData>();
+  const [bannerData, setBannerData] = useState<BannerData | null>(null);
 
-  // 배너 목록 조회
-  const getBannersTable = async () => {
+  const BannerInfo = (): BannerInfo[] => [
+    { key: "id", label: "ID", value: bannerData?.id ?? "정보 없음" },
+    {
+      key: "title",
+      label: "배너 이름",
+      value: bannerData?.title ?? "정보 없음",
+    },
+    {
+      key: "position",
+      label: "배너 위치",
+      value: bannerData?.position ?? "정보 없음",
+    },
+    {
+      key: "bannerUrl",
+      label: "배너 URL",
+      value: bannerData?.bannerUrl ?? "정보 없음",
+    },
+    {
+      key: "redirectUrl",
+      label: "Redirect URL",
+      value: bannerData?.redirectUrl ?? "정보 없음",
+    },
+    {
+      key: "createdAt",
+      label: "생성일",
+      value: bannerData?.createdAt
+        ? bannerData.createdAt.split("T")[0]
+        : "정보 없음",
+    },
+    {
+      key: "updatedAt",
+      label: "업데이트일",
+      value: bannerData?.updatedAt
+        ? bannerData.updatedAt.split("T")[0]
+        : "정보 없음",
+    },
+    {
+      key: "description",
+      label: "설명",
+      value: bannerData?.description ?? "정보 없음",
+    },
+  ];
+
+  const BannerInfoComponent = ({
+    label,
+    value,
+  }: {
+    label: string;
+    value: string | number | undefined;
+  }) => {
+    return (
+      <CardContent className="flex flex-col gap-2">
+        <p className="text-sm">{label}</p>
+        <div className="px-3 py-2 text-sm font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md px-3 py-2">
+          {value}
+        </div>
+      </CardContent>
+    );
+  };
+
+  // 배너 상세 정보 조회
+  const getBannerDetail = async (id: string) => {
     try {
-      const response = await axiosInterceptor.get("/api/banners");
+      const response = await axiosInterceptor.get(`/api/banners/${id}`);
       const data = response.data.data;
       setBannerData(data);
     } catch (error) {
-      console.error("배너 목록 조회 중 오류 발생:", error);
+      console.error("배너 상세 조회 중 오류 발생:", error);
     }
   };
 
   useEffect(() => {
-    getBannersTable();
-  }, []);
+    if (bannerId) {
+      getBannerDetail(bannerId);
+    }
+  }, [bannerId]);
 
   if (!bannerData) {
     return (
@@ -56,49 +112,37 @@ export default function BannersDetail() {
   }
 
   return (
-    <>
-      {bannerData && (
-        <Table className="flex flex-row ">
-          <TableHeader>
-            <TableRow className="flex flex-col border-none">
-              <TableHead>ID</TableHead>
-              <TableHead>배너 이름</TableHead>
-              <TableHead>배너 위치</TableHead>
-              <TableHead>배너 URL</TableHead>
-              <TableHead>Redirect URL</TableHead>
-              <TableHead>생성일</TableHead>
-              <TableHead>업데이트일</TableHead>
-              <TableHead>설명</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody className="flex justify-center">
-            <TableRow className="flex flex-col">
-              <TableCell>{bannerData.id}</TableCell>
-              <TableCell>{bannerData.title}</TableCell>
-              <TableCell>{bannerData.position}</TableCell>
-              <TableCell>
-                <Tooltip>
-                  <TooltipTrigger>{bannerData.bannerUrl}</TooltipTrigger>
-                  <TooltipContent>
-                    <img src={bannerData.bannerUrl}></img>
-                  </TooltipContent>
-                </Tooltip>
-              </TableCell>
-              <TableCell>{bannerData.redirectUrl}</TableCell>
-              <TableCell>{bannerData.createdAt}</TableCell>
-              <TableCell>{bannerData.updatedAt}</TableCell>
-              <TableCell>{bannerData.description}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      )}
+    <div className="grid grid-row gap-10">
+      {/* 배너 정보 */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-bold text-lg">배너 정보</CardTitle>
+        </CardHeader>
+        {BannerInfo().map((item) => (
+          <BannerInfoComponent
+            key={item.key}
+            label={item.label}
+            value={item.value}
+          />
+        ))}
+      </Card>
 
-      <div className="flex justify-end gap-2 pt-4">
-        <Button className="cursor-pointer">배너 수정</Button>
-      </div>
-      <div className="flex justify-end gap-2 pt-4">
-        <Button className="cursor-pointer">배너 삭제</Button>
-      </div>
-    </>
+      {/* 액션 버튼 */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-bold text-lg">배너 관리</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-4">
+            <Button className="cursor-pointer bg-blue-500 hover:bg-blue-600">
+              배너 수정
+            </Button>
+            <Button className="cursor-pointer bg-red-500 hover:bg-red-600">
+              배너 삭제
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

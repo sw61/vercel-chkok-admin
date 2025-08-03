@@ -1,21 +1,17 @@
 import * as React from "react";
 import {
   BookOpen,
-  Bot,
-  Command,
   Frame,
   LifeBuoy,
   Map,
   PieChart,
   Send,
-  Settings2,
-  SquareTerminal,
   UserRound,
   Earth,
 } from "lucide-react";
 
 import { NavMain } from "@/SideBar/nav-main";
-import { NavProjects } from "@/SideBar/nav-projects";
+// import { NavProjects } from "@/SideBar/nav-projects";
 import { NavSecondary } from "@/SideBar/nav-secondary";
 import { NavUser } from "@/SideBar/nav-user";
 import {

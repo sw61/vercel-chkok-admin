@@ -64,11 +64,10 @@ export default function UserTablePage() {
       const response = await axiosInterceptor.get(
         `/users?page=${page}&size=10`
       );
-      const userData = response.data.data;
-      // console.log(userData);
-      setUserData(userData.content);
-
-      setPageData(userData.pagination);
+      const data = response.data.data;
+      setUserData(data.content);
+      setPageData(data.pagination);
+      console.log(userData);
     } catch (error) {
       const axiosError = error as AxiosError;
       if (axiosError.response) {

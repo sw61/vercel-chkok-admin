@@ -56,7 +56,7 @@ export default function UserDetail() {
     { key: "role", label: "권한", value: userData?.role ?? "정보 없음" },
     {
       key: "active",
-      label: "활성화 상태",
+      label: "계정 상태",
       value: userData?.active ? "활성화" : "비활성화",
     },
     {
@@ -89,8 +89,8 @@ export default function UserDetail() {
   }) => {
     return (
       <CardContent className="flex flex-col gap-2">
-        <p>{label}</p>
-        <div className="px-3 py-2 text-base font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md">
+        <p className="text-sm font-semibold">{label}</p>
+        <div className="px-3 py-2 text-sm font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md">
           {value}
         </div>
       </CardContent>

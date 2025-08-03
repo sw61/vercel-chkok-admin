@@ -9,6 +9,7 @@ import CampaignTablePage from "./Campaigns/CampaignTablePage";
 import CampaignDetail from "./Campaigns/CampaignDetail";
 import SideBar from "./SideBar/SideBar";
 import BannersTable from "./Banners/BannersTablePage";
+import AdminDetail from "./AdminAccount/AdminDetail";
 // ts file
 import { LoginForm } from "./auth/login-form";
 import { PrivateComponent } from "./auth/tokenCheck";
@@ -84,6 +85,15 @@ function App() {
               element={
                 <PrivateComponent>
                   <BannersDetail />
+                </PrivateComponent>
+              }
+            ></Route>
+            {/* 관리자 계정 페이지 */}
+            <Route
+              path="/admin"
+              element={
+                <PrivateComponent>
+                  <AdminDetail />
                 </PrivateComponent>
               }
             ></Route>
