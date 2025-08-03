@@ -39,6 +39,7 @@ interface User {
   id: number;
   name: string;
   email: string;
+  active: boolean;
   nickname: string;
   createdAt: string;
   updatedAt: string;
@@ -49,15 +50,24 @@ interface CustomColumnMeta {
 }
 interface UserDataTableProps {
   userData: User[];
+  columnFilters: ColumnFiltersState;
+  setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
+  columnVisibility: VisibilityState;
+  setColumnVisibility: React.Dispatch<React.SetStateAction<VisibilityState>>;
 }
 
-export function UserTable({ userData }: UserDataTableProps) {
+export function UserTable({
+  userData,
+  columnFilters,
+  setColumnFilters,
+  columnVisibility,
+  setColumnVisibility,
+}: UserDataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const navigate = useNavigate();
+
   // columns 재정의: nickname, email, role, createdAt, updatedAt 순서
+  const navigate = useNavigate();
   const columns: ColumnDef<User, unknown>[] = [
     {
       id: "select",
@@ -148,6 +158,23 @@ export function UserTable({ userData }: UserDataTableProps) {
       meta: { label: "역할" } as CustomColumnMeta,
     },
     {
+      accessorKey: "active",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          className="has-[>svg]:px-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          활성화 상태
+          <ArrowUpDown />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <div>{row.getValue("active") ? "활성화" : "비활성화"}</div>
+      ),
+      meta: { label: "활성화 상태" } as CustomColumnMeta,
+    },
+    {
       accessorKey: "createdAt",
       header: ({ column }) => (
         <Button
@@ -222,6 +249,7 @@ export function UserTable({ userData }: UserDataTableProps) {
       },
     },
   ];
+
   const table = useReactTable({
     data: userData,
     columns,

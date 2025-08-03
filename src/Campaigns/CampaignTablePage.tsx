@@ -171,6 +171,7 @@ export default function CampaignTablePage() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+        {/* 검색창 */}
         <Input
           placeholder="캠페인 이름 검색"
           value={

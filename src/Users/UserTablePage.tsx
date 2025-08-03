@@ -14,9 +14,9 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
+  // DropdownMenuItem,
+  // DropdownMenuLabel,
+  // DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,7 @@ interface User {
   name: string;
   email: string;
   nickname: string;
+  active: boolean;
   createdAt: string;
   updatedAt: string;
   role: string;
@@ -50,12 +51,12 @@ export default function UserTablePage() {
   const navigate = useNavigate();
   const headerMenu = [
     { id: "id", label: "ID" },
-    { id: "title", label: "캠페인 이름" },
-    { id: "campaignType", label: "캠페인 유형" },
-    { id: "approvalStatus", label: "처리 상태" },
-    { id: "approvalDate", label: "처리일" },
+    { id: "nickname", label: "닉네임" },
+    { id: "email", label: "이메일" },
+    { id: "role", label: "권한" },
+    { id: "active", label: "활성화 상태" },
     { id: "createdAt", label: "생성일" },
-    { id: "approvalComment", label: "처리 코멘트" },
+    { id: "updatedAt", label: "갱신일" },
   ];
 
   const getUserTable = async (page: number = 0) => {
@@ -137,17 +138,17 @@ export default function UserTablePage() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-
         {/* 검색창 */}
         <Input
           placeholder="사용자 이름 검색"
           value={
-            (columnFilters.find((f) => f.id === "title")?.value as string) ?? ""
+            (columnFilters.find((f) => f.id === "nickname")?.value as string) ??
+            ""
           }
           onChange={(event) =>
             setColumnFilters((prev) => [
-              ...prev.filter((f) => f.id !== "title"),
-              { id: "title", value: event.target.value },
+              ...prev.filter((f) => f.id !== "nickname"),
+              { id: "nickname", value: event.target.value },
             ])
           }
           className="pr-20"
@@ -155,7 +156,13 @@ export default function UserTablePage() {
       </div>
 
       <>
-        <UserTable userData={userData} />
+        <UserTable
+          userData={userData}
+          columnFilters={columnFilters}
+          setColumnFilters={setColumnFilters}
+          columnVisibility={columnVisibility}
+          setColumnVisibility={setColumnVisibility}
+        />
         <PaginationDemo pageData={pageData} onPageChange={handlePageChange} />
       </>
     </>
