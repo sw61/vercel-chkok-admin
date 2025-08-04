@@ -11,26 +11,20 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  ChevronDown,
-  MoreHorizontal,
-  Settings,
-  Copy,
-} from "lucide-react";
+import { ArrowUpDown, MoreHorizontal, Settings, Copy } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
+  // DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+
 import {
   Table,
   TableBody,
@@ -45,6 +39,7 @@ interface User {
   id: number;
   name: string;
   email: string;
+  active: boolean;
   nickname: string;
   createdAt: string;
   updatedAt: string;
@@ -55,15 +50,24 @@ interface CustomColumnMeta {
 }
 interface UserDataTableProps {
   userData: User[];
+  columnFilters: ColumnFiltersState;
+  setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
+  columnVisibility: VisibilityState;
+  setColumnVisibility: React.Dispatch<React.SetStateAction<VisibilityState>>;
 }
 
-export function UserTable({ userData }: UserDataTableProps) {
+export function UserTable({
+  userData,
+  columnFilters,
+  setColumnFilters,
+  columnVisibility,
+  setColumnVisibility,
+}: UserDataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const navigate = useNavigate();
+
   // columns 재정의: nickname, email, role, createdAt, updatedAt 순서
+  const navigate = useNavigate();
   const columns: ColumnDef<User, unknown>[] = [
     {
       id: "select",
@@ -146,12 +150,29 @@ export function UserTable({ userData }: UserDataTableProps) {
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          역할
+          권한
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => <div>{row.getValue("role")}</div>,
-      meta: { label: "역할" } as CustomColumnMeta,
+      meta: { label: "권한" } as CustomColumnMeta,
+    },
+    {
+      accessorKey: "active",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          className="has-[>svg]:px-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          계정 상태
+          <ArrowUpDown />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <div>{row.getValue("active") ? "활성화" : "비활성화"}</div>
+      ),
+      meta: { label: "계정 상태" } as CustomColumnMeta,
     },
     {
       accessorKey: "createdAt",
@@ -180,7 +201,7 @@ export function UserTable({ userData }: UserDataTableProps) {
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          갱신일
+          업데이트일
           <ArrowUpDown />
         </Button>
       ),
@@ -189,7 +210,7 @@ export function UserTable({ userData }: UserDataTableProps) {
         const dateOnly = fullDate.split("T")[0];
         return <div>{dateOnly}</div>;
       },
-      meta: { label: "갱신일" } as CustomColumnMeta,
+      meta: { label: "업데이트일" } as CustomColumnMeta,
     },
     {
       id: "actions",
@@ -228,6 +249,7 @@ export function UserTable({ userData }: UserDataTableProps) {
       },
     },
   ];
+
   const table = useReactTable({
     data: userData,
     columns,
@@ -248,43 +270,7 @@ export function UserTable({ userData }: UserDataTableProps) {
 
   return (
     <div className="w-full">
-      <div className="flex items-center">
-        <Input
-          placeholder="이메일 검색"
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              항목 <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {(column.columnDef.meta as CustomColumnMeta)?.label ||
-                      column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+      {/* 데이터 테이블 */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>

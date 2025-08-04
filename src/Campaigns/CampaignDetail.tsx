@@ -2,30 +2,12 @@ import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import PulseLoader from "react-spinners/PulseLoader";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AxiosError } from "axios";
+
 import { toast } from "react-toastify";
+
 interface Campaign {
-  aprrovalDate: any;
   id: number;
   title: string;
   campaignType: string;
@@ -55,10 +37,172 @@ interface Campaign {
   };
 }
 
+interface CampaignInfo {
+  key: string;
+  label: string;
+  value: string | number | undefined;
+}
+
 export default function CampaignDetail() {
   const { campaignId } = useParams<{ campaignId: string }>();
   const [campaignData, setCampaignData] = useState<Campaign | null>(null);
-  const navigate = useNavigate();
+
+  const CampaignInfo = (): CampaignInfo[] => [
+    { key: "id", label: "ID", value: campaignData?.id ?? "정보 없음" },
+    {
+      key: "title",
+      label: "캠페인 이름",
+      value: campaignData?.title ?? "정보 없음",
+    },
+    {
+      key: "productShortInfo",
+      label: "상품 간단 정보",
+      value: campaignData?.productShortInfo ?? "정보 없음",
+    },
+    {
+      key: "thumbnailUrl",
+      label: "썸네일 주소",
+      value: campaignData?.thumbnailUrl ?? "정보 없음",
+    },
+    {
+      key: "campaignType",
+      label: "캠페인 유형",
+      value: campaignData?.campaignType ?? "정보 없음",
+    },
+
+    {
+      key: "maxApplicants",
+      label: "최대 지원자 수",
+      value: campaignData?.maxApplicants ?? "정보 없음",
+    },
+    {
+      key: "recruitmentStartDate",
+      label: "신청 시작일",
+      value: campaignData?.recruitmentStartDate ?? "정보 없음",
+    },
+    {
+      key: "recruitmentEndDate",
+      label: "신청 종료일",
+      value: campaignData?.recruitmentEndDate ?? "정보 없음",
+    },
+    {
+      key: "approvalStatus",
+      label: "처리 상태",
+      value: campaignData?.approvalStatus ?? "정보 없음",
+    },
+    {
+      key: "approvalComment",
+      label: "처리 코멘트",
+      value: campaignData?.approvalComment ?? "정보 없음",
+    },
+    {
+      key: "approvalDate",
+      label: "처리일",
+      value: campaignData?.approvalDate
+        ? campaignData.approvalDate.split("T")[0]
+        : "정보 없음",
+    },
+    {
+      key: "createdAt",
+      label: "생성일",
+      value: campaignData?.createdAt
+        ? campaignData.createdAt.split("T")[0]
+        : "정보 없음",
+    },
+    {
+      key: "reviewDeadlineDate",
+      label: "리뷰 마감일",
+      value: campaignData?.reviewDeadlineDate ?? "정보 없음",
+    },
+    {
+      key: "selectionDate",
+      label: "선택일",
+      value: campaignData?.selectionDate ?? "정보 없음",
+    },
+  ];
+  const CreatorInfo = (): CampaignInfo[] => [
+    {
+      key: "creatorId",
+      label: "ID",
+      value: campaignData?.creator.id ?? "정보 없음",
+    },
+    {
+      key: "creatorNickname",
+      label: "이름",
+      value: campaignData?.creator.nickname ?? "정보 없음",
+    },
+    {
+      key: "creatorEmail",
+      label: "이메일",
+      value: campaignData?.creator.email ?? "정보 없음",
+    },
+
+    {
+      key: "creatorRole",
+      label: "계정 권한",
+      value: campaignData?.creator.role ?? "정보 없음",
+    },
+  ];
+  const CompanyInfo = (): CampaignInfo[] => [
+    {
+      key: "companyId",
+      label: "ID",
+      value: campaignData?.company.id ?? "정보 없음",
+    },
+    {
+      key: "companyName",
+      label: "회사 이름",
+      value: campaignData?.company.companyName ?? "정보 없음",
+    },
+
+    {
+      key: "contactPerson",
+      label: "연락처 이름",
+      value: campaignData?.company.contactPerson ?? "정보 없음",
+    },
+    {
+      key: "phoneNumber",
+      label: "연락처 번호",
+      value: campaignData?.company.phoneNumber ?? "정보 없음",
+    },
+    // {
+    //   key: "businessRegistrationNumber",
+    //   label: "사업자 등록 번호",
+    //   value: campaignData?.company.businessRegistrationNumber ?? "정보 없음",
+    // },
+  ];
+
+  const CampaignInfoComponent = ({
+    label,
+    value,
+    fieldKey,
+  }: {
+    label: string;
+    value: string | number | undefined;
+    fieldKey: string;
+  }) => {
+    const isUrlField = fieldKey === "thumbnailUrl";
+    const isValidUrl = typeof value === "string" && value !== "정보 없음";
+    return (
+      <CardContent className="flex flex-col gap-2">
+        <p className="text-sm font-semibold">{label}</p>
+        <div className="px-3 py-2 text-sm font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md px-3 py-2">
+          {isUrlField && isValidUrl ? (
+            <a
+              href={value as string}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              {value}
+            </a>
+          ) : (
+            <span>{value}</span>
+          )}
+        </div>
+      </CardContent>
+    );
+  };
 
   // 캠페인 상세 정보 조회
   const getCampaignDetail = async (id: string) => {
@@ -68,14 +212,14 @@ export default function CampaignDetail() {
       setCampaignData(campaignData);
       console.log(campaignData);
     } catch (error) {
+      toast.error(`${error}`);
       console.log(error);
-      alert(error);
     }
   };
 
   // 캠페인 승인 처리
   const approveCampaign = async (id: number) => {
-    if (window.confirm("캠페인을 승인하시겠습니까?"))
+    if (window.confirm("캠페인을 승인하시겠습니까?")) {
       try {
         const response = await axiosInterceptor.put(
           `/campaigns/${id}/approval`,
@@ -89,36 +233,15 @@ export default function CampaignDetail() {
         toast.success("캠페인이 승인되었습니다.");
         console.log(response);
       } catch (error) {
+        toast.error(`${error}`);
         console.log(error);
-        const axiosError = error as AxiosError;
-        if (axiosError.response) {
-          switch (axiosError.response.status) {
-            case 400:
-              toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
-              break;
-            case 401:
-              toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
-              navigate("/login");
-              break;
-            case 403:
-              toast.error("접근 권한이 없습니다.");
-              navigate("/login");
-              break;
-            case 404:
-              toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");
-              break;
-            case 500:
-              toast.error(
-                "서버 오류가 발생했습니다. 나중에 다시 시도해주세요."
-              );
-              break;
-          }
-        }
       }
+    }
   };
+
   // 캠페인 반려 처리
   const rejectCampaign = async (id: number) => {
-    if (window.confirm("캠페인을 반려하시겠습니까?"))
+    if (window.confirm("캠페인을 반려하시겠습니까?")) {
       try {
         const response = await axiosInterceptor.put(
           `/campaigns/${id}/approval`,
@@ -132,32 +255,10 @@ export default function CampaignDetail() {
         toast.success("캠페인이 반려되었습니다.");
         console.log(response);
       } catch (error) {
+        toast.error(`${error}`);
         console.log(error);
-        const axiosError = error as AxiosError;
-        if (axiosError.response) {
-          switch (axiosError.response.status) {
-            case 400:
-              toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
-              break;
-            case 401:
-              toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
-              navigate("/login");
-              break;
-            case 403:
-              toast.error("접근 권한이 없습니다.");
-              navigate("/login");
-              break;
-            case 404:
-              toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");
-              break;
-            case 500:
-              toast.error(
-                "서버 오류가 발생했습니다. 나중에 다시 시도해주세요."
-              );
-              break;
-          }
-        }
       }
+    }
   };
 
   useEffect(() => {
@@ -165,6 +266,7 @@ export default function CampaignDetail() {
       getCampaignDetail(campaignId);
     }
   }, [campaignId]);
+
   if (!campaignData) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -174,110 +276,73 @@ export default function CampaignDetail() {
   }
 
   return (
-    <>
-      <Table className="flex flex-row ">
-        <TableHeader>
-          <TableRow className="flex flex-col border-none">
-            <TableHead>ID</TableHead>
-            <TableHead>캠페인 이름</TableHead>
-            <TableHead>캠페인 유형</TableHead>
-            <TableHead>썸네일</TableHead>
-            <TableHead>상품 간단 정보</TableHead>
-            <TableHead>최대 지원자 수</TableHead>
-            <TableHead>신청 시작일</TableHead>
-            <TableHead>신청 종료일</TableHead>
-            <TableHead>처리 상태</TableHead>
-            <TableHead>처리 코멘트</TableHead>
-            <TableHead>처리일</TableHead>
-            <TableHead>생성일</TableHead>
-            <TableHead>리뷰 마감일</TableHead>
-            <TableHead>선택일</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody className="flex justify-center">
-          <TableRow className="flex flex-col">
-            <TableCell>{campaignData.id}</TableCell>
-            <TableCell>{campaignData.title}</TableCell>
-            <TableCell>{campaignData.campaignType}</TableCell>
-            <TableCell>
-              <Tooltip>
-                <TooltipTrigger>{campaignData.thumbnailUrl}</TooltipTrigger>
-                <TooltipContent>
-                  <img
-                    src={campaignData.thumbnailUrl}
-                    className="w-80 h-80"
-                  ></img>
-                </TooltipContent>
-              </Tooltip>
-            </TableCell>
-            <TableCell>{campaignData.productShortInfo}</TableCell>
-            <TableCell>{campaignData.maxApplicants}</TableCell>
-            <TableCell>{campaignData.recruitmentStartDate}</TableCell>
-            <TableCell>{campaignData.recruitmentEndDate}</TableCell>
-            <TableCell>{campaignData.approvalStatus}</TableCell>
-            <TableCell>{campaignData.approvalComment}</TableCell>
-            <TableCell>
-              {campaignData.approvalDate
-                ? campaignData.approvalDate.split("T")[0]
-                : ""}
-            </TableCell>
-            <TableCell>
-              {campaignData.createdAt
-                ? campaignData.createdAt.split("T")[0]
-                : ""}
-            </TableCell>
-            <TableCell>{campaignData.reviewDeadlineDate}</TableCell>
-            <TableCell>{campaignData.selectionDate}</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-      <Accordion type="multiple" className="w-full">
-        {campaignData.creator && (
-          <AccordionItem value="item-1">
-            <AccordionTrigger className="font-bold cursor-pointer">
-              크리에이터 정보
-            </AccordionTrigger>
-            <AccordionContent className="flex flex-col gap-4 text-balance">
-              <p>ID : {campaignData.creator.id}</p>
-              <p>닉네임 : {campaignData.creator.nickname}</p>
-              <p>이메일 : {campaignData.creator.email}</p>
-              <p>권한 : {campaignData.creator.role}</p>
-            </AccordionContent>
-          </AccordionItem>
-        )}
+    <div className="grid grid-row gap-6">
+      {/* 캠페인 상세 정보 */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex justify-between font-bold text-lg">
+            <div className="flex items-center">캠페인 정보</div>
+            <div className="flex gap-4">
+              <Button
+                className="cursor-pointer bg-blue-500 hover:bg-blue-600"
+                onClick={() => approveCampaign(campaignData.id)}
+              >
+                승인
+              </Button>
+              <Button
+                className="cursor-pointer bg-red-500 hover:bg-red-600"
+                onClick={() => rejectCampaign(campaignData.id)}
+              >
+                거절
+              </Button>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        {CampaignInfo().map((item) => (
+          <CampaignInfoComponent
+            key={item.key}
+            label={item.label}
+            value={item.value}
+            fieldKey={item.key}
+          />
+        ))}
+      </Card>
 
-        {campaignData.company && (
-          <AccordionItem value="item-2">
-            <AccordionTrigger className="font-bold cursor-pointer">
-              회사 정보
-            </AccordionTrigger>
-            <AccordionContent className="flex flex-col gap-4 text-balance">
-              <p>ID : {campaignData.company.id}</p>
-              <p>이름 : {campaignData.company.companyName}</p>
-              <p>연락처 이름 : {campaignData.company.contactPerson}</p>
-              <p>연락처 : {campaignData.company.phoneNumber}</p>
-            </AccordionContent>
-          </AccordionItem>
-        )}
-      </Accordion>
-      <div className="flex flex-column justify-end gap-4">
-        <div className="flex justify-end gap-2 pt-4">
-          <Button
-            className="cursor-pointer"
-            onClick={() => approveCampaign(campaignData.id)}
-          >
-            승인
-          </Button>
-        </div>
-        <div className="flex justify-end gap-2 pt-4">
-          <Button
-            className="cursor-pointer"
-            onClick={() => rejectCampaign(campaignData.id)}
-          >
-            거절
-          </Button>
-        </div>
-      </div>
-    </>
+      {/* 크리에이터 정보 */}
+      {campaignData.creator && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-bold text-lg flex items-center">
+              크리에이터 정보
+            </CardTitle>
+          </CardHeader>
+          {CreatorInfo().map((item) => (
+            <CampaignInfoComponent
+              key={item.key}
+              label={item.label}
+              value={item.value}
+              fieldKey={item.key}
+            />
+          ))}
+        </Card>
+      )}
+
+      {/* 회사 정보 */}
+      {campaignData.company && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-bold text-lg">회사 정보</CardTitle>
+          </CardHeader>
+          {CompanyInfo().map((item) => (
+            <CampaignInfoComponent
+              key={item.key}
+              label={item.label}
+              value={item.value}
+              fieldKey={item.key}
+            />
+          ))}
+        </Card>
+      )}
+    </div>
   );
 }

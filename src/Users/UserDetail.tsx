@@ -2,23 +2,23 @@ import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect, type ChangeEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import PulseLoader from "react-spinners/PulseLoader";
+
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  Card,
+  // CardAction,
+  CardContent,
+  // CardDescription,
+  // CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
+import { SquarePen, Delete, Power, PowerOff } from "lucide-react";
+
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface User {
   id: number;
@@ -34,8 +34,14 @@ interface User {
   platforms: string;
   profileImg: string;
   memo: string;
+  emailVerified: boolean;
   createdAt: string;
   updatedAt: string;
+}
+interface UserAccountInfo {
+  key: string;
+  label: string;
+  value: string | number | boolean | undefined;
 }
 
 export default function UserDetail() {
@@ -45,6 +51,53 @@ export default function UserDetail() {
   const [userMemo, setUserMemo] = useState<string>("");
   const [hideMemo, setHideMemo] = useState<Boolean>(false);
 
+  const UserAccountInfo = (): UserAccountInfo[] => [
+    { key: "id", label: "ID", value: userData?.id ?? "정보 없음" },
+    { key: "role", label: "권한", value: userData?.role ?? "정보 없음" },
+    {
+      key: "active",
+      label: "계정 상태",
+      value: userData?.active ? "활성화" : "비활성화",
+    },
+    {
+      key: "platforms",
+      label: "계정 플랫폼",
+      value: userData?.platforms ?? "정보 없음",
+    },
+    {
+      key: "emailVerified",
+      label: "이메일 인증",
+      value: userData?.emailVerified ? "인증 완료" : "인증 필요",
+    },
+    {
+      key: "createdAt",
+      label: "생성일",
+      value: userData?.createdAt.split("T")[0] ?? "정보 없음",
+    },
+    {
+      key: "updatedAt",
+      label: "업데이트일",
+      value: userData?.updatedAt.split("T")[0] ?? "정보 없음",
+    },
+  ];
+  const UserInfoComponent = ({
+    label,
+    value,
+  }: {
+    label: string;
+    value: string | boolean | number | undefined;
+  }) => {
+    return (
+      <CardContent className="flex flex-col gap-2">
+        <p className="text-sm font-semibold">{label}</p>
+        <div className="px-3 py-2 text-sm font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md">
+          {value}
+        </div>
+      </CardContent>
+    );
+  };
+
+  // 사용자 메모 수정 핸들러
   const handleTextAreaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setUserMemo(event.target.value);
   };
@@ -55,6 +108,7 @@ export default function UserDetail() {
       const userData = response.data.data;
       setUserData(userData);
       setUserMemo(userData.memo || "");
+      console.log(userData);
     } catch (error) {
       console.log(error);
       const axiosError = error as AxiosError;
@@ -144,78 +198,98 @@ export default function UserDetail() {
 
   return (
     <>
-      <Table className="flex flex-row ">
-        <TableHeader>
-          <TableRow className="flex flex-col border-none">
-            <TableHead>ID</TableHead>
-            <TableHead>닉네임</TableHead>
-            <TableHead>이메일</TableHead>
-            <TableHead>프로필 이미지</TableHead>
-            <TableHead>전화번호</TableHead>
-            <TableHead>성별</TableHead>
-            <TableHead>나이</TableHead>
-            <TableHead>계정 서비스</TableHead>
-            <TableHead>역할</TableHead>
-            <TableHead>활성화 상태</TableHead>
-            <TableHead>생성일</TableHead>
-            <TableHead>갱신일</TableHead>
-            <TableHead>회원 메모</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody className="flex justify-center">
-          <TableRow className="flex flex-col">
-            <TableCell>{userData.id}</TableCell>
-            <TableCell>{userData.nickname}</TableCell>
-            <TableCell>{userData.email}</TableCell>
-            <TableCell>
-              <Tooltip>
-                <TooltipTrigger>{userData.profileImg}</TooltipTrigger>
-                <TooltipContent>
-                  <img src={userData.profileImg} className="w-80 h-80"></img>
-                </TooltipContent>
-              </Tooltip>
-            </TableCell>
-            <TableCell>{userData.phone}</TableCell>
-            <TableCell>{userData.gender}</TableCell>
-            <TableCell>{userData.age}</TableCell>
-            <TableCell>{userData.provider}</TableCell>
-            <TableCell>{userData.role}</TableCell>
-            <TableCell>{userData.active ? "활성화" : "비활성화"}</TableCell>
-            <TableCell>{userData.createdAt.split("T")[0]}</TableCell>
-            <TableCell>{userData.updatedAt.split("T")[0]}</TableCell>
-            <TableCell>{userData.memo}</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-      {hideMemo && (
+      <div className="grid grid-row gap-10">
+        {/* 헤더 */}
         <div>
-          <Textarea
-            placeholder="텍스트를 입력하세요."
-            value={userMemo}
-            onChange={handleTextAreaChange}
-          />
-          <div className="flex justify-end">
-            <Button onClick={() => putMemoUpdate(userData.id, userMemo || "")}>
-              메모 업데이트
-            </Button>
+          <div className="flex gap-8">
+            <Avatar className="w-40 h-40">
+              <AvatarImage src={userData.profileImg} alt={userData.nickname} />
+              <AvatarFallback></AvatarFallback>
+            </Avatar>
+
+            <div className="flex flex-col justify-center gap-4">
+              <div className="flex flex-col gap-4 font-semibold">
+                <div>
+                  {userData.nickname} (
+                  {userData.gender ? userData.gender : "남성"},{" "}
+                  {userData.age ? userData.age : "나이"})
+                </div>
+                <div>{userData.email}</div>
+                <div>{userData.phone ? userData.phone : "전화번호"}</div>
+              </div>
+              <div className="flex gap-4">
+                <Button
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md border transition-colors ${
+                    userData.active
+                      ? "bg-red-500 hover:bg-red-600 text-white"
+                      : "bg-blue-500 hover:bg-blue-600 text-white"
+                  } `}
+                  onClick={() => putUserStatus(userData.id)}
+                >
+                  {userData.active ? <PowerOff /> : <Power />}
+                  {userData.active ? "비활성화" : "활성화"}
+                </Button>
+                <Button
+                  className="cursor-pointer border bg-red-500 hover:bg-red-600"
+                  onClick={() => deleteUser(userData.id)}
+                >
+                  <Delete />
+                  사용자 삭제
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
-      )}
-
-      <div className="flex justify-end gap-2 pt-4">
-        {!hideMemo && (
-          <div>
-            <Button onClick={() => setHideMemo(true)}>메모 수정</Button>
-          </div>
-        )}
-
-        <Button
-          className="cursor-pointer"
-          onClick={() => putUserStatus(userData.id)}
-        >
-          활성화/비활성화
-        </Button>
-        <Button onClick={() => deleteUser(userData.id)}>사용자 삭제</Button>
+        {/* 사용자 계정 정보 */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-bold text-lg flex items-center">
+              사용자 계정 정보
+            </CardTitle>
+          </CardHeader>
+          {UserAccountInfo().map((item) => (
+            <UserInfoComponent
+              key={item.key}
+              label={item.label}
+              value={item.value}
+            />
+          ))}
+          <CardContent className="flex flex-col gap-2">
+            <p>사용자 메모</p>
+            <div className="px-3 py-2 text-base font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md">
+              {userData.memo ? userData.memo : "내용이 없습니다."}
+            </div>
+            {!hideMemo && (
+              <div className="flex justify-end">
+                <Button
+                  className="cursor-pointer border bg-blue-500 hover:bg-blue-600 max-w-3xs"
+                  onClick={() => setHideMemo(true)}
+                >
+                  <SquarePen />
+                  메모 수정
+                </Button>
+              </div>
+            )}
+            {/* 메모 수정 기능 */}
+            {hideMemo && (
+              <div>
+                <Textarea
+                  placeholder="텍스트를 입력하세요."
+                  value={userMemo}
+                  onChange={handleTextAreaChange}
+                />
+                <div className="flex justify-end">
+                  <Button
+                    className="bg-blue-500 hover:bg-blue-600"
+                    onClick={() => putMemoUpdate(userData.id, userMemo || "")}
+                  >
+                    메모 업데이트
+                  </Button>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </>
   );

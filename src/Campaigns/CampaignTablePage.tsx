@@ -1,7 +1,5 @@
-// page
 import { CampaignPagination } from "@/Campaigns/CampaignPagination";
 import { CampaignTable } from "@/Campaigns/CampaignTable";
-// ts, library
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
 import PulseLoader from "react-spinners/PulseLoader";
@@ -15,7 +13,13 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import { ChevronDown } from "lucide-react";
+import {
+  type ColumnFiltersState,
+  type VisibilityState,
+} from "@tanstack/react-table";
+
 interface Campaign {
   id: number;
   title: string;
@@ -40,8 +44,18 @@ export default function CampaignTablePage() {
   const [pageData, setPageData] = useState<PaginationData | null>();
   const [campaignType, setCampaignType] = useState<string>("ALL");
   const [isLoading, setIsLoading] = useState<Boolean>(false);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const navigate = useNavigate();
-
+  const headerMenu = [
+    { id: "id", label: "ID" },
+    { id: "title", label: "캠페인 이름" },
+    { id: "campaignType", label: "캠페인 유형" },
+    { id: "approvalStatus", label: "처리 상태" },
+    { id: "approvalDate", label: "처리일" },
+    { id: "createdAt", label: "생성일" },
+    { id: "approvalComment", label: "처리 코멘트" },
+  ];
   const getCampaignTable = async (
     page: number = 0,
     type: typeof campaignType
@@ -49,7 +63,7 @@ export default function CampaignTablePage() {
     setIsLoading(true);
     try {
       const url =
-        campaignType === "ALL"
+        type === "ALL"
           ? `/campaigns?page=${page}&size=10`
           : `/campaigns?approvalStatus=${type}&page=${page}&size=10`;
       const response = await axiosInterceptor.get(url);
@@ -67,12 +81,10 @@ export default function CampaignTablePage() {
           case 401:
             navigate("/login");
             toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
-
             break;
           case 403:
             navigate("/login");
             toast.error("접근 권한이 없습니다.");
-
             break;
           case 404:
             toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");
@@ -90,59 +102,110 @@ export default function CampaignTablePage() {
   useEffect(() => {
     getCampaignTable(0, campaignType);
   }, [campaignType]);
-  if (!campaignData || !pageData || isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <PulseLoader />
-      </div>
-    );
-  }
+
   const typeValues = [
     { type: "ALL", label: "전체 캠페인" },
     { type: "PENDING", label: "승인 대기 캠페인" },
     { type: "APPROVED", label: "승인된 캠페인" },
-    { type: "REJECTED", label: "거절된 캠페인" },
+    { type: "REJECTED", label: "반려된 캠페인" },
     { type: "EXPIRED", label: "만료된 캠페인" },
   ];
+
   const handlePageChange = (page: number) => {
     getCampaignTable(page, campaignType);
   };
+
   const handleType = (type: typeof campaignType) => {
     setCampaignType(type);
   };
+
   const currentLabel =
     typeValues.find((item) => item.type === campaignType)?.label ||
     "캠페인 필터";
 
   return (
     <>
-      <div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              {currentLabel}
-              <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {typeValues.map((item) => (
-              <DropdownMenuCheckboxItem
-                key={item.type}
-                checked={campaignType === item.type}
-                onClick={() => handleType(item.type)}
-              >
-                {item.label}
-              </DropdownMenuCheckboxItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        <CampaignTable campaignData={campaignData} />
-        <CampaignPagination
-          pageData={pageData}
-          onPageChange={handlePageChange}
+      <div className="flex justify-between items-center mb-2">
+        <div className="flex gap-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                {currentLabel}
+                <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {typeValues.map((item) => (
+                <DropdownMenuCheckboxItem
+                  key={item.type}
+                  checked={campaignType === item.type}
+                  onClick={() => handleType(item.type)}
+                >
+                  {item.label}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                항목 <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {headerMenu.map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={columnVisibility[column.id] !== false}
+                  onCheckedChange={(value) =>
+                    setColumnVisibility((prev) => ({
+                      ...prev,
+                      [column.id]: value,
+                    }))
+                  }
+                >
+                  {column.label}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        {/* 검색창 */}
+        <Input
+          placeholder="캠페인 이름 검색"
+          value={
+            (columnFilters.find((f) => f.id === "title")?.value as string) ?? ""
+          }
+          onChange={(event) =>
+            setColumnFilters((prev) => [
+              ...prev.filter((f) => f.id !== "title"),
+              { id: "title", value: event.target.value },
+            ])
+          }
+          className="pr-20"
         />
       </div>
+
+      {!campaignData || !pageData || isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <PulseLoader />
+        </div>
+      ) : (
+        <>
+          <CampaignTable
+            campaignData={campaignData}
+            columnFilters={columnFilters}
+            setColumnFilters={setColumnFilters}
+            columnVisibility={columnVisibility}
+            setColumnVisibility={setColumnVisibility}
+          />
+          <CampaignPagination
+            pageData={pageData}
+            onPageChange={handlePageChange}
+          />
+        </>
+      )}
     </>
   );
 }

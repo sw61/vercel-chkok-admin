@@ -9,8 +9,8 @@ import CampaignTablePage from "./Campaigns/CampaignTablePage";
 import CampaignDetail from "./Campaigns/CampaignDetail";
 import SideBar from "./SideBar/SideBar";
 import BannersTable from "./Banners/BannersTablePage";
-
-// ts
+import AdminDetail from "./AdminAccount/AdminDetail";
+// ts file
 import { LoginForm } from "./auth/login-form";
 import { PrivateComponent } from "./auth/tokenCheck";
 // library
@@ -25,6 +25,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route element={<SideBar />}>
+            {/* 메인 페이지 */}
             <Route
               path="/"
               element={
@@ -33,7 +34,7 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
-
+            {/* 사용자 테이블 페이지 */}
             <Route
               path="/userTable"
               element={
@@ -42,7 +43,7 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
-
+            {/* 사용자 상세 페이지 */}
             <Route
               path="/users/:userId"
               element={
@@ -51,6 +52,7 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
+            {/* 캠페인 페이지 */}
             <Route
               path="/campaigns"
               element={
@@ -59,6 +61,7 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
+            {/* 캠페인 상세 페이지 */}
             <Route
               path="/campaigns/:campaignId"
               element={
@@ -67,6 +70,7 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
+            {/* 배너 테이블 페이지 */}
             <Route
               path="/banners"
               element={
@@ -75,6 +79,7 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
+            {/* 배너 상세 페이지 */}
             <Route
               path="/banners/:bannerId"
               element={
@@ -83,7 +88,17 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
+            {/* 관리자 계정 페이지 */}
+            <Route
+              path="/admin"
+              element={
+                <PrivateComponent>
+                  <AdminDetail />
+                </PrivateComponent>
+              }
+            ></Route>
           </Route>
+          {/* 로그인 페이지 */}
           <Route path="/login" element={<LoginForm />}></Route>
         </Routes>
       </BrowserRouter>
