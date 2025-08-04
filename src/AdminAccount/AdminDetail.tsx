@@ -79,8 +79,8 @@ export default function AdminDetail() {
   const AdminInfoComponent = ({ label, value }: { label: string; value: string | number | boolean | undefined }) => {
     return (
       <CardContent className="flex flex-col gap-2">
-        <p className="ck-body-1-bold ">{label}</p>
-        <div className="px-3 py-2 ck-body-1 bg-transparent border border-ck-gray-300 rounded-md">{value}</div>
+        <p className="ck-body-2-bold ">{label}</p>
+        <div className="px-3 py-2 ck-body-2 bg-transparent border border-ck-gray-300 rounded-md">{value}</div>
       </CardContent>
     );
   };
@@ -120,11 +120,11 @@ export default function AdminDetail() {
           </Avatar>
 
           <div className="flex flex-col justify-center gap-4">
-            <div className="flex gap-4 font-semibold">
-              <div className="ck-body-1-bold">{adminData?.name}</div>
-              <div className="ck-body-1">{adminData?.email}</div>
+            <div className="flex gap-4">
+              <div className="ck-sub-title-1">{adminData?.name}</div>
+              <div className="ck-sub-title-1">{adminData?.email}</div>
             </div>
-            <div className="text-ck-gray-600 ck-body-1">
+            <div className="text-ck-gray-600 ck-body-2">
               마지막 로그인 &nbsp;{formatLastLogin(adminData?.lastLoginAt)}
             </div>
           </div>

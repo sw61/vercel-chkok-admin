@@ -181,8 +181,8 @@ export default function CampaignDetail() {
     const isValidUrl = typeof value === "string" && value !== "정보 없음";
     return (
       <CardContent className="flex flex-col gap-2">
-        <p className="ck-body-1-bold">{label}</p>
-        <div className="px-3 py-2 ck-body-1 bg-transparent border border-ck-gray-300 rounded-md px-3 py-2">
+        <p className="ck-body-2-bold">{label}</p>
+        <div className="px-3 py-2 ck-body-2 bg-transparent border border-ck-gray-300 rounded-md px-3 py-2">
           {isUrlField && isValidUrl ? (
             <a href={value as string} target="_blank" rel="noopener noreferrer" className="hover:underline ck-body-1">
               {value}

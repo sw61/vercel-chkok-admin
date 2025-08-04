@@ -161,8 +161,8 @@ export default function BannersDetail() {
 
     return (
       <CardContent className="flex flex-col gap-2">
-        <p className="ck-body-1-bold">{label}</p>
-        <div className="px-3 py-2 ck-body-1 bg-transparent border border-ck-gray-300 rounded-md">
+        <p className="ck-body-2-bold">{label}</p>
+        <div className="px-3 py-2 ck-body-2 bg-transparent border border-ck-gray-300 rounded-md">
           {isUrlField && isValidUrl ? (
             <a href={value as string} target="_blank" rel="noopener noreferrer" className="hover:underline ck-body-1">
               {value}
@@ -236,58 +236,58 @@ export default function BannersDetail() {
         {isEditing ? (
           <CardContent className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <p className="ck-sub-title-1">배너 이름</p>
+              <p className="ck-body-2-bold">배너 이름</p>
               <Input
                 id="title"
                 name="title"
                 value={editBannerData.title}
                 onChange={handleInputChange}
                 placeholder="배너 이름을 입력하세요"
-                className="w-full px-3 py-2 ck-body-1 bg-transparent border border-gray-300 rounded-md"
+                className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
               />
             </div>
             <div className="flex flex-col gap-2">
-              <p className="ck-sub-title-1">배너 URL</p>
+              <p className="ck-body-2-bold">배너 URL</p>
               <Input
                 id="bannerUrl"
                 name="bannerUrl"
                 value={editBannerData.bannerUrl}
                 onChange={handleInputChange}
                 placeholder="배너 URL을 입력하세요"
-                className="w-full px-3 py-2 ck-body-1 bg-transparent border border-gray-300 rounded-md"
+                className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
               />
             </div>
             <div className="flex flex-col gap-2">
-              <p className="ck-sub-title-1">Redirect URL</p>
+              <p className="ck-body-2-bold">Redirect URL</p>
               <Input
                 id="redirectUrl"
                 name="redirectUrl"
                 value={editBannerData.redirectUrl}
                 onChange={handleInputChange}
                 placeholder="Redirect URL을 입력하세요"
-                className="w-full px-3 py-2 ck-body-1 bg-transparent border border-gray-300 rounded-md"
+                className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
               />
             </div>
             <div className="flex flex-col gap-2">
-              <p className="ck-sub-title-1">설명</p>
+              <p className="ck-body-2-bold">설명</p>
               <Input
                 id="description"
                 name="description"
                 value={editBannerData.description}
                 onChange={handleInputChange}
                 placeholder="설명을 입력하세요"
-                className="w-full px-3 py-2 ck-body-1 bg-transparent border border-gray-300 rounded-md"
+                className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
               />
             </div>
             <div className="flex flex-col gap-2">
-              <p className="ck-sub-title-1">배너 위치</p>
+              <p className="ck-body-2-bold">배너 위치</p>
               <Input
                 id="position"
                 name="position"
                 value={editBannerData.position}
                 onChange={handleInputChange}
                 placeholder="배너 위치를 입력하세요"
-                className="w-full px-3 py-2 ck-body-1 bg-transparent border border-gray-300 rounded-md"
+                className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
               />
             </div>
           </CardContent>

@@ -83,8 +83,8 @@ export default function UserDetail() {
   const UserInfoComponent = ({ label, value }: { label: string; value: string | boolean | number | undefined }) => {
     return (
       <CardContent className="flex flex-col gap-2">
-        <p className="ck-body-1-bold">{label}</p>
-        <div className="px-3 py-2 ck-body-1 bg-transparent border border-ck-gray-300 rounded-md">{value}</div>
+        <p className="ck-body-2-bold">{label}</p>
+        <div className="px-3 py-2 ck-body-2 bg-transparent border border-ck-gray-300 rounded-md">{value}</div>
       </CardContent>
     );
   };
@@ -236,8 +236,8 @@ export default function UserDetail() {
             <UserInfoComponent key={item.key} label={item.label} value={item.value} />
           ))}
           <CardContent className="flex flex-col gap-2">
-            <p className="ck-sub-title-1">사용자 메모</p>
-            <div className="px-3 py-2 ck-body-1 bg-transparent border border-ck-gray-300 rounded-md">
+            <p className="ck-body-2-bold">사용자 메모</p>
+            <div className="px-3 py-2 ck-body-2 bg-transparent border border-ck-gray-300 rounded-md">
               {userData.memo ? userData.memo : "내용이 없습니다."}
             </div>
             {!hideMemo && (
