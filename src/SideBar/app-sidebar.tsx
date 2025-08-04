@@ -1,20 +1,18 @@
 import * as React from "react";
 import {
   BookOpen,
-  Bot,
-  Command,
   Frame,
   LifeBuoy,
   Map,
   PieChart,
   Send,
-  Settings2,
-  SquareTerminal,
+  UserRound,
+  Earth,
 } from "lucide-react";
 
 import { NavMain } from "@/SideBar/nav-main";
-import { NavProjects } from "@/SideBar/nav-projects";
-import { NavSecondary } from "@/SideBar/nav-secondary";
+// import { NavProjects } from "@/SideBar/nav-projects";
+// import { NavSecondary } from "@/SideBar/nav-secondary";
 import { NavUser } from "@/SideBar/nav-user";
 import {
   Sidebar,
@@ -30,92 +28,23 @@ const data = {
   user: {
     name: "관리자",
     email: "admin1234@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "../src/Image/appicon.png",
   },
   navMain: [
     {
       title: "사용자 목록",
       url: "/userTable",
-      icon: SquareTerminal,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
+      icon: UserRound,
     },
     {
       title: "캠페인 목록",
       url: "/campaigns",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
+      icon: Earth,
     },
     {
       title: "배너 목록",
       url: "/banners",
       icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
     },
   ],
   navSecondary: [
@@ -160,9 +89,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="/">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Command className="size-4" />
+                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square w-32 h-32 items-center justify-center rounded-lg">
+                  <img src="../src/Image/chkokLogo.png"></img>
                 </div>
+
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">체험콕</span>
                   <span className="truncate text-xs">관리자 페이지</span>
@@ -174,8 +104,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        {/* <NavProjects projects={data.projects} /> */}
+        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
