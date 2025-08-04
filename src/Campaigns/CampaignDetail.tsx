@@ -281,7 +281,7 @@ export default function CampaignDetail() {
       <Card>
         <CardHeader>
           <CardTitle className="flex justify-between font-bold text-lg">
-            <div>캠페인 정보</div>
+            <div className="flex items-center">캠페인 정보</div>
             <div className="flex gap-4">
               <Button
                 className="cursor-pointer bg-blue-500 hover:bg-blue-600"
@@ -312,7 +312,9 @@ export default function CampaignDetail() {
       {campaignData.creator && (
         <Card>
           <CardHeader>
-            <CardTitle className="font-bold text-lg">크리에이터 정보</CardTitle>
+            <CardTitle className="font-bold text-lg flex items-center">
+              크리에이터 정보
+            </CardTitle>
           </CardHeader>
           {CreatorInfo().map((item) => (
             <CampaignInfoComponent

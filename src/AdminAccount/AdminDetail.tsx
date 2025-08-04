@@ -123,7 +123,7 @@ export default function AdminDetail() {
       <div className="grid grid-row gap-10">
         <div className="flex gap-8">
           <Avatar className="w-40 h-40">
-            <AvatarImage src="../src/Image/mainLogo.png" alt="관리자 프로필" />
+            <AvatarImage src="../src/Image/appicon.png" alt="관리자 프로필" />
             <AvatarFallback></AvatarFallback>
           </Avatar>
 
@@ -140,7 +140,7 @@ export default function AdminDetail() {
         {/* 관리자 계정 정보 */}
         <Card>
           <CardHeader>
-            <CardTitle className="font-bold text-lg">
+            <CardTitle className="font-bold text-lg flex items-center">
               관리자 계정 정보
             </CardTitle>
           </CardHeader>

@@ -28,7 +28,7 @@ const data = {
   user: {
     name: "관리자",
     email: "admin1234@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "../src/Image/appicon.png",
   },
   navMain: [
     {

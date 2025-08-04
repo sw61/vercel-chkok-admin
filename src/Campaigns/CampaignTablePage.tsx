@@ -124,8 +124,8 @@ export default function CampaignTablePage() {
     "캠페인 필터";
 
   return (
-    <div>
-      <div className="flex justify-between my-2">
+    <>
+      <div className="flex justify-between items-center mb-2">
         <div className="flex gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -206,6 +206,6 @@ export default function CampaignTablePage() {
           />
         </>
       )}
-    </div>
+    </>
   );
 }

@@ -231,10 +231,6 @@ export default function BannersTable({
                 <Settings />
                 배너 상세 정보
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDelete(banner.id)}>
-                <Trash2 />
-                배너 이미지 삭제하기
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );

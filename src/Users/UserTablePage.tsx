@@ -48,6 +48,7 @@ export default function UserTablePage() {
   const [pageData, setPageData] = useState<PaginationData | null>();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [isLoading, setIsLoading] = useState<Boolean>(false);
   const navigate = useNavigate();
   const headerMenu = [
     { id: "id", label: "ID" },
@@ -60,6 +61,7 @@ export default function UserTablePage() {
   ];
 
   const getUserTable = async (page: number = 0) => {
+    setIsLoading(true);
     try {
       const response = await axiosInterceptor.get(
         `/users?page=${page}&size=10`
@@ -69,6 +71,7 @@ export default function UserTablePage() {
       setPageData(data.pagination);
       console.log(userData);
     } catch (error) {
+      console.log(error);
       const axiosError = error as AxiosError;
       if (axiosError.response) {
         switch (axiosError.response.status) {
@@ -76,10 +79,11 @@ export default function UserTablePage() {
             toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
             break;
           case 401:
-            toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
             navigate("/login");
+            toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
             break;
           case 403:
+            navigate("/login");
             toast.error("접근 권한이 없습니다.");
             break;
           case 404:
@@ -90,6 +94,8 @@ export default function UserTablePage() {
             break;
         }
       }
+    } finally {
+      setIsLoading(false);
     }
   };
   useEffect(() => {
@@ -153,17 +159,22 @@ export default function UserTablePage() {
           className="pr-20"
         />
       </div>
-
-      <>
-        <UserTable
-          userData={userData}
-          columnFilters={columnFilters}
-          setColumnFilters={setColumnFilters}
-          columnVisibility={columnVisibility}
-          setColumnVisibility={setColumnVisibility}
-        />
-        <PaginationDemo pageData={pageData} onPageChange={handlePageChange} />
-      </>
+      {!userData || !pageData || isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <PulseLoader />
+        </div>
+      ) : (
+        <>
+          <UserTable
+            userData={userData}
+            columnFilters={columnFilters}
+            setColumnFilters={setColumnFilters}
+            columnVisibility={columnVisibility}
+            setColumnVisibility={setColumnVisibility}
+          />
+          <PaginationDemo pageData={pageData} onPageChange={handlePageChange} />
+        </>
+      )}
     </>
   );
 }

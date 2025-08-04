@@ -243,7 +243,7 @@ export default function UserDetail() {
         {/* 사용자 계정 정보 */}
         <Card>
           <CardHeader>
-            <CardTitle className="font-bold text-lg">
+            <CardTitle className="font-bold text-lg flex items-center">
               사용자 계정 정보
             </CardTitle>
           </CardHeader>
