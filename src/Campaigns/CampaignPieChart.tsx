@@ -76,17 +76,17 @@ export function CamapaignPieChart() {
     {
       status: "pending",
       visitors: campaignStatus?.pendingCampaigns,
-      fill: "#10B981",
+      fill: "#86ABFF",
     },
     {
       status: "approved",
       visitors: campaignStatus?.approvedCampaigns,
-      fill: "#F59E0B",
+      fill: "#2388FF",
     },
     {
       status: "rejected",
       visitors: campaignStatus?.rejectedCampaigns,
-      fill: "#3B82F6",
+      fill: "#FB2C36",
     },
   ];
   const chartConfig = {
@@ -95,15 +95,15 @@ export function CamapaignPieChart() {
     },
     pending: {
       label: "Pending",
-      color: "var(--chart-2)",
+      color: "var(--chart-1)",
     },
     approved: {
       label: "Approved",
-      color: "var(--chart-3)",
+      color: "var(--chart-2)",
     },
     rejected: {
       label: "Rejected",
-      color: "var(--chart-4)",
+      color: "var(--chart-3)",
     },
   } satisfies ChartConfig;
 
@@ -123,7 +123,7 @@ export function CamapaignPieChart() {
               <Pie data={chartData} dataKey="visitors" label nameKey="status" />
               <ChartLegend
                 content={<ChartLegendContent nameKey="status" />}
-                className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center pt-5"
+                className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
               >
                 <ChartLegendContent nameKey="status" />
               </ChartLegend>

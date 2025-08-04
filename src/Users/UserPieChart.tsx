@@ -73,22 +73,22 @@ export function UserPieChart() {
     {
       status: "client",
       visitors: userStatus?.clientCount,
-      fill: "#10B981",
+      fill: "#86ABFF",
     },
     {
       status: "userCount",
       visitors: userStatus?.userCount,
-      fill: "#F59E0B",
+      fill: "#DBE2FB",
     },
     {
       status: "active",
       visitors: userStatus?.activeUsers,
-      fill: "#3B82F6",
+      fill: "#2388FF",
     },
     {
       status: "inactive",
       visitors: userStatus?.inactiveUsers,
-      fill: "#EF4444",
+      fill: "#FB2C36",
     },
   ];
   const chartConfig = {
