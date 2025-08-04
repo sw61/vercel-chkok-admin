@@ -143,15 +143,16 @@ export default function BannersDetail() {
 
   // 배너 삭제
   const deleteBanners = async (id: number) => {
-    try {
-      const response = await axiosInterceptor.delete(`/api/banners/${id}`);
-      console.log("배너 삭제 성공:", response);
-      toast.success("배너가 성공적으로 삭제되었습니다.");
-      navigate("/banners"); // 삭제 후 목록 페이지로 이동
-    } catch (error) {
-      console.error("배너 삭제 중 오류 발생:", error);
-      toast.error("배너 삭제에 실패했습니다.");
-    }
+    if (window.confirm("배너를 삭제하시겠습니까?"))
+      try {
+        const response = await axiosInterceptor.delete(`/api/banners/${id}`);
+        console.log("배너 삭제 성공:", response);
+        toast.success("배너가 성공적으로 삭제되었습니다.");
+        navigate("/banners"); // 삭제 후 목록 페이지로 이동
+      } catch (error) {
+        console.error("배너 삭제 중 오류 발생:", error);
+        toast.error("배너 삭제에 실패했습니다.");
+      }
   };
 
   // 폼 입력 핸들러

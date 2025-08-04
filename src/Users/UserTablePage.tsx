@@ -101,13 +101,6 @@ export default function UserTablePage() {
   useEffect(() => {
     getUserTable();
   }, []);
-  if (!userData || !pageData) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <PulseLoader />
-      </div>
-    );
-  }
 
   const handlePageChange = (page: number) => {
     getUserTable(page);
@@ -159,6 +152,7 @@ export default function UserTablePage() {
           className="pr-20"
         />
       </div>
+
       {!userData || !pageData || isLoading ? (
         <div className="flex justify-center items-center h-64">
           <PulseLoader />
