@@ -45,56 +45,37 @@ export default function BannersDetail() {
     {
       key: "title",
       label: "배너 이름",
-      value:
-        bannerData?.title || bannerData?.title === ""
-          ? "정보 없음"
-          : bannerData?.title,
+      value: bannerData?.title || bannerData?.title === "" ? "정보 없음" : bannerData?.title,
     },
     {
       key: "position",
       label: "배너 위치",
-      value:
-        bannerData?.position || bannerData?.position === ""
-          ? "정보 없음"
-          : bannerData?.position,
+      value: bannerData?.position || bannerData?.position === "" ? "정보 없음" : bannerData?.position,
     },
     {
       key: "bannerUrl",
       label: "배너 URL",
-      value:
-        bannerData?.bannerUrl || bannerData?.bannerUrl === ""
-          ? "정보 없음"
-          : bannerData?.bannerUrl,
+      value: bannerData?.bannerUrl || bannerData?.bannerUrl === "" ? "정보 없음" : bannerData?.bannerUrl,
     },
     {
       key: "redirectUrl",
       label: "Redirect URL",
-      value:
-        bannerData?.redirectUrl || bannerData?.redirectUrl === ""
-          ? "정보 없음"
-          : bannerData?.redirectUrl,
+      value: bannerData?.redirectUrl || bannerData?.redirectUrl === "" ? "정보 없음" : bannerData?.redirectUrl,
     },
     {
       key: "createdAt",
       label: "생성일",
-      value: bannerData?.createdAt
-        ? bannerData.createdAt.split("T")[0]
-        : "정보 없음",
+      value: bannerData?.createdAt ? bannerData.createdAt.split("T")[0] : "정보 없음",
     },
     {
       key: "updatedAt",
       label: "업데이트일",
-      value: bannerData?.updatedAt
-        ? bannerData.updatedAt.split("T")[0]
-        : "정보 없음",
+      value: bannerData?.updatedAt ? bannerData.updatedAt.split("T")[0] : "정보 없음",
     },
     {
       key: "description",
       label: "설명",
-      value:
-        bannerData?.description || bannerData?.description === ""
-          ? "정보 없음"
-          : bannerData?.description,
+      value: bannerData?.description || bannerData?.description === "" ? "정보 없음" : bannerData?.description,
     },
   ];
 
@@ -180,15 +161,10 @@ export default function BannersDetail() {
 
     return (
       <CardContent className="flex flex-col gap-2">
-        <p className="text-sm">{label}</p>
-        <div className="px-3 py-2 text-sm font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md">
+        <p className="ck-body-1-bold">{label}</p>
+        <div className="px-3 py-2 ck-body-1 bg-transparent border border-ck-gray-300 rounded-md">
           {isUrlField && isValidUrl ? (
-            <a
-              href={value as string}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline"
-            >
+            <a href={value as string} target="_blank" rel="noopener noreferrer" className="hover:underline ck-body-1">
               {value}
             </a>
           ) : (
@@ -218,20 +194,20 @@ export default function BannersDetail() {
       {/* 배너 상세 정보 */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex justify-between font-bold text-lg">
-            <div className="flex items-center">배너 정보</div>
-            <div className="flex gap-4">
+          <CardTitle className="flex justify-between">
+            <div className="ck-sub-title-1 flex items-center">배너 정보</div>
+            <div className="flex gap-4 ">
               {isEditing ? (
                 <>
                   <Button
                     onClick={() => editBanners(bannerData.id)}
-                    className="bg-green-500 hover:bg-green-600"
+                    className="cursor-pointer ck-body-1 bg-ck-blue-500 hover:bg-ck-blue-600"
                   >
                     저장
                   </Button>
                   <Button
                     onClick={toggleEditMode}
-                    className="bg-gray-500 hover:bg-gray-600"
+                    className="cursor-pointer ck-body-1 bg-ck-gray-600 hover:bg-ck-gray-700"
                   >
                     취소
                   </Button>
@@ -240,14 +216,14 @@ export default function BannersDetail() {
                 <>
                   <Button
                     onClick={toggleEditMode}
-                    className="cursor-pointer bg-blue-500 hover:bg-blue-600"
+                    className="cursor-pointer ck-body-1 bg-ck-blue-500 hover:bg-ck-blue-600"
                   >
                     <Pencil />
                     수정
                   </Button>
                   <Button
                     onClick={() => deleteBanners(bannerData.id)}
-                    className="cursor-pointer bg-red-500 hover:bg-red-600"
+                    className="cursor-pointer ck-body-1 bg-ck-red-500 hover:bg-ck-red-600"
                   >
                     <Delete />
                     삭제
@@ -260,69 +236,64 @@ export default function BannersDetail() {
         {isEditing ? (
           <CardContent className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <p className="text-sm text-semibold">배너 이름</p>
+              <p className="ck-sub-title-1">배너 이름</p>
               <Input
                 id="title"
                 name="title"
                 value={editBannerData.title}
                 onChange={handleInputChange}
                 placeholder="배너 이름을 입력하세요"
-                className="w-full px-3 py-2 text-sm font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md"
+                className="w-full px-3 py-2 ck-body-1 bg-transparent border border-gray-300 rounded-md"
               />
             </div>
             <div className="flex flex-col gap-2">
-              <p className="text-sm text-semibold">배너 URL</p>
+              <p className="ck-sub-title-1">배너 URL</p>
               <Input
                 id="bannerUrl"
                 name="bannerUrl"
                 value={editBannerData.bannerUrl}
                 onChange={handleInputChange}
                 placeholder="배너 URL을 입력하세요"
-                className="w-full px-3 py-2 text-sm font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md"
+                className="w-full px-3 py-2 ck-body-1 bg-transparent border border-gray-300 rounded-md"
               />
             </div>
             <div className="flex flex-col gap-2">
-              <p className="text-sm text-semibold">Redirect URL</p>
+              <p className="ck-sub-title-1">Redirect URL</p>
               <Input
                 id="redirectUrl"
                 name="redirectUrl"
                 value={editBannerData.redirectUrl}
                 onChange={handleInputChange}
                 placeholder="Redirect URL을 입력하세요"
-                className="w-full px-3 py-2 text-sm font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md"
+                className="w-full px-3 py-2 ck-body-1 bg-transparent border border-gray-300 rounded-md"
               />
             </div>
             <div className="flex flex-col gap-2">
-              <p className="text-sm text-semibold">설명</p>
+              <p className="ck-sub-title-1">설명</p>
               <Input
                 id="description"
                 name="description"
                 value={editBannerData.description}
                 onChange={handleInputChange}
                 placeholder="설명을 입력하세요"
-                className="w-full px-3 py-2 text-sm font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md"
+                className="w-full px-3 py-2 ck-body-1 bg-transparent border border-gray-300 rounded-md"
               />
             </div>
             <div className="flex flex-col gap-2">
-              <p className="text-sm text-semibold">배너 위치</p>
+              <p className="ck-sub-title-1">배너 위치</p>
               <Input
                 id="position"
                 name="position"
                 value={editBannerData.position}
                 onChange={handleInputChange}
                 placeholder="배너 위치를 입력하세요"
-                className="w-full px-3 py-2 text-sm font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md"
+                className="w-full px-3 py-2 ck-body-1 bg-transparent border border-gray-300 rounded-md"
               />
             </div>
           </CardContent>
         ) : (
           BannerInfo().map((item) => (
-            <BannerInfoComponent
-              key={item.key}
-              label={item.label}
-              value={item.value}
-              fieldKey={item.key}
-            />
+            <BannerInfoComponent key={item.key} label={item.label} value={item.value} fieldKey={item.key} />
           ))
         )}
       </Card>

@@ -125,15 +125,18 @@ export default function BannersTablePage() {
         {/* 숨겨진 파일 입력 */}
         <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" ref={fileInputRef} />
         {/* 파일 선택 버튼 */}
-        <Button className="bg-white text-black border-1  hover:bg-gray-300" onClick={handleFileSelect}>
+        <Button
+          className="ck-body-1 border-1 bg-ck-white text-ck-gray-900 hover:bg-ck-gray-300"
+          onClick={handleFileSelect}
+        >
           파일 선택
         </Button>
 
         {/* 선택된 파일 정보 표시 */}
         {imageFile && (
           <div className="text-sm text-gray-700">
-            <span>선택된 파일 : {imageFile.name}</span>
-            <span className="ml-2">({(imageFile.size / 1024).toFixed(2)} KB)</span>
+            <span className="ck-body-1">선택된 파일 : {imageFile.name}</span>
+            <span className="ml-2 ck-body-1">({(imageFile.size / 1024).toFixed(2)} KB)</span>
           </div>
         )}
         {/* 파일 업로드 버튼 */}
@@ -141,7 +144,7 @@ export default function BannersTablePage() {
           <Button
             onClick={handleUrlUpload}
             disabled={isUploading || !imageFile}
-            className="bg-white text-black border-1 hover:bg-gray-300"
+            className="ck-body-1 border-1 bg-ck-white text-ck-gray-900 hover:bg-ck-gray-300"
           >
             {isUploading ? "업로드 중..." : "파일 업로드"}
           </Button>

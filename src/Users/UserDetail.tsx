@@ -80,19 +80,11 @@ export default function UserDetail() {
       value: userData?.updatedAt.split("T")[0] ?? "정보 없음",
     },
   ];
-  const UserInfoComponent = ({
-    label,
-    value,
-  }: {
-    label: string;
-    value: string | boolean | number | undefined;
-  }) => {
+  const UserInfoComponent = ({ label, value }: { label: string; value: string | boolean | number | undefined }) => {
     return (
       <CardContent className="flex flex-col gap-2">
-        <p className="text-sm font-semibold">{label}</p>
-        <div className="px-3 py-2 text-sm font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md">
-          {value}
-        </div>
+        <p className="ck-body-1-bold">{label}</p>
+        <div className="px-3 py-2 ck-body-1 bg-transparent border border-ck-gray-300 rounded-md">{value}</div>
       </CardContent>
     );
   };
@@ -148,11 +140,7 @@ export default function UserDetail() {
   };
   // 사용자 삭제
   const deleteUser = async (id: number) => {
-    if (
-      window.confirm(
-        "사용자를 삭제하시겠습니까? (주의 : 이 작업은 되돌릴 수 없습니다)"
-      )
-    ) {
+    if (window.confirm("사용자를 삭제하시겠습니까? (주의 : 이 작업은 되돌릴 수 없습니다)")) {
       try {
         const response = await axiosInterceptor.delete(`/users/${id}`);
         navigate("/userTable");
@@ -209,20 +197,19 @@ export default function UserDetail() {
 
             <div className="flex flex-col justify-center gap-4">
               <div className="flex flex-col gap-4 font-semibold">
-                <div>
-                  {userData.nickname} (
-                  {userData.gender ? userData.gender : "남성"},{" "}
+                <div className="ck-body-1-bold">
+                  {userData.nickname} ({userData.gender ? userData.gender : "남성"},{" "}
                   {userData.age ? userData.age : "나이"})
                 </div>
-                <div>{userData.email}</div>
-                <div>{userData.phone ? userData.phone : "전화번호"}</div>
+                <div className="ck-body-1">{userData.email}</div>
+                <div className="ck-body-1">{userData.phone ? userData.phone : "전화번호(정보 없음)"}</div>
               </div>
               <div className="flex gap-4">
                 <Button
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md border transition-colors ${
+                  className={`cursor-pointer ck-body-1 flex items-center gap-2 px-4 py-2 rounded-md border transition-colors ${
                     userData.active
-                      ? "bg-red-500 hover:bg-red-600 text-white"
-                      : "bg-blue-500 hover:bg-blue-600 text-white"
+                      ? "bg-ck-red-500 hover:bg-ck-red-600 text-white"
+                      : "bg-ck-blue-500 hover:bg-ck-blue-600 text-white"
                   } `}
                   onClick={() => putUserStatus(userData.id)}
                 >
@@ -230,7 +217,7 @@ export default function UserDetail() {
                   {userData.active ? "비활성화" : "활성화"}
                 </Button>
                 <Button
-                  className="cursor-pointer border bg-red-500 hover:bg-red-600"
+                  className="cursor-pointer ck-body-1 flex items-center border bg-ck-red-500 hover:bg-ck-red-600"
                   onClick={() => deleteUser(userData.id)}
                 >
                   <Delete />
@@ -243,26 +230,20 @@ export default function UserDetail() {
         {/* 사용자 계정 정보 */}
         <Card>
           <CardHeader>
-            <CardTitle className="font-bold text-lg flex items-center">
-              사용자 계정 정보
-            </CardTitle>
+            <CardTitle className="ck-sub-title-1 flex items-center">사용자 계정 정보</CardTitle>
           </CardHeader>
           {UserAccountInfo().map((item) => (
-            <UserInfoComponent
-              key={item.key}
-              label={item.label}
-              value={item.value}
-            />
+            <UserInfoComponent key={item.key} label={item.label} value={item.value} />
           ))}
           <CardContent className="flex flex-col gap-2">
-            <p>사용자 메모</p>
-            <div className="px-3 py-2 text-base font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md">
+            <p className="ck-sub-title-1">사용자 메모</p>
+            <div className="px-3 py-2 ck-body-1 bg-transparent border border-ck-gray-300 rounded-md">
               {userData.memo ? userData.memo : "내용이 없습니다."}
             </div>
             {!hideMemo && (
               <div className="flex justify-end">
                 <Button
-                  className="cursor-pointer border bg-white text-black hover:bg-gray-300 max-w-3xs"
+                  className="cursor-pointer ck-body-1 border bg-white text-ck-gray-900 hover:bg-ck-gray-300 max-w-3xs"
                   onClick={() => setHideMemo(true)}
                 >
                   <Pencil />
@@ -273,14 +254,10 @@ export default function UserDetail() {
             {/* 메모 수정 기능 */}
             {hideMemo && (
               <div className="flex flex-col gap-4">
-                <Textarea
-                  placeholder="텍스트를 입력하세요."
-                  value={userMemo}
-                  onChange={handleTextAreaChange}
-                />
+                <Textarea placeholder="텍스트를 입력하세요." value={userMemo} onChange={handleTextAreaChange} />
                 <div className="flex justify-end">
                   <Button
-                    className="cursor-pointer border bg-white text-black hover:bg-gray-300"
+                    className="cursor-pointer ck-body-1 border bg-white text-ck-gray-900 hover:bg-ck-gray-300"
                     onClick={() => putMemoUpdate(userData.id, userMemo || "")}
                   >
                     <Pencil />
