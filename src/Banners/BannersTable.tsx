@@ -45,10 +45,9 @@ interface CustomColumnMeta {
 }
 interface BannerDataTableProps {
   bannerData: Banner[];
-  onDelete: (id: number) => void;
 }
 
-export default function BannersTable({ bannerData, onDelete }: BannerDataTableProps) {
+export default function BannersTable({ bannerData }: BannerDataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});

@@ -120,7 +120,7 @@ export default function BannersTablePage() {
 
   return (
     <>
-      <BannersTable bannerData={bannerData} onDelete={deleteBanner} />
+      <BannersTable bannerData={bannerData} />
       <div className="flex items-center space-x-4 mb-4">
         {/* 숨겨진 파일 입력 */}
         <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" ref={fileInputRef} />
@@ -144,7 +144,7 @@ export default function BannersTablePage() {
           <Button
             onClick={handleUrlUpload}
             disabled={isUploading || !imageFile}
-            className="ck-body-1 border-1 bg-ck-white text-ck-gray-900 hover:bg-ck-gray-300"
+            className="ck-body-1 border-1 bg-ck-white text-ck-gray-900 hover:bg-gray-300"
           >
             {isUploading ? "업로드 중..." : "파일 업로드"}
           </Button>
