@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import PulseLoader from "react-spinners/PulseLoader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AxiosError } from "axios";
+
 import { toast } from "react-toastify";
 
 interface Campaign {
@@ -46,7 +46,6 @@ interface CampaignInfo {
 export default function CampaignDetail() {
   const { campaignId } = useParams<{ campaignId: string }>();
   const [campaignData, setCampaignData] = useState<Campaign | null>(null);
-  const navigate = useNavigate();
 
   const CampaignInfo = (): CampaignInfo[] => [
     { key: "id", label: "ID", value: campaignData?.id ?? "정보 없음" },
@@ -56,16 +55,21 @@ export default function CampaignDetail() {
       value: campaignData?.title ?? "정보 없음",
     },
     {
+      key: "productShortInfo",
+      label: "상품 간단 정보",
+      value: campaignData?.productShortInfo ?? "정보 없음",
+    },
+    {
+      key: "thumbnailUrl",
+      label: "썸네일 주소",
+      value: campaignData?.thumbnailUrl ?? "정보 없음",
+    },
+    {
       key: "campaignType",
       label: "캠페인 유형",
       value: campaignData?.campaignType ?? "정보 없음",
     },
 
-    {
-      key: "productShortInfo",
-      label: "상품 간단 정보",
-      value: campaignData?.productShortInfo ?? "정보 없음",
-    },
     {
       key: "maxApplicants",
       label: "최대 지원자 수",
@@ -171,15 +175,30 @@ export default function CampaignDetail() {
   const CampaignInfoComponent = ({
     label,
     value,
+    fieldKey,
   }: {
     label: string;
     value: string | number | undefined;
+    fieldKey: string;
   }) => {
+    const isUrlField = fieldKey === "thumbnailUrl";
+    const isValidUrl = typeof value === "string" && value !== "정보 없음";
     return (
       <CardContent className="flex flex-col gap-2">
         <p className="text-sm font-semibold">{label}</p>
         <div className="px-3 py-2 text-sm font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md px-3 py-2">
-          {value}
+          {isUrlField && isValidUrl ? (
+            <a
+              href={value as string}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              {value}
+            </a>
+          ) : (
+            <span>{value}</span>
+          )}
         </div>
       </CardContent>
     );
@@ -193,29 +212,8 @@ export default function CampaignDetail() {
       setCampaignData(campaignData);
       console.log(campaignData);
     } catch (error) {
+      toast.error(`${error}`);
       console.log(error);
-      const axiosError = error as AxiosError;
-      if (axiosError.response) {
-        switch (axiosError.response.status) {
-          case 400:
-            toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
-            break;
-          case 401:
-            toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
-            navigate("/login");
-            break;
-          case 403:
-            toast.error("접근 권한이 없습니다.");
-            navigate("/login");
-            break;
-          case 404:
-            toast.error("요청한 캠페인 데이터를 찾을 수 없습니다.");
-            break;
-          case 500:
-            toast.error("서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
-            break;
-        }
-      }
     }
   };
 
@@ -235,31 +233,8 @@ export default function CampaignDetail() {
         toast.success("캠페인이 승인되었습니다.");
         console.log(response);
       } catch (error) {
+        toast.error(`${error}`);
         console.log(error);
-        const axiosError = error as AxiosError;
-        if (axiosError.response) {
-          switch (axiosError.response.status) {
-            case 400:
-              toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
-              break;
-            case 401:
-              toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
-              navigate("/login");
-              break;
-            case 403:
-              toast.error("접근 권한이 없습니다.");
-              navigate("/login");
-              break;
-            case 404:
-              toast.error("요청한 캠페인 데이터를 찾을 수 없습니다.");
-              break;
-            case 500:
-              toast.error(
-                "서버 오류가 발생했습니다. 나중에 다시 시도해주세요."
-              );
-              break;
-          }
-        }
       }
     }
   };
@@ -280,31 +255,8 @@ export default function CampaignDetail() {
         toast.success("캠페인이 반려되었습니다.");
         console.log(response);
       } catch (error) {
+        toast.error(`${error}`);
         console.log(error);
-        const axiosError = error as AxiosError;
-        if (axiosError.response) {
-          switch (axiosError.response.status) {
-            case 400:
-              toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
-              break;
-            case 401:
-              toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
-              navigate("/login");
-              break;
-            case 403:
-              toast.error("접근 권한이 없습니다.");
-              navigate("/login");
-              break;
-            case 404:
-              toast.error("요청한 캠페인 데이터를 찾을 수 없습니다.");
-              break;
-            case 500:
-              toast.error(
-                "서버 오류가 발생했습니다. 나중에 다시 시도해주세요."
-              );
-              break;
-          }
-        }
       }
     }
   };
@@ -325,12 +277,12 @@ export default function CampaignDetail() {
 
   return (
     <div className="grid grid-row gap-6">
-      {/* 캠페인 정보 */}
+      {/* 캠페인 상세 정보 */}
       <Card>
         <CardHeader>
           <CardTitle className="flex justify-between font-bold text-lg">
             <div>캠페인 정보</div>
-            <div className="flex gap-2">
+            <div className="flex gap-4">
               <Button
                 className="cursor-pointer bg-blue-500 hover:bg-blue-600"
                 onClick={() => approveCampaign(campaignData.id)}
@@ -351,6 +303,7 @@ export default function CampaignDetail() {
             key={item.key}
             label={item.label}
             value={item.value}
+            fieldKey={item.key}
           />
         ))}
       </Card>
@@ -366,6 +319,7 @@ export default function CampaignDetail() {
               key={item.key}
               label={item.label}
               value={item.value}
+              fieldKey={item.key}
             />
           ))}
         </Card>
@@ -382,6 +336,7 @@ export default function CampaignDetail() {
               key={item.key}
               label={item.label}
               value={item.value}
+              fieldKey={item.key}
             />
           ))}
         </Card>

@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import PulseLoader from "react-spinners/PulseLoader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Pencil, Delete } from "lucide-react";
 
 interface BannerData {
   id: number;
@@ -72,15 +73,31 @@ export default function BannersDetail() {
   const BannerInfoComponent = ({
     label,
     value,
+    fieldKey,
   }: {
     label: string;
     value: string | number | undefined;
+    fieldKey: string;
   }) => {
+    const isUrlField = fieldKey === "bannerUrl" || fieldKey === "redirectUrl";
+    const isValidUrl = typeof value === "string" && value !== "정보 없음";
+
     return (
       <CardContent className="flex flex-col gap-2">
         <p className="text-sm">{label}</p>
         <div className="px-3 py-2 text-sm font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md px-3 py-2">
-          {value}
+          {isUrlField && isValidUrl ? (
+            <a
+              href={value as string}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              {value}
+            </a>
+          ) : (
+            <span>{value}</span>
+          )}
         </div>
       </CardContent>
     );
@@ -113,35 +130,31 @@ export default function BannersDetail() {
 
   return (
     <div className="grid grid-row gap-10">
-      {/* 배너 정보 */}
+      {/* 배너 상세 정보 */}
       <Card>
         <CardHeader>
-          <CardTitle className="font-bold text-lg">배너 정보</CardTitle>
+          <CardTitle className="flex justify-between font-bold text-lg">
+            <div>배너 정보</div>
+            <div className="flex gap-4">
+              <Button className="cursor-pointer bg-blue-500 hover:bg-blue-600">
+                <Pencil />
+                수정
+              </Button>
+              <Button className="cursor-pointer bg-red-500 hover:bg-red-600">
+                <Delete />
+                삭제
+              </Button>
+            </div>
+          </CardTitle>
         </CardHeader>
         {BannerInfo().map((item) => (
           <BannerInfoComponent
             key={item.key}
             label={item.label}
             value={item.value}
+            fieldKey={item.key}
           />
         ))}
-      </Card>
-
-      {/* 액션 버튼 */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-bold text-lg">배너 관리</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4">
-            <Button className="cursor-pointer bg-blue-500 hover:bg-blue-600">
-              배너 수정
-            </Button>
-            <Button className="cursor-pointer bg-red-500 hover:bg-red-600">
-              배너 삭제
-            </Button>
-          </div>
-        </CardContent>
       </Card>
     </div>
   );
