@@ -239,20 +239,20 @@ export default function CampaignDetail() {
     }
   };
 
-  // 캠페인 반려 처리
+  // 캠페인 거절 처리
   const rejectCampaign = async (id: number) => {
-    if (window.confirm("캠페인을 반려하시겠습니까?")) {
+    if (window.confirm("이 캠페인을 거절하시겠습니까?")) {
       try {
         const response = await axiosInterceptor.put(
           `/campaigns/${id}/approval`,
           {
             approvalStatus: "REJECTED",
-            comment: "조건을 만족하지 못하여 반려되었습니다.",
+            comment: "조건을 만족하지 못하여 거절되었습니다.",
           }
         );
         const updatedData = response.data.data;
         setCampaignData((prev) => ({ ...prev, ...updatedData }));
-        toast.success("캠페인이 반려되었습니다.");
+        toast.success("캠페인이 거절되었습니다.");
         console.log(response);
       } catch (error) {
         toast.error(`${error}`);

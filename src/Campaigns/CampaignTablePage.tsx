@@ -107,7 +107,7 @@ export default function CampaignTablePage() {
     { type: "ALL", label: "전체 캠페인" },
     { type: "PENDING", label: "승인 대기 캠페인" },
     { type: "APPROVED", label: "승인된 캠페인" },
-    { type: "REJECTED", label: "반려된 캠페인" },
+    { type: "REJECTED", label: "거절된 캠페인" },
     { type: "EXPIRED", label: "만료된 캠페인" },
   ];
 
