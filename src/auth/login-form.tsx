@@ -32,14 +32,14 @@ export function LoginForm({
       if (axiosError.response) {
         switch (axiosError.response.status) {
           case 400:
-            toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
+            toast.error("이메일과 비밀번호는 필수입니다.");
             break;
           case 401:
-            toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
+            toast.error("이메일 또는 비밀번호가 올바르지 않습니다.");
             navigate("/login");
             break;
           case 403:
-            toast.error("접근 권한이 없습니다.");
+            toast.error("관리자 권한이 필요합니다.");
             break;
           case 429:
             toast.error(
@@ -47,7 +47,7 @@ export function LoginForm({
             );
             break;
           case 500:
-            toast.error("서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
+            toast.error("로그인 처리 중 오류가 발생했습니다.");
             break;
         }
       }
