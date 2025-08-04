@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
-import { SquarePen, Delete, Power, PowerOff } from "lucide-react";
+import { Delete, Power, PowerOff, Pencil } from "lucide-react";
 
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
@@ -262,17 +262,17 @@ export default function UserDetail() {
             {!hideMemo && (
               <div className="flex justify-end">
                 <Button
-                  className="cursor-pointer border bg-blue-500 hover:bg-blue-600 max-w-3xs"
+                  className="cursor-pointer border bg-white text-black hover:bg-gray-300 max-w-3xs"
                   onClick={() => setHideMemo(true)}
                 >
-                  <SquarePen />
+                  <Pencil />
                   메모 수정
                 </Button>
               </div>
             )}
             {/* 메모 수정 기능 */}
             {hideMemo && (
-              <div>
+              <div className="flex flex-col gap-4">
                 <Textarea
                   placeholder="텍스트를 입력하세요."
                   value={userMemo}
@@ -280,9 +280,10 @@ export default function UserDetail() {
                 />
                 <div className="flex justify-end">
                   <Button
-                    className="bg-blue-500 hover:bg-blue-600"
+                    className="cursor-pointer border bg-white text-black hover:bg-gray-300"
                     onClick={() => putMemoUpdate(userData.id, userMemo || "")}
                   >
+                    <Pencil />
                     메모 업데이트
                   </Button>
                 </div>

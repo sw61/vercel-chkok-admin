@@ -76,13 +76,7 @@ export default function AdminDetail() {
     },
   ];
 
-  const AdminInfoComponent = ({
-    label,
-    value,
-  }: {
-    label: string;
-    value: string | number | boolean | undefined;
-  }) => {
+  const AdminInfoComponent = ({ label, value }: { label: string; value: string | number | boolean | undefined }) => {
     return (
       <CardContent className="flex flex-col gap-2">
         <p className="text-sm font-semibold">{label}</p>
@@ -132,24 +126,16 @@ export default function AdminDetail() {
               <div>{adminData?.name}</div>
               <div>{adminData?.email}</div>
             </div>
-            <div className="text-gray-500">
-              마지막 로그인 &nbsp;{formatLastLogin(adminData?.lastLoginAt)}
-            </div>
+            <div className="text-gray-500">마지막 로그인 &nbsp;{formatLastLogin(adminData?.lastLoginAt)}</div>
           </div>
         </div>
         {/* 관리자 계정 정보 */}
         <Card>
           <CardHeader>
-            <CardTitle className="font-bold text-lg flex items-center">
-              관리자 계정 정보
-            </CardTitle>
+            <CardTitle className="font-bold text-lg flex items-center">관리자 계정 정보</CardTitle>
           </CardHeader>
           {AdminAccountInfo().map((item) => (
-            <AdminInfoComponent
-              key={item.key}
-              label={item.label}
-              value={item.value}
-            />
+            <AdminInfoComponent key={item.key} label={item.label} value={item.value} />
           ))}
         </Card>
       </div>

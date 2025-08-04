@@ -12,13 +12,7 @@ import {
   type ColumnFiltersState,
   type Table as TableType,
 } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  ChevronDown,
-  MoreHorizontal,
-  Settings,
-  Copy,
-} from "lucide-react";
+import { ArrowUpDown, MoreHorizontal, Settings, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -37,7 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { memo, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface Campaign {

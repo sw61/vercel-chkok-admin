@@ -10,10 +10,10 @@ export default function MainPage() {
             <UserPieChart />
           </div>
           <div className="aspect-video rounded-xl">
-            <CamapaignPieChart />
+            <UserPieChart />
           </div>
           <div className="aspect-video rounded-xl">
-            <UserPieChart />
+            <CamapaignPieChart />
           </div>
         </div>
         <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min p-4">

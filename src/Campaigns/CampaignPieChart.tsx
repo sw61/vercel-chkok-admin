@@ -74,11 +74,6 @@ export function CamapaignPieChart() {
   }
   const chartData = [
     {
-      status: "total",
-      visitors: campaignStatus?.totalCampaigns,
-      fill: "#9c3bf6",
-    },
-    {
       status: "pending",
       visitors: campaignStatus?.pendingCampaigns,
       fill: "#10B981",
@@ -98,10 +93,6 @@ export function CamapaignPieChart() {
     visitors: {
       label: "Visitors",
     },
-    total: {
-      label: "Total",
-      color: "var(--chart-1)",
-    },
     pending: {
       label: "Pending",
       color: "var(--chart-2)",
@@ -118,7 +109,7 @@ export function CamapaignPieChart() {
 
   return (
     <>
-      <Card className="flex flex-col">
+      <Card className="flex flex-col pb-0">
         <CardHeader className="items-center pb-0">
           <CardTitle>캠페인 통계</CardTitle>
         </CardHeader>
@@ -132,7 +123,7 @@ export function CamapaignPieChart() {
               <Pie data={chartData} dataKey="visitors" label nameKey="status" />
               <ChartLegend
                 content={<ChartLegendContent nameKey="status" />}
-                className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
+                className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center pt-5"
               >
                 <ChartLegendContent nameKey="status" />
               </ChartLegend>

@@ -46,14 +46,10 @@ export default function BannersTablePage() {
       return;
     }
     setIsUploading(true);
-    const fileExtension =
-      imageFile.name.split(".").pop()?.toLowerCase() || "jpg";
+    const fileExtension = imageFile.name.split(".").pop()?.toLowerCase() || "jpg";
 
     try {
-      const response = await axiosInterceptor.post(
-        "/api/images/banners/presigned-url",
-        { fileExtension }
-      );
+      const response = await axiosInterceptor.post("/api/images/banners/presigned-url", { fileExtension });
       console.log("Presigned URL 응답:", response);
       const presignedUrl = response.data.data.presignedUrl;
       setPresignedUrl(presignedUrl);
@@ -127,18 +123,9 @@ export default function BannersTablePage() {
       <BannersTable bannerData={bannerData} onDelete={deleteBanner} />
       <div className="flex items-center space-x-4 mb-4">
         {/* 숨겨진 파일 입력 */}
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="hidden"
-          ref={fileInputRef}
-        />
+        <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" ref={fileInputRef} />
         {/* 파일 선택 버튼 */}
-        <Button
-          className="bg-white text-black border-1  hover:bg-gray-300"
-          onClick={handleFileSelect}
-        >
+        <Button className="bg-white text-black border-1  hover:bg-gray-300" onClick={handleFileSelect}>
           파일 선택
         </Button>
 
@@ -146,9 +133,7 @@ export default function BannersTablePage() {
         {imageFile && (
           <div className="text-sm text-gray-700">
             <span>선택된 파일 : {imageFile.name}</span>
-            <span className="ml-2">
-              ({(imageFile.size / 1024).toFixed(2)} KB)
-            </span>
+            <span className="ml-2">({(imageFile.size / 1024).toFixed(2)} KB)</span>
           </div>
         )}
         {/* 파일 업로드 버튼 */}

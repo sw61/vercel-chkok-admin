@@ -5,7 +5,7 @@ import PulseLoader from "react-spinners/PulseLoader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"; // Input 컴포넌트 추가
-import { Label } from "@/components/ui/label"; // Label 컴포넌트 추가
+
 import { Pencil, Delete } from "lucide-react";
 import { toast } from "react-toastify"; // toast 추가
 
