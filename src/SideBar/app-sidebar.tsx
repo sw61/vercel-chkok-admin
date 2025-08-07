@@ -5,6 +5,9 @@ import { NavMain } from "@/SideBar/nav-main";
 // import { NavProjects } from "@/SideBar/nav-projects";
 import { NavSecondary } from "@/SideBar/nav-secondary";
 import { NavUser } from "@/SideBar/nav-user";
+import appicon from "../Image/appicon.png";
+import chkokLogo from "../Image/chkokLogo.png";
+
 import {
   Sidebar,
   SidebarContent,
@@ -20,7 +23,7 @@ const data = {
   user: {
     name: "관리자",
     email: "admin1234@example.com",
-    avatar: "../src/Image/appicon.png",
+    avatar: appicon,
   },
   navMain: [
     {
@@ -73,7 +76,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="/">
-                <img src="../src/Image/chkokLogo.png"></img>
+                <img src={chkokLogo}></img>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
