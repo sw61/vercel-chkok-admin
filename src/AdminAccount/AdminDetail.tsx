@@ -76,19 +76,11 @@ export default function AdminDetail() {
     },
   ];
 
-  const AdminInfoComponent = ({
-    label,
-    value,
-  }: {
-    label: string;
-    value: string | number | boolean | undefined;
-  }) => {
+  const AdminInfoComponent = ({ label, value }: { label: string; value: string | number | boolean | undefined }) => {
     return (
       <CardContent className="flex flex-col gap-2">
-        <p className="text-sm font-semibold">{label}</p>
-        <div className="px-3 py-2 text-sm font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md">
-          {value}
-        </div>
+        <p className="ck-body-2-bold ">{label}</p>
+        <div className="px-3 py-2 ck-body-2 bg-transparent border border-ck-gray-300 rounded-md">{value}</div>
       </CardContent>
     );
   };
@@ -128,11 +120,11 @@ export default function AdminDetail() {
           </Avatar>
 
           <div className="flex flex-col justify-center gap-4">
-            <div className="flex gap-4 font-semibold">
-              <div>{adminData?.name}</div>
-              <div>{adminData?.email}</div>
+            <div className="flex gap-4">
+              <div className="ck-sub-title-1">{adminData?.name}</div>
+              <div className="ck-sub-title-1">{adminData?.email}</div>
             </div>
-            <div className="text-gray-500">
+            <div className="text-ck-gray-600 ck-body-2">
               마지막 로그인 &nbsp;{formatLastLogin(adminData?.lastLoginAt)}
             </div>
           </div>
@@ -140,16 +132,10 @@ export default function AdminDetail() {
         {/* 관리자 계정 정보 */}
         <Card>
           <CardHeader>
-            <CardTitle className="font-bold text-lg flex items-center">
-              관리자 계정 정보
-            </CardTitle>
+            <CardTitle className="ck-sub-title-1 flex items-center">관리자 계정 정보</CardTitle>
           </CardHeader>
           {AdminAccountInfo().map((item) => (
-            <AdminInfoComponent
-              key={item.key}
-              label={item.label}
-              value={item.value}
-            />
+            <AdminInfoComponent key={item.key} label={item.label} value={item.value} />
           ))}
         </Card>
       </div>

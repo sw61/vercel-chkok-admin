@@ -46,14 +46,10 @@ export default function BannersTablePage() {
       return;
     }
     setIsUploading(true);
-    const fileExtension =
-      imageFile.name.split(".").pop()?.toLowerCase() || "jpg";
+    const fileExtension = imageFile.name.split(".").pop()?.toLowerCase() || "jpg";
 
     try {
-      const response = await axiosInterceptor.post(
-        "/api/images/banners/presigned-url",
-        { fileExtension }
-      );
+      const response = await axiosInterceptor.post("/api/images/banners/presigned-url", { fileExtension });
       console.log("Presigned URL 응답:", response);
       const presignedUrl = response.data.data.presignedUrl;
       setPresignedUrl(presignedUrl);
@@ -97,19 +93,6 @@ export default function BannersTablePage() {
     }
   };
 
-  // 배너 이미지 삭제
-  const deleteBanner = async (id: number) => {
-    try {
-      const response = await axiosInterceptor.delete(`/api/banners/${id}`);
-      await getBannersTable();
-      toast.success("배너 이미지가 삭제되었습니다.");
-      console.log(response);
-    } catch (error) {
-      toast.error("이미지 삭제 중 오류가 발생했습니다.");
-      console.log(error);
-    }
-  };
-
   if (!bannerData) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -124,19 +107,13 @@ export default function BannersTablePage() {
 
   return (
     <>
-      <BannersTable bannerData={bannerData} onDelete={deleteBanner} />
+      <BannersTable bannerData={bannerData} />
       <div className="flex items-center space-x-4 mb-4">
         {/* 숨겨진 파일 입력 */}
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="hidden"
-          ref={fileInputRef}
-        />
+        <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" ref={fileInputRef} />
         {/* 파일 선택 버튼 */}
         <Button
-          className="bg-white text-black border-1  hover:bg-gray-300"
+          className="ck-body-1 border-1 bg-ck-white text-ck-gray-900 hover:bg-ck-gray-300"
           onClick={handleFileSelect}
         >
           파일 선택
@@ -145,10 +122,8 @@ export default function BannersTablePage() {
         {/* 선택된 파일 정보 표시 */}
         {imageFile && (
           <div className="text-sm text-gray-700">
-            <span>선택된 파일 : {imageFile.name}</span>
-            <span className="ml-2">
-              ({(imageFile.size / 1024).toFixed(2)} KB)
-            </span>
+            <span className="ck-body-1">선택된 파일 : {imageFile.name}</span>
+            <span className="ml-2 ck-body-1">({(imageFile.size / 1024).toFixed(2)} KB)</span>
           </div>
         )}
         {/* 파일 업로드 버튼 */}
@@ -156,7 +131,7 @@ export default function BannersTablePage() {
           <Button
             onClick={handleUrlUpload}
             disabled={isUploading || !imageFile}
-            className="bg-white text-black border-1 hover:bg-gray-300"
+            className="ck-body-1 border-1 bg-ck-white text-ck-gray-900 hover:bg-gray-300"
           >
             {isUploading ? "업로드 중..." : "파일 업로드"}
           </Button>

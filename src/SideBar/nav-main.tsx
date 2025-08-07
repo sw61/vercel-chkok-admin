@@ -2,11 +2,7 @@
 
 import { ChevronRight, type LucideIcon } from "lucide-react";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -18,6 +14,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { useState } from "react";
 
 export function NavMain({
   items,
@@ -33,6 +30,11 @@ export function NavMain({
     }[];
   }[];
 }) {
+  const [isActivate, setIsActivate] = useState(false);
+  const handleActivate = () => {
+    setIsActivate(!isActivate);
+  };
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>데이터 목록</SidebarGroupLabel>
@@ -41,11 +43,12 @@ export function NavMain({
           <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip={item.title}>
-                <a href={item.url}>
+                <a href={item.url} className="py-5">
                   <item.icon />
-                  <span>{item.title}</span>
+                  <span className="ck-body-2">{item.title}</span>
                 </a>
               </SidebarMenuButton>
+
               {item.items?.length ? (
                 <>
                   <CollapsibleTrigger asChild>

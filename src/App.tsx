@@ -102,7 +102,6 @@ function App() {
           <Route path="/login" element={<LoginForm />}></Route>
         </Routes>
       </BrowserRouter>
-      <Toaster /> {/* shadcn/ui-sonner */}
       <ToastContainer /> {/* react-toast */}
     </>
   );

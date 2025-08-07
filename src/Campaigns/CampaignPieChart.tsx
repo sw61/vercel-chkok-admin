@@ -74,58 +74,49 @@ export function CamapaignPieChart() {
   }
   const chartData = [
     {
-      status: "total",
-      visitors: campaignStatus?.totalCampaigns,
-      fill: "#9c3bf6",
-    },
-    {
       status: "pending",
       visitors: campaignStatus?.pendingCampaigns,
-      fill: "#10B981",
+      fill: "#86ABFF",
     },
     {
       status: "approved",
       visitors: campaignStatus?.approvedCampaigns,
-      fill: "#F59E0B",
+      fill: "#2388FF",
     },
     {
       status: "rejected",
       visitors: campaignStatus?.rejectedCampaigns,
-      fill: "#3B82F6",
+      fill: "#FB2C36",
     },
   ];
   const chartConfig = {
     visitors: {
       label: "Visitors",
     },
-    total: {
-      label: "Total",
+    pending: {
+      label: "대기중",
       color: "var(--chart-1)",
     },
-    pending: {
-      label: "Pending",
+    approved: {
+      label: "승인됨",
       color: "var(--chart-2)",
     },
-    approved: {
-      label: "Approved",
-      color: "var(--chart-3)",
-    },
     rejected: {
-      label: "Rejected",
-      color: "var(--chart-4)",
+      label: "거절됨",
+      color: "var(--chart-3)",
     },
   } satisfies ChartConfig;
 
   return (
     <>
-      <Card className="flex flex-col">
+      <Card className="flex flex-col pb-0">
         <CardHeader className="items-center pb-0">
           <CardTitle>캠페인 통계</CardTitle>
         </CardHeader>
         <CardContent className="flex-1 pb-0">
           <ChartContainer
             config={chartConfig}
-            className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square max-h-[250px] pb-0"
+            className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square max-h-[300px] pb-0"
           >
             <PieChart>
               <ChartTooltip content={<ChartTooltipContent hideLabel />} />

@@ -71,74 +71,65 @@ export function UserPieChart() {
   }
   const chartData = [
     {
-      status: "total",
-      visitors: userStatus?.totalUsers,
-      fill: "#9c3bf6",
-    },
-    {
       status: "client",
       visitors: userStatus?.clientCount,
-      fill: "#10B981",
+      fill: "#86ABFF",
     },
     {
       status: "userCount",
       visitors: userStatus?.userCount,
-      fill: "#F59E0B",
+      fill: "#DBE2FB",
     },
     {
       status: "active",
       visitors: userStatus?.activeUsers,
-      fill: "#3B82F6",
+      fill: "#2388FF",
     },
     {
       status: "inactive",
       visitors: userStatus?.inactiveUsers,
-      fill: "#EF4444",
+      fill: "#FB2C36",
     },
   ];
   const chartConfig = {
     visitors: {
       label: "Visitors",
     },
-    total: {
-      label: "Total",
-      color: "var(--chart-1)",
-    },
     client: {
-      label: "Client",
+      label: "클라이언트",
       color: "var(--chart-2)",
     },
     userCount: {
-      label: "UserCount",
+      label: "일반 사용자",
       color: "var(--chart-3)",
     },
     active: {
-      label: "Active",
+      label: "활성화 계정",
       color: "var(--chart-4)",
     },
     inactive: {
-      label: "InActive",
+      label: "비활성화 계정",
       color: "var(--chart-5)",
     },
   } satisfies ChartConfig;
 
   return (
     <>
-      <Card className="flex flex-col">
+      <Card className="flex flex-col pb-0">
         <CardHeader className="items-center pb-0">
           <CardTitle>사용자 통계</CardTitle>
         </CardHeader>
         <CardContent className="flex-1 pb-0">
           <ChartContainer
             config={chartConfig}
-            className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square max-h-[250px] pb-0"
+            className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square max-h-[300px] pb-0"
           >
             <PieChart>
               <ChartTooltip content={<ChartTooltipContent hideLabel />} />
               <Pie data={chartData} dataKey="visitors" label nameKey="status" />
               <ChartLegend
                 content={<ChartLegendContent nameKey="status" />}
-                className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
+                className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center pt-5"
               />
             </PieChart>
           </ChartContainer>
