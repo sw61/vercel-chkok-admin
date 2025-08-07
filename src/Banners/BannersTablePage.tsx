@@ -108,7 +108,7 @@ export default function BannersTablePage() {
   return (
     <>
       <BannersTable bannerData={bannerData} />
-      <div className="flex items-center space-x-4 mb-4">
+      <div className="flex items-center space-x-4 mb-4 pt-2">
         {/* 숨겨진 파일 입력 */}
         <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" ref={fileInputRef} />
         {/* 파일 선택 버튼 */}
