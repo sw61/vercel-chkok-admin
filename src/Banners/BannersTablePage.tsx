@@ -93,19 +93,6 @@ export default function BannersTablePage() {
     }
   };
 
-  // 배너 이미지 삭제
-  const deleteBanner = async (id: number) => {
-    try {
-      const response = await axiosInterceptor.delete(`/api/banners/${id}`);
-      await getBannersTable();
-      toast.success("배너 이미지가 삭제되었습니다.");
-      console.log(response);
-    } catch (error) {
-      toast.error("이미지 삭제 중 오류가 발생했습니다.");
-      console.log(error);
-    }
-  };
-
   if (!bannerData) {
     return (
       <div className="flex justify-center items-center h-64">

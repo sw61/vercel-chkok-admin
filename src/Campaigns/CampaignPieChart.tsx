@@ -94,15 +94,15 @@ export function CamapaignPieChart() {
       label: "Visitors",
     },
     pending: {
-      label: "Pending",
+      label: "대기중",
       color: "var(--chart-1)",
     },
     approved: {
-      label: "Approved",
+      label: "승인됨",
       color: "var(--chart-2)",
     },
     rejected: {
-      label: "Rejected",
+      label: "거절됨",
       color: "var(--chart-3)",
     },
   } satisfies ChartConfig;
@@ -116,7 +116,7 @@ export function CamapaignPieChart() {
         <CardContent className="flex-1 pb-0">
           <ChartContainer
             config={chartConfig}
-            className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square max-h-[250px] pb-0"
+            className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square max-h-[300px] pb-0"
           >
             <PieChart>
               <ChartTooltip content={<ChartTooltipContent hideLabel />} />

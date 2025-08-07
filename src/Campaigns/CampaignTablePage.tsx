@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ChevronDown } from "lucide-react";
 import { type ColumnFiltersState, type VisibilityState } from "@tanstack/react-table";
+import { Card } from "@/components/ui/card";
 
 interface Campaign {
   id: number;
@@ -114,12 +115,12 @@ export default function CampaignTablePage() {
   const currentLabel = typeValues.find((item) => item.type === campaignType)?.label || "캠페인 필터";
 
   return (
-    <>
+    <Card className="px-6 py-4">
       <div className="flex justify-between items-center mb-2">
         <div className="flex gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="custom">
+              <Button variant="outline">
                 {currentLabel}
                 <ChevronDown />
               </Button>
@@ -138,7 +139,7 @@ export default function CampaignTablePage() {
           </DropdownMenu>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="custom">
+              <Button variant="outline">
                 항목 <ChevronDown />
               </Button>
             </DropdownMenuTrigger>
@@ -191,6 +192,6 @@ export default function CampaignTablePage() {
           <CampaignPagination pageData={pageData} onPageChange={handlePageChange} />
         </>
       )}
-    </>
+    </Card>
   );
 }

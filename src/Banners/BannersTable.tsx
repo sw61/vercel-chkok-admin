@@ -28,6 +28,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Card } from "@/components/ui/card";
 
 interface Banner {
   id: number;
@@ -229,13 +230,13 @@ export default function BannersTable({ bannerData }: BannerDataTableProps) {
   });
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center my-2">
+    <Card className="w-full px-6 py-4">
+      <div className="flex justify-between items-center mb-2">
         {/* 테이블 헤더 카테고리 */}
         <div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="custom" className="ml-auto ">
+              <Button variant="outline" className="ml-auto ">
                 항목 <ChevronDown />
               </Button>
             </DropdownMenuTrigger>
@@ -309,6 +310,6 @@ export default function BannersTable({ bannerData }: BannerDataTableProps) {
         </div>
         <div className="space-x-2"></div>
       </div>
-    </div>
+    </Card>
   );
 }

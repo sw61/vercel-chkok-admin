@@ -14,6 +14,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { useState } from "react";
 
 export function NavMain({
   items,
@@ -29,19 +30,25 @@ export function NavMain({
     }[];
   }[];
 }) {
+  const [isActivate, setIsActivate] = useState(false);
+  const handleActivate = () => {
+    setIsActivate(!isActivate);
+  };
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>데이터 목록</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
-            <SidebarMenuItem className="py-1">
-              <SidebarMenuButton asChild tooltip={item.title} className=" hover:bg-ck-blue-500 hover:text-white">
-                <a href={item.url}>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip={item.title}>
+                <a href={item.url} className="py-5">
                   <item.icon />
-                  <span className="ck-body-2 ">{item.title}</span>
+                  <span className="ck-body-2">{item.title}</span>
                 </a>
               </SidebarMenuButton>
+
               {item.items?.length ? (
                 <>
                   <CollapsibleTrigger asChild>

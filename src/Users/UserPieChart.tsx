@@ -96,19 +96,19 @@ export function UserPieChart() {
       label: "Visitors",
     },
     client: {
-      label: "Client",
+      label: "클라이언트",
       color: "var(--chart-2)",
     },
     userCount: {
-      label: "UserCount",
+      label: "일반 사용자",
       color: "var(--chart-3)",
     },
     active: {
-      label: "Active",
+      label: "활성화 계정",
       color: "var(--chart-4)",
     },
     inactive: {
-      label: "InActive",
+      label: "비활성화 계정",
       color: "var(--chart-5)",
     },
   } satisfies ChartConfig;
@@ -122,7 +122,7 @@ export function UserPieChart() {
         <CardContent className="flex-1 pb-0">
           <ChartContainer
             config={chartConfig}
-            className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square max-h-[250px] pb-0"
+            className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square max-h-[300px] pb-0"
           >
             <PieChart>
               <ChartTooltip content={<ChartTooltipContent hideLabel />} />

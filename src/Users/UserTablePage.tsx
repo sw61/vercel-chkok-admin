@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronDown } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 interface User {
   id: number;
@@ -102,13 +103,13 @@ export default function UserTablePage() {
   };
 
   return (
-    <>
+    <Card className="px-6 py-4">
       <div className="flex justify-between items-center mb-2">
         <div>
           {/* 테이블 헤더 카테고리 */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="custom" className="ml-auto">
+              <Button variant="outline" className="ml-auto">
                 항목 <ChevronDown />
               </Button>
             </DropdownMenuTrigger>
@@ -161,6 +162,6 @@ export default function UserTablePage() {
           <PaginationDemo pageData={pageData} onPageChange={handlePageChange} />
         </>
       )}
-    </>
+    </Card>
   );
 }
