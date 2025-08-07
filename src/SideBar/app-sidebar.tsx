@@ -1,9 +1,9 @@
 import * as React from "react";
-import { BookOpen, Frame, LifeBuoy, Map, PieChart, Send, UserRound, Earth } from "lucide-react";
+import { BookOpen, Frame, BadgeCheck, Map, PieChart, UserRound, Earth } from "lucide-react";
 
 import { NavMain } from "@/SideBar/nav-main";
 // import { NavProjects } from "@/SideBar/nav-projects";
-// import { NavSecondary } from "@/SideBar/nav-secondary";
+import { NavSecondary } from "@/SideBar/nav-secondary";
 import { NavUser } from "@/SideBar/nav-user";
 import {
   Sidebar,
@@ -14,6 +14,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
 
 const data = {
   user: {
@@ -40,14 +41,9 @@ const data = {
   ],
   navSecondary: [
     {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
+      title: "관리자 계정 설정",
+      url: "/admin",
+      icon: BadgeCheck,
     },
   ],
   projects: [
@@ -83,11 +79,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent>
         <NavMain items={data.navMain} />
         {/* <NavProjects projects={data.projects} /> */}
-        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
+        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
+      <Separator />
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>
