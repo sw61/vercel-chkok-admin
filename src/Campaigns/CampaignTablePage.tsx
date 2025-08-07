@@ -119,7 +119,7 @@ export default function CampaignTablePage() {
         <div className="flex gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
+              <Button variant="custom">
                 {currentLabel}
                 <ChevronDown />
               </Button>
@@ -138,7 +138,7 @@ export default function CampaignTablePage() {
           </DropdownMenu>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
+              <Button variant="custom">
                 항목 <ChevronDown />
               </Button>
             </DropdownMenuTrigger>

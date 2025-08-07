@@ -235,7 +235,7 @@ export default function BannersTable({ bannerData }: BannerDataTableProps) {
         <div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto ">
+              <Button variant="custom" className="ml-auto ">
                 항목 <ChevronDown />
               </Button>
             </DropdownMenuTrigger>

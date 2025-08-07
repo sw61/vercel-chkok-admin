@@ -35,11 +35,11 @@ export function NavMain({
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip={item.title}>
+            <SidebarMenuItem className="py-1">
+              <SidebarMenuButton asChild tooltip={item.title} className=" hover:bg-ck-blue-500 hover:text-white">
                 <a href={item.url}>
                   <item.icon />
-                  <span className="ck-body-2">{item.title}</span>
+                  <span className="ck-body-2 ">{item.title}</span>
                 </a>
               </SidebarMenuButton>
               {item.items?.length ? (
