@@ -286,6 +286,7 @@ export function CampaignTable({
           {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s)
           selected.
         </div>
+        <div className="space-x-2"></div>
       </div>
     </div>
   );
