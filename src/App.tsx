@@ -36,7 +36,7 @@ function App() {
             ></Route>
             {/* 사용자 테이블 페이지 */}
             <Route
-              path="/userTable"
+              path="/users"
               element={
                 <PrivateComponent>
                   <UserTablePage />
