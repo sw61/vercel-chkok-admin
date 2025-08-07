@@ -6,10 +6,7 @@ import PulseLoader from "react-spinners/PulseLoader";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
-import {
-  type ColumnFiltersState,
-  type VisibilityState,
-} from "@tanstack/react-table";
+import { type ColumnFiltersState, type VisibilityState } from "@tanstack/react-table";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -22,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronDown } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 interface User {
   id: number;
@@ -63,9 +61,7 @@ export default function UserTablePage() {
   const getUserTable = async (page: number = 0) => {
     setIsLoading(true);
     try {
-      const response = await axiosInterceptor.get(
-        `/users?page=${page}&size=10`
-      );
+      const response = await axiosInterceptor.get(`/users?page=${page}&size=10`);
       const data = response.data.data;
       setUserData(data.content);
       setPageData(data.pagination);
@@ -107,7 +103,7 @@ export default function UserTablePage() {
   };
 
   return (
-    <>
+    <Card className="px-6 py-4">
       <div className="flex justify-between items-center mb-2">
         <div>
           {/* 테이블 헤더 카테고리 */}
@@ -139,10 +135,7 @@ export default function UserTablePage() {
         {/* 검색창 */}
         <Input
           placeholder="사용자 이름 검색"
-          value={
-            (columnFilters.find((f) => f.id === "nickname")?.value as string) ??
-            ""
-          }
+          value={(columnFilters.find((f) => f.id === "nickname")?.value as string) ?? ""}
           onChange={(event) =>
             setColumnFilters((prev) => [
               ...prev.filter((f) => f.id !== "nickname"),
@@ -169,6 +162,6 @@ export default function UserTablePage() {
           <PaginationDemo pageData={pageData} onPageChange={handlePageChange} />
         </>
       )}
-    </>
+    </Card>
   );
 }

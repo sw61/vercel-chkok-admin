@@ -1,14 +1,5 @@
 import * as React from "react";
-import {
-  BookOpen,
-  Frame,
-  LifeBuoy,
-  Map,
-  PieChart,
-  Send,
-  UserRound,
-  Earth,
-} from "lucide-react";
+import { BookOpen, Frame, LifeBuoy, Map, PieChart, Send, UserRound, Earth } from "lucide-react";
 
 import { NavMain } from "@/SideBar/nav-main";
 // import { NavProjects } from "@/SideBar/nav-projects";
@@ -80,23 +71,13 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar
-      className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
-      {...props}
-    >
+    <Sidebar className="top-(--header-height) h-[calc(100svh-var(--header-height))]!" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="/">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square w-32 h-32 items-center justify-center rounded-lg">
-                  <img src="../src/Image/chkokLogo.png"></img>
-                </div>
-
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">체험콕</span>
-                  <span className="truncate text-xs">관리자 페이지</span>
-                </div>
+                <img src="../src/Image/chkokLogo.png"></img>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -98,16 +98,12 @@ export default function CampaignDetail() {
     {
       key: "approvalDate",
       label: "처리일",
-      value: campaignData?.approvalDate
-        ? campaignData.approvalDate.split("T")[0]
-        : "정보 없음",
+      value: campaignData?.approvalDate ? campaignData.approvalDate.split("T")[0] : "정보 없음",
     },
     {
       key: "createdAt",
       label: "생성일",
-      value: campaignData?.createdAt
-        ? campaignData.createdAt.split("T")[0]
-        : "정보 없음",
+      value: campaignData?.createdAt ? campaignData.createdAt.split("T")[0] : "정보 없음",
     },
     {
       key: "reviewDeadlineDate",
@@ -185,15 +181,10 @@ export default function CampaignDetail() {
     const isValidUrl = typeof value === "string" && value !== "정보 없음";
     return (
       <CardContent className="flex flex-col gap-2">
-        <p className="text-sm font-semibold">{label}</p>
-        <div className="px-3 py-2 text-sm font-normal text-gray-900 bg-transparent border border-gray-300 rounded-md px-3 py-2">
+        <p className="ck-body-2-bold">{label}</p>
+        <div className="px-3 py-2 ck-body-2 bg-transparent border border-ck-gray-300 rounded-md px-3 py-2">
           {isUrlField && isValidUrl ? (
-            <a
-              href={value as string}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline"
-            >
+            <a href={value as string} target="_blank" rel="noopener noreferrer" className="hover:underline ck-body-1">
               {value}
             </a>
           ) : (
@@ -221,13 +212,10 @@ export default function CampaignDetail() {
   const approveCampaign = async (id: number) => {
     if (window.confirm("캠페인을 승인하시겠습니까?")) {
       try {
-        const response = await axiosInterceptor.put(
-          `/campaigns/${id}/approval`,
-          {
-            approvalStatus: "APPROVED",
-            comment: "모든 조건을 만족하여 승인합니다.",
-          }
-        );
+        const response = await axiosInterceptor.put(`/campaigns/${id}/approval`, {
+          approvalStatus: "APPROVED",
+          comment: "모든 조건을 만족하여 승인합니다.",
+        });
         const updatedData = response.data.data;
         setCampaignData((prev) => ({ ...prev, ...updatedData }));
         toast.success("캠페인이 승인되었습니다.");
@@ -243,13 +231,10 @@ export default function CampaignDetail() {
   const rejectCampaign = async (id: number) => {
     if (window.confirm("이 캠페인을 거절하시겠습니까?")) {
       try {
-        const response = await axiosInterceptor.put(
-          `/campaigns/${id}/approval`,
-          {
-            approvalStatus: "REJECTED",
-            comment: "조건을 만족하지 못하여 거절되었습니다.",
-          }
-        );
+        const response = await axiosInterceptor.put(`/campaigns/${id}/approval`, {
+          approvalStatus: "REJECTED",
+          comment: "조건을 만족하지 못하여 거절되었습니다.",
+        });
         const updatedData = response.data.data;
         setCampaignData((prev) => ({ ...prev, ...updatedData }));
         toast.success("캠페인이 거절되었습니다.");
@@ -280,17 +265,17 @@ export default function CampaignDetail() {
       {/* 캠페인 상세 정보 */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex justify-between font-bold text-lg">
-            <div className="flex items-center">캠페인 정보</div>
+          <CardTitle className="flex justify-between">
+            <div className="ck-sub-title-1 flex items-center">캠페인 정보</div>
             <div className="flex gap-4">
               <Button
-                className="cursor-pointer bg-blue-500 hover:bg-blue-600"
+                className="cursor-pointer ck-body-1 bg-ck-blue-500 hover:bg-ck-blue-600"
                 onClick={() => approveCampaign(campaignData.id)}
               >
                 승인
               </Button>
               <Button
-                className="cursor-pointer bg-red-500 hover:bg-red-600"
+                className="cursor-pointer ck-body-1 bg-red-500 hover:bg-red-600"
                 onClick={() => rejectCampaign(campaignData.id)}
               >
                 거절
@@ -299,12 +284,7 @@ export default function CampaignDetail() {
           </CardTitle>
         </CardHeader>
         {CampaignInfo().map((item) => (
-          <CampaignInfoComponent
-            key={item.key}
-            label={item.label}
-            value={item.value}
-            fieldKey={item.key}
-          />
+          <CampaignInfoComponent key={item.key} label={item.label} value={item.value} fieldKey={item.key} />
         ))}
       </Card>
 
@@ -312,17 +292,10 @@ export default function CampaignDetail() {
       {campaignData.creator && (
         <Card>
           <CardHeader>
-            <CardTitle className="font-bold text-lg flex items-center">
-              크리에이터 정보
-            </CardTitle>
+            <CardTitle className="ck-sub-title-1 flex items-center">크리에이터 정보</CardTitle>
           </CardHeader>
           {CreatorInfo().map((item) => (
-            <CampaignInfoComponent
-              key={item.key}
-              label={item.label}
-              value={item.value}
-              fieldKey={item.key}
-            />
+            <CampaignInfoComponent key={item.key} label={item.label} value={item.value} fieldKey={item.key} />
           ))}
         </Card>
       )}
@@ -331,15 +304,10 @@ export default function CampaignDetail() {
       {campaignData.company && (
         <Card>
           <CardHeader>
-            <CardTitle className="font-bold text-lg">회사 정보</CardTitle>
+            <CardTitle className="ck-sub-title-1">회사 정보</CardTitle>
           </CardHeader>
           {CompanyInfo().map((item) => (
-            <CampaignInfoComponent
-              key={item.key}
-              label={item.label}
-              value={item.value}
-              fieldKey={item.key}
-            />
+            <CampaignInfoComponent key={item.key} label={item.label} value={item.value} fieldKey={item.key} />
           ))}
         </Card>
       )}
