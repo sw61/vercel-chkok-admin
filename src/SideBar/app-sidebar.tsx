@@ -25,7 +25,7 @@ const data = {
   navMain: [
     {
       title: "사용자 목록",
-      url: "/userTable",
+      url: "/users",
       icon: UserRound,
     },
     {
