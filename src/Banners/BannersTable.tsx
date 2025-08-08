@@ -137,7 +137,11 @@ export default function BannersTable({ bannerData }: BannerDataTableProps) {
           <ArrowUpDown />
         </Button>
       ),
-      cell: ({ row }) => <div>{row.getValue("createdAt")}</div>,
+      cell: ({ row }) => {
+        const fullDate = row.getValue("createdAt") as string;
+        const dateOnly = typeof fullDate === "string" ? fullDate.split("T")[0] : "";
+        return <div>{dateOnly}</div>;
+      },
 
       meta: { label: "생성일" } as CustomColumnMeta,
     },
@@ -303,7 +307,7 @@ export default function BannersTable({ bannerData }: BannerDataTableProps) {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-2">
+      <div className="flex items-center justify-end space-x-2">
         <div className="flex-1 ck-caption-1 text-ck-gray-600">
           {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s)
           selected.

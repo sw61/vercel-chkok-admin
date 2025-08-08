@@ -15,6 +15,7 @@ interface BannerData {
   position: string;
   createdAt: string;
   updatedAt: string;
+  displayOrder: number;
 }
 
 export default function BannersTablePage() {

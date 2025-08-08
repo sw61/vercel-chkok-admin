@@ -31,7 +31,7 @@ interface Campaign {
   id: number;
   title: string;
   campaignType: string;
-  approvalStatus: string;
+  approvalStatus: "APPROVED" | "REJECTED" | "PENDING" | string;
   approvalComment: string;
   approvalDate: string;
   createdAt: string;
@@ -49,7 +49,7 @@ interface CampaignDataTableProps {
   setColumnVisibility: React.Dispatch<React.SetStateAction<VisibilityState>>;
 }
 
-const columns: ColumnDef<Campaign, unknown>[] = [
+const columns: ColumnDef<Campaign>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -130,7 +130,15 @@ const columns: ColumnDef<Campaign, unknown>[] = [
         <ArrowUpDown />
       </Button>
     ),
-    cell: ({ row }) => <div>{row.getValue("approvalStatus")}</div>,
+    cell: ({ row }) => {
+      const statusMap: Record<string, string> = {
+        APPROVED: "승인됨",
+        REJECTED: "거절됨",
+        PENDING: "대기중",
+      };
+      const status = row.getValue("approvalStatus") as string;
+      return <div>{statusMap[status] || "알 수 없음"}</div>;
+    },
     meta: { label: "처리 상태" } as CustomColumnMeta,
   },
   {
@@ -286,7 +294,6 @@ export function CampaignTable({
           {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s)
           selected.
         </div>
-        <div className="space-x-2"></div>
       </div>
     </div>
   );
