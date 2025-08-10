@@ -143,7 +143,7 @@ export default function UserDetail() {
     if (window.confirm("사용자를 삭제하시겠습니까? (주의 : 이 작업은 되돌릴 수 없습니다)")) {
       try {
         const response = await axiosInterceptor.delete(`/users/${id}`);
-        navigate("/userTable");
+        navigate("/users");
         console.log(response);
         toast.success("사용자가 삭제되었습니다.");
       } catch (error) {
@@ -180,6 +180,11 @@ export default function UserDetail() {
       console.log(error);
     }
   };
+  const genderMap: Record<string, string> = {
+    UNKNOWN: "비공개",
+    MALE: "남성",
+    FEMALE: "여성",
+  };
 
   useEffect(() => {
     if (userId) {
@@ -208,7 +213,7 @@ export default function UserDetail() {
             <div className="flex flex-col justify-center gap-4">
               <div className="flex flex-col gap-4 font-semibold">
                 <div className="ck-body-1-bold">
-                  {userData.nickname} ({userData.gender ? userData.gender : "남성"},{" "}
+                  {userData.nickname} ({genderMap[userData.gender] || "알 수 없음"},{" "}
                   {userData.age ? userData.age : "나이"})
                 </div>
                 <div className="ck-body-1">{userData.email}</div>
@@ -233,14 +238,18 @@ export default function UserDetail() {
                   <Delete />
                   사용자 삭제
                 </Button>
-                <Button
-                  className="cursor-pointer ck-body-1 flex items-center border "
-                  onClick={() => userToClient(userData.id)}
-                  variant="outline"
-                >
-                  <ArrowUpNarrowWide />
-                  클라이언트 승급
-                </Button>
+                {userData.role === "USER" ? (
+                  <Button
+                    className="cursor-pointer ck-body-1 flex items-center border "
+                    onClick={() => userToClient(userData.id)}
+                    variant="outline"
+                  >
+                    <ArrowUpNarrowWide />
+                    클라이언트 승급
+                  </Button>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
           </div>
