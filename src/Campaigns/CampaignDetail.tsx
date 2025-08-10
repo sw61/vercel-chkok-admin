@@ -269,14 +269,16 @@ export default function CampaignDetail() {
             <div className="ck-sub-title-1 flex items-center">캠페인 정보</div>
             <div className="flex gap-4">
               <Button
-                className="cursor-pointer ck-body-1 bg-ck-blue-500 hover:bg-ck-blue-600"
+                className="cursor-pointer ck-body-1 hover:bg-ck-blue-500 hover:text-white"
                 onClick={() => approveCampaign(campaignData.id)}
+                variant="outline"
               >
                 승인
               </Button>
               <Button
-                className="cursor-pointer ck-body-1 bg-red-500 hover:bg-red-600"
+                className="cursor-pointer ck-body-1 hover:bg-ck-red-500 hover:text-white"
                 onClick={() => rejectCampaign(campaignData.id)}
+                variant="outline"
               >
                 거절
               </Button>

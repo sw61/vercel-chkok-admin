@@ -87,7 +87,6 @@ export default function BannersDetail() {
       const response = await axiosInterceptor.get(`/api/banners/${id}`);
       const data = response.data.data;
       setBannerData(data);
-      console.log(data);
       // 폼 데이터 초기화
       setEditBannerData({
         title: data.title || "",
@@ -200,42 +199,49 @@ export default function BannersDetail() {
       <Card>
         <CardHeader>
           <CardTitle className="flex justify-between">
-            <div className="ck-sub-title-1 flex items-center">배너 정보</div>
-            <div className="flex gap-4 ">
-              {isEditing ? (
-                <>
+            {isEditing ? (
+              <>
+                <div className="ck-title flex items-center">배너 수정</div>
+                <div className="flex gap-4 ">
                   <Button
                     onClick={() => editBanners(bannerData.id)}
-                    className="cursor-pointer ck-body-1 bg-ck-blue-500 hover:bg-ck-blue-600"
+                    className="cursor-pointer ck-body-1 hover:bg-ck-blue-500 hover:text-white"
+                    variant="outline"
                   >
                     저장
                   </Button>
                   <Button
                     onClick={toggleEditMode}
-                    className="cursor-pointer ck-body-1 bg-ck-gray-600 hover:bg-ck-gray-700"
+                    className="cursor-pointer ck-body-1 hover:bg-ck-gray-600 hover:text-white"
+                    variant="outline"
                   >
                     취소
                   </Button>
-                </>
-              ) : (
-                <>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="ck-title flex items-center">배너 정보</div>
+                <div className="flex gap-4">
                   <Button
                     onClick={toggleEditMode}
-                    className="cursor-pointer ck-body-1 bg-ck-blue-500 hover:bg-ck-blue-600"
+                    className="cursor-pointer ck-body-1 hover:bg-ck-blue-500 hover:text-white"
+                    variant="outline"
                   >
                     <Pencil />
                     수정
                   </Button>
                   <Button
                     onClick={() => deleteBanners(bannerData.id)}
-                    className="cursor-pointer ck-body-1 bg-ck-red-500 hover:bg-ck-red-600"
+                    className="cursor-pointer ck-body-1 hover:bg-ck-red-500 hover:text-white"
+                    variant="outline"
                   >
                     <Delete />
                     삭제
                   </Button>
-                </>
-              )}
-            </div>
+                </div>
+              </>
+            )}
           </CardTitle>
         </CardHeader>
         {isEditing ? (

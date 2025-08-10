@@ -86,7 +86,7 @@ export function CamapaignPieChart() {
     {
       status: "rejected",
       visitors: campaignStatus?.rejectedCampaigns,
-      fill: "#FB2C36",
+      fill: "#FF6467",
     },
   ];
   const chartConfig = {

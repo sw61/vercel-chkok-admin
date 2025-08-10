@@ -1,5 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { HashIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface BannerData {
@@ -50,7 +51,7 @@ const Item = ({ banner }: ItemProps) => {
           </div>
           <div className="flex items-center ck-body-1">
             <span className="flex items-center justify-center w-12 h-10 bg-ck-blue-500 text-white rounded-full">
-              {banner.displayOrder}
+              # {banner.displayOrder}
             </span>
           </div>
         </div>

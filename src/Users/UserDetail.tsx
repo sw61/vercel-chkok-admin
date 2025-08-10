@@ -132,7 +132,7 @@ export default function UserDetail() {
       const response = await axiosInterceptor.put(`/users/${id}/status`);
       const updatedData = response.data.data;
       setUserData((prev) => ({ ...prev, ...updatedData }));
-      alert(response.data.message);
+      toast.success(response.data.message);
     } catch (error) {
       console.log(error);
       toast.error("상태 변경에 실패했습니다.");
@@ -217,25 +217,26 @@ export default function UserDetail() {
               <div className="flex gap-4">
                 <Button
                   className={`cursor-pointer ck-body-1 flex items-center gap-2 px-4 py-2 rounded-md border transition-colors ${
-                    userData.active
-                      ? "bg-ck-red-500 hover:bg-ck-red-600 text-white"
-                      : "bg-ck-blue-500 hover:bg-ck-blue-600 text-white"
+                    userData.active ? "hover:bg-ck-red-500 hover:text-white" : "hover:bg-ck-blue-500 hover:text-white"
                   } `}
                   onClick={() => putUserStatus(userData.id)}
+                  variant="outline"
                 >
                   {userData.active ? <PowerOff /> : <Power />}
                   {userData.active ? "비활성화" : "활성화"}
                 </Button>
                 <Button
-                  className="cursor-pointer ck-body-1 flex items-center border bg-ck-red-500 hover:bg-ck-red-600"
+                  className="cursor-pointer ck-body-1 flex items-center border hover:bg-ck-red-500 hover:text-white"
                   onClick={() => deleteUser(userData.id)}
+                  variant="outline"
                 >
                   <Delete />
                   사용자 삭제
                 </Button>
                 <Button
-                  className="cursor-pointer ck-body-1 flex items-center border bg-ck-blue-500 hover:bg-ck-blue-600"
+                  className="cursor-pointer ck-body-1 flex items-center border "
                   onClick={() => userToClient(userData.id)}
+                  variant="outline"
                 >
                   <ArrowUpNarrowWide />
                   클라이언트 승급
@@ -254,7 +255,7 @@ export default function UserDetail() {
           ))}
           <CardContent className="flex flex-col gap-2">
             <p className="ck-body-2-bold">사용자 메모</p>
-            <div className="px-3 py-2 ck-body-2 bg-transparent border border-ck-gray-300 rounded-md">
+            <div className="px-3 py-2 ck-body-2 bg-transparent border border-ck-gray-300 rounded-md mb-2">
               {userData.memo ? userData.memo : "내용이 없습니다."}
             </div>
             {!hideMemo && (
