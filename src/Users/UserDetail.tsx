@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
-import { Delete, Power, PowerOff, Pencil } from "lucide-react";
+import { Delete, Power, PowerOff, Pencil, ArrowUpNarrowWide } from "lucide-react";
 
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
@@ -170,6 +170,16 @@ export default function UserDetail() {
       console.log(error);
     }
   };
+  // 사용자 USER -> Client 승급
+  const userToClient = async (id: number) => {
+    try {
+      const response = await axiosInterceptor.put(`/users/${id}/promote-to-client`);
+      const data = response.data.data;
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     if (userId) {
@@ -222,6 +232,13 @@ export default function UserDetail() {
                 >
                   <Delete />
                   사용자 삭제
+                </Button>
+                <Button
+                  className="cursor-pointer ck-body-1 flex items-center border bg-ck-blue-500 hover:bg-ck-blue-600"
+                  onClick={() => userToClient(userData.id)}
+                >
+                  <ArrowUpNarrowWide />
+                  클라이언트 승급
                 </Button>
               </div>
             </div>
