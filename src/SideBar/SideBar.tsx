@@ -14,7 +14,7 @@ export default function SideBar() {
         <div className="flex flex-1">
           <AppSidebar />
           <SidebarInset>
-            <div className="p-8 min-h-[100vh] flex-1 rounded-xl md:min-h-min">
+            <div className="p-8 flex-1 md:min-h-min">
               <Outlet />
             </div>
           </SidebarInset>

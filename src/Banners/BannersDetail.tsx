@@ -1,13 +1,12 @@
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // useNavigate 추가
+import { useParams, useNavigate } from "react-router-dom";
 import PulseLoader from "react-spinners/PulseLoader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input"; // Input 컴포넌트 추가
-
+import { Input } from "@/components/ui/input";
 import { Pencil, Delete } from "lucide-react";
-import { toast } from "react-toastify"; // toast 추가
+import { toast } from "react-toastify";
 
 interface BannerData {
   id: number;
@@ -18,6 +17,7 @@ interface BannerData {
   position: string;
   createdAt: string;
   updatedAt: string;
+  displayOrder: number;
 }
 
 interface BannerInfo {
@@ -28,54 +28,56 @@ interface BannerInfo {
 
 export default function BannersDetail() {
   const { bannerId } = useParams<{ bannerId: string }>();
-  const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate
+  const navigate = useNavigate();
   const [bannerData, setBannerData] = useState<BannerData | null>(null);
-  const [isEditing, setIsEditing] = useState(false); // 수정 모드 상태
+  const [isEditing, setIsEditing] = useState(false);
   const [editBannerData, setEditBannerData] = useState({
     title: "",
     bannerUrl: "",
     redirectUrl: "",
     description: "",
     position: "",
+    displayOrder: "",
   });
 
   // 배너 정보 표시
   const BannerInfo = (): BannerInfo[] => [
-    { key: "id", label: "ID", value: bannerData?.id ?? "정보 없음" },
+    { key: "id", label: "ID", value: bannerData?.id },
+    { key: "displayOrder", label: "배너 순서 번호", value: bannerData?.displayOrder },
     {
       key: "title",
       label: "배너 이름",
-      value: bannerData?.title || bannerData?.title === "" ? "정보 없음" : bannerData?.title,
+      value: bannerData?.title,
     },
     {
       key: "position",
       label: "배너 위치",
-      value: bannerData?.position || bannerData?.position === "" ? "정보 없음" : bannerData?.position,
-    },
-    {
-      key: "bannerUrl",
-      label: "배너 URL",
-      value: bannerData?.bannerUrl || bannerData?.bannerUrl === "" ? "정보 없음" : bannerData?.bannerUrl,
-    },
-    {
-      key: "redirectUrl",
-      label: "Redirect URL",
-      value: bannerData?.redirectUrl || bannerData?.redirectUrl === "" ? "정보 없음" : bannerData?.redirectUrl,
-    },
-    {
-      key: "createdAt",
-      label: "생성일",
-      value: bannerData?.createdAt ? bannerData.createdAt.split("T")[0] : "정보 없음",
-    },
-    {
-      key: "updatedAt",
-      label: "업데이트일",
-      value: bannerData?.updatedAt ? bannerData.updatedAt.split("T")[0] : "정보 없음",
+      value: bannerData?.position,
     },
     {
       key: "description",
       label: "설명",
-      value: bannerData?.description || bannerData?.description === "" ? "정보 없음" : bannerData?.description,
+      value: bannerData?.description,
+    },
+    {
+      key: "createdAt",
+      label: "생성일",
+      value: bannerData?.createdAt.split("T")[0],
+    },
+    {
+      key: "updatedAt",
+      label: "업데이트일",
+      value: bannerData?.updatedAt.split("T")[0],
+    },
+    {
+      key: "bannerUrl",
+      label: "배너 URL",
+      value: bannerData?.bannerUrl,
+    },
+    {
+      key: "redirectUrl",
+      label: "Redirect URL",
+      value: bannerData?.redirectUrl,
     },
   ];
 
@@ -92,6 +94,7 @@ export default function BannersDetail() {
         redirectUrl: data.redirectUrl || "",
         description: data.description || "",
         position: data.position || "",
+        displayOrder: data.displayOrder || "",
       });
     } catch (error) {
       console.error("배너 상세 조회 중 오류 발생:", error);
@@ -109,16 +112,17 @@ export default function BannersDetail() {
         title: editBannerData.title,
         description: editBannerData.description,
         position: editBannerData.position,
+        displayOrder: editBannerData.displayOrder,
       });
       console.log("배너 수정 성공:", response);
       toast.success("배너가 성공적으로 수정되었습니다.");
 
-      await getBannerDetail(bannerId!); // 수정 후 데이터 갱신
+      await getBannerDetail(bannerId!);
     } catch (error) {
       console.error("배너 수정 중 오류 발생:", error);
       toast.error("배너 수정에 실패했습니다.");
     } finally {
-      setIsEditing(false); // 수정 모드 종료
+      setIsEditing(false);
     }
   };
 
@@ -129,7 +133,7 @@ export default function BannersDetail() {
         const response = await axiosInterceptor.delete(`/api/banners/${id}`);
         console.log("배너 삭제 성공:", response);
         toast.success("배너가 성공적으로 삭제되었습니다.");
-        navigate("/banners"); // 삭제 후 목록 페이지로 이동
+        navigate("/banners");
       } catch (error) {
         console.error("배너 삭제 중 오류 발생:", error);
         toast.error("배너 삭제에 실패했습니다.");
@@ -147,6 +151,7 @@ export default function BannersDetail() {
     setIsEditing(!isEditing);
   };
 
+  // 배너 상세 내용 컴포넌트
   const BannerInfoComponent = ({
     label,
     value,
@@ -195,42 +200,49 @@ export default function BannersDetail() {
       <Card>
         <CardHeader>
           <CardTitle className="flex justify-between">
-            <div className="ck-sub-title-1 flex items-center">배너 정보</div>
-            <div className="flex gap-4 ">
-              {isEditing ? (
-                <>
+            {isEditing ? (
+              <>
+                <div className="ck-title flex items-center">배너 수정</div>
+                <div className="flex gap-4 ">
                   <Button
                     onClick={() => editBanners(bannerData.id)}
-                    className="cursor-pointer ck-body-1 bg-ck-blue-500 hover:bg-ck-blue-600"
+                    className="cursor-pointer ck-body-1 hover:bg-ck-blue-500 hover:text-white"
+                    variant="outline"
                   >
                     저장
                   </Button>
                   <Button
                     onClick={toggleEditMode}
-                    className="cursor-pointer ck-body-1 bg-ck-gray-600 hover:bg-ck-gray-700"
+                    className="cursor-pointer ck-body-1 hover:bg-ck-gray-600 hover:text-white"
+                    variant="outline"
                   >
                     취소
                   </Button>
-                </>
-              ) : (
-                <>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="ck-title flex items-center">배너 정보</div>
+                <div className="flex gap-4">
                   <Button
                     onClick={toggleEditMode}
-                    className="cursor-pointer ck-body-1 bg-ck-blue-500 hover:bg-ck-blue-600"
+                    className="cursor-pointer ck-body-1 hover:bg-ck-blue-500 hover:text-white"
+                    variant="outline"
                   >
                     <Pencil />
                     수정
                   </Button>
                   <Button
                     onClick={() => deleteBanners(bannerData.id)}
-                    className="cursor-pointer ck-body-1 bg-ck-red-500 hover:bg-ck-red-600"
+                    className="cursor-pointer ck-body-1 hover:bg-ck-red-500 hover:text-white"
+                    variant="outline"
                   >
                     <Delete />
                     삭제
                   </Button>
-                </>
-              )}
-            </div>
+                </div>
+              </>
+            )}
           </CardTitle>
         </CardHeader>
         {isEditing ? (
@@ -287,6 +299,17 @@ export default function BannersDetail() {
                 value={editBannerData.position}
                 onChange={handleInputChange}
                 placeholder="배너 위치를 입력하세요"
+                className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="ck-body-2-bold">배너 순서</p>
+              <Input
+                id="displayOrder"
+                name="displayOrder"
+                value={editBannerData.displayOrder}
+                onChange={handleInputChange}
+                placeholder="배너 순서 번호를 입력하세요"
                 className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
               />
             </div>
