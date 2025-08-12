@@ -3,15 +3,7 @@ import { useState, useEffect, type ChangeEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import PulseLoader from "react-spinners/PulseLoader";
 
-import {
-  Card,
-  // CardAction,
-  CardContent,
-  // CardDescription,
-  // CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "react-toastify";
@@ -100,7 +92,6 @@ export default function UserDetail() {
       const userData = response.data.data;
       setUserData(userData);
       setUserMemo(userData.memo || "");
-      console.log(userData);
     } catch (error) {
       console.log(error);
       const axiosError = error as AxiosError;
@@ -172,12 +163,14 @@ export default function UserDetail() {
   };
   // 사용자 USER -> Client 승급
   const userToClient = async (id: number) => {
-    try {
-      const response = await axiosInterceptor.put(`/users/${id}/promote-to-client`);
-      const data = response.data.data;
-      console.log(data);
-    } catch (error) {
-      console.log(error);
+    if (window.confirm("클라이언트로 승급하시겠습니까?")) {
+      try {
+        await axiosInterceptor.put(`/users/${id}/promote-to-client`);
+        await getUserDetail(id.toString());
+        toast.success("클라이언트로 승급되었습니다.");
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
   const genderMap: Record<string, string> = {

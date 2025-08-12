@@ -1,9 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import logo from "../Image/mainLogo.png";
 import { Button } from "@/components/ui/button";
+import { House, ArrowBigLeft } from "lucide-react";
 
 export default function NotFoundPage() {
   const navigate = useNavigate();
+  const handleGoBack = () => {
+    window.history.back();
+  };
+
   return (
     <>
       <div className="flex flex-col w-full h-full  min-h-screen justify-center items-center gap-4">
@@ -15,9 +20,16 @@ export default function NotFoundPage() {
         </div>
 
         <img className="w-80 h-50 mt-10" src={logo}></img>
-        <Button className="ck-headline-1 cursor-pointer mt-10" onClick={() => navigate("/login")}>
-          홈으로
-        </Button>
+        <div className="flex gap-6">
+          <Button className="ck-headline-1 cursor-pointer mt-10" onClick={() => navigate("/login")}>
+            <House />
+            홈으로
+          </Button>
+          <Button className="ck-headline-1 cursor-pointer mt-10" onClick={handleGoBack}>
+            <ArrowBigLeft />
+            이전
+          </Button>
+        </div>
       </div>
     </>
   );

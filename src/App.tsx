@@ -8,7 +8,7 @@ import UserDetail from "./Users/UserDetail";
 import CampaignTablePage from "./Campaigns/CampaignTablePage";
 import CampaignDetail from "./Campaigns/CampaignDetail";
 import SideBar from "./SideBar/SideBar";
-import BannersTable from "./Banners/BannersTablePage";
+
 import AdminDetail from "./AdminAccount/AdminDetail";
 import BannersDragpage from "./Banners/BannersDragPage";
 import NotFoundPage from "./Pages/NotFoundPage";
@@ -102,15 +102,6 @@ function App() {
               }
             ></Route>
           </Route>
-          {/* 배너 테이블 페이지 */}
-          {/* <Route
-            path="/bannersTable"
-            element={
-              <PrivateComponent>
-                <BannersTable />
-              </PrivateComponent>
-            }
-          ></Route> */}
           {/* 로그인 페이지 */}
           <Route path="/login" element={<LoginForm />}></Route>
           <Route path="/*" element={<NotFoundPage />}></Route>
