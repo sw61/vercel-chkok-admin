@@ -151,6 +151,7 @@ export default function BannersDetail() {
     setIsEditing(!isEditing);
   };
 
+  // 배너 상세 내용 컴포넌트
   const BannerInfoComponent = ({
     label,
     value,
