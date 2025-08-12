@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import BannersTable from "./BannersTable";
 import PulseLoader from "react-spinners/PulseLoader";
+import { FolderInput } from "lucide-react";
 
 interface BannerData {
   id: number;
@@ -15,6 +16,7 @@ interface BannerData {
   position: string;
   createdAt: string;
   updatedAt: string;
+  displayOrder: number;
 }
 
 export default function BannersTablePage() {
@@ -116,6 +118,7 @@ export default function BannersTablePage() {
           className="ck-body-1 border-1 bg-ck-white text-ck-gray-900 hover:bg-ck-gray-300"
           onClick={handleFileSelect}
         >
+          <FolderInput />
           파일 선택
         </Button>
 

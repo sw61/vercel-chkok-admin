@@ -10,11 +10,13 @@ import CampaignDetail from "./Campaigns/CampaignDetail";
 import SideBar from "./SideBar/SideBar";
 import BannersTable from "./Banners/BannersTablePage";
 import AdminDetail from "./AdminAccount/AdminDetail";
+import BannersDragpage from "./Banners/BannersDragPage";
+import NotFoundPage from "./Pages/NotFoundPage";
 // ts file
 import { LoginForm } from "./auth/login-form";
 import { PrivateComponent } from "./auth/tokenCheck";
 // library
-import { Toaster } from "./components/ui/sonner";
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import BannersDetail from "./Banners/BannersDetail";
@@ -70,15 +72,16 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
-            {/* 배너 테이블 페이지 */}
+            {/* 배너 목록 페이지 */}
             <Route
               path="/banners"
               element={
                 <PrivateComponent>
-                  <BannersTable />
+                  <BannersDragpage />
                 </PrivateComponent>
               }
             ></Route>
+
             {/* 배너 상세 페이지 */}
             <Route
               path="/banners/:bannerId"
@@ -88,6 +91,7 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
+
             {/* 관리자 계정 페이지 */}
             <Route
               path="/admin"
@@ -98,8 +102,18 @@ function App() {
               }
             ></Route>
           </Route>
+          {/* 배너 테이블 페이지 */}
+          {/* <Route
+            path="/bannersTable"
+            element={
+              <PrivateComponent>
+                <BannersTable />
+              </PrivateComponent>
+            }
+          ></Route> */}
           {/* 로그인 페이지 */}
           <Route path="/login" element={<LoginForm />}></Route>
+          <Route path="/*" element={<NotFoundPage />}></Route>
         </Routes>
       </BrowserRouter>
       <ToastContainer /> {/* react-toast */}

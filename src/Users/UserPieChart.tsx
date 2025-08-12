@@ -88,7 +88,7 @@ export function UserPieChart() {
     {
       status: "inactive",
       visitors: userStatus?.inactiveUsers,
-      fill: "#FB2C36",
+      fill: "#FF6467",
     },
   ];
   const chartConfig = {
@@ -129,7 +129,7 @@ export function UserPieChart() {
               <Pie data={chartData} dataKey="visitors" label nameKey="status" />
               <ChartLegend
                 content={<ChartLegendContent nameKey="status" />}
-                className="-translate-y-2 flex-wrap gap-2 *:justify-center pt-5"
+                className="-translate-y-2 flex-wrap gap-2  *:justify-center pt-5"
               />
             </PieChart>
           </ChartContainer>

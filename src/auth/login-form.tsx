@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type KeyboardEvent } from "react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
             toast.error("이메일과 비밀번호는 필수입니다.");
             break;
           case 401:
-            toast.error("이메일 또는 비밀번호가 올바르지 않습니다.");
+            toast.error("잘못된 정보가 있어요");
             break;
           case 403:
             toast.error("관리자 권한이 필요합니다.");
@@ -46,6 +46,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       }
     } finally {
       setIsLoading(false);
+    }
+  };
+  const handleEnterLogin = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleLogin();
     }
   };
 
@@ -86,6 +91,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                     required
                     value={password}
                     onChange={handlePassword}
+                    onKeyDown={handleEnterLogin}
                     className="ck-body-2"
                   />
                 </div>

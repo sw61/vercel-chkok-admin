@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
-import { Delete, Power, PowerOff, Pencil } from "lucide-react";
+import { Delete, Power, PowerOff, Pencil, ArrowUpNarrowWide } from "lucide-react";
 
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
@@ -132,7 +132,7 @@ export default function UserDetail() {
       const response = await axiosInterceptor.put(`/users/${id}/status`);
       const updatedData = response.data.data;
       setUserData((prev) => ({ ...prev, ...updatedData }));
-      alert(response.data.message);
+      toast.success(response.data.message);
     } catch (error) {
       console.log(error);
       toast.error("상태 변경에 실패했습니다.");
@@ -143,7 +143,7 @@ export default function UserDetail() {
     if (window.confirm("사용자를 삭제하시겠습니까? (주의 : 이 작업은 되돌릴 수 없습니다)")) {
       try {
         const response = await axiosInterceptor.delete(`/users/${id}`);
-        navigate("/userTable");
+        navigate("/users");
         console.log(response);
         toast.success("사용자가 삭제되었습니다.");
       } catch (error) {
@@ -169,6 +169,21 @@ export default function UserDetail() {
       toast.error("메모 업데이트에 실패했습니다.");
       console.log(error);
     }
+  };
+  // 사용자 USER -> Client 승급
+  const userToClient = async (id: number) => {
+    try {
+      const response = await axiosInterceptor.put(`/users/${id}/promote-to-client`);
+      const data = response.data.data;
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const genderMap: Record<string, string> = {
+    UNKNOWN: "비공개",
+    MALE: "남성",
+    FEMALE: "여성",
   };
 
   useEffect(() => {
@@ -198,7 +213,7 @@ export default function UserDetail() {
             <div className="flex flex-col justify-center gap-4">
               <div className="flex flex-col gap-4 font-semibold">
                 <div className="ck-body-1-bold">
-                  {userData.nickname} ({userData.gender ? userData.gender : "남성"},{" "}
+                  {userData.nickname} ({genderMap[userData.gender] || "알 수 없음"},{" "}
                   {userData.age ? userData.age : "나이"})
                 </div>
                 <div className="ck-body-1">{userData.email}</div>
@@ -207,22 +222,34 @@ export default function UserDetail() {
               <div className="flex gap-4">
                 <Button
                   className={`cursor-pointer ck-body-1 flex items-center gap-2 px-4 py-2 rounded-md border transition-colors ${
-                    userData.active
-                      ? "bg-ck-red-500 hover:bg-ck-red-600 text-white"
-                      : "bg-ck-blue-500 hover:bg-ck-blue-600 text-white"
+                    userData.active ? "hover:bg-ck-red-500 hover:text-white" : "hover:bg-ck-blue-500 hover:text-white"
                   } `}
                   onClick={() => putUserStatus(userData.id)}
+                  variant="outline"
                 >
                   {userData.active ? <PowerOff /> : <Power />}
                   {userData.active ? "비활성화" : "활성화"}
                 </Button>
                 <Button
-                  className="cursor-pointer ck-body-1 flex items-center border bg-ck-red-500 hover:bg-ck-red-600"
+                  className="cursor-pointer ck-body-1 flex items-center border hover:bg-ck-red-500 hover:text-white"
                   onClick={() => deleteUser(userData.id)}
+                  variant="outline"
                 >
                   <Delete />
                   사용자 삭제
                 </Button>
+                {userData.role === "USER" ? (
+                  <Button
+                    className="cursor-pointer ck-body-1 flex items-center border "
+                    onClick={() => userToClient(userData.id)}
+                    variant="outline"
+                  >
+                    <ArrowUpNarrowWide />
+                    클라이언트 승급
+                  </Button>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
           </div>
@@ -237,7 +264,7 @@ export default function UserDetail() {
           ))}
           <CardContent className="flex flex-col gap-2">
             <p className="ck-body-2-bold">사용자 메모</p>
-            <div className="px-3 py-2 ck-body-2 bg-transparent border border-ck-gray-300 rounded-md">
+            <div className="px-3 py-2 ck-body-2 bg-transparent border border-ck-gray-300 rounded-md mb-2">
               {userData.memo ? userData.memo : "내용이 없습니다."}
             </div>
             {!hideMemo && (
