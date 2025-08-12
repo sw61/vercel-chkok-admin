@@ -193,7 +193,7 @@ export default function BannersDetail() {
       </div>
     );
   }
- //테스트
+
   return (
     <div className="grid grid-row gap-10">
       {/* 배너 상세 정보 */}
