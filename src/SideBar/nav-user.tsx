@@ -16,19 +16,62 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/c
 import { useLogout } from "@/auth/useLogout";
 import { useNavigate } from "react-router-dom";
 import appicon from "../Image/appicon.png";
+import { useState, useEffect } from "react";
+import axiosInterceptor from "@/lib/axios-interceptors";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+interface AdminData {
+  id: number;
+  name: string;
+  email: string;
+  accountType: string;
+  role: string;
+  createdAt: string;
+  lastLoginAt: string;
+  isActive: boolean;
+  loginCount: number;
+  thumbnailUrl: string;
+}
+
+export function NavUser() {
   const { isMobile } = useSidebar();
   const logout = useLogout();
   const navigate = useNavigate();
+  const [adminData, setAdminData] = useState<AdminData>();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getAdminData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInterceptor.get("/auth/me");
+      const data = response.data.data;
+      console.log(data);
+      setAdminData(data);
+    } catch (error) {
+      console.log(error);
+      alert(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAdminData();
+  }, []);
+  if (isLoading) {
+    return (
+      <div className="flex items-center">
+        <Skeleton className="h-8 w-8 rounded-full" />
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-[200px]" />
+          <Skeleton className="h-4 w-[200px]" />
+        </div>
+      </div>
+    );
+  }
+  if (!adminData) {
+    return <div>데이터가 없습니다.</div>;
+  }
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -39,18 +82,18 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-full">
-                <AvatarImage src="../src/Image/appicon.png" alt={user.name} />
-                <AvatarFallback>User</AvatarFallback>
+                <AvatarImage src="../src/Image/appicon.png" alt={adminData.name} />
+                <AvatarFallback>Admin</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate ck-body-2-bold">{user.name}</span>
-                <span className="truncate ck-caption-2">{user.email}</span>
+                <span className="truncate ck-body-2-bold">{adminData.name}</span>
+                <span className="truncate ck-caption-2">{adminData.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
@@ -58,12 +101,12 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={appicon} alt={user.name} />
+                  <AvatarImage src={appicon} alt={adminData.name} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate ck-body-2-bold">{user.name}</span>
-                  <span className="truncate ck-caption-2">{user.email}</span>
+                  <span className="truncate ck-body-2-bold">{adminData.name}</span>
+                  <span className="truncate ck-caption-2">{adminData.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
