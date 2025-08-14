@@ -10,7 +10,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "@/components/ui/sidebar";
 import { useLogout } from "@/auth/useLogout";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -64,9 +69,12 @@ export function NavUser() {
 
   if (error || !adminData) {
     return (
-      <div className="text-red-500 text-sm p-2">
+      <div className="p-2 text-sm text-red-500">
         {error ? error.message : "데이터를 불러올 수 없습니다."}
-        <button onClick={() => window.location.reload()} className="ml-2 text-blue-500 underline">
+        <button
+          onClick={() => window.location.reload()}
+          className="ml-2 text-blue-500 underline"
+        >
           재시도
         </button>
       </div>
@@ -83,12 +91,17 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground transition-all duration-200"
             >
               <Avatar className="h-8 w-8 rounded-full">
-                <AvatarImage src={adminData.thumbnailUrl || appicon} alt={adminData.name} />
+                <AvatarImage
+                  src={adminData.thumbnailUrl || appicon}
+                  alt={adminData.name}
+                />
                 <AvatarFallback>Admin</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate ck-body-2-bold">{adminData.name}</span>
-                <span className="truncate ck-caption-2">{adminData.email}</span>
+                <span className="ck-body-2-bold truncate">
+                  {adminData.name}
+                </span>
+                <span className="ck-caption-2 truncate">{adminData.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -102,12 +115,19 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={adminData.thumbnailUrl || appicon} alt={adminData.name} />
+                  <AvatarImage
+                    src={adminData.thumbnailUrl || appicon}
+                    alt={adminData.name}
+                  />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate ck-body-2-bold">{adminData.name}</span>
-                  <span className="truncate ck-caption-2">{adminData.email}</span>
+                  <span className="ck-body-2-bold truncate">
+                    {adminData.name}
+                  </span>
+                  <span className="ck-caption-2 truncate">
+                    {adminData.email}
+                  </span>
                 </div>
               </div>
             </DropdownMenuLabel>

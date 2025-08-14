@@ -76,11 +76,19 @@ export default function AdminDetail() {
     },
   ];
 
-  const AdminInfoComponent = ({ label, value }: { label: string; value: string | number | boolean | undefined }) => {
+  const AdminInfoComponent = ({
+    label,
+    value,
+  }: {
+    label: string;
+    value: string | number | boolean | undefined;
+  }) => {
     return (
       <CardContent className="flex flex-col gap-2">
-        <p className="ck-body-2-bold ">{label}</p>
-        <div className="px-3 py-2 ck-body-2 bg-transparent border border-ck-gray-300 rounded-md">{value}</div>
+        <p className="ck-body-2-bold">{label}</p>
+        <div className="ck-body-2 border-ck-gray-300 rounded-md border bg-transparent px-3 py-2">
+          {value}
+        </div>
       </CardContent>
     );
   };
@@ -104,7 +112,7 @@ export default function AdminDetail() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <PulseLoader />
       </div>
     );
@@ -112,9 +120,9 @@ export default function AdminDetail() {
 
   return (
     <>
-      <div className="grid grid-row gap-10">
+      <div className="grid-row grid gap-10">
         <div className="flex gap-8">
-          <Avatar className="w-40 h-40">
+          <Avatar className="h-40 w-40">
             <AvatarImage src="../src/Image/appicon.png" alt="관리자 프로필" />
             <AvatarFallback></AvatarFallback>
           </Avatar>
@@ -132,10 +140,16 @@ export default function AdminDetail() {
         {/* 관리자 계정 정보 */}
         <Card>
           <CardHeader>
-            <CardTitle className="ck-sub-title-1 flex items-center">관리자 계정 정보</CardTitle>
+            <CardTitle className="ck-sub-title-1 flex items-center">
+              관리자 계정 정보
+            </CardTitle>
           </CardHeader>
           {AdminAccountInfo().map((item) => (
-            <AdminInfoComponent key={item.key} label={item.label} value={item.value} />
+            <AdminInfoComponent
+              key={item.key}
+              label={item.label}
+              value={item.value}
+            />
           ))}
         </Card>
       </div>
