@@ -13,57 +13,54 @@ import {
 } from "@/components/ui/chart";
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import PulseLoader from "react-spinners/PulseLoader";
-import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
 export const description = "A pie chart with a label";
 interface Status {
-  totalCampaigns: number;
-  pendingCampaigns: number;
-  approvedCampaigns: number;
-  rejectedCampaigns: number;
+  totalUsers: number; // 등록된 전체 사용자 수
+  clientCount: number; // Client 권한 가진 사용자 수
+  userCount: number; // USER 권한 가진 사용자 수
+  activeUsers: number; // 활성화 상태인 사용자 수
+  inactiveUsers: number; // 비활성화 상태인 사용자 수
 }
 
-export function CamapaignPieChart() {
-  const [campaignStatus, setCampaignStatus] = useState<Status | null>(null);
+export function UserPieChartCount() {
+  const [userStatus, setUserStatus] = useState<Status | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const getCampaignStatus = async () => {
+
+  const getUserStatus = async () => {
     try {
       setIsLoading(true);
-      const response = await axiosInterceptor.get(`/campaigns/stats`);
-      const campaignStatus = response.data.data;
-      setCampaignStatus(campaignStatus);
+      const response = await axiosInterceptor.get(`/users/stats`);
+      const userStatus = response.data.data;
+      setUserStatus(userStatus);
       setIsLoading(false);
     } catch (error) {
+      console.log(error);
       const axiosError = error as AxiosError;
       if (axiosError.response) {
         switch (axiosError.response.status) {
-          case 400:
-            toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
-            break;
           case 401:
             toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
             navigate("/login");
             break;
           case 403:
-            toast.error("접근 권한이 없습니다.");
-            navigate("/login");
+            toast.error("사용자 통계 조회는 관리자만 가능합니다.");
             break;
-          case 404:
-            toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");
-            break;
+
           case 500:
-            toast.error("서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
+            toast.error("사용자 통계 조회 실패 : 데이터베이스 연결 오류.");
             break;
         }
       }
     }
   };
   useEffect(() => {
-    getCampaignStatus();
+    getUserStatus();
   }, []);
   if (isLoading) {
     return (
@@ -74,35 +71,26 @@ export function CamapaignPieChart() {
   }
   const chartData = [
     {
-      status: "pending",
-      visitors: campaignStatus?.pendingCampaigns,
-      fill: "#FBC02D",
-    },
-    {
-      status: "approved",
-      visitors: campaignStatus?.approvedCampaigns,
+      status: "client",
+      visitors: userStatus?.clientCount,
       fill: "#2388FF",
     },
     {
-      status: "rejected",
-      visitors: campaignStatus?.rejectedCampaigns,
-      fill: "#FB2C36",
+      status: "userCount",
+      visitors: userStatus?.userCount,
+      fill: "#86ABFF",
     },
   ];
   const chartConfig = {
     visitors: {
       label: "Visitors",
     },
-    pending: {
-      label: "대기중",
-      color: "var(--chart-1)",
-    },
-    approved: {
-      label: "승인됨",
+    client: {
+      label: "클라이언트",
       color: "var(--chart-2)",
     },
-    rejected: {
-      label: "거절됨",
+    userCount: {
+      label: "일반 사용자",
       color: "var(--chart-3)",
     },
   } satisfies ChartConfig;
@@ -111,7 +99,7 @@ export function CamapaignPieChart() {
     <>
       <Card className="flex flex-col pb-0">
         <CardHeader className="items-center pb-0">
-          <CardTitle>캠페인 통계</CardTitle>
+          <CardTitle>사용자 권한 통계</CardTitle>
         </CardHeader>
         <CardContent className="flex-1 pb-0">
           <ChartContainer
@@ -123,10 +111,8 @@ export function CamapaignPieChart() {
               <Pie data={chartData} dataKey="visitors" label nameKey="status" />
               <ChartLegend
                 content={<ChartLegendContent nameKey="status" />}
-                className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
-              >
-                <ChartLegendContent nameKey="status" />
-              </ChartLegend>
+                className="-translate-y-2 flex-wrap gap-2  *:justify-center pt-5"
+              />
             </PieChart>
           </ChartContainer>
         </CardContent>

@@ -28,12 +28,14 @@ interface Campaign {
     nickname: string;
     email: string;
     role: string;
+    accountType: string;
   };
   company: {
     id: number;
     companyName: string;
     contactPerson: string;
     phoneNumber: string;
+    businessRegistrationNumber: string;
   };
 }
 
@@ -132,11 +134,15 @@ export default function CampaignDetail() {
       label: "이메일",
       value: campaignData?.creator.email ?? "정보 없음",
     },
-
     {
       key: "creatorRole",
       label: "계정 권한",
       value: campaignData?.creator.role ?? "정보 없음",
+    },
+    {
+      key: "creatorType",
+      label: "계정 타입",
+      value: campaignData?.creator.accountType ?? "정보 없음",
     },
   ];
   const CompanyInfo = (): CampaignInfo[] => [
@@ -161,11 +167,11 @@ export default function CampaignDetail() {
       label: "연락처 번호",
       value: campaignData?.company.phoneNumber ?? "정보 없음",
     },
-    // {
-    //   key: "businessRegistrationNumber",
-    //   label: "사업자 등록 번호",
-    //   value: campaignData?.company.businessRegistrationNumber ?? "정보 없음",
-    // },
+    {
+      key: "businessRegistrationNumber",
+      label: "사업자 등록 번호",
+      value: campaignData?.company.businessRegistrationNumber ?? "정보 없음",
+    },
   ];
 
   const CampaignInfoComponent = ({
@@ -267,22 +273,24 @@ export default function CampaignDetail() {
         <CardHeader>
           <CardTitle className="flex justify-between">
             <div className="ck-sub-title-1 flex items-center">캠페인 정보</div>
-            <div className="flex gap-4">
-              <Button
-                className="cursor-pointer ck-body-1 hover:bg-ck-blue-500 hover:text-white"
-                onClick={() => approveCampaign(campaignData.id)}
-                variant="outline"
-              >
-                승인
-              </Button>
-              <Button
-                className="cursor-pointer ck-body-1 hover:bg-ck-red-500 hover:text-white"
-                onClick={() => rejectCampaign(campaignData.id)}
-                variant="outline"
-              >
-                거절
-              </Button>
-            </div>
+            {campaignData.approvalStatus === "PENDING" && (
+              <div className="flex gap-4">
+                <Button
+                  className="cursor-pointer ck-body-1 hover:bg-ck-blue-500 hover:text-white"
+                  onClick={() => approveCampaign(campaignData.id)}
+                  variant="outline"
+                >
+                  승인
+                </Button>
+                <Button
+                  className="cursor-pointer ck-body-1 hover:bg-ck-red-500 hover:text-white"
+                  onClick={() => rejectCampaign(campaignData.id)}
+                  variant="outline"
+                >
+                  거절
+                </Button>
+              </div>
+            )}
           </CardTitle>
         </CardHeader>
         {CampaignInfo().map((item) => (

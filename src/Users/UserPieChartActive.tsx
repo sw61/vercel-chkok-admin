@@ -27,7 +27,7 @@ interface Status {
   inactiveUsers: number; // 비활성화 상태인 사용자 수
 }
 
-export function UserPieChart() {
+export function UserPieChartActive() {
   const [userStatus, setUserStatus] = useState<Status | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -71,16 +71,6 @@ export function UserPieChart() {
   }
   const chartData = [
     {
-      status: "client",
-      visitors: userStatus?.clientCount,
-      fill: "#86ABFF",
-    },
-    {
-      status: "userCount",
-      visitors: userStatus?.userCount,
-      fill: "#DBE2FB",
-    },
-    {
       status: "active",
       visitors: userStatus?.activeUsers,
       fill: "#2388FF",
@@ -88,20 +78,12 @@ export function UserPieChart() {
     {
       status: "inactive",
       visitors: userStatus?.inactiveUsers,
-      fill: "#FF6467",
+      fill: "#FB2C36",
     },
   ];
   const chartConfig = {
     visitors: {
       label: "Visitors",
-    },
-    client: {
-      label: "클라이언트",
-      color: "var(--chart-2)",
-    },
-    userCount: {
-      label: "일반 사용자",
-      color: "var(--chart-3)",
     },
     active: {
       label: "활성화 계정",
@@ -117,7 +99,7 @@ export function UserPieChart() {
     <>
       <Card className="flex flex-col pb-0">
         <CardHeader className="items-center pb-0">
-          <CardTitle>사용자 통계</CardTitle>
+          <CardTitle>사용자 계정 통계</CardTitle>
         </CardHeader>
         <CardContent className="flex-1 pb-0">
           <ChartContainer
