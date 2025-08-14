@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import logo from "../Image/mainLogo.png";
+import bannerImg from "../Image/bannerImg.png";
 import { Button } from "@/components/ui/button";
 import { House, ArrowBigLeft } from "lucide-react";
 
@@ -23,7 +23,7 @@ export default function NotFoundPage() {
           </div>
         </div>
 
-        <img className="mt-10 h-50 w-80" src={logo}></img>
+        <img className="mt-10 h-50 w-80" src={bannerImg}></img>
         <div className="flex gap-6">
           <Button
             className="ck-headline-1 mt-10 cursor-pointer"

@@ -1,7 +1,7 @@
 import { UserPieChartActive } from "@/Users/UserPieChartActive";
 import { UserPieChartCount } from "@/Users/UserPieChartCount";
 import { CamapaignPieChart } from "@/Campaigns/CampaignPieChart";
-import CampaignTablePage from "@/Campaigns/CampaignTablePage";
+import UserTablePage from "@/Users/UserTablePage";
 export default function MainPage() {
   return (
     <>
@@ -17,8 +17,8 @@ export default function MainPage() {
             <CamapaignPieChart />
           </div>
         </div>
-        <div className="aspect-video rounded-xl">
-          <CampaignTablePage />
+        <div className="rounded-xl">
+          <UserTablePage />
         </div>
       </div>
     </>

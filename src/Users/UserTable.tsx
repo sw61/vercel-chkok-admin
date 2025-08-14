@@ -68,6 +68,7 @@ export function UserTable({
 
   // columns 재정의: nickname, email, role, createdAt, updatedAt 순서
   const navigate = useNavigate();
+
   const columns: ColumnDef<User, unknown>[] = [
     {
       id: "select",
@@ -90,6 +91,7 @@ export function UserTable({
       ),
       enableSorting: false,
       enableHiding: false,
+      size: 30,
     },
     {
       accessorKey: "id",
@@ -107,6 +109,7 @@ export function UserTable({
       ),
       cell: ({ row }) => <div>{row.getValue("id")}</div>,
       meta: { label: "id" } as CustomColumnMeta,
+      size: 50,
     },
     {
       accessorKey: "nickname",
@@ -124,6 +127,7 @@ export function UserTable({
       ),
       cell: ({ row }) => <div>{row.getValue("nickname")}</div>,
       meta: { label: "닉네임" } as CustomColumnMeta,
+      size: 80,
     },
     {
       accessorKey: "email",
@@ -141,6 +145,7 @@ export function UserTable({
         <div className="lowercase">{row.getValue("email")}</div>
       ),
       meta: { label: "이메일" } as CustomColumnMeta,
+      size: 150,
     },
     {
       accessorKey: "role",
@@ -154,8 +159,18 @@ export function UserTable({
           <ArrowUpDown />
         </Button>
       ),
-      cell: ({ row }) => <div>{row.getValue("role")}</div>,
+
+      cell: ({ row }) => {
+        const roleMap: Record<string, string> = {
+          USER: "사용자",
+          CLIENT: "클라이언트",
+          ADMIN: "관리자",
+        };
+        const role = row.getValue("role") as string;
+        return <div>{roleMap[role]}</div>;
+      },
       meta: { label: "권한" } as CustomColumnMeta,
+      size: 100,
     },
     {
       accessorKey: "active",
@@ -173,7 +188,9 @@ export function UserTable({
         <div>{row.getValue("active") ? "활성화" : "비활성화"}</div>
       ),
       meta: { label: "계정 상태" } as CustomColumnMeta,
+      size: 100,
     },
+
     {
       accessorKey: "createdAt",
       header: ({ column }) => (
@@ -192,6 +209,7 @@ export function UserTable({
         return <div>{dateOnly}</div>;
       },
       meta: { label: "생성일" } as CustomColumnMeta,
+      size: 100,
     },
     {
       accessorKey: "updatedAt",
@@ -211,6 +229,7 @@ export function UserTable({
         return <div>{dateOnly}</div>;
       },
       meta: { label: "업데이트일" } as CustomColumnMeta,
+      size: 100,
     },
     {
       id: "actions",
@@ -246,8 +265,13 @@ export function UserTable({
           </DropdownMenu>
         );
       },
+      size: 50,
     },
   ];
+  const totalColumnWidth = columns.reduce(
+    (sum, column) => sum + (column.size || 100),
+    0,
+  );
 
   const table = useReactTable({
     data: userData,
@@ -265,19 +289,27 @@ export function UserTable({
       columnVisibility,
       rowSelection,
     },
+    columnResizeMode: "onChange",
+    enableColumnResizing: false,
   });
 
   return (
     <div className="w-full">
       {/* 데이터 테이블 */}
-      <div className="rounded-md border">
-        <Table>
+      <div className="overflow-x-auto rounded-md border">
+        <Table
+          className="table-fixed"
+          style={{ minWidth: `${totalColumnWidth}px` }}
+        >
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      style={{ width: `${header.getSize()}px` }}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -298,7 +330,11 @@ export function UserTable({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className="overflow-hidden text-ellipsis whitespace-nowrap"
+                      style={{ width: `${cell.column.getSize()}px` }}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),

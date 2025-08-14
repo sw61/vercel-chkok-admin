@@ -1,10 +1,10 @@
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import PulseLoader from "react-spinners/PulseLoader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
+import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
 
 interface Campaign {
@@ -23,6 +23,8 @@ interface Campaign {
   selectionDate: string;
   createdAt: string;
   updatedAt: string;
+  creatorRole: string;
+  creatorAccountType: string;
   creator: {
     id: number;
     nickname: string;
@@ -48,6 +50,16 @@ interface CampaignInfo {
 export default function CampaignDetail() {
   const { campaignId } = useParams<{ campaignId: string }>();
   const [campaignData, setCampaignData] = useState<Campaign | null>(null);
+  const [comment, setComment] = useState<string>();
+  const dataMap: Record<string, string> = {
+    APPROVED: "승인됨",
+    REJECTED: "거절됨",
+    PENDING: "대기중",
+    USER: "사용자",
+    CLIENT: "클라이언트",
+    ADMIN: "관리자",
+    SOCIAL: "소셜",
+  };
 
   const CampaignInfo = (): CampaignInfo[] => [
     { key: "id", label: "ID", value: campaignData?.id ?? "정보 없음" },
@@ -141,12 +153,12 @@ export default function CampaignDetail() {
     {
       key: "creatorRole",
       label: "계정 권한",
-      value: campaignData?.creator.role ?? "정보 없음",
+      value: campaignData?.creatorRole ?? "정보 없음",
     },
     {
       key: "creatorType",
       label: "계정 타입",
-      value: campaignData?.creator.accountType ?? "정보 없음",
+      value: campaignData?.creatorAccountType ?? "정보 없음",
     },
   ];
   const CompanyInfo = (): CampaignInfo[] => [
@@ -215,8 +227,17 @@ export default function CampaignDetail() {
     try {
       const response = await axiosInterceptor.get(`/campaigns/${id}`);
       const campaignData = response.data.data;
-      setCampaignData(campaignData);
-      console.log(campaignData);
+      const mappedData = {
+        ...campaignData,
+        approvalStatus:
+          dataMap[campaignData.approvalStatus] || campaignData.approvalStatus,
+        creatorRole:
+          dataMap[campaignData.creator.role] || campaignData.creator.role,
+        creatorAccountType:
+          dataMap[campaignData.creator.accountType] || campaignData.accountType,
+      };
+      setCampaignData(mappedData);
+      console.log(mappedData);
     } catch (error) {
       toast.error(`${error}`);
       console.log(error);
@@ -231,7 +252,7 @@ export default function CampaignDetail() {
           `/campaigns/${id}/approval`,
           {
             approvalStatus: "APPROVED",
-            comment: "모든 조건을 만족하여 승인합니다.",
+            comment: comment ?? "모든 조건을 만족하여 승인합니다.",
           },
         );
         const updatedData = response.data.data;
@@ -253,7 +274,7 @@ export default function CampaignDetail() {
           `/campaigns/${id}/approval`,
           {
             approvalStatus: "REJECTED",
-            comment: "조건을 만족하지 못하여 거절되었습니다.",
+            comment: comment ?? "조건을 만족하지 못하여 거절되었습니다.",
           },
         );
         const updatedData = response.data.data;
@@ -265,6 +286,10 @@ export default function CampaignDetail() {
         console.log(error);
       }
     }
+  };
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setComment(value);
   };
 
   useEffect(() => {
@@ -308,6 +333,21 @@ export default function CampaignDetail() {
             )}
           </CardTitle>
         </CardHeader>
+        {campaignData.approvalStatus === "PENDING" && (
+          <div>
+            <CardContent className="flex flex-col gap-2">
+              <p className="ck-body-2-bold">처리 코멘트</p>
+              <Input
+                id="comment"
+                name="comment"
+                value={comment}
+                onChange={handleInputChange}
+                placeholder="처리 코멘트 입력해주세요"
+                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
+              ></Input>
+            </CardContent>
+          </div>
+        )}
         {CampaignInfo().map((item) => (
           <CampaignInfoComponent
             key={item.key}

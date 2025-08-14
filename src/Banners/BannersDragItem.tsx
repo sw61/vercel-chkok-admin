@@ -56,7 +56,6 @@ const Item = ({ banner }: ItemProps) => {
         <div className="flex w-full items-center justify-between p-6">
           <div className="flex flex-col gap-2">
             <div className="ck-title">{banner.title}</div>
-            <div className="ck-body-2">ID : {banner.id}</div>
             <div className="ck-body-2">배너 위치 : {banner.position}</div>
             <div className="ck-body-2">설명 : {banner.description}</div>
           </div>

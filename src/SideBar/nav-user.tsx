@@ -21,7 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { Skeleton } from "@/components/ui/skeleton";
-import appicon from "../Image/appicon.png";
+import usericon from "../Image/usericon.png";
 
 interface AdminData {
   id: number;
@@ -92,7 +92,7 @@ export function NavUser() {
             >
               <Avatar className="h-8 w-8 rounded-full">
                 <AvatarImage
-                  src={adminData.thumbnailUrl || appicon}
+                  src={adminData.thumbnailUrl || usericon}
                   alt={adminData.name}
                 />
                 <AvatarFallback>Admin</AvatarFallback>
@@ -116,7 +116,7 @@ export function NavUser() {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
-                    src={adminData.thumbnailUrl || appicon}
+                    src={adminData.thumbnailUrl || usericon}
                     alt={adminData.name}
                   />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>

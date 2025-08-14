@@ -36,7 +36,9 @@ export default function BannersDragPage() {
   const [presignedUrl, setPresignedUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null); // 파일 입력 참조
+  const [createMode, setCreateMode] = useState<boolean>(false);
   const [isCreating, setIsCreating] = useState<boolean>(false);
+
   const [createBannerData, setCreateBannerData] = useState({
     redirectUrl: "",
     title: "",
@@ -59,7 +61,6 @@ export default function BannersDragPage() {
       // 폼 데이터 초기화
       setCreateBannerData({
         title: "",
-
         redirectUrl: "",
         description: "",
         position: "",
@@ -118,6 +119,11 @@ export default function BannersDragPage() {
   // 배너 이미지 생성
   const createBanner = async () => {
     setIsCreating(true);
+    if (!presignedUrl) {
+      toast.error("이미지를 업로드 해주세요.");
+      setIsCreating(false);
+      return;
+    }
     if (
       !createBannerData.title ||
       !createBannerData.description ||
@@ -126,10 +132,12 @@ export default function BannersDragPage() {
       !createBannerData.displayOrder
     ) {
       toast.error("모든 필수 필드를 입력해주세요.");
+      setIsCreating(false);
       return;
     }
     if (isNaN(Number(createBannerData.displayOrder))) {
       toast.error("배너 순서는 숫자 형식이어야 합니다.");
+      setIsCreating(false);
       return;
     }
     try {
@@ -148,6 +156,7 @@ export default function BannersDragPage() {
     } catch (error) {
       console.error("배너 이미지 생성 중 오류 발생:", error);
     } finally {
+      setCreateMode(false);
       setIsCreating(false);
     }
   };
@@ -163,7 +172,7 @@ export default function BannersDragPage() {
   };
   // 수정 모드 토글
   const toggleCreateMode = () => {
-    setIsCreating(!isCreating);
+    setCreateMode(!createMode);
     setImageFile(null);
     setPresignedUrl(null);
     setCreateBannerData({
@@ -260,7 +269,7 @@ export default function BannersDragPage() {
           <CardTitle className="flex justify-between">
             <div className="ck-title flex items-center">배너 목록</div>
             <div className="flex gap-4">
-              {isCreating ? (
+              {createMode ? (
                 <>
                   <div className="flex items-center gap-2">
                     {/* 숨겨진 파일 입력 */}
@@ -308,7 +317,7 @@ export default function BannersDragPage() {
                     className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
                     variant="outline"
                   >
-                    생성
+                    {isCreating ? "생성 중..." : "생성"}
                   </Button>
                   <Button
                     onClick={toggleCreateMode}
@@ -332,7 +341,7 @@ export default function BannersDragPage() {
             </div>
           </CardTitle>
         </CardHeader>
-        {isCreating ? (
+        {createMode ? (
           <CardContent className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <p className="ck-body-2-bold">배너 이름</p>

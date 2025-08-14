@@ -73,12 +73,12 @@ export function UserPieChartCount() {
     {
       status: "client",
       visitors: userStatus?.clientCount,
-      fill: "#2388FF",
+      fill: "oklch(79.5% 0.184 86.047)",
     },
     {
       status: "userCount",
       visitors: userStatus?.userCount,
-      fill: "#86ABFF",
+      fill: "oklch(72.3% 0.219 149.579)",
     },
   ];
   const chartConfig = {

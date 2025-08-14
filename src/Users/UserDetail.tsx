@@ -47,6 +47,17 @@ export default function UserDetail() {
   const [userData, setUserData] = useState<User | null>(null);
   const [userMemo, setUserMemo] = useState<string>("");
   const [hideMemo, setHideMemo] = useState<Boolean>(false);
+  const dataMap: Record<string, string> = {
+    GOOGLE: "구글",
+    kakao: "카카오",
+    USER: "사용자",
+    CLIENT: "클라이언트",
+    ADMIN: "관리자",
+    SOCIAL: "소셜",
+    UNKNOWN: "비공개",
+    MALE: "남성",
+    FEMALE: "여성",
+  };
 
   const UserAccountInfo = (): UserAccountInfo[] => [
     { key: "id", label: "ID", value: userData?.id ?? "정보 없음" },
@@ -60,6 +71,16 @@ export default function UserDetail() {
       key: "platforms",
       label: "계정 플랫폼",
       value: userData?.platforms ?? "정보 없음",
+    },
+    {
+      key: "provider",
+      label: "계정 서비스",
+      value: userData?.provider ?? "정보 없음",
+    },
+    {
+      key: "accountType",
+      label: "계정 타입",
+      value: userData?.accountType ?? "정보 없음",
     },
     {
       key: "emailVerified",
@@ -103,7 +124,14 @@ export default function UserDetail() {
     try {
       const response = await axiosInterceptor.get(`/users/${id}`);
       const userData = response.data.data;
-      setUserData(userData);
+      const mappedData = {
+        ...userData,
+        accountType: dataMap[userData.accountType] || userData.accountType,
+        role: dataMap[userData.role] || userData.role,
+        gender: dataMap[userData.gender] || userData.gender,
+        provider: dataMap[userData.provider] || userData.provider,
+      };
+      setUserData(mappedData);
       setUserMemo(userData.memo || "");
     } catch (error) {
       console.log(error);
@@ -190,11 +218,6 @@ export default function UserDetail() {
       }
     }
   };
-  const genderMap: Record<string, string> = {
-    UNKNOWN: "비공개",
-    MALE: "남성",
-    FEMALE: "여성",
-  };
 
   useEffect(() => {
     if (userId) {
@@ -223,8 +246,7 @@ export default function UserDetail() {
             <div className="flex flex-col justify-center gap-4">
               <div className="flex flex-col gap-4 font-semibold">
                 <div className="ck-body-1-bold">
-                  {userData.nickname} (
-                  {genderMap[userData.gender] || "알 수 없음"},{" "}
+                  {userData.nickname} ({userData.gender},{" "}
                   {userData.age ? userData.age : "나이"})
                 </div>
                 <div className="ck-body-1">{userData.email}</div>

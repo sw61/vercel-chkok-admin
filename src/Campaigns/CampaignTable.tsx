@@ -288,7 +288,7 @@ export function CampaignTable({
       rowSelection,
     },
     columnResizeMode: "onChange",
-    enableColumnResizing: false, // 열 크기 조정 비활성화
+    enableColumnResizing: false,
   });
 
   return (

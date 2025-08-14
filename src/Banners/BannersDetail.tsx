@@ -310,17 +310,6 @@ export default function BannersDetail() {
                 className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
               />
             </div>
-            <div className="flex flex-col gap-2">
-              <p className="ck-body-2-bold">배너 순서</p>
-              <Input
-                id="displayOrder"
-                name="displayOrder"
-                value={editBannerData.displayOrder}
-                onChange={handleInputChange}
-                placeholder="배너 순서 번호를 입력하세요"
-                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
-              />
-            </div>
           </CardContent>
         ) : (
           BannerInfo().map((item) => (
