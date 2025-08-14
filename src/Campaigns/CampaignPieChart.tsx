@@ -24,6 +24,7 @@ interface Status {
   pendingCampaigns: number;
   approvedCampaigns: number;
   rejectedCampaigns: number;
+  expiredCampaigns: number;
 }
 
 export function CamapaignPieChart() {
@@ -67,7 +68,7 @@ export function CamapaignPieChart() {
   }, []);
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <PulseLoader />
       </div>
     );
@@ -88,6 +89,11 @@ export function CamapaignPieChart() {
       visitors: campaignStatus?.rejectedCampaigns,
       fill: "#FB2C36",
     },
+    {
+      status: "expired",
+      visitors: campaignStatus?.expiredCampaigns,
+      fill: "#FFA2A2",
+    },
   ];
   const chartConfig = {
     visitors: {
@@ -104,6 +110,10 @@ export function CamapaignPieChart() {
     rejected: {
       label: "거절됨",
       color: "var(--chart-3)",
+    },
+    expired: {
+      label: "만료됨",
+      color: "var(--chart-4)",
     },
   } satisfies ChartConfig;
 

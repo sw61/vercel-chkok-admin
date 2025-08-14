@@ -43,7 +43,11 @@ export default function BannersDetail() {
   // 배너 정보 표시
   const BannerInfo = (): BannerInfo[] => [
     { key: "id", label: "ID", value: bannerData?.id },
-    { key: "displayOrder", label: "배너 순서 번호", value: bannerData?.displayOrder },
+    {
+      key: "displayOrder",
+      label: "배너 순서 번호",
+      value: bannerData?.displayOrder,
+    },
     {
       key: "title",
       label: "배너 이름",
@@ -167,9 +171,14 @@ export default function BannersDetail() {
     return (
       <CardContent className="flex flex-col gap-2">
         <p className="ck-body-2-bold">{label}</p>
-        <div className="px-3 py-2 ck-body-2 bg-transparent border border-ck-gray-300 rounded-md">
+        <div className="ck-body-2 border-ck-gray-300 rounded-md border bg-transparent px-3 py-2">
           {isUrlField && isValidUrl ? (
-            <a href={value as string} target="_blank" rel="noopener noreferrer" className="hover:underline ck-body-1">
+            <a
+              href={value as string}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ck-body-1 hover:underline"
+            >
               {value}
             </a>
           ) : (
@@ -188,13 +197,13 @@ export default function BannersDetail() {
 
   if (!bannerData) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <PulseLoader />
       </div>
     );
   }
   return (
-    <div className="grid grid-row gap-10">
+    <div className="grid-row grid gap-10">
       {/* 배너 상세 정보 */}
       <Card>
         <CardHeader>
@@ -202,17 +211,17 @@ export default function BannersDetail() {
             {isEditing ? (
               <>
                 <div className="ck-title flex items-center">배너 수정</div>
-                <div className="flex gap-4 ">
+                <div className="flex gap-4">
                   <Button
                     onClick={() => editBanners(bannerData.id)}
-                    className="cursor-pointer ck-body-1 hover:bg-ck-blue-500 hover:text-white"
+                    className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
                     variant="outline"
                   >
                     저장
                   </Button>
                   <Button
                     onClick={toggleEditMode}
-                    className="cursor-pointer ck-body-1 hover:bg-ck-gray-600 hover:text-white"
+                    className="ck-body-1 hover:bg-ck-gray-600 cursor-pointer hover:text-white"
                     variant="outline"
                   >
                     취소
@@ -225,7 +234,7 @@ export default function BannersDetail() {
                 <div className="flex gap-4">
                   <Button
                     onClick={toggleEditMode}
-                    className="cursor-pointer ck-body-1 hover:bg-ck-blue-500 hover:text-white"
+                    className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
                     variant="outline"
                   >
                     <Pencil />
@@ -233,7 +242,7 @@ export default function BannersDetail() {
                   </Button>
                   <Button
                     onClick={() => deleteBanners(bannerData.id)}
-                    className="cursor-pointer ck-body-1 hover:bg-ck-red-500 hover:text-white"
+                    className="ck-body-1 hover:bg-ck-red-500 cursor-pointer hover:text-white"
                     variant="outline"
                   >
                     <Delete />
@@ -254,7 +263,7 @@ export default function BannersDetail() {
                 value={editBannerData.title}
                 onChange={handleInputChange}
                 placeholder="배너 이름을 입력하세요"
-                className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
+                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -265,7 +274,7 @@ export default function BannersDetail() {
                 value={editBannerData.bannerUrl}
                 onChange={handleInputChange}
                 placeholder="배너 URL을 입력하세요"
-                className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
+                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -276,7 +285,7 @@ export default function BannersDetail() {
                 value={editBannerData.redirectUrl}
                 onChange={handleInputChange}
                 placeholder="Redirect URL을 입력하세요"
-                className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
+                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -287,7 +296,7 @@ export default function BannersDetail() {
                 value={editBannerData.description}
                 onChange={handleInputChange}
                 placeholder="설명을 입력하세요"
-                className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
+                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -298,7 +307,7 @@ export default function BannersDetail() {
                 value={editBannerData.position}
                 onChange={handleInputChange}
                 placeholder="배너 위치를 입력하세요"
-                className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
+                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -309,13 +318,18 @@ export default function BannersDetail() {
                 value={editBannerData.displayOrder}
                 onChange={handleInputChange}
                 placeholder="배너 순서 번호를 입력하세요"
-                className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
+                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
               />
             </div>
           </CardContent>
         ) : (
           BannerInfo().map((item) => (
-            <BannerInfoComponent key={item.key} label={item.label} value={item.value} fieldKey={item.key} />
+            <BannerInfoComponent
+              key={item.key}
+              label={item.label}
+              value={item.value}
+              fieldKey={item.key}
+            />
           ))
         )}
       </Card>

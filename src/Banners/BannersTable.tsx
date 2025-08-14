@@ -11,7 +11,13 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal, Settings, Copy } from "lucide-react";
+import {
+  ArrowUpDown,
+  ChevronDown,
+  MoreHorizontal,
+  Settings,
+  Copy,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -25,7 +31,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
@@ -61,7 +74,10 @@ export default function BannersTable({ bannerData }: BannerDataTableProps) {
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -122,7 +138,9 @@ export default function BannersTable({ bannerData }: BannerDataTableProps) {
           <ArrowUpDown />
         </Button>
       ),
-      cell: ({ row }) => <div className="lowercase">{row.getValue("position")}</div>,
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue("position")}</div>
+      ),
       meta: { label: "배너 위치" } as CustomColumnMeta,
     },
     {
@@ -139,7 +157,8 @@ export default function BannersTable({ bannerData }: BannerDataTableProps) {
       ),
       cell: ({ row }) => {
         const fullDate = row.getValue("createdAt") as string;
-        const dateOnly = typeof fullDate === "string" ? fullDate.split("T")[0] : "";
+        const dateOnly =
+          typeof fullDate === "string" ? fullDate.split("T")[0] : "";
         return <div>{dateOnly}</div>;
       },
 
@@ -160,7 +179,8 @@ export default function BannersTable({ bannerData }: BannerDataTableProps) {
       ),
       cell: ({ row }) => {
         const fullDate = row.getValue("updatedAt") as string;
-        const dateOnly = typeof fullDate === "string" ? fullDate.split("T")[0] : "";
+        const dateOnly =
+          typeof fullDate === "string" ? fullDate.split("T")[0] : "";
         return <div>{dateOnly}</div>;
       },
       meta: { label: "업데이트일" } as CustomColumnMeta,
@@ -198,14 +218,19 @@ export default function BannersTable({ bannerData }: BannerDataTableProps) {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(banner.title.toString())}
+                onClick={() =>
+                  navigator.clipboard.writeText(banner.title.toString())
+                }
                 className="ck-body-1"
               >
                 <Copy />
                 이름 복사하기
               </DropdownMenuItem>
 
-              <DropdownMenuItem onClick={() => navigate(`/banners/${banner.id}`)} className="ck-body-1">
+              <DropdownMenuItem
+                onClick={() => navigate(`/banners/${banner.id}`)}
+                className="ck-body-1"
+              >
                 <Settings />
                 배너 상세 정보
               </DropdownMenuItem>
@@ -235,12 +260,12 @@ export default function BannersTable({ bannerData }: BannerDataTableProps) {
 
   return (
     <Card className="w-full px-6 py-4">
-      <div className="flex justify-between items-center mb-2">
+      <div className="mb-2 flex items-center justify-between">
         {/* 테이블 헤더 카테고리 */}
         <div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto ">
+              <Button variant="outline" className="ml-auto">
                 항목 <ChevronDown />
               </Button>
             </DropdownMenuTrigger>
@@ -254,9 +279,12 @@ export default function BannersTable({ bannerData }: BannerDataTableProps) {
                       key={column.id}
                       className="capitalize"
                       checked={column.getIsVisible()}
-                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
                     >
-                      {(column.columnDef.meta as CustomColumnMeta)?.label || column.id}
+                      {(column.columnDef.meta as CustomColumnMeta)?.label ||
+                        column.id}
                     </DropdownMenuCheckboxItem>
                   );
                 })}
@@ -268,7 +296,9 @@ export default function BannersTable({ bannerData }: BannerDataTableProps) {
         <Input
           placeholder="배너 이름 검색"
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
-          onChange={(event) => table.getColumn("title")?.setFilterValue(event.target.value)}
+          onChange={(event) =>
+            table.getColumn("title")?.setFilterValue(event.target.value)
+          }
           className="pr-20"
         />
       </div>
@@ -281,7 +311,12 @@ export default function BannersTable({ bannerData }: BannerDataTableProps) {
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   );
                 })}
@@ -291,15 +326,26 @@ export default function BannersTable({ bannerData }: BannerDataTableProps) {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center ck-body-1">
+                <TableCell
+                  colSpan={columns.length}
+                  className="ck-body-1 h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
@@ -308,9 +354,9 @@ export default function BannersTable({ bannerData }: BannerDataTableProps) {
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2">
-        <div className="flex-1 ck-caption-1 text-ck-gray-600">
-          {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s)
-          selected.
+        <div className="ck-caption-1 text-ck-gray-600 flex-1">
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
         <div className="space-x-2"></div>
       </div>

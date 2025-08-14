@@ -10,7 +10,6 @@ import {
   useReactTable,
   type VisibilityState,
   type ColumnFiltersState,
-  type Table as TableType,
 } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal, Settings, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,7 +22,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -54,7 +60,10 @@ const columns: ColumnDef<Campaign>[] = [
     id: "select",
     header: ({ table }) => (
       <Checkbox
-        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
       />
@@ -68,6 +77,7 @@ const columns: ColumnDef<Campaign>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
+    size: 38,
   },
   {
     accessorKey: "id",
@@ -85,6 +95,7 @@ const columns: ColumnDef<Campaign>[] = [
     ),
     cell: ({ row }) => <div>{row.getValue("id")}</div>,
     meta: { label: "id" } as CustomColumnMeta,
+    size: 89,
   },
   {
     accessorKey: "title",
@@ -102,6 +113,7 @@ const columns: ColumnDef<Campaign>[] = [
     ),
     cell: ({ row }) => <div>{row.getValue("title")}</div>,
     meta: { label: "캠페인 이름" } as CustomColumnMeta,
+    size: 317,
   },
   {
     accessorKey: "campaignType",
@@ -115,8 +127,11 @@ const columns: ColumnDef<Campaign>[] = [
         <ArrowUpDown />
       </Button>
     ),
-    cell: ({ row }) => <div className="lowercase">{row.getValue("campaignType")}</div>,
+    cell: ({ row }) => (
+      <div className="lowercase">{row.getValue("campaignType")}</div>
+    ),
     meta: { label: "캠페인 유형" } as CustomColumnMeta,
+    size: 152,
   },
   {
     accessorKey: "approvalStatus",
@@ -140,6 +155,7 @@ const columns: ColumnDef<Campaign>[] = [
       return <div>{statusMap[status] || "알 수 없음"}</div>;
     },
     meta: { label: "처리 상태" } as CustomColumnMeta,
+    size: 127,
   },
   {
     accessorKey: "approvalDate",
@@ -155,10 +171,12 @@ const columns: ColumnDef<Campaign>[] = [
     ),
     cell: ({ row }) => {
       const fullDate = row.getValue("approvalDate") as string;
-      const dateOnly = typeof fullDate === "string" ? fullDate.split("T")[0] : "";
+      const dateOnly =
+        typeof fullDate === "string" ? fullDate.split("T")[0] : "";
       return <div>{dateOnly}</div>;
     },
     meta: { label: "처리일" } as CustomColumnMeta,
+    size: 190,
   },
   {
     accessorKey: "createdAt",
@@ -174,10 +192,12 @@ const columns: ColumnDef<Campaign>[] = [
     ),
     cell: ({ row }) => {
       const fullDate = row.getValue("createdAt") as string;
-      const dateOnly = typeof fullDate === "string" ? fullDate.split("T")[0] : "";
+      const dateOnly =
+        typeof fullDate === "string" ? fullDate.split("T")[0] : "";
       return <div>{dateOnly}</div>;
     },
     meta: { label: "생성일" } as CustomColumnMeta,
+    size: 190,
   },
   {
     accessorKey: "approvalComment",
@@ -193,6 +213,7 @@ const columns: ColumnDef<Campaign>[] = [
     ),
     cell: ({ row }) => <div>{row.getValue("approvalComment")}</div>,
     meta: { label: "처리 코멘트" } as CustomColumnMeta,
+    size: 380,
   },
   {
     id: "actions",
@@ -212,11 +233,17 @@ const columns: ColumnDef<Campaign>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(campaign.title.toString())}>
+            <DropdownMenuItem
+              onClick={() =>
+                navigator.clipboard.writeText(campaign.title.toString())
+              }
+            >
               <Copy />
               이름 복사하기
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate(`/campaigns/${campaign.id}`)}>
+            <DropdownMenuItem
+              onClick={() => navigate(`/campaigns/${campaign.id}`)}
+            >
               <Settings />
               캠페인 상세 정보
             </DropdownMenuItem>
@@ -224,8 +251,15 @@ const columns: ColumnDef<Campaign>[] = [
         </DropdownMenu>
       );
     },
+    size: 62,
   },
 ];
+
+// ColumnDef의 size 합계 계산
+const totalColumnWidth = columns.reduce(
+  (sum, column) => sum + (column.size || 100),
+  0,
+); // 1545px
 
 export function CampaignTable({
   campaignData,
@@ -253,35 +287,65 @@ export function CampaignTable({
       columnVisibility,
       rowSelection,
     },
+    columnResizeMode: "onChange",
+    enableColumnResizing: false, // 열 크기 조정 비활성화
   });
 
   return (
     <div className="w-full">
-      <div className="rounded-md border">
-        <Table>
+      <div className="overflow-x-auto rounded-md border">
+        <Table
+          className="table-fixed"
+          style={{ minWidth: `${totalColumnWidth}px` }}
+        >
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                ))}
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead
+                      key={header.id}
+                      style={{ width: `${header.getSize()}px` }}
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    <TableCell
+                      key={cell.id}
+                      className="overflow-hidden text-ellipsis whitespace-nowrap"
+                      style={{ width: `${cell.column.getSize()}px` }}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-12 overflow-hidden text-center text-ellipsis whitespace-nowrap"
+                >
                   No results.
                 </TableCell>
               </TableRow>
@@ -290,9 +354,9 @@ export function CampaignTable({
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-2">
-        <div className="ck-caption-1 text-ck-gray-600 flex-1 ">
-          {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s)
-          selected.
+        <div className="ck-caption-1 text-ck-gray-600 flex-1">
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
       </div>
     </div>

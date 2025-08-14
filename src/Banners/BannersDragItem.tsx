@@ -20,7 +20,14 @@ interface ItemProps {
 }
 
 const Item = ({ banner }: ItemProps) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: banner.id.toString(),
   });
   const navigate = useNavigate();
@@ -30,7 +37,7 @@ const Item = ({ banner }: ItemProps) => {
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      className={`flex flex-col w-full bg-white border  rounded-xl px-4 py-2 ${
+      className={`flex w-full flex-col rounded-xl border bg-white px-4 py-2 ${
         isDragging ? "opacity-50 shadow-lg" : "opacity-100"
       }`}
       style={{
@@ -41,16 +48,20 @@ const Item = ({ banner }: ItemProps) => {
       onClick={() => navigate(`/banners/${banner.id}`)}
     >
       <div className="flex items-center">
-        <img src={banner.bannerUrl} alt={banner.title} className="w-64 h-36 rounded-md" />
-        <div className="flex w-full justify-between items-center p-6">
+        <img
+          src={banner.bannerUrl}
+          alt={banner.title}
+          className="h-36 w-64 rounded-md"
+        />
+        <div className="flex w-full items-center justify-between p-6">
           <div className="flex flex-col gap-2">
             <div className="ck-title">{banner.title}</div>
             <div className="ck-body-2">ID : {banner.id}</div>
             <div className="ck-body-2">배너 위치 : {banner.position}</div>
             <div className="ck-body-2">설명 : {banner.description}</div>
           </div>
-          <div className="flex items-center ck-body-1">
-            <span className="flex items-center justify-center w-12 h-10 bg-ck-blue-500 text-white rounded-full">
+          <div className="ck-body-1 flex items-center">
+            <span className="bg-ck-blue-500 flex h-10 w-12 items-center justify-center rounded-full text-white">
               # {banner.displayOrder}
             </span>
           </div>
