@@ -5,7 +5,7 @@ import { NavMain } from "@/SideBar/nav-main";
 // import { NavProjects } from "@/SideBar/nav-projects";
 import { NavSecondary } from "@/SideBar/nav-secondary";
 import { NavUser } from "@/SideBar/nav-user";
-import appicon from "../Image/appicon.png";
+
 import chkokLogo from "../Image/chkokLogo.png";
 
 import {
@@ -18,57 +18,64 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-
-const data = {
-  user: {
-    name: "관리자",
-    email: "admin1234@example.com",
-    avatar: appicon,
-  },
-  navMain: [
-    {
-      title: "사용자 목록",
-      url: "/users",
-      icon: UserRound,
-    },
-    {
-      title: "캠페인 목록",
-      url: "/campaigns",
-      icon: Earth,
-    },
-    {
-      title: "배너 목록",
-      url: "/banners",
-      icon: BookOpen,
-    },
-  ],
-  navSecondary: [
-    {
-      title: "관리자 계정 설정",
-      url: "/admin",
-      icon: BadgeCheck,
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-};
+interface AdminData {
+  id: number;
+  name: string;
+  email: string;
+  accountType: string;
+  role: string;
+  createdAt: string;
+  lastLoginAt: string;
+  isActive: boolean;
+  loginCount: number;
+  thumbnailUrl: string;
+}
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const data = {
+    navMain: [
+      {
+        title: "사용자 목록",
+        url: "/users",
+        icon: UserRound,
+      },
+      {
+        title: "캠페인 목록",
+        url: "/campaigns",
+        icon: Earth,
+      },
+      {
+        title: "배너 목록",
+        url: "/banners",
+        icon: BookOpen,
+      },
+    ],
+    navSecondary: [
+      {
+        title: "관리자 계정 설정",
+        url: "/admin",
+        icon: BadgeCheck,
+      },
+    ],
+    projects: [
+      {
+        name: "Design Engineering",
+        url: "#",
+        icon: Frame,
+      },
+      {
+        name: "Sales & Marketing",
+        url: "#",
+        icon: PieChart,
+      },
+      {
+        name: "Travel",
+        url: "#",
+        icon: Map,
+      },
+    ],
+  };
+
   return (
     <Sidebar className="top-(--header-height) h-[calc(100svh-var(--header-height))]!" {...props}>
       <SidebarHeader>
@@ -90,7 +97,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <Separator />
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );
