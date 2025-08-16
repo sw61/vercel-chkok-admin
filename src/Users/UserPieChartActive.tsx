@@ -35,10 +35,9 @@ export function UserPieChartActive() {
   const getUserStatus = async () => {
     try {
       setIsLoading(true);
-      const response = await axiosInterceptor.get(`/users/stats`);
+      const response = await axiosInterceptor.get("/users/stats");
       const userStatus = response.data.data;
       setUserStatus(userStatus);
-      setIsLoading(false);
     } catch (error) {
       console.log(error);
       const axiosError = error as AxiosError;
@@ -57,6 +56,8 @@ export function UserPieChartActive() {
             break;
         }
       }
+    } finally {
+      setIsLoading(false);
     }
   };
   useEffect(() => {

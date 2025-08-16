@@ -100,7 +100,7 @@ export function CamapaignPieChart() {
       label: "Visitors",
     },
     pending: {
-      label: "대기중",
+      label: "승인 대기중",
       color: "var(--chart-1)",
     },
     approved: {
@@ -108,11 +108,11 @@ export function CamapaignPieChart() {
       color: "var(--chart-2)",
     },
     rejected: {
-      label: "거절됨",
+      label: "승인 거절",
       color: "var(--chart-3)",
     },
     expired: {
-      label: "만료됨",
+      label: "종료됨",
       color: "var(--chart-4)",
     },
   } satisfies ChartConfig;

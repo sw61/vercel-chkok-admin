@@ -20,6 +20,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import BannersDetail from "./Banners/BannersDetail";
+import { ServerPieChart } from "./Server/ServerPieChart";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -111,7 +112,17 @@ function App() {
                   </PrivateComponent>
                 }
               ></Route>
+              {/* 서버 차트 테스트 */}
+              <Route
+                path="/server"
+                element={
+                  <PrivateComponent>
+                    <ServerPieChart />
+                  </PrivateComponent>
+                }
+              ></Route>
             </Route>
+
             {/* 로그인 페이지 */}
             <Route path="/login" element={<LoginForm />}></Route>
             <Route path="/*" element={<NotFoundPage />}></Route>
