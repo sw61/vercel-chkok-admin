@@ -14,7 +14,6 @@ interface AdminData {
   createdAt: string;
   lastLoginAt: string;
   isActive: boolean;
-  loginCount: number;
 }
 interface AdminAccountInfo {
   key: string;
@@ -51,14 +50,7 @@ export default function AdminDetail() {
 
   const AdminAccountInfo = (): AdminAccountInfo[] => [
     { key: "id", label: "ID", value: adminData?.id ?? "정보 없음" },
-    { key: "name", label: "닉네임", value: adminData?.name ?? "정보 없음" },
-    { key: "email", label: "이메일", value: adminData?.email ?? "정보 없음" },
-    { key: "role", label: "권한", value: adminData?.role ?? "정보 없음" },
-    {
-      key: "loginCount",
-      label: "로그인 횟수",
-      value: adminData?.loginCount ?? "정보 없음",
-    },
+
     {
       key: "isActive",
       label: "계정 상태",
@@ -67,7 +59,7 @@ export default function AdminDetail() {
 
     {
       key: "accountType",
-      label: "이메일 인증",
+      label: "계정 타입",
       value: adminData?.accountType ? "인증 완료" : "인증 필요",
     },
     {
@@ -100,6 +92,7 @@ export default function AdminDetail() {
       const response = await axiosInterceptor.get("/auth/me");
       const data = response.data.data;
       setAdminData(data);
+      console.log(data);
     } catch (error) {
       console.log(error);
     } finally {

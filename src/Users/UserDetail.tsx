@@ -19,21 +19,21 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface User {
   id: number;
-  nickname: string;
-  email: string;
-  accountType: string;
-  phone: string;
+  email: string; // 사용자 이메일
+  nickname: string; // 사용자 이름
+  role: string;
+  provider: string;
+  accountType: string; //
+  active: boolean;
+  emailVerified: boolean;
   gender: string;
   age: number;
-  role: string;
-  active: boolean;
-  provider: string;
-  platforms: string;
+  phone: string;
   profileImg: string;
   memo: string;
-  emailVerified: boolean;
   createdAt: string;
   updatedAt: string;
+  platforms: string;
 }
 interface UserAccountInfo {
   key: string;
@@ -52,6 +52,7 @@ export default function UserDetail() {
     kakao: "카카오",
     USER: "사용자",
     CLIENT: "클라이언트",
+    LOCAL: "로컬",
     ADMIN: "관리자",
     SOCIAL: "소셜",
     UNKNOWN: "비공개",
@@ -275,6 +276,7 @@ export default function UserDetail() {
                   <Delete />
                   사용자 삭제
                 </Button>
+                {/* 일반 사용자의 경우에만 클라이언트 승급 버튼 추가 */}
                 {userData.role === "USER" ? (
                   <Button
                     className="ck-body-1 flex cursor-pointer items-center border"

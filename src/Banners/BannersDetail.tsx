@@ -10,14 +10,14 @@ import { toast } from "react-toastify";
 
 interface BannerData {
   id: number;
-  title: string;
-  bannerUrl: string;
-  redirectUrl: string;
-  description: string;
-  position: string;
-  createdAt: string;
-  updatedAt: string;
-  displayOrder: number;
+  title: string; // 배너 제목
+  bannerUrl: string; // 배너 URL
+  redirectUrl: string; // 리다이렉트 URL
+  description: string; // 설명
+  position: string; // 배너 위치
+  createdAt: string; // 생성일
+  updatedAt: string; // 업데이트일
+  displayOrder: number; // 배너 순서 번호
 }
 
 interface BannerInfo {

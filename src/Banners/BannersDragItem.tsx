@@ -1,6 +1,5 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { HashIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface BannerData {
@@ -37,7 +36,7 @@ const Item = ({ banner }: ItemProps) => {
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      className={`flex w-full flex-col rounded-xl border bg-white px-4 py-2 ${
+      className={`flex w-full cursor-pointer flex-col rounded-xl border bg-white px-4 py-2 ${
         isDragging ? "opacity-50 shadow-lg" : "opacity-100"
       }`}
       style={{

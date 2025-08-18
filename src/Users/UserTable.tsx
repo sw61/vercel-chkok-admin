@@ -14,7 +14,7 @@ import {
 import { ArrowUpDown, MoreHorizontal, Settings, Copy } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+
 import {
   DropdownMenu,
   // DropdownMenuCheckboxItem,
@@ -70,29 +70,6 @@ export function UserTable({
   const navigate = useNavigate();
 
   const columns: ColumnDef<User, unknown>[] = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-      size: 30,
-    },
     {
       accessorKey: "id",
       header: ({ column }) => (
@@ -231,42 +208,42 @@ export function UserTable({
       meta: { label: "업데이트일" } as CustomColumnMeta,
       size: 100,
     },
-    {
-      id: "actions",
-      enableHiding: false,
-      cell: ({ row }) => {
-        const user = row.original as User;
+    // {
+    //   id: "actions",
+    //   enableHiding: false,
+    //   cell: ({ row }) => {
+    //     const user = row.original as User;
 
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(user.email.toString())
-                }
-              >
-                <Copy />
-                이메일 복사하기
-              </DropdownMenuItem>
+    //     return (
+    //       <DropdownMenu>
+    //         <DropdownMenuTrigger asChild>
+    //           <Button variant="ghost" className="h-8 w-8 p-0">
+    //             <span className="sr-only">Open menu</span>
+    //             <MoreHorizontal />
+    //           </Button>
+    //         </DropdownMenuTrigger>
+    //         <DropdownMenuContent align="end">
+    //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
+    //           <DropdownMenuSeparator />
+    //           <DropdownMenuItem
+    //             onClick={() =>
+    //               navigator.clipboard.writeText(user.email.toString())
+    //             }
+    //           >
+    //             <Copy />
+    //             이메일 복사하기
+    //           </DropdownMenuItem>
 
-              <DropdownMenuItem onClick={() => navigate(`/users/${user.id}`)}>
-                <Settings />
-                사용자 상세 정보
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-      },
-      size: 50,
-    },
+    //           <DropdownMenuItem onClick={() => navigate(`/users/${user.id}`)}>
+    //             <Settings />
+    //             사용자 상세 정보
+    //           </DropdownMenuItem>
+    //         </DropdownMenuContent>
+    //       </DropdownMenu>
+    //     );
+    //   },
+    //   size: 50,
+    // },
   ];
   const totalColumnWidth = columns.reduce(
     (sum, column) => sum + (column.size || 100),
@@ -328,6 +305,8 @@ export function UserTable({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="cursor-pointer"
+                  onClick={() => navigate(`/users/${row.original.id}`)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell

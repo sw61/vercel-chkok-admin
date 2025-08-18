@@ -10,35 +10,46 @@ import { toast } from "react-toastify";
 interface Campaign {
   id: number;
   title: string;
-  campaignType: string;
-  thumbnailUrl: string;
-  productShortInfo: string;
-  maxApplicants: number;
-  recruitmentStartDate: number;
-  recruitmentEndDate: string;
-  reviewDeadlineDate: string;
-  approvalStatus: string;
-  approvalComment: string;
-  approvalDate: string;
-  selectionDate: string;
-  createdAt: string;
-  updatedAt: string;
-  creatorRole: string;
-  creatorAccountType: string;
+  campaignType: string; // 캠페인 유형
+  thumbnailUrl: string; // 캠페인 썸네일
+  productShortInfo: string; // 상품 간단 정보
+  maxApplicants: number; // 최대 신청자 수
+  recruitmentStartDate: string; // 모집 시작일
+  recruitmentEndDate: string; // 모집 마감일
+  applicationDeadlineDate: string; // 신청 마감일
+  selectionDate: string; // 선택 날짜
+  reviewDeadlineDate: string; // 리뷰 마감일
+  approvalStatus: string; // 처리 상태
+  approvalComment: string; // 처리 코멘트
+  approvalDate: string; // 처리 날짜
+  creatorRole: string; // 한글화된 크리에이터 역할
+  creatorAccountType: string; // 한글화된 계정 타입
   creator: {
     id: number;
-    nickname: string;
-    email: string;
-    role: string;
-    accountType: string;
+    nickname: string; // 크리에이터 이름
+    email: string; // 크리에이터 이메일
+    role: string; // 크리에이터 역할
+    accountType: string; // 크리에이터 계정 타입
   };
   company: {
     id: number;
-    companyName: string;
-    contactPerson: string;
-    phoneNumber: string;
-    businessRegistrationNumber: string;
+    companyName: string; // 회사 이름
+    businessRegistrationNumber: string; // 사업자 등록번호
+    contactPerson: string; // 연락처 이름
+    phoneNumber: string; // 전화번호
   };
+  location: {
+    id: number;
+    latitude: number; // 위도
+    longitude: number; // 경도
+    businessAddress: string; // 비즈니스 주소
+    businessDetailAddress: string; // 비즈니스 상세 주소
+    homepage: string; // 홈페이지
+    contactPhone: string; // 연락처
+    visitAndReservationInfo: string; // 방문 및 예약 정보
+    hasCoordinates: boolean; // 좌표가 있는지 true/false
+  };
+  missionInfo: {};
 }
 
 interface CampaignInfo {
@@ -52,9 +63,6 @@ export default function CampaignDetail() {
   const [campaignData, setCampaignData] = useState<Campaign | null>(null);
   const [comment, setComment] = useState<string>();
   const dataMap: Record<string, string> = {
-    APPROVED: "승인됨",
-    REJECTED: "거절됨",
-    PENDING: "대기중",
     USER: "사용자",
     CLIENT: "클라이언트",
     ADMIN: "관리자",
@@ -69,21 +77,15 @@ export default function CampaignDetail() {
       value: campaignData?.title ?? "정보 없음",
     },
     {
-      key: "productShortInfo",
-      label: "상품 간단 정보",
-      value: campaignData?.productShortInfo ?? "정보 없음",
-    },
-    {
-      key: "thumbnailUrl",
-      label: "썸네일 주소",
-      value: campaignData?.thumbnailUrl ?? "정보 없음",
-    },
-    {
       key: "campaignType",
       label: "캠페인 유형",
       value: campaignData?.campaignType ?? "정보 없음",
     },
-
+    {
+      key: "productShortInfo",
+      label: "캠페인 간단 정보",
+      value: campaignData?.productShortInfo ?? "정보 없음",
+    },
     {
       key: "maxApplicants",
       label: "최대 지원자 수",
@@ -114,13 +116,6 @@ export default function CampaignDetail() {
       label: "처리일",
       value: campaignData?.approvalDate
         ? campaignData.approvalDate.split("T")[0]
-        : "정보 없음",
-    },
-    {
-      key: "createdAt",
-      label: "생성일",
-      value: campaignData?.createdAt
-        ? campaignData.createdAt.split("T")[0]
         : "정보 없음",
     },
     {
@@ -193,30 +188,15 @@ export default function CampaignDetail() {
   const CampaignInfoComponent = ({
     label,
     value,
-    fieldKey,
   }: {
     label: string;
     value: string | number | undefined;
-    fieldKey: string;
   }) => {
-    const isUrlField = fieldKey === "thumbnailUrl";
-    const isValidUrl = typeof value === "string" && value !== "정보 없음";
     return (
       <CardContent className="flex flex-col gap-2">
         <p className="ck-body-2-bold">{label}</p>
         <div className="ck-body-2 border-ck-gray-300 rounded-md border bg-transparent px-3 py-2">
-          {isUrlField && isValidUrl ? (
-            <a
-              href={value as string}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ck-body-1 hover:underline"
-            >
-              {value}
-            </a>
-          ) : (
-            <span>{value}</span>
-          )}
+          <span>{value}</span>
         </div>
       </CardContent>
     );
@@ -229,8 +209,6 @@ export default function CampaignDetail() {
       const campaignData = response.data.data;
       const mappedData = {
         ...campaignData,
-        approvalStatus:
-          dataMap[campaignData.approvalStatus] || campaignData.approvalStatus,
         creatorRole:
           dataMap[campaignData.creator.role] || campaignData.creator.role,
         creatorAccountType:
@@ -313,7 +291,7 @@ export default function CampaignDetail() {
         <CardHeader>
           <CardTitle className="flex justify-between">
             <div className="ck-sub-title-1 flex items-center">캠페인 정보</div>
-            {campaignData.approvalStatus === "PENDING" && (
+            {campaignData.approvalStatus === "대기중" && (
               <div className="flex gap-4">
                 <Button
                   className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
@@ -333,7 +311,7 @@ export default function CampaignDetail() {
             )}
           </CardTitle>
         </CardHeader>
-        {campaignData.approvalStatus === "PENDING" && (
+        {campaignData.approvalStatus === "대기중" && (
           <div>
             <CardContent className="flex flex-col gap-2">
               <p className="ck-body-2-bold">처리 코멘트</p>
@@ -348,12 +326,17 @@ export default function CampaignDetail() {
             </CardContent>
           </div>
         )}
+        <CardContent>
+          <img
+            src={campaignData.thumbnailUrl}
+            className="h-54 w-96 rounded-md"
+          ></img>
+        </CardContent>
         {CampaignInfo().map((item) => (
           <CampaignInfoComponent
             key={item.key}
             label={item.label}
             value={item.value}
-            fieldKey={item.key}
           />
         ))}
       </Card>
@@ -371,7 +354,6 @@ export default function CampaignDetail() {
               key={item.key}
               label={item.label}
               value={item.value}
-              fieldKey={item.key}
             />
           ))}
         </Card>
@@ -388,7 +370,6 @@ export default function CampaignDetail() {
               key={item.key}
               label={item.label}
               value={item.value}
-              fieldKey={item.key}
             />
           ))}
         </Card>

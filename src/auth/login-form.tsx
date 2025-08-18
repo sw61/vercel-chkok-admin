@@ -19,7 +19,6 @@ export function LoginForm({
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
-  // 동기 함수
   const handleLogin = async () => {
     try {
       setIsLoading(true);
