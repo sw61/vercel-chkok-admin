@@ -41,22 +41,6 @@ export function UserPieChartCount() {
       setIsLoading(false);
     } catch (error) {
       console.log(error);
-      const axiosError = error as AxiosError;
-      if (axiosError.response) {
-        switch (axiosError.response.status) {
-          case 401:
-            toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
-            navigate("/login");
-            break;
-          case 403:
-            toast.error("사용자 통계 조회는 관리자만 가능합니다.");
-            break;
-
-          case 500:
-            toast.error("사용자 통계 조회 실패 : 데이터베이스 연결 오류.");
-            break;
-        }
-      }
     }
   };
   useEffect(() => {

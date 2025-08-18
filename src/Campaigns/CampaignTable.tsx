@@ -333,7 +333,7 @@ export function CampaignTable({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-12 overflow-hidden text-center text-ellipsis whitespace-nowrap"
+                  className="h-24 text-center whitespace-nowrap"
                 >
                   No results.
                 </TableCell>

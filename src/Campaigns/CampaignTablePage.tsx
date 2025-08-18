@@ -2,10 +2,7 @@ import { CampaignPagination } from "@/Campaigns/CampaignPagination";
 import { CampaignTable } from "@/Campaigns/CampaignTable";
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
-import PulseLoader from "react-spinners/PulseLoader";
-import { toast } from "react-toastify";
-import { AxiosError } from "axios";
-import { useNavigate } from "react-router-dom";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,12 +11,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import {
   type ColumnFiltersState,
   type VisibilityState,
 } from "@tanstack/react-table";
 import { Card } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface Campaign {
   id: number;
@@ -29,7 +34,7 @@ interface Campaign {
   approvalComment: string;
   approvalDate: string;
   createdAt: string;
-  recruitmentStartDate: string; // 모집 시작일
+  recruitmentStartDate: string;
 }
 
 interface PaginationData {
@@ -44,11 +49,11 @@ interface PaginationData {
 export default function CampaignTablePage() {
   const [campaignData, setCampaignData] = useState<Campaign[] | null>();
   const [pageData, setPageData] = useState<PaginationData | null>();
+  const [searchKey, setSearchKey] = useState<string>("");
   const [campaignType, setCampaignType] = useState<string>("ALL");
   const [isLoading, setIsLoading] = useState<Boolean>(false);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const navigate = useNavigate();
   const headerMenu = [
     { id: "id", label: "ID" },
     { id: "title", label: "캠페인 이름" },
@@ -58,6 +63,7 @@ export default function CampaignTablePage() {
     { id: "createdAt", label: "생성일" },
     { id: "approvalComment", label: "처리 코멘트" },
   ];
+  // 캠페인 테이블 조회
   const getCampaignTable = async (
     page: number = 0,
     type: typeof campaignType,
@@ -75,30 +81,21 @@ export default function CampaignTablePage() {
       console.log(campaignData);
     } catch (error) {
       console.log(error);
-      const axiosError = error as AxiosError;
-      if (axiosError.response) {
-        switch (axiosError.response.status) {
-          case 400:
-            toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
-            break;
-          case 401:
-            navigate("/login");
-            toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
-            break;
-          case 403:
-            navigate("/login");
-            toast.error("접근 권한이 없습니다.");
-            break;
-          case 404:
-            toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");
-            break;
-          case 500:
-            toast.error("서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
-            break;
-        }
-      }
     } finally {
       setIsLoading(false);
+    }
+    // 캠페인 검색 함수
+  };
+  const handleSearch = async (page: number = 0) => {
+    try {
+      const response = await axiosInterceptor.get(
+        `/campaigns/search?keyword=${searchKey}&page=${page}&size=10`,
+      );
+      const campaignData = response.data.data;
+      setCampaignData(campaignData.content);
+      setPageData(campaignData.pagination);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -175,24 +172,51 @@ export default function CampaignTablePage() {
           </DropdownMenu>
         </div>
         {/* 검색창 */}
-        <Input
-          placeholder="캠페인 이름 검색"
-          value={
-            (columnFilters.find((f) => f.id === "title")?.value as string) ?? ""
-          }
-          onChange={(event) =>
-            setColumnFilters((prev) => [
-              ...prev.filter((f) => f.id !== "title"),
-              { id: "title", value: event.target.value },
-            ])
-          }
-          className="pr-20"
-        />
+        <div className="relative">
+          <Input
+            placeholder="캠페인 이름 검색"
+            value={searchKey}
+            onChange={(event) => setSearchKey(event.target.value)}
+            className="pr-12"
+          />
+          <button
+            className="absolute top-0 right-0 h-full w-10"
+            onClick={() => handleSearch(0)}
+          >
+            <Search />
+          </button>
+        </div>
       </div>
 
       {!campaignData || !pageData || isLoading ? (
-        <div className="flex h-64 items-center justify-center">
-          <PulseLoader />
+        <div className="overflow-x-auto rounded-md border">
+          <Table className="table-fixed" style={{ minWidth: `${1130}px` }}>
+            <TableHeader>
+              <TableRow>
+                {[50, 250, 120, 100, 120, 120, 120, 250].map((width, idx) => (
+                  <TableHead key={idx} style={{ width: `${width}px` }}>
+                    <Skeleton className="h-4 w-3/4" />
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Array.from({ length: 10 }).map((_, rowIdx) => (
+                <TableRow key={rowIdx}>
+                  {[50, 250, 120, 100, 120, 120, 120, 250].map(
+                    (width, colIdx) => (
+                      <TableCell
+                        key={`${rowIdx}-${colIdx}`}
+                        style={{ width: `${width}px` }}
+                      >
+                        <Skeleton className="h-4 w-full" />
+                      </TableCell>
+                    ),
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       ) : (
         <>
