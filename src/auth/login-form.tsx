@@ -10,13 +10,15 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 
-export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
+export function LoginForm({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   const { value: email, handleValue: handleEmail } = useStringInput("");
   const { value: password, handleValue: handlePassword } = useStringInput("");
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
-  // 동기 함수
   const handleLogin = async () => {
     try {
       setIsLoading(true);
@@ -37,7 +39,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
             toast.error("관리자 권한이 필요합니다.");
             break;
           case 429:
-            toast.error("로그인 시도 횟수를 초과했습니다. 15분 후 다시 시도해주세요");
+            toast.error(
+              "로그인 시도 횟수를 초과했습니다. 15분 후 다시 시도해주세요",
+            );
             break;
           case 500:
             toast.error("로그인 처리 중 오류가 발생했습니다.");
@@ -60,11 +64,13 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         <div className={cn("flex flex-col gap-6", className)} {...props}>
           <Card>
             <CardHeader>
-              <CardTitle className="ck-sub-title-1">체험콕 관리자 로그인</CardTitle>
+              <CardTitle className="ck-sub-title-1">
+                체험콕 관리자 로그인
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-6">
-                <div className="grid gap-3 ">
+                <div className="grid gap-3">
                   <label htmlFor="email" className="ck-body-2-bold">
                     아이디
                   </label>
@@ -95,7 +101,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                     className="ck-body-2"
                   />
                 </div>
-                <Button type="submit" className="w-full ck-body-2" onClick={handleLogin} disabled={isLoading}>
+                <Button
+                  type="submit"
+                  className="ck-body-2 w-full"
+                  onClick={handleLogin}
+                  disabled={isLoading}
+                >
                   {isLoading ? "로그인 중입니다..." : "로그인"}
                 </Button>
               </div>

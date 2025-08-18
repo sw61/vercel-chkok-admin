@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import PulseLoader from "react-spinners/PulseLoader";
+import usericon from "../Image/usericon.png";
 
 interface AdminData {
   id: number;
@@ -13,7 +14,6 @@ interface AdminData {
   createdAt: string;
   lastLoginAt: string;
   isActive: boolean;
-  loginCount: number;
 }
 interface AdminAccountInfo {
   key: string;
@@ -50,14 +50,7 @@ export default function AdminDetail() {
 
   const AdminAccountInfo = (): AdminAccountInfo[] => [
     { key: "id", label: "ID", value: adminData?.id ?? "정보 없음" },
-    { key: "name", label: "닉네임", value: adminData?.name ?? "정보 없음" },
-    { key: "email", label: "이메일", value: adminData?.email ?? "정보 없음" },
-    { key: "role", label: "권한", value: adminData?.role ?? "정보 없음" },
-    {
-      key: "loginCount",
-      label: "로그인 횟수",
-      value: adminData?.loginCount ?? "정보 없음",
-    },
+
     {
       key: "isActive",
       label: "계정 상태",
@@ -66,7 +59,7 @@ export default function AdminDetail() {
 
     {
       key: "accountType",
-      label: "이메일 인증",
+      label: "계정 타입",
       value: adminData?.accountType ? "인증 완료" : "인증 필요",
     },
     {
@@ -76,11 +69,19 @@ export default function AdminDetail() {
     },
   ];
 
-  const AdminInfoComponent = ({ label, value }: { label: string; value: string | number | boolean | undefined }) => {
+  const AdminInfoComponent = ({
+    label,
+    value,
+  }: {
+    label: string;
+    value: string | number | boolean | undefined;
+  }) => {
     return (
       <CardContent className="flex flex-col gap-2">
-        <p className="ck-body-2-bold ">{label}</p>
-        <div className="px-3 py-2 ck-body-2 bg-transparent border border-ck-gray-300 rounded-md">{value}</div>
+        <p className="ck-body-2-bold">{label}</p>
+        <div className="ck-body-2 border-ck-gray-300 rounded-md border bg-transparent px-3 py-2">
+          {value}
+        </div>
       </CardContent>
     );
   };
@@ -91,6 +92,7 @@ export default function AdminDetail() {
       const response = await axiosInterceptor.get("/auth/me");
       const data = response.data.data;
       setAdminData(data);
+      console.log(data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -104,7 +106,7 @@ export default function AdminDetail() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <PulseLoader />
       </div>
     );
@@ -112,10 +114,10 @@ export default function AdminDetail() {
 
   return (
     <>
-      <div className="grid grid-row gap-10">
+      <div className="grid-row grid gap-10">
         <div className="flex gap-8">
-          <Avatar className="w-40 h-40">
-            <AvatarImage src="../src/Image/appicon.png" alt="관리자 프로필" />
+          <Avatar className="h-40 w-40">
+            <AvatarImage src={usericon} alt="관리자 프로필" />
             <AvatarFallback></AvatarFallback>
           </Avatar>
 
@@ -132,10 +134,16 @@ export default function AdminDetail() {
         {/* 관리자 계정 정보 */}
         <Card>
           <CardHeader>
-            <CardTitle className="ck-sub-title-1 flex items-center">관리자 계정 정보</CardTitle>
+            <CardTitle className="ck-sub-title-1 flex items-center">
+              관리자 계정 정보
+            </CardTitle>
           </CardHeader>
           {AdminAccountInfo().map((item) => (
-            <AdminInfoComponent key={item.key} label={item.label} value={item.value} />
+            <AdminInfoComponent
+              key={item.key}
+              label={item.label}
+              value={item.value}
+            />
           ))}
         </Card>
       </div>

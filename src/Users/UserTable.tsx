@@ -14,7 +14,7 @@ import {
 import { ArrowUpDown, MoreHorizontal, Settings, Copy } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+
 import {
   DropdownMenu,
   // DropdownMenuCheckboxItem,
@@ -25,7 +25,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 interface User {
@@ -61,26 +68,8 @@ export function UserTable({
 
   // columns 재정의: nickname, email, role, createdAt, updatedAt 순서
   const navigate = useNavigate();
+
   const columns: ColumnDef<User, unknown>[] = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
     {
       accessorKey: "id",
       header: ({ column }) => (
@@ -97,6 +86,7 @@ export function UserTable({
       ),
       cell: ({ row }) => <div>{row.getValue("id")}</div>,
       meta: { label: "id" } as CustomColumnMeta,
+      size: 50,
     },
     {
       accessorKey: "nickname",
@@ -114,6 +104,7 @@ export function UserTable({
       ),
       cell: ({ row }) => <div>{row.getValue("nickname")}</div>,
       meta: { label: "닉네임" } as CustomColumnMeta,
+      size: 80,
     },
     {
       accessorKey: "email",
@@ -127,8 +118,11 @@ export function UserTable({
           <ArrowUpDown />
         </Button>
       ),
-      cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue("email")}</div>
+      ),
       meta: { label: "이메일" } as CustomColumnMeta,
+      size: 150,
     },
     {
       accessorKey: "role",
@@ -142,8 +136,18 @@ export function UserTable({
           <ArrowUpDown />
         </Button>
       ),
-      cell: ({ row }) => <div>{row.getValue("role")}</div>,
+
+      cell: ({ row }) => {
+        const roleMap: Record<string, string> = {
+          USER: "사용자",
+          CLIENT: "클라이언트",
+          ADMIN: "관리자",
+        };
+        const role = row.getValue("role") as string;
+        return <div>{roleMap[role]}</div>;
+      },
       meta: { label: "권한" } as CustomColumnMeta,
+      size: 100,
     },
     {
       accessorKey: "active",
@@ -157,9 +161,13 @@ export function UserTable({
           <ArrowUpDown />
         </Button>
       ),
-      cell: ({ row }) => <div>{row.getValue("active") ? "활성화" : "비활성화"}</div>,
+      cell: ({ row }) => (
+        <div>{row.getValue("active") ? "활성화" : "비활성화"}</div>
+      ),
       meta: { label: "계정 상태" } as CustomColumnMeta,
+      size: 100,
     },
+
     {
       accessorKey: "createdAt",
       header: ({ column }) => (
@@ -178,6 +186,7 @@ export function UserTable({
         return <div>{dateOnly}</div>;
       },
       meta: { label: "생성일" } as CustomColumnMeta,
+      size: 100,
     },
     {
       accessorKey: "updatedAt",
@@ -197,39 +206,49 @@ export function UserTable({
         return <div>{dateOnly}</div>;
       },
       meta: { label: "업데이트일" } as CustomColumnMeta,
+      size: 100,
     },
-    {
-      id: "actions",
-      enableHiding: false,
-      cell: ({ row }) => {
-        const user = row.original as User;
+    // {
+    //   id: "actions",
+    //   enableHiding: false,
+    //   cell: ({ row }) => {
+    //     const user = row.original as User;
 
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(user.email.toString())}>
-                <Copy />
-                이메일 복사하기
-              </DropdownMenuItem>
+    //     return (
+    //       <DropdownMenu>
+    //         <DropdownMenuTrigger asChild>
+    //           <Button variant="ghost" className="h-8 w-8 p-0">
+    //             <span className="sr-only">Open menu</span>
+    //             <MoreHorizontal />
+    //           </Button>
+    //         </DropdownMenuTrigger>
+    //         <DropdownMenuContent align="end">
+    //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
+    //           <DropdownMenuSeparator />
+    //           <DropdownMenuItem
+    //             onClick={() =>
+    //               navigator.clipboard.writeText(user.email.toString())
+    //             }
+    //           >
+    //             <Copy />
+    //             이메일 복사하기
+    //           </DropdownMenuItem>
 
-              <DropdownMenuItem onClick={() => navigate(`/users/${user.id}`)}>
-                <Settings />
-                사용자 상세 정보
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-      },
-    },
+    //           <DropdownMenuItem onClick={() => navigate(`/users/${user.id}`)}>
+    //             <Settings />
+    //             사용자 상세 정보
+    //           </DropdownMenuItem>
+    //         </DropdownMenuContent>
+    //       </DropdownMenu>
+    //     );
+    //   },
+    //   size: 50,
+    // },
   ];
+  const totalColumnWidth = columns.reduce(
+    (sum, column) => sum + (column.size || 100),
+    0,
+  );
 
   const table = useReactTable({
     data: userData,
@@ -247,20 +266,33 @@ export function UserTable({
       columnVisibility,
       rowSelection,
     },
+    columnResizeMode: "onChange",
+    enableColumnResizing: false,
   });
 
   return (
     <div className="w-full">
       {/* 데이터 테이블 */}
-      <div className="rounded-md border">
-        <Table>
+      <div className="overflow-x-auto rounded-md border">
+        <Table
+          className="table-fixed"
+          style={{ minWidth: `${totalColumnWidth}px` }}
+        >
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    <TableHead
+                      key={header.id}
+                      style={{ width: `${header.getSize()}px` }}
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   );
                 })}
@@ -270,15 +302,32 @@ export function UserTable({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  className="cursor-pointer"
+                  onClick={() => navigate(`/users/${row.original.id}`)}
+                >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    <TableCell
+                      key={cell.id}
+                      className="overflow-hidden text-ellipsis whitespace-nowrap"
+                      style={{ width: `${cell.column.getSize()}px` }}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
@@ -288,8 +337,8 @@ export function UserTable({
       </div>
       <div className="flex items-center justify-end space-x-2 py-2">
         <div className="ck-caption-1 text-ck-gray-600 flex-1">
-          {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s)
-          selected.
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
       </div>
     </div>

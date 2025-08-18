@@ -50,7 +50,7 @@ export function PaginationDemo({
         >
           {i + 1}
         </PaginationLink>
-      </PaginationItem>
+      </PaginationItem>,
     );
   }
 

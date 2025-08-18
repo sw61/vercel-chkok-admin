@@ -1,6 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import Item from "./BannersDragItem";
-import { DndContext, type DragEndEvent, type DragStartEvent, type UniqueIdentifier } from "@dnd-kit/core";
+import {
+  DndContext,
+  type DragEndEvent,
+  type DragStartEvent,
+  type UniqueIdentifier,
+} from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { useSensors, useSensor, MouseSensor, TouchSensor } from "@dnd-kit/core";
 import axiosInterceptor from "@/lib/axios-interceptors";
@@ -24,14 +29,16 @@ interface BannerData {
   displayOrder: number;
 }
 
-export default function BannersDragpage() {
+export default function BannersDragPage() {
   const [bannerData, setBannerData] = useState<BannerData[]>([]);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [presignedUrl, setPresignedUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null); // 파일 입력 참조
+  const [createMode, setCreateMode] = useState<boolean>(false);
   const [isCreating, setIsCreating] = useState<boolean>(false);
+
   const [createBannerData, setCreateBannerData] = useState({
     redirectUrl: "",
     title: "",
@@ -46,11 +53,14 @@ export default function BannersDragpage() {
       const response = await axiosInterceptor.get("/api/banners");
       const data = response.data.data;
       // displayOrder 기준으로 정렬
-      setBannerData(data.sort((a: BannerData, b: BannerData) => a.displayOrder - b.displayOrder));
+      setBannerData(
+        data.sort(
+          (a: BannerData, b: BannerData) => a.displayOrder - b.displayOrder,
+        ),
+      );
       // 폼 데이터 초기화
       setCreateBannerData({
         title: "",
-
         redirectUrl: "",
         description: "",
         position: "",
@@ -82,10 +92,14 @@ export default function BannersDragpage() {
       return;
     }
     setIsUploading(true);
-    const fileExtension = imageFile.name.split(".").pop()?.toLowerCase() || "jpg";
+    const fileExtension =
+      imageFile.name.split(".").pop()?.toLowerCase() || "jpg";
 
     try {
-      const response = await axiosInterceptor.post("/api/images/banners/presigned-url", { fileExtension });
+      const response = await axiosInterceptor.post(
+        "/api/images/banners/presigned-url",
+        { fileExtension },
+      );
       console.log("Presigned URL 응답:", response);
       const presignedUrl = response.data.data.presignedUrl;
       setPresignedUrl(presignedUrl);
@@ -105,6 +119,11 @@ export default function BannersDragpage() {
   // 배너 이미지 생성
   const createBanner = async () => {
     setIsCreating(true);
+    if (!presignedUrl) {
+      toast.error("이미지를 업로드 해주세요.");
+      setIsCreating(false);
+      return;
+    }
     if (
       !createBannerData.title ||
       !createBannerData.description ||
@@ -113,10 +132,12 @@ export default function BannersDragpage() {
       !createBannerData.displayOrder
     ) {
       toast.error("모든 필수 필드를 입력해주세요.");
+      setIsCreating(false);
       return;
     }
     if (isNaN(Number(createBannerData.displayOrder))) {
       toast.error("배너 순서는 숫자 형식이어야 합니다.");
+      setIsCreating(false);
       return;
     }
     try {
@@ -135,6 +156,7 @@ export default function BannersDragpage() {
     } catch (error) {
       console.error("배너 이미지 생성 중 오류 발생:", error);
     } finally {
+      setCreateMode(false);
       setIsCreating(false);
     }
   };
@@ -150,7 +172,7 @@ export default function BannersDragpage() {
   };
   // 수정 모드 토글
   const toggleCreateMode = () => {
-    setIsCreating(!isCreating);
+    setCreateMode(!createMode);
     setImageFile(null);
     setPresignedUrl(null);
     setCreateBannerData({
@@ -171,7 +193,10 @@ export default function BannersDragpage() {
           displayOrder: index + 1, // 1부터 시작
         })),
       };
-      const response = await axiosInterceptor.patch("/api/banners/order", requestBody);
+      const response = await axiosInterceptor.patch(
+        "/api/banners/order",
+        requestBody,
+      );
       toast.success("배너 순서 변경이 완료되었습니다.");
       console.log(response);
     } catch (error) {
@@ -191,7 +216,7 @@ export default function BannersDragpage() {
         delay: 250,
         tolerance: 5,
       },
-    })
+    }),
   );
   // 드래그 시작 함수
   const handleDragStart = ({ active }: DragStartEvent) => {
@@ -200,11 +225,19 @@ export default function BannersDragpage() {
   // 드래그 종료 함수
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (over && active.id !== over.id) {
-      const activeIndex = bannerData.findIndex((item) => item.id === Number(active.id));
-      const overIndex = bannerData.findIndex((item) => item.id === Number(over.id));
+      const activeIndex = bannerData.findIndex(
+        (item) => item.id === Number(active.id),
+      );
+      const overIndex = bannerData.findIndex(
+        (item) => item.id === Number(over.id),
+      );
       if (activeIndex !== -1 && overIndex !== -1) {
         // 새로운 배열 생성 및 displayOrder 업데이트
-        const updatedBanners = arrayMove(bannerData, activeIndex, overIndex).map((banner, index) => ({
+        const updatedBanners = arrayMove(
+          bannerData,
+          activeIndex,
+          overIndex,
+        ).map((banner, index) => ({
           ...banner,
           displayOrder: index + 1, // 1부터 시작
         }));
@@ -222,21 +255,21 @@ export default function BannersDragpage() {
 
   if (!bannerData.length) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <PulseLoader />
       </div>
     );
   }
 
   return (
-    <div className="grid grid-row gap-10">
+    <div className="grid-row grid gap-10">
       {/* 배너 상세 정보 */}
       <Card>
         <CardHeader>
           <CardTitle className="flex justify-between">
             <div className="ck-title flex items-center">배너 목록</div>
-            <div className="flex gap-4 ">
-              {isCreating ? (
+            <div className="flex gap-4">
+              {createMode ? (
                 <>
                   <div className="flex items-center gap-2">
                     {/* 숨겨진 파일 입력 */}
@@ -249,7 +282,7 @@ export default function BannersDragpage() {
                     />
                     {/* 파일 선택 버튼 */}
                     <Button
-                      className="ck-body-1 border-1 bg-ck-white text-ck-gray-900 hover:bg-ck-gray-300"
+                      className="ck-body-1 bg-ck-white text-ck-gray-900 hover:bg-ck-gray-300 border-1"
                       onClick={handleFileSelect}
                     >
                       <FolderInput />
@@ -259,8 +292,12 @@ export default function BannersDragpage() {
                     {/* 선택된 파일 정보 표시 */}
                     {imageFile && (
                       <div className="text-sm text-gray-700">
-                        <span className="ck-body-2">선택된 파일 : {imageFile.name}</span>
-                        <span className="ml-2 ck-body-2">({(imageFile.size / 1024).toFixed(2)} KB)</span>
+                        <span className="ck-body-2">
+                          선택된 파일 : {imageFile.name}
+                        </span>
+                        <span className="ck-body-2 ml-2">
+                          ({(imageFile.size / 1024).toFixed(2)} KB)
+                        </span>
                       </div>
                     )}
                     {/* 파일 업로드 버튼 */}
@@ -268,7 +305,7 @@ export default function BannersDragpage() {
                       <Button
                         onClick={handleUrlUpload}
                         disabled={isUploading || !imageFile}
-                        className="ck-body-1 border-1 bg-ck-white text-ck-gray-900 hover:bg-gray-300"
+                        className="ck-body-1 bg-ck-white text-ck-gray-900 border-1 hover:bg-gray-300"
                       >
                         <Upload />
                         {isUploading ? "업로드 중..." : "파일 업로드"}
@@ -277,14 +314,14 @@ export default function BannersDragpage() {
                   </div>
                   <Button
                     onClick={() => createBanner()}
-                    className="cursor-pointer ck-body-1 hover:bg-ck-blue-500 hover:text-white"
+                    className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
                     variant="outline"
                   >
-                    생성
+                    {isCreating ? "생성 중..." : "생성"}
                   </Button>
                   <Button
                     onClick={toggleCreateMode}
-                    className="cursor-pointer ck-body-1 hover:bg-ck-gray-600 hover:text-white"
+                    className="ck-body-1 hover:bg-ck-gray-600 cursor-pointer hover:text-white"
                     variant="outline"
                   >
                     취소
@@ -292,7 +329,11 @@ export default function BannersDragpage() {
                 </>
               ) : (
                 <>
-                  <Button onClick={toggleCreateMode} className="cursor-pointer ck-body-1" variant="outline">
+                  <Button
+                    onClick={toggleCreateMode}
+                    className="ck-body-1 cursor-pointer"
+                    variant="outline"
+                  >
                     배너 추가
                   </Button>
                 </>
@@ -300,7 +341,7 @@ export default function BannersDragpage() {
             </div>
           </CardTitle>
         </CardHeader>
-        {isCreating ? (
+        {createMode ? (
           <CardContent className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <p className="ck-body-2-bold">배너 이름</p>
@@ -310,7 +351,7 @@ export default function BannersDragpage() {
                 value={createBannerData.title}
                 onChange={handleInputChange}
                 placeholder="배너 이름을 입력하세요"
-                className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
+                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -321,7 +362,7 @@ export default function BannersDragpage() {
                 value={createBannerData.redirectUrl}
                 onChange={handleInputChange}
                 placeholder="Redirect URL을 입력하세요"
-                className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
+                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -332,7 +373,7 @@ export default function BannersDragpage() {
                 value={createBannerData.description}
                 onChange={handleInputChange}
                 placeholder="설명을 입력하세요"
-                className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
+                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -343,7 +384,7 @@ export default function BannersDragpage() {
                 value={createBannerData.position}
                 onChange={handleInputChange}
                 placeholder="배너 위치를 입력하세요"
-                className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
+                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -354,14 +395,20 @@ export default function BannersDragpage() {
                 value={createBannerData.displayOrder}
                 onChange={handleInputChange}
                 placeholder="배너 순서 번호를 입력하세요"
-                className="w-full px-3 py-2 ck-body-2 bg-transparent border border-gray-300 rounded-md"
+                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
               />
             </div>
           </CardContent>
         ) : (
-          <div className="flex flex-col gap-4 w-full rounded-xl px-6 py-4">
-            <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} sensors={sensors}>
-              <SortableContext items={bannerData.map((item) => item.id.toString())}>
+          <div className="flex w-full flex-col gap-4 rounded-xl px-6 py-4">
+            <DndContext
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              sensors={sensors}
+            >
+              <SortableContext
+                items={bannerData.map((item) => item.id.toString())}
+              >
                 {bannerData.map((banner) => (
                   <Item key={banner.id} banner={banner} />
                 ))}

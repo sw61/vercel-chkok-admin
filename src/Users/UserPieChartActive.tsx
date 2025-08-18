@@ -35,10 +35,9 @@ export function UserPieChartActive() {
   const getUserStatus = async () => {
     try {
       setIsLoading(true);
-      const response = await axiosInterceptor.get(`/users/stats`);
+      const response = await axiosInterceptor.get("/users/stats");
       const userStatus = response.data.data;
       setUserStatus(userStatus);
-      setIsLoading(false);
     } catch (error) {
       console.log(error);
       const axiosError = error as AxiosError;
@@ -57,6 +56,8 @@ export function UserPieChartActive() {
             break;
         }
       }
+    } finally {
+      setIsLoading(false);
     }
   };
   useEffect(() => {
@@ -64,7 +65,7 @@ export function UserPieChartActive() {
   }, []);
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <PulseLoader />
       </div>
     );
@@ -111,7 +112,7 @@ export function UserPieChartActive() {
               <Pie data={chartData} dataKey="visitors" label nameKey="status" />
               <ChartLegend
                 content={<ChartLegendContent nameKey="status" />}
-                className="-translate-y-2 flex-wrap gap-2  *:justify-center pt-5"
+                className="-translate-y-2 flex-wrap gap-2 pt-5 *:justify-center"
               />
             </PieChart>
           </ChartContainer>
