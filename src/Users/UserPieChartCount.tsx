@@ -64,7 +64,7 @@ export function UserPieChartCount() {
   }, []);
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <PulseLoader />
       </div>
     );
@@ -73,12 +73,12 @@ export function UserPieChartCount() {
     {
       status: "client",
       visitors: userStatus?.clientCount,
-      fill: "#2388FF",
+      fill: "oklch(79.5% 0.184 86.047)",
     },
     {
       status: "userCount",
       visitors: userStatus?.userCount,
-      fill: "#86ABFF",
+      fill: "oklch(72.3% 0.219 149.579)",
     },
   ];
   const chartConfig = {
@@ -111,7 +111,7 @@ export function UserPieChartCount() {
               <Pie data={chartData} dataKey="visitors" label nameKey="status" />
               <ChartLegend
                 content={<ChartLegendContent nameKey="status" />}
-                className="-translate-y-2 flex-wrap gap-2  *:justify-center pt-5"
+                className="-translate-y-2 flex-wrap gap-2 pt-5 *:justify-center"
               />
             </PieChart>
           </ChartContainer>

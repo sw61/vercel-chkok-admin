@@ -22,7 +22,10 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 } // * props 인터페이스 정의
 
-export function CampaignPagination({ pageData, onPageChange }: PaginationProps) {
+export function CampaignPagination({
+  pageData,
+  onPageChange,
+}: PaginationProps) {
   const { totalPages, pageNumber, first, last } = pageData;
 
   const pageItems = [];
@@ -47,7 +50,7 @@ export function CampaignPagination({ pageData, onPageChange }: PaginationProps) 
         >
           {i + 1}
         </PaginationLink>
-      </PaginationItem>
+      </PaginationItem>,
     );
   }
 

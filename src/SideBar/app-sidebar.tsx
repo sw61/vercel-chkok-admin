@@ -1,5 +1,13 @@
 import * as React from "react";
-import { BookOpen, Frame, BadgeCheck, Map, PieChart, UserRound, Earth } from "lucide-react";
+import {
+  BookOpen,
+  Frame,
+  BadgeCheck,
+  Map,
+  PieChart,
+  UserRound,
+  Earth,
+} from "lucide-react";
 
 import { NavMain } from "@/SideBar/nav-main";
 // import { NavProjects } from "@/SideBar/nav-projects";
@@ -77,12 +85,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   return (
-    <Sidebar className="top-(--header-height) h-[calc(100svh-var(--header-height))]!" {...props}>
+    <Sidebar
+      className="top-(--header-height) h-[calc(100svh-var(--header-height))]! bg-white"
+      {...props}
+    >
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="/">
+              <a href="/" className="h-20">
                 <img src={chkokLogo}></img>
               </a>
             </SidebarMenuButton>

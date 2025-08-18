@@ -15,7 +15,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { ChevronDown } from "lucide-react";
-import { type ColumnFiltersState, type VisibilityState } from "@tanstack/react-table";
+import {
+  type ColumnFiltersState,
+  type VisibilityState,
+} from "@tanstack/react-table";
 import { Card } from "@/components/ui/card";
 
 interface Campaign {
@@ -26,6 +29,7 @@ interface Campaign {
   approvalComment: string;
   approvalDate: string;
   createdAt: string;
+  recruitmentStartDate: string; // 모집 시작일
 }
 
 interface PaginationData {
@@ -54,15 +58,21 @@ export default function CampaignTablePage() {
     { id: "createdAt", label: "생성일" },
     { id: "approvalComment", label: "처리 코멘트" },
   ];
-  const getCampaignTable = async (page: number = 0, type: typeof campaignType) => {
+  const getCampaignTable = async (
+    page: number = 0,
+    type: typeof campaignType,
+  ) => {
     setIsLoading(true);
     try {
       const url =
-        type === "ALL" ? `/campaigns?page=${page}&size=10` : `/campaigns?approvalStatus=${type}&page=${page}&size=10`;
+        type === "ALL"
+          ? `/campaigns?page=${page}&size=10`
+          : `/campaigns?approvalStatus=${type}&page=${page}&size=10`;
       const response = await axiosInterceptor.get(url);
       const campaignData = response.data.data;
       setCampaignData(campaignData.content);
       setPageData(campaignData.pagination);
+      console.log(campaignData);
     } catch (error) {
       console.log(error);
       const axiosError = error as AxiosError;
@@ -112,11 +122,13 @@ export default function CampaignTablePage() {
     setCampaignType(type);
   };
 
-  const currentLabel = typeValues.find((item) => item.type === campaignType)?.label || "캠페인 필터";
+  const currentLabel =
+    typeValues.find((item) => item.type === campaignType)?.label ||
+    "캠페인 필터";
 
   return (
     <Card className="px-6 py-4">
-      <div className="flex justify-between items-center mb-2">
+      <div className="mb-2 flex items-center justify-between">
         <div className="flex gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -165,7 +177,9 @@ export default function CampaignTablePage() {
         {/* 검색창 */}
         <Input
           placeholder="캠페인 이름 검색"
-          value={(columnFilters.find((f) => f.id === "title")?.value as string) ?? ""}
+          value={
+            (columnFilters.find((f) => f.id === "title")?.value as string) ?? ""
+          }
           onChange={(event) =>
             setColumnFilters((prev) => [
               ...prev.filter((f) => f.id !== "title"),
@@ -177,7 +191,7 @@ export default function CampaignTablePage() {
       </div>
 
       {!campaignData || !pageData || isLoading ? (
-        <div className="flex justify-center items-center h-64">
+        <div className="flex h-64 items-center justify-center">
           <PulseLoader />
         </div>
       ) : (
@@ -189,7 +203,10 @@ export default function CampaignTablePage() {
             columnVisibility={columnVisibility}
             setColumnVisibility={setColumnVisibility}
           />
-          <CampaignPagination pageData={pageData} onPageChange={handlePageChange} />
+          <CampaignPagination
+            pageData={pageData}
+            onPageChange={handlePageChange}
+          />
         </>
       )}
     </Card>

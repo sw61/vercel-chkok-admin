@@ -27,7 +27,11 @@ export function NavSecondary({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild size="sm" isActive={item.url === location.pathname}>
+              <SidebarMenuButton
+                asChild
+                size="sm"
+                isActive={item.url === location.pathname}
+              >
                 <a href={item.url} className="py-5">
                   <item.icon />
                   <span className="ck-body-2">{item.title}</span>
