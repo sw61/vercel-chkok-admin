@@ -326,7 +326,7 @@ export function UserTable({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-24 text-center whitespace-nowrap"
                 >
                   No results.
                 </TableCell>

@@ -13,7 +13,6 @@ interface AdminData {
   role: string;
   createdAt: string;
   lastLoginAt: string;
-  isActive: boolean;
 }
 interface AdminAccountInfo {
   key: string;
@@ -50,18 +49,6 @@ export default function AdminDetail() {
 
   const AdminAccountInfo = (): AdminAccountInfo[] => [
     { key: "id", label: "ID", value: adminData?.id ?? "정보 없음" },
-
-    {
-      key: "isActive",
-      label: "계정 상태",
-      value: adminData?.isActive ? "활성화" : "비활성화",
-    },
-
-    {
-      key: "accountType",
-      label: "계정 타입",
-      value: adminData?.accountType ? "인증 완료" : "인증 필요",
-    },
     {
       key: "createdAt",
       label: "생성일",

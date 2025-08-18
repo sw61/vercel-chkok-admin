@@ -7,6 +7,7 @@ import {
   PieChart,
   UserRound,
   Earth,
+  Server,
 } from "lucide-react";
 
 import { NavMain } from "@/SideBar/nav-main";
@@ -57,6 +58,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/banners",
         icon: BookOpen,
       },
+      {
+        title: "서버 데이터",
+        url: "/server",
+        icon: Server,
+      },
     ],
     navSecondary: [
       {
@@ -104,7 +110,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
         {/* <NavProjects projects={data.projects} /> */}
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <Separator />
       <SidebarFooter>

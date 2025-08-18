@@ -27,12 +27,8 @@ interface AdminData {
   id: number;
   name: string;
   email: string;
-  accountType: string;
-  role: string;
   createdAt: string;
   lastLoginAt: string;
-  isActive: boolean;
-  loginCount: number;
   thumbnailUrl: string;
 }
 

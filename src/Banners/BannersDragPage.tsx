@@ -314,7 +314,8 @@ export default function BannersDragPage() {
                   </div>
                   <Button
                     onClick={() => createBanner()}
-                    className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
+                    disabled={!presignedUrl || isCreating}
+                    className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                     variant="outline"
                   >
                     {isCreating ? "생성 중..." : "생성"}
