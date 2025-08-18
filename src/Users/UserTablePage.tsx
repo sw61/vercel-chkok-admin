@@ -2,7 +2,7 @@ import { UserTable } from "./UserTable";
 import { PaginationDemo } from "./UserPagination";
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
-import PulseLoader from "react-spinners/PulseLoader";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +23,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronDown } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Search } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface User {
   id: number;
@@ -47,6 +56,7 @@ interface PaginationData {
 export default function UserTablePage() {
   const [userData, setUserData] = useState<User[]>();
   const [pageData, setPageData] = useState<PaginationData | null>();
+  const [searchKey, setSearchKey] = useState<string>("");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [isLoading, setIsLoading] = useState<Boolean>(false);
@@ -60,7 +70,7 @@ export default function UserTablePage() {
     { id: "createdAt", label: "생성일" },
     { id: "updatedAt", label: "갱신일" },
   ];
-
+  // 사용자 테이블 조회
   const getUserTable = async (page: number = 0) => {
     setIsLoading(true);
     try {
@@ -72,39 +82,29 @@ export default function UserTablePage() {
       setPageData(data.pagination);
     } catch (error) {
       console.log(error);
-      const axiosError = error as AxiosError;
-      if (axiosError.response) {
-        switch (axiosError.response.status) {
-          case 400:
-            toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
-            break;
-          case 401:
-            navigate("/login");
-            toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
-            break;
-          case 403:
-            navigate("/login");
-            toast.error("접근 권한이 없습니다.");
-            break;
-          case 404:
-            toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");
-            break;
-          case 500:
-            toast.error("서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
-            break;
-        }
-      }
     } finally {
       setIsLoading(false);
     }
   };
-  useEffect(() => {
-    getUserTable();
-  }, []);
+  const handleSearch = async () => {
+    try {
+      const response = await axiosInterceptor.get(
+        `/users/search?keyword=${searchKey}&size=10`,
+      );
+      const userData = response.data.data;
+      setUserData(userData.content);
+      setPageData(userData.pagination);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handlePageChange = (page: number) => {
     getUserTable(page);
   };
+  useEffect(() => {
+    getUserTable();
+  }, []);
 
   return (
     <Card className="px-6 py-4">
@@ -137,25 +137,49 @@ export default function UserTablePage() {
           </DropdownMenu>
         </div>
         {/* 검색창 */}
-        <Input
-          placeholder="사용자 이름 검색"
-          value={
-            (columnFilters.find((f) => f.id === "nickname")?.value as string) ??
-            ""
-          }
-          onChange={(event) =>
-            setColumnFilters((prev) => [
-              ...prev.filter((f) => f.id !== "nickname"),
-              { id: "nickname", value: event.target.value },
-            ])
-          }
-          className="pr-20"
-        />
+        <div className="relative">
+          <Input
+            placeholder="사용자 이름 검색"
+            value={searchKey}
+            onChange={(e) => setSearchKey(e.target.value)}
+            className="pr-12"
+          />
+          <button
+            className="absolute top-0 right-0 h-full w-10"
+            onClick={() => handleSearch()}
+          >
+            <Search />
+          </button>
+        </div>
       </div>
 
       {!userData || !pageData || isLoading ? (
-        <div className="flex h-64 items-center justify-center">
-          <PulseLoader />
+        <div className="overflow-x-auto rounded-md border">
+          <Table className="table-fixed" style={{ minWidth: `${1000}px` }}>
+            <TableHeader>
+              <TableRow>
+                {[80, 150, 200, 100, 120, 150, 150].map((width, idx) => (
+                  <TableHead key={idx} style={{ width: `${width}px` }}>
+                    <Skeleton className="h-4 w-3/4" />
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Array.from({ length: 10 }).map((_, rowIdx) => (
+                <TableRow key={rowIdx}>
+                  {[80, 150, 200, 100, 120, 150, 150].map((width, colIdx) => (
+                    <TableCell
+                      key={`${rowIdx}-${colIdx}`}
+                      style={{ width: `${width}px` }}
+                    >
+                      <Skeleton className="h-4 w-full" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       ) : (
         <>
