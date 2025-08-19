@@ -246,7 +246,7 @@ export default function CampaignDetail() {
 
   // 캠페인 거절 처리
   const rejectCampaign = async (id: number) => {
-    if (window.confirm("이 캠페인을 거절하시겠습니까?")) {
+    if (window.confirm("캠페인을 거절하시겠습니까?")) {
       try {
         const response = await axiosInterceptor.put(
           `/campaigns/${id}/approval`,

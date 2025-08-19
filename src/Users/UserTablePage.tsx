@@ -145,7 +145,7 @@ export default function UserTablePage() {
             className="pr-12"
           />
           <button
-            className="absolute top-0 right-0 h-full w-10"
+            className="absolute top-0 right-0 h-full w-10 cursor-pointer"
             onClick={() => handleSearch()}
           >
             <Search />
