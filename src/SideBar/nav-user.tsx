@@ -51,7 +51,7 @@ export function NavUser() {
     staleTime: 5 * 60 * 1000, // 5분 동안 캐싱
   });
 
-  if (isLoading || error || !adminData) {
+  if (isLoading) {
     return (
       <div className="flex items-center gap-2 p-2 opacity-50">
         <Skeleton className="h-8 w-8 rounded-full" />
@@ -59,6 +59,20 @@ export function NavUser() {
           <Skeleton className="h-4 w-[150px]" />
           <Skeleton className="h-4 w-[100px]" />
         </div>
+      </div>
+    );
+  }
+
+  if (error || !adminData) {
+    return (
+      <div className="p-2 text-sm text-red-500">
+        {error ? error.message : "데이터를 불러올 수 없습니다."}
+        <button
+          onClick={() => window.location.reload()}
+          className="ml-2 text-blue-500 underline"
+        >
+          재시도
+        </button>
       </div>
     );
   }

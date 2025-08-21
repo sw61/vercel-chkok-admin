@@ -36,6 +36,7 @@ export function LoginForm({
             toast.error("잘못된 정보가 있어요");
             break;
           case 403:
+            navigate("/login");
             toast.error("관리자 권한이 필요합니다.");
             break;
           case 429:

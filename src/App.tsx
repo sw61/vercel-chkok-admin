@@ -20,6 +20,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import BannersDetail from "./Banners/BannersDetail";
+import ServerDashBoard from "./Server/ServerDashBoard";
 import { ServerPieChart } from "./Server/ServerPieChart";
 
 const queryClient = new QueryClient({
@@ -117,7 +118,7 @@ function App() {
                 path="/server"
                 element={
                   <PrivateComponent>
-                    <ServerPieChart />
+                    <ServerDashBoard />
                   </PrivateComponent>
                 }
               ></Route>
