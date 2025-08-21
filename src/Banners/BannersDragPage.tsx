@@ -9,9 +9,9 @@ import {
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { useSensors, useSensor, MouseSensor, TouchSensor } from "@dnd-kit/core";
 import axiosInterceptor from "@/lib/axios-interceptors";
-import PulseLoader from "react-spinners/PulseLoader";
 import { toast } from "react-toastify";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { FolderInput, Upload } from "lucide-react";
@@ -255,8 +255,25 @@ export default function BannersDragPage() {
 
   if (!bannerData.length) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <PulseLoader />
+      <div className="flex w-full flex-col gap-4 rounded-xl px-6 py-4">
+        {[1, 2, 3].map((index) => (
+          <div
+            key={index}
+            className="flex w-full flex-col rounded-xl border bg-white px-4 py-2"
+          >
+            <div className="flex items-center">
+              <Skeleton className="h-36 w-64 rounded-md" />
+              <div className="flex w-full items-center justify-between p-6">
+                <div className="flex flex-col gap-2">
+                  <Skeleton className="h-6 w-48" />
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-4 w-40" />
+                </div>
+                <Skeleton className="h-10 w-12 rounded-full" />
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     );
   }

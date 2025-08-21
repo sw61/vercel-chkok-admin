@@ -173,15 +173,10 @@ export default function UserDetail() {
   };
   // 사용자 삭제
   const deleteUser = async (id: number) => {
-    if (
-      window.confirm(
-        "사용자를 삭제하시겠습니까? (주의 : 이 작업은 되돌릴 수 없습니다)",
-      )
-    ) {
+    if (window.confirm("사용자를 삭제하시겠습니까?")) {
       try {
-        const response = await axiosInterceptor.delete(`/users/${id}`);
+        await axiosInterceptor.delete(`/users/${id}`);
         navigate("/users");
-        console.log(response);
         toast.success("사용자가 삭제되었습니다.");
       } catch (error) {
         console.log(error);
