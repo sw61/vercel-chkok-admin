@@ -59,16 +59,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/banners",
         icon: BookOpen,
       },
-      {
-        title: "서버 데이터",
-        url: "/server",
-        icon: Server,
-      },
-      {
-        title: "마크다운 에디터",
-        url: "/editor",
-        icon: Edit,
-      },
+      // {
+      //   title: "서버 데이터",
+      //   url: "/server",
+      //   icon: Server,
+      // },
+      // {
+      //   title: "마크다운 에디터",
+      //   url: "/editor",
+      //   icon: Edit,
+      // },
     ],
     navSecondary: [
       {
