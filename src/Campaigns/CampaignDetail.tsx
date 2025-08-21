@@ -1,6 +1,6 @@
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PulseLoader from "react-spinners/PulseLoader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -62,6 +62,7 @@ export default function CampaignDetail() {
   const { campaignId } = useParams<{ campaignId: string }>();
   const [campaignData, setCampaignData] = useState<Campaign | null>(null);
   const [comment, setComment] = useState<string>();
+  const navigate = useNavigate();
   const dataMap: Record<string, string> = {
     USER: "사용자",
     CLIENT: "클라이언트",
@@ -221,6 +222,19 @@ export default function CampaignDetail() {
       console.log(error);
     }
   };
+  // 캠페인 삭제 처리
+  const deleteCampaign = async (id: number) => {
+    if (window.confirm("캠페인을 삭제하시겠습니까?")) {
+      try {
+        await axiosInterceptor.delete(`/campaigns/${id}`);
+        navigate("/campaigns");
+        toast.success("캠페인이 삭제되었습니다.");
+      } catch (error) {
+        toast.error("캠페인 삭제 중 오류가 발생했습니다.");
+        console.log(error);
+      }
+    }
+  };
 
   // 캠페인 승인 처리
   const approveCampaign = async (id: number) => {
@@ -246,7 +260,7 @@ export default function CampaignDetail() {
 
   // 캠페인 거절 처리
   const rejectCampaign = async (id: number) => {
-    if (window.confirm("이 캠페인을 거절하시겠습니까?")) {
+    if (window.confirm("캠페인을 거절하시겠습니까?")) {
       try {
         const response = await axiosInterceptor.put(
           `/campaigns/${id}/approval`,
@@ -291,24 +305,33 @@ export default function CampaignDetail() {
         <CardHeader>
           <CardTitle className="flex justify-between">
             <div className="ck-sub-title-1 flex items-center">캠페인 정보</div>
-            {campaignData.approvalStatus === "대기중" && (
-              <div className="flex gap-4">
-                <Button
-                  className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
-                  onClick={() => approveCampaign(campaignData.id)}
-                  variant="outline"
-                >
-                  승인
-                </Button>
-                <Button
-                  className="ck-body-1 hover:bg-ck-red-500 cursor-pointer hover:text-white"
-                  onClick={() => rejectCampaign(campaignData.id)}
-                  variant="outline"
-                >
-                  거절
-                </Button>
-              </div>
-            )}
+            <div className="flex gap-4">
+              <Button
+                className="ck-body-1 hover:bg-ck-red-500 cursor-pointer hover:text-white"
+                onClick={() => deleteCampaign(campaignData.id)}
+                variant="outline"
+              >
+                삭제
+              </Button>
+              {campaignData.approvalStatus === "대기중" && (
+                <>
+                  <Button
+                    className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
+                    onClick={() => approveCampaign(campaignData.id)}
+                    variant="outline"
+                  >
+                    승인
+                  </Button>
+                  <Button
+                    className="ck-body-1 hover:bg-ck-red-500 cursor-pointer hover:text-white"
+                    onClick={() => rejectCampaign(campaignData.id)}
+                    variant="outline"
+                  >
+                    거절
+                  </Button>
+                </>
+              )}
+            </div>
           </CardTitle>
         </CardHeader>
         {campaignData.approvalStatus === "대기중" && (
