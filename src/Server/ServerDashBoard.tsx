@@ -1,19 +1,21 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { CheckCircle2, XCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  RadialBarChart,
-  RadialBar,
-  Legend,
-} from "recharts";
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+} from "@/components/ui/chart";
+import { BarChart, Bar, XAxis, YAxis } from "recharts";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // API 응답 타입 정의
 interface MetricStats {
@@ -37,6 +39,86 @@ interface ApiResponse {
     StatusCheckFailed_System: MetricStats;
     StatusCheckFailed_Instance: MetricStats;
   };
+}
+
+function StatusIndicator({
+  label,
+  ok,
+  okLabel = "정상",
+  failLabel = "실패",
+  tooltip,
+}: {
+  label: string;
+  ok: boolean;
+  okLabel?: string;
+  failLabel?: string;
+  tooltip?: string;
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div className="flex items-center gap-2">
+          {ok ? (
+            <CheckCircle2 className="size-4 text-green-500" />
+          ) : (
+            <XCircle className="size-4 text-red-500" />
+          )}
+          <span>
+            {label} : {ok ? okLabel : failLabel}
+          </span>
+        </div>
+      </TooltipTrigger>
+      <TooltipContent>
+        {tooltip || (ok ? "정상 상태" : "문제 감지")}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
+// 스켈레톤 로딩 컴포넌트
+function ServerDashboardSkeleton() {
+  return (
+    <div className="space-y-6">
+      {/* 차트 섹션 스켈레톤 */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {[1, 2, 3].map((i) => (
+          <Card key={i}>
+            <CardHeader>
+              <Skeleton className="h-6 w-32" />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+                <div className="flex space-x-2">
+                  <Skeleton className="h-8 w-16" />
+                  <Skeleton className="h-8 w-16" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* 상태 모니터링 섹션 스켈레톤 */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {[1, 2, 3, 4].map((i) => (
+          <Card key={i}>
+            <CardHeader className="pb-3">
+              <Skeleton className="h-5 w-24" />
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-4 w-4 rounded-full" />
+                <Skeleton className="h-4 w-32" />
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default function ServerDashBoard() {
@@ -66,7 +148,7 @@ export default function ServerDashBoard() {
     return () => clearInterval(interval);
   }, []);
 
-  if (loading) return <div className="text-center text-xl">로딩 중...</div>;
+  if (loading) return <ServerDashboardSkeleton />;
   if (error)
     return (
       <Alert variant="destructive">
@@ -82,36 +164,29 @@ export default function ServerDashBoard() {
       </Alert>
     );
 
-  // CPUUtilization 데이터
-  const cpuUtilizationData = [
-    { name: "CPU 사용률", value: serverData.Metrics.CPUUtilization.Average },
-  ];
-
-  // CPUCreditBalance 데이터
-  const cpuCreditBalanceData = [
+  // CPUUtilization 및 CPUCreditUsage 데이터 통합
+  const cpuData = [
     {
-      name: "CPU 크레딧 잔액",
-      value: serverData.Metrics.CPUCreditBalance.Average,
+      name: "CPU 사용률",
+      Average: serverData.Metrics.CPUUtilization.Average,
+      Maximum: serverData.Metrics.CPUUtilization.Maximum,
     },
-  ];
-
-  // CPUCreditUsage 데이터
-  const cpuCreditUsageData = [
     {
       name: "CPU 크레딧 사용량",
-      value: serverData.Metrics.CPUCreditUsage.Average,
+      Average: serverData.Metrics.CPUCreditUsage.Average * 100,
+      Maximum: serverData.Metrics.CPUCreditUsage.Maximum * 100,
     },
   ];
 
   // NetworkIn/Out 데이터
   const networkData = [
     {
-      name: "NetworkIn",
+      name: "수신 트래픽",
       Average: serverData.Metrics.NetworkIn.Average,
       Maximum: serverData.Metrics.NetworkIn.Maximum,
     },
     {
-      name: "NetworkOut",
+      name: "송신 트래픽",
       Average: serverData.Metrics.NetworkOut.Average,
       Maximum: serverData.Metrics.NetworkOut.Maximum,
     },
@@ -119,232 +194,226 @@ export default function ServerDashBoard() {
 
   // NetworkPacketsIn/Out 데이터
   const packetsData = [
-    { name: "PacketsIn", Average: serverData.Metrics.NetworkPacketsIn.Average },
     {
-      name: "PacketsOut",
+      name: "수신 패킷",
+      Average: serverData.Metrics.NetworkPacketsIn.Average,
+      Maximum: serverData.Metrics.NetworkPacketsIn.Maximum,
+    },
+    {
+      name: "송신 패킷",
       Average: serverData.Metrics.NetworkPacketsOut.Average,
+      Maximum: serverData.Metrics.NetworkPacketsOut.Maximum,
     },
   ];
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="mb-4 text-center text-2xl font-bold">
-        EC2 인스턴스 대시보드
-      </h1>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {/* CPUUtilization (RadialBarChart) */}
+    <div className="space-y-6">
+      {/* 차트 섹션 */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* CPUUtilization 및 CPUCreditUsage (BarChart) */}
         <Card>
           <CardHeader>
-            <CardTitle>CPU 사용률</CardTitle>
+            <CardTitle className="ck-body-1-bold">CPU 메트릭</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <RadialBarChart
-                innerRadius="40%"
-                outerRadius="80%"
-                data={cpuUtilizationData}
-                startAngle={180}
-                endAngle={0}
-              >
-                <RadialBar
-                  endAngle={15}
-                  label={{
-                    fill: "#333",
-                    position: "insideStart",
-                    fontSize: 14,
-                  }}
-                  background
-                  dataKey="value"
-                  fill={
-                    serverData.Metrics.CPUUtilization.Average > 80
-                      ? "#ef4444"
-                      : serverData.Metrics.CPUUtilization.Average > 50
-                        ? "#f59e0b"
-                        : "#10b981"
-                  }
-                />
-                <Tooltip
-                  formatter={(value: number) => `${value.toFixed(1)}%`}
-                />
-              </RadialBarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* CPUCreditBalance (RadialBarChart) */}
-        <Card>
-          <CardHeader>
-            <CardTitle>CPU 크레딧 잔액</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <RadialBarChart
-                innerRadius="40%"
-                outerRadius="80%"
-                data={cpuCreditBalanceData}
-                startAngle={180}
-                endAngle={0}
-              >
-                <RadialBar
-                  endAngle={15}
-                  label={{
-                    fill: "#333",
-                    position: "insideStart",
-                    fontSize: 14,
-                  }}
-                  background
-                  dataKey="value"
-                  fill={
-                    serverData.Metrics.CPUCreditBalance.Average < 10
-                      ? "#ef4444"
-                      : "#10b981"
-                  }
-                />
-                <Tooltip
-                  formatter={(value: number) => `${value.toFixed(0)} 크레딧`}
-                />
-              </RadialBarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* CPUCreditUsage (BarChart) */}
-        <Card>
-          <CardHeader>
-            <CardTitle>CPU 크레딧 사용량</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={cpuCreditUsageData}>
+            <ChartContainer
+              config={{
+                Average: {
+                  label: "평균",
+                  color: "#3b82f6",
+                },
+                Maximum: {
+                  label: "최대",
+                  color: "#93c5fd",
+                },
+              }}
+            >
+              <BarChart data={cpuData}>
                 <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip
-                  formatter={(value: number) => `${value.toFixed(3)} 크레딧`}
+                <YAxis domain={[0, 100]} />
+                <ChartTooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <ChartTooltipContent
+                          active={active}
+                          payload={payload}
+                          labelFormatter={(_, items) =>
+                            items?.[0]?.payload?.name
+                          }
+                          formatter={(value: any, name: any) =>
+                            `${name}: ${Number(value).toFixed(1)}%`
+                          }
+                        />
+                      );
+                    }
+                    return null;
+                  }}
                 />
-                <Bar dataKey="value" fill="#3b82f6" />
+                <ChartLegend />
+                <Bar dataKey="Average" fill="#3b82f6" name="평균" />
+                <Bar dataKey="Maximum" fill="#93c5fd" name="최대" />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </CardContent>
         </Card>
 
         {/* NetworkIn/Out (BarChart) */}
         <Card>
           <CardHeader>
-            <CardTitle>네트워크 트래픽</CardTitle>
+            <CardTitle className="ck-body-1-bold">네트워크 트래픽</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
+            <ChartContainer
+              config={{
+                Average: {
+                  label: "평균",
+                  color: "#3b82f6",
+                },
+                Maximum: {
+                  label: "최대",
+                  color: "#93c5fd",
+                },
+              }}
+            >
               <BarChart data={networkData}>
                 <XAxis dataKey="name" />
                 <YAxis />
-                <Tooltip
-                  formatter={(value: number) => `${value.toFixed(0)} Bytes`}
+                <ChartTooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <ChartTooltipContent
+                          active={active}
+                          payload={payload}
+                          labelFormatter={(_, items) =>
+                            items?.[0]?.payload?.name
+                          }
+                          formatter={(value: any, name: any) =>
+                            `${name}: ${Number(value).toFixed(0)} Bytes`
+                          }
+                        />
+                      );
+                    }
+                    return null;
+                  }}
                 />
-                <Legend />
+                <ChartLegend />
                 <Bar dataKey="Average" fill="#3b82f6" name="평균" />
                 <Bar dataKey="Maximum" fill="#93c5fd" name="최대" />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </CardContent>
         </Card>
 
         {/* NetworkPacketsIn/Out (BarChart) */}
         <Card>
           <CardHeader>
-            <CardTitle>네트워크 패킷</CardTitle>
+            <CardTitle className="ck-body-1-bold">네트워크 패킷</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
+            <ChartContainer
+              config={{
+                Average: {
+                  label: "평균",
+                  color: "#6b7280",
+                },
+                Maximum: {
+                  label: "최대",
+                  color: "#9ca3af",
+                },
+              }}
+            >
               <BarChart data={packetsData}>
                 <XAxis dataKey="name" />
                 <YAxis />
-                <Tooltip
-                  formatter={(value: number) => `${value.toFixed(0)} Packets`}
+                <ChartTooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <ChartTooltipContent
+                          active={active}
+                          payload={payload}
+                          labelFormatter={(_, items) =>
+                            items?.[0]?.payload?.name
+                          }
+                          formatter={(value: any, name: any) =>
+                            `${name}: ${Number(value).toFixed(0)} Packets`
+                          }
+                        />
+                      );
+                    }
+                    return null;
+                  }}
                 />
-                <Legend />
+                <ChartLegend />
                 <Bar dataKey="Average" fill="#6b7280" name="평균" />
-                <Bar
-                  dataKey="Average"
-                  fill="#9ca3af"
-                  name="평균 (PacketsOut)"
-                />
+                <Bar dataKey="Maximum" fill="#9ca3af" name="최대" />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* 상태 모니터링 섹션 */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {/* CPU 크레딧 잔액 상태 */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="ck-body-1-bold">CPU 크레딧 상태</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <StatusIndicator
+              label="CPU 크레딧 잔액"
+              ok={serverData.Metrics.CPUCreditBalance.Average > 0}
+              okLabel={`${serverData.Metrics.CPUCreditBalance.Average.toFixed(0)}개 (정상)`}
+              failLabel="0 (부족)"
+              tooltip="CPU 크레딧 잔액 상태"
+            />
           </CardContent>
         </Card>
 
-        {/* StatusCheckFailed_Instance */}
+        {/* 인스턴스 상태 검사 */}
         <Card>
-          <CardHeader>
-            <CardTitle>인스턴스 상태 체크</CardTitle>
+          <CardHeader className="pb-3">
+            <CardTitle className="ck-body-1-bold">인스턴스 상태</CardTitle>
           </CardHeader>
-          <CardContent>
-            <Badge
-              variant={
-                serverData.Metrics.StatusCheckFailed_Instance.Average === 0
-                  ? "default"
-                  : "destructive"
-              }
-              className={
-                serverData.Metrics.StatusCheckFailed_Instance.Average === 0
-                  ? "bg-green-500"
-                  : "bg-red-500"
-              }
-            >
-              {serverData.Metrics.StatusCheckFailed_Instance.Average === 0
-                ? "정상"
-                : "실패"}
-            </Badge>
+          <CardContent className="pt-0">
+            <StatusIndicator
+              label="인스턴스 상태 검사"
+              ok={serverData.Metrics.StatusCheckFailed_Instance.Average === 0}
+              tooltip="인스턴스 상태 검사 통과 여부"
+            />
           </CardContent>
         </Card>
 
-        {/* StatusCheckFailed_System */}
+        {/* 시스템 상태 검사 */}
         <Card>
-          <CardHeader>
-            <CardTitle>시스템 상태 체크</CardTitle>
+          <CardHeader className="pb-3">
+            <CardTitle className="ck-body-1-bold">시스템 상태</CardTitle>
           </CardHeader>
-          <CardContent>
-            <Badge
-              variant={
-                serverData.Metrics.StatusCheckFailed_System.Average === 0
-                  ? "default"
-                  : "destructive"
-              }
-              className={
-                serverData.Metrics.StatusCheckFailed_System.Average === 0
-                  ? "bg-green-500"
-                  : "bg-red-500"
-              }
-            >
-              {serverData.Metrics.StatusCheckFailed_System.Average === 0
-                ? "정상"
-                : "실패"}
-            </Badge>
+          <CardContent className="pt-0">
+            <StatusIndicator
+              label="시스템 상태 검사"
+              ok={serverData.Metrics.StatusCheckFailed_System.Average === 0}
+              tooltip="시스템 상태 검사 통과 여부"
+            />
           </CardContent>
         </Card>
 
-        {/* MetadataNoToken */}
+        {/* 메타데이터 토큰 상태 */}
         <Card>
-          <CardHeader>
-            <CardTitle>메타데이터 토큰</CardTitle>
+          <CardHeader className="pb-3">
+            <CardTitle className="ck-body-1-bold">보안 상태</CardTitle>
           </CardHeader>
-          <CardContent>
-            <Badge
-              variant={
-                serverData.Metrics.MetadataNoToken.Average === 0
-                  ? "default"
-                  : "destructive"
-              }
-              className={
-                serverData.Metrics.MetadataNoToken.Average === 0
-                  ? "bg-green-500"
-                  : "bg-red-500"
-              }
-            >
-              {serverData.Metrics.MetadataNoToken.Average === 0
-                ? "없음 (안전)"
-                : "탐지됨"}
-            </Badge>
+          <CardContent className="pt-0">
+            <StatusIndicator
+              label="메타데이터 토큰"
+              ok={serverData.Metrics.MetadataNoToken.Average === 0}
+              okLabel="없음 (안전)"
+              failLabel="탐지됨"
+              tooltip="메타데이터 접근 탐지 여부"
+            />
           </CardContent>
         </Card>
       </div>

@@ -11,12 +11,9 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart";
+import { Skeleton } from "@/components/ui/skeleton";
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import PulseLoader from "react-spinners/PulseLoader";
-import { AxiosError } from "axios";
-import { toast } from "react-toastify";
 
 export const description = "A pie chart with a label";
 interface Status {
@@ -27,10 +24,45 @@ interface Status {
   expiredCampaigns: number;
 }
 
+// 파이 차트 스켈레톤 컴포넌트
+function PieChartSkeleton() {
+  return (
+    <Card className="flex flex-col pb-0">
+      <CardHeader className="items-center pb-0">
+        <Skeleton className="h-6 w-32" />
+      </CardHeader>
+      <CardContent className="flex-1 pb-0">
+        <div className="mx-auto flex aspect-square max-h-[300px] items-center justify-center pb-0">
+          <div className="space-y-4">
+            <Skeleton className="h-48 w-48 rounded-full" />
+            <div className="flex justify-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <Skeleton className="h-3 w-3 rounded-full" />
+                <Skeleton className="h-4 w-20" />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Skeleton className="h-3 w-3 rounded-full" />
+                <Skeleton className="h-4 w-20" />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Skeleton className="h-3 w-3 rounded-full" />
+                <Skeleton className="h-4 w-20" />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Skeleton className="h-3 w-3 rounded-full" />
+                <Skeleton className="h-4 w-20" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export function CamapaignPieChart() {
   const [campaignStatus, setCampaignStatus] = useState<Status | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
   const getCampaignStatus = async () => {
     try {
       setIsLoading(true);
@@ -39,39 +71,14 @@ export function CamapaignPieChart() {
       setCampaignStatus(campaignStatus);
       setIsLoading(false);
     } catch (error) {
-      const axiosError = error as AxiosError;
-      if (axiosError.response) {
-        switch (axiosError.response.status) {
-          case 400:
-            toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
-            break;
-          case 401:
-            toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
-            navigate("/login");
-            break;
-          case 403:
-            toast.error("접근 권한이 없습니다.");
-            navigate("/login");
-            break;
-          case 404:
-            toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");
-            break;
-          case 500:
-            toast.error("서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
-            break;
-        }
-      }
+      console.log(error);
     }
   };
   useEffect(() => {
     getCampaignStatus();
   }, []);
   if (isLoading) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <PulseLoader />
-      </div>
-    );
+    return <PieChartSkeleton />;
   }
   const chartData = [
     {

@@ -18,10 +18,12 @@ import {
 } from "@/components/ui/sidebar";
 import { useLogout } from "@/auth/useLogout";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import axiosInterceptor from "@/lib/axios-interceptors";
+import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
 import usericon from "../Image/usericon.png";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 interface AdminData {
   id: number;
@@ -32,47 +34,47 @@ interface AdminData {
   thumbnailUrl: string;
 }
 
-const getAdminData = async (): Promise<AdminData> => {
-  const response = await axiosInterceptor.get("/auth/me");
-  return response.data.data;
-};
-
 export function NavUser() {
+  const [adminData, setAdminData] = useState<AdminData>();
+  const [isLoading, setIsLoading] = useState(true);
   const { isMobile } = useSidebar();
   const logout = useLogout();
   const navigate = useNavigate();
-  const {
-    data: adminData,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["adminData"],
-    queryFn: getAdminData,
-    staleTime: 5 * 60 * 1000, // 5분 동안 캐싱
-  });
 
-  if (isLoading) {
+  const getAdminData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInterceptor.get("/auth/me");
+      const data = response.data.data;
+      setAdminData(data);
+    } catch (err) {
+      console.log(err);
+      if (axios.isAxiosError(err)) {
+        if (err.response?.status === 403) {
+          navigate("/login");
+          toast.warn("토큰이 만료되었습니다. 다시 로그인해주세요.");
+        } else {
+          toast.error("관리자 정보를 불러오는데 실패했습니다.");
+        }
+      } else {
+        toast.error("알 수 없는 오류가 발생했습니다.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    getAdminData();
+  }, []);
+
+  if (isLoading || !adminData) {
     return (
-      <div className="flex items-center gap-2 p-2 opacity-50">
+      <div className="flex items-center gap-2 p-2">
         <Skeleton className="h-8 w-8 rounded-full" />
         <div className="space-y-2">
           <Skeleton className="h-4 w-[150px]" />
           <Skeleton className="h-4 w-[100px]" />
         </div>
-      </div>
-    );
-  }
-
-  if (error || !adminData) {
-    return (
-      <div className="p-2 text-sm text-red-500">
-        {error ? error.message : "데이터를 불러올 수 없습니다."}
-        <button
-          onClick={() => window.location.reload()}
-          className="ml-2 text-blue-500 underline"
-        >
-          재시도
-        </button>
       </div>
     );
   }
