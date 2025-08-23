@@ -85,7 +85,7 @@ export default function BannersDragPage() {
     setImageFile(file);
   };
 
-  // 이미지 파일로 배너 업로드 처리
+  // 이미지 파일 선택 + presignedUrl 을 통해 S3 이미지 업로드
   const handleUrlUpload = async () => {
     if (!imageFile) {
       toast.error("이미지 파일을 선택해주세요.");
