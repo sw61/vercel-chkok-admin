@@ -251,8 +251,8 @@ export default function ServerDashBoard() {
                   }}
                 />
                 <ChartLegend />
-                <Bar dataKey="Average" fill="#3b82f6" name="평균" />
-                <Bar dataKey="Maximum" fill="#93c5fd" name="최대" />
+                <Bar dataKey="Average" fill="#86abff" name="평균" />
+                <Bar dataKey="Maximum" fill="#2388ff" name="최대" />
               </BarChart>
             </ChartContainer>
           </CardContent>
@@ -299,8 +299,8 @@ export default function ServerDashBoard() {
                   }}
                 />
                 <ChartLegend />
-                <Bar dataKey="Average" fill="#3b82f6" name="평균" />
-                <Bar dataKey="Maximum" fill="#93c5fd" name="최대" />
+                <Bar dataKey="Average" fill="#86abff" name="평균" />
+                <Bar dataKey="Maximum" fill="#2388ff" name="최대" />
               </BarChart>
             </ChartContainer>
           </CardContent>
@@ -347,8 +347,8 @@ export default function ServerDashBoard() {
                   }}
                 />
                 <ChartLegend />
-                <Bar dataKey="Average" fill="#6b7280" name="평균" />
-                <Bar dataKey="Maximum" fill="#9ca3af" name="최대" />
+                <Bar dataKey="Average" fill="#86abff" name="평균" />
+                <Bar dataKey="Maximum" fill="#2388ff" name="최대" />
               </BarChart>
             </ChartContainer>
           </CardContent>
@@ -362,7 +362,7 @@ export default function ServerDashBoard() {
           <CardHeader className="pb-3">
             <CardTitle className="ck-body-1-bold">CPU 크레딧 상태</CardTitle>
           </CardHeader>
-          <CardContent className="pt-0">
+          <CardContent className="ck-body-1 pt-0">
             <StatusIndicator
               label="CPU 크레딧 잔액"
               ok={serverData.Metrics.CPUCreditBalance.Average > 0}
@@ -378,7 +378,7 @@ export default function ServerDashBoard() {
           <CardHeader className="pb-3">
             <CardTitle className="ck-body-1-bold">인스턴스 상태</CardTitle>
           </CardHeader>
-          <CardContent className="pt-0">
+          <CardContent className="ck-body-1 pt-0">
             <StatusIndicator
               label="인스턴스 상태 검사"
               ok={serverData.Metrics.StatusCheckFailed_Instance.Average === 0}
@@ -392,7 +392,7 @@ export default function ServerDashBoard() {
           <CardHeader className="pb-3">
             <CardTitle className="ck-body-1-bold">시스템 상태</CardTitle>
           </CardHeader>
-          <CardContent className="pt-0">
+          <CardContent className="ck-body-1 pt-0">
             <StatusIndicator
               label="시스템 상태 검사"
               ok={serverData.Metrics.StatusCheckFailed_System.Average === 0}
@@ -406,7 +406,7 @@ export default function ServerDashBoard() {
           <CardHeader className="pb-3">
             <CardTitle className="ck-body-1-bold">보안 상태</CardTitle>
           </CardHeader>
-          <CardContent className="pt-0">
+          <CardContent className="ck-body-1 pt-0">
             <StatusIndicator
               label="메타데이터 토큰"
               ok={serverData.Metrics.MetadataNoToken.Average === 0}

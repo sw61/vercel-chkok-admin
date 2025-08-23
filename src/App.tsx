@@ -20,6 +20,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import BannersDetail from "./Banners/BannersDetail";
 import ServerDashBoard from "./Server/ServerDashBoard";
+import MarkdownEditor from "./Editor/MarkdownEditor";
 
 function App() {
   return (
@@ -101,12 +102,21 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
-            {/* 서버 차트 테스트 */}
+            {/* 서버 데이터 대시보드 */}
             <Route
               path="/server"
               element={
                 <PrivateComponent>
                   <ServerDashBoard />
+                </PrivateComponent>
+              }
+            ></Route>
+            {/* 마크다운 에디터 테스트 */}
+            <Route
+              path="/editor"
+              element={
+                <PrivateComponent>
+                  <MarkdownEditor />
                 </PrivateComponent>
               }
             ></Route>
