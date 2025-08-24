@@ -16,7 +16,7 @@ interface ImageSize {
   height: string;
 }
 export default function MarkdownEditor() {
-  const [value, setValue] = useState<string | undefined>("**Hello Markdown!**");
+  const [value, setValue] = useState<string | undefined>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [presignedUrl, setPresignedUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
