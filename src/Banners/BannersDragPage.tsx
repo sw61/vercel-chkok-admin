@@ -255,7 +255,18 @@ export default function BannersDragPage() {
 
   if (!bannerData.length) {
     return (
-      <div className="flex w-full flex-col gap-4 rounded-xl px-6 py-4">
+      <Card className="flex w-full flex-col gap-4 rounded-xl px-6 py-4">
+        <CardTitle className="flex justify-between">
+          <div className="ck-title flex items-center">배너 목록</div>
+          <Button
+            onClick={toggleCreateMode}
+            className="ck-body-1 cursor-pointer"
+            variant="outline"
+          >
+            배너 추가
+          </Button>
+        </CardTitle>
+
         {[1, 2, 3].map((index) => (
           <div
             key={index}
@@ -274,7 +285,7 @@ export default function BannersDragPage() {
             </div>
           </div>
         ))}
-      </div>
+      </Card>
     );
   }
 
