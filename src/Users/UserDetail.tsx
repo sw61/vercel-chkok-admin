@@ -135,28 +135,8 @@ export default function UserDetail() {
       setUserData(mappedData);
       setUserMemo(userData.memo || "");
     } catch (error) {
+      toast.error("유저 정보 조회에 실패했습니다.");
       console.log(error);
-      const axiosError = error as AxiosError;
-      if (axiosError.response) {
-        switch (axiosError.response.status) {
-          case 400:
-            toast.error("잘못된 요청입니다. 입력 데이터를 확인해주세요.");
-            break;
-          case 401:
-            toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
-            navigate("/login");
-            break;
-          case 403:
-            toast.error("접근 권한이 없습니다.");
-            break;
-          case 404:
-            toast.error("요청한 사용자 데이터를 찾을 수 없습니다.");
-            break;
-          case 500:
-            toast.error("서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
-            break;
-        }
-      }
     }
   };
   // 사용자 활성화 / 비활성화
@@ -243,11 +223,13 @@ export default function UserDetail() {
               <div className="flex flex-col gap-4 font-semibold">
                 <div className="ck-body-1-bold">
                   {userData.nickname} ({userData.gender},{" "}
-                  {userData.age ? userData.age : "나이"})
+                  {userData.age ? userData.age : "나이 정보 없음"})
                 </div>
-                <div className="ck-body-1">{userData.email}</div>
                 <div className="ck-body-1">
-                  {userData.phone ? userData.phone : "전화번호(정보 없음)"}
+                  {userData.email ? userData.email : "이메일 정보 없음"}
+                </div>
+                <div className="ck-body-1">
+                  {userData.phone ? userData.phone : "전화번호 정보 없음"}
                 </div>
               </div>
               <div className="flex gap-4">
@@ -272,7 +254,7 @@ export default function UserDetail() {
                   사용자 삭제
                 </Button>
                 {/* 일반 사용자의 경우에만 클라이언트 승급 버튼 추가 */}
-                {userData.role === "USER" ? (
+                {userData.role === "사용자" ? (
                   <Button
                     className="ck-body-1 flex cursor-pointer items-center border"
                     onClick={() => userToClient(userData.id)}
