@@ -155,9 +155,6 @@ export default function MarkdownEditor() {
             commands.help,
           ]}
         />
-        <div className="ck-caption-1 text-ck-gray-500 flex justify-end">
-          드래그로 높이 조정 가능
-        </div>
       </div>
 
       {/* 이미지 크기 설정 모달 */}

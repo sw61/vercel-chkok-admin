@@ -1,55 +1,74 @@
 import axiosInterceptor from "@/lib/axios-interceptors";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import PulseLoader from "react-spinners/PulseLoader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 
 interface Campaign {
   id: number;
   title: string;
-  campaignType: string; // 캠페인 유형
-  thumbnailUrl: string; // 캠페인 썸네일
-  productShortInfo: string; // 상품 간단 정보
-  maxApplicants: number; // 최대 신청자 수
-  recruitmentStartDate: string; // 모집 시작일
-  recruitmentEndDate: string; // 모집 마감일
-  applicationDeadlineDate: string; // 신청 마감일
-  selectionDate: string; // 선택 날짜
-  reviewDeadlineDate: string; // 리뷰 마감일
-  approvalStatus: string; // 처리 상태
-  approvalComment: string; // 처리 코멘트
-  approvalDate: string; // 처리 날짜
-  creatorRole: string; // 한글화된 크리에이터 역할
-  creatorAccountType: string; // 한글화된 계정 타입
+  campaignType: string;
+  thumbnailUrl: string;
+  productShortInfo: string;
+  maxApplicants: number;
+  recruitmentStartDate: string;
+  recruitmentEndDate: string;
+  applicationDeadlineDate: string;
+  selectionDate: string;
+  reviewDeadlineDate: string;
+  approvalStatus: string;
+  approvalComment: string;
+  approvalDate: string;
+  creatorRole: string;
+  creatorAccountType: string;
   creator: {
     id: number;
-    nickname: string; // 크리에이터 이름
-    email: string; // 크리에이터 이메일
-    role: string; // 크리에이터 역할
-    accountType: string; // 크리에이터 계정 타입
+    nickname: string;
+    email: string;
+    role: string;
+    accountType: string;
+  };
+  approver: {
+    id: number;
+    email: string;
+    nickname: string;
   };
   company: {
     id: number;
-    companyName: string; // 회사 이름
-    businessRegistrationNumber: string; // 사업자 등록번호
-    contactPerson: string; // 연락처 이름
-    phoneNumber: string; // 전화번호
+    companyName: string;
+    businessRegistrationNumber: string;
+    contactPerson: string;
+    phoneNumber: string;
   };
   location: {
     id: number;
-    latitude: number; // 위도
-    longitude: number; // 경도
-    businessAddress: string; // 비즈니스 주소
-    businessDetailAddress: string; // 비즈니스 상세 주소
-    homepage: string; // 홈페이지
-    contactPhone: string; // 연락처
-    visitAndReservationInfo: string; // 방문 및 예약 정보
-    hasCoordinates: boolean; // 좌표가 있는지 true/false
+    latitude: number;
+    longitude: number;
+    businessAddress: string;
+    businessDetailAddress: string;
+    homepage: string;
+    contactPhone: string;
+    visitAndReservationInfo: string;
+    hasCoordinates: boolean;
   };
-  missionInfo: {};
+  missionInfo: {
+    id: number;
+    titleKeyWords: string;
+    bodyKeywords: string;
+    numberOfVideo: number;
+    numberOfImage: number;
+    numberOfText: number;
+    isMap: boolean;
+    missionGuide: string;
+    missionStartDate: string;
+    missionDeadlineDate: string;
+    createdAt: string;
+    updatedAt: string;
+  };
 }
 
 interface CampaignInfo {
@@ -71,11 +90,10 @@ export default function CampaignDetail() {
   };
 
   const CampaignInfo = (): CampaignInfo[] => [
-    { key: "id", label: "ID", value: campaignData?.id ?? "정보 없음" },
     {
-      key: "title",
-      label: "캠페인 이름",
-      value: campaignData?.title ?? "정보 없음",
+      key: "id",
+      label: "캠페인 ID",
+      value: campaignData?.id ?? "정보 없음",
     },
     {
       key: "campaignType",
@@ -83,38 +101,30 @@ export default function CampaignDetail() {
       value: campaignData?.campaignType ?? "정보 없음",
     },
     {
-      key: "productShortInfo",
-      label: "캠페인 간단 정보",
-      value: campaignData?.productShortInfo ?? "정보 없음",
+      key: "maxApplicants",
+      label: "최대 신청자 수",
+      value: campaignData?.maxApplicants
+        ? `${campaignData.maxApplicants}명`
+        : "정보 없음",
     },
     {
-      key: "maxApplicants",
-      label: "최대 지원자 수",
-      value: campaignData?.maxApplicants ?? "정보 없음",
+      key: "approvalStatus",
+      label: "승인 상태",
+      value: campaignData?.approvalStatus ?? "정보 없음",
     },
     {
       key: "recruitmentStartDate",
-      label: "신청 시작일",
+      label: "모집 시작일",
       value: campaignData?.recruitmentStartDate ?? "정보 없음",
     },
     {
       key: "recruitmentEndDate",
-      label: "신청 종료일",
+      label: "모집 마감일",
       value: campaignData?.recruitmentEndDate ?? "정보 없음",
     },
     {
-      key: "approvalStatus",
-      label: "처리 상태",
-      value: campaignData?.approvalStatus ?? "정보 없음",
-    },
-    {
-      key: "approvalComment",
-      label: "처리 코멘트",
-      value: campaignData?.approvalComment ?? "정보 없음",
-    },
-    {
       key: "approvalDate",
-      label: "처리일",
+      label: "승인일",
       value: campaignData?.approvalDate
         ? campaignData.approvalDate.split("T")[0]
         : "정보 없음",
@@ -126,84 +136,68 @@ export default function CampaignDetail() {
     },
     {
       key: "selectionDate",
-      label: "선택일",
+      label: "체험단 선정일",
       value: campaignData?.selectionDate ?? "정보 없음",
     },
   ];
-  const CreatorInfo = (): CampaignInfo[] => [
+  const MissionInfo = (): CampaignInfo[] => [
     {
-      key: "creatorId",
-      label: "ID",
-      value: campaignData?.creator.id ?? "정보 없음",
+      key: "id",
+      label: "미션 ID",
+      value: campaignData?.missionInfo.id ?? "정보 없음",
     },
     {
-      key: "creatorNickname",
-      label: "이름",
-      value: campaignData?.creator.nickname ?? "정보 없음",
+      key: "titleKeywords",
+      label: "제목 키워드",
+      value: campaignData?.missionInfo.titleKeyWords ?? "정보 없음",
     },
     {
-      key: "creatorEmail",
-      label: "이메일",
-      value: campaignData?.creator.email ?? "정보 없음",
+      key: "bodyKeywords",
+      label: "내용 키워드",
+      value: campaignData?.missionInfo.bodyKeywords ?? "정보 없음",
     },
     {
-      key: "creatorRole",
-      label: "계정 권한",
-      value: campaignData?.creatorRole ?? "정보 없음",
+      key: "numberOfvideo",
+      label: "영상 개수",
+      value: campaignData?.missionInfo.numberOfVideo ?? "정보 없음",
     },
     {
-      key: "creatorType",
-      label: "계정 타입",
-      value: campaignData?.creatorAccountType ?? "정보 없음",
+      key: "numberOfImage",
+      label: "이미지 개수",
+      value: campaignData?.missionInfo.numberOfImage ?? "정보 없음",
+    },
+    {
+      key: "numberOfText",
+      label: "텍스트 길이",
+      value: campaignData?.missionInfo.numberOfText ?? "정보 없음",
+    },
+    {
+      key: "missionGuide",
+      label: "미션 가이드",
+      value: campaignData?.missionInfo.missionGuide ?? "정보 없음",
+    },
+    {
+      key: "missionStartDate",
+      label: "미션 시작일",
+      value: campaignData?.missionInfo.missionStartDate ?? "정보 없음",
+    },
+    {
+      key: "missionDeadlineDate",
+      label: "미션 가이드",
+      value: campaignData?.missionInfo.missionGuide ?? "정보 없음",
+    },
+    {
+      key: "createdAt",
+      label: "생성일",
+      value: campaignData?.missionInfo.createdAt.split("T")[0] ?? "정보 없음",
+    },
+    {
+      key: "updatedAt",
+      label: "업데이트일",
+      value: campaignData?.missionInfo.updatedAt.split("T")[0] ?? "정보 없음",
     },
   ];
-  const CompanyInfo = (): CampaignInfo[] => [
-    {
-      key: "companyId",
-      label: "ID",
-      value: campaignData?.company.id ?? "정보 없음",
-    },
-    {
-      key: "companyName",
-      label: "회사 이름",
-      value: campaignData?.company.companyName ?? "정보 없음",
-    },
 
-    {
-      key: "contactPerson",
-      label: "연락처 이름",
-      value: campaignData?.company.contactPerson ?? "정보 없음",
-    },
-    {
-      key: "phoneNumber",
-      label: "연락처 번호",
-      value: campaignData?.company.phoneNumber ?? "정보 없음",
-    },
-    {
-      key: "businessRegistrationNumber",
-      label: "사업자 등록 번호",
-      value: campaignData?.company.businessRegistrationNumber ?? "정보 없음",
-    },
-  ];
-
-  const CampaignInfoComponent = ({
-    label,
-    value,
-  }: {
-    label: string;
-    value: string | number | undefined;
-  }) => {
-    return (
-      <CardContent className="flex flex-col gap-2">
-        <p className="ck-body-2-bold">{label}</p>
-        <div className="ck-body-2 border-ck-gray-300 rounded-md border bg-transparent px-3 py-2">
-          <span>{value}</span>
-        </div>
-      </CardContent>
-    );
-  };
-
-  // 캠페인 상세 정보 조회
   const getCampaignDetail = async (id: string) => {
     try {
       const response = await axiosInterceptor.get(`/campaigns/${id}`);
@@ -216,13 +210,10 @@ export default function CampaignDetail() {
           dataMap[campaignData.creator.accountType] || campaignData.accountType,
       };
       setCampaignData(mappedData);
-      console.log(mappedData);
     } catch (error) {
-      toast.error(`${error}`);
       console.log(error);
     }
   };
-  // 캠페인 삭제 처리
   const deleteCampaign = async (id: number) => {
     if (window.confirm("캠페인을 삭제하시겠습니까?")) {
       try {
@@ -231,12 +222,10 @@ export default function CampaignDetail() {
         toast.success("캠페인이 삭제되었습니다.");
       } catch (error) {
         toast.error("캠페인 삭제 중 오류가 발생했습니다.");
-        console.log(error);
       }
     }
   };
 
-  // 캠페인 승인 처리
   const approveCampaign = async (id: number) => {
     if (window.confirm("캠페인을 승인하시겠습니까?")) {
       try {
@@ -250,15 +239,12 @@ export default function CampaignDetail() {
         const updatedData = response.data.data;
         setCampaignData((prev) => ({ ...prev, ...updatedData }));
         toast.success("캠페인이 승인되었습니다.");
-        console.log(response);
       } catch (error) {
         toast.error(`${error}`);
-        console.log(error);
       }
     }
   };
 
-  // 캠페인 거절 처리
   const rejectCampaign = async (id: number) => {
     if (window.confirm("캠페인을 거절하시겠습니까?")) {
       try {
@@ -272,14 +258,13 @@ export default function CampaignDetail() {
         const updatedData = response.data.data;
         setCampaignData((prev) => ({ ...prev, ...updatedData }));
         toast.success("캠페인이 거절되었습니다.");
-        console.log(response);
       } catch (error) {
         toast.error(`${error}`);
-        console.log(error);
       }
     }
   };
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setComment(value);
   };
@@ -289,114 +274,233 @@ export default function CampaignDetail() {
       getCampaignDetail(campaignId);
     }
   }, [campaignId]);
-
+  // 스켈레톤 ui
   if (!campaignData) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <PulseLoader />
+      <div className="p-6">
+        <div className="mb-6 flex items-center justify-between">
+          <Skeleton className="h-8 w-64" />
+          <div className="space-x-4">
+            <Skeleton className="h-10 w-24" />
+            <Skeleton className="h-10 w-24" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">
+                <Skeleton className="h-6 w-32" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex justify-between">
+                <div className="flex items-center gap-4">
+                  <Skeleton className="h-16 w-16 rounded-full" />
+                  <div>
+                    <Skeleton className="mb-2 h-6 w-32" />
+                    <Skeleton className="mb-1 h-4 w-40" />
+                    <Skeleton className="h-4 w-36" />
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Skeleton className="h-10 w-24" />
+                  <Skeleton className="h-10 w-24" />
+                  <Skeleton className="h-10 w-24" />
+                </div>
+              </div>
+              <div className="mb-6 grid grid-cols-3 gap-6">
+                {Array.from({ length: 9 }).map((_, index) => (
+                  <div key={index}>
+                    <Skeleton className="mb-2 h-4 w-20" />
+                    <Skeleton className="h-6 w-24" />
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-col gap-2">
+                <Skeleton className="mb-2 h-4 w-24" />
+                <Skeleton className="h-20 w-full" />
+                <div className="flex justify-end">
+                  <Skeleton className="h-10 w-16" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">
+                <Skeleton className="h-6 w-32" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <div key={index} className="grid grid-cols-2 gap-4">
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-6 w-24" />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">
+                <Skeleton className="h-6 w-32" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <div key={index} className="grid grid-cols-2 gap-4">
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-6 w-24" />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="grid-row grid gap-6">
-      {/* 캠페인 상세 정보 */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex justify-between">
-            <div className="ck-sub-title-1 flex items-center">캠페인 정보</div>
-            <div className="flex gap-4">
+    <div className="p-6">
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-2xl font-bold">{campaignData.title}</h2>
+        <div className="px-4">
+          <Button
+            className="flex items-center border text-sm hover:bg-red-500 hover:text-white"
+            onClick={() => deleteCampaign(campaignData.id)}
+            variant="outline"
+          >
+            삭제
+          </Button>
+          {campaignData.approvalStatus === "대기중" && (
+            <>
               <Button
-                className="ck-body-1 hover:bg-ck-red-500 cursor-pointer hover:text-white"
-                onClick={() => deleteCampaign(campaignData.id)}
+                className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
+                onClick={() => approveCampaign(campaignData.id)}
                 variant="outline"
               >
-                삭제
+                승인
               </Button>
-              {campaignData.approvalStatus === "대기중" && (
-                <>
-                  <Button
-                    className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
-                    onClick={() => approveCampaign(campaignData.id)}
-                    variant="outline"
-                  >
-                    승인
-                  </Button>
-                  <Button
-                    className="ck-body-1 hover:bg-ck-red-500 cursor-pointer hover:text-white"
-                    onClick={() => rejectCampaign(campaignData.id)}
-                    variant="outline"
-                  >
-                    거절
-                  </Button>
-                </>
+              <Button
+                className="ck-body-1 hover:bg-ck-red-500 cursor-pointer hover:text-white"
+                onClick={() => rejectCampaign(campaignData.id)}
+                variant="outline"
+              >
+                거절
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+      <img
+        src={campaignData.thumbnailUrl}
+        className="max-h-[400px] object-contain"
+      ></img>
+      <div className="grid grid-cols-2 gap-6 pt-6">
+        <Card>
+          <CardContent className="pt-2">
+            <div className="flex justify-between pb-4">
+              <div className="flex items-center gap-4">
+                <div>
+                  <p className="ck-body-1-bold">{campaignData.title}</p>
+                  <p className="ck-caption-1">
+                    간단 소개 : {campaignData.productShortInfo || "No Info"}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="mb-6 grid grid-cols-3 gap-6">
+              {CampaignInfo().map((item) => (
+                <div key={item.key}>
+                  <p className="ck-caption-1 text-ck-gray-600">{item.label}</p>
+                  <p className="ck-body-2">{item.value}</p>
+                </div>
+              ))}
+            </div>
+            {campaignData.approvalStatus === "대기중" && (
+              <div className="flex flex-col gap-2">
+                <p className="ck-caption-1 text-ck-gray-600">승인 코멘트</p>
+                <Input
+                  id="comment"
+                  name="comment"
+                  value={comment}
+                  onChange={handleInputChange}
+                  placeholder="승인 코멘트를 입력해주세요."
+                />
+              </div>
+            )}
+            <div className="flex flex-col gap-4">
+              <div>
+                <p className="ck-caption-1 text-ck-gray-600">승인 코멘트</p>
+                <p className="ck-body-2">{campaignData.approvalComment}</p>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <div className="flex flex-col">
+                  <div className="ck-body-2 flex gap-2">
+                    <div className="ck-caption-1 text-ck-gray-600">
+                      캠페인 승인인
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="flex flex-col">
+                        <span className="ck-body-2-bold flex gap-2">
+                          {campaignData.approver.nickname}
+                        </span>
+                        <span className="ck-caption-2 text-ck-gray-600">
+                          {campaignData.approver.email}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {campaignData.creator && (
+                <div className="flex flex-col gap-1">
+                  <div className="flex flex-col">
+                    <div className="ck-body-2 flex gap-2">
+                      <div className="ck-caption-1 text-ck-gray-600">
+                        캠페인 생성인
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="flex flex-col">
+                          <span className="ck-body-2-bold flex gap-2">
+                            {campaignData.creator.nickname}
+                            <Badge>{campaignData.creatorRole}</Badge>
+                          </span>
+                          <span className="ck-caption-2 text-ck-gray-600">
+                            {campaignData.creator.email}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {campaignData.company && (
+                <div className="flex flex-col gap-1">
+                  <div className="flex flex-col">
+                    <div className="ck-body-2 flex gap-2">
+                      <div className="ck-caption-1 text-ck-gray-600">
+                        회사 연락처
+                      </div>
+                      <div>
+                        <div className="ck-body-2 flex gap-2">
+                          <span>{campaignData.company.companyName}</span>|
+                          <span>{campaignData.creator.email}</span>
+                        </div>
+                        <div className="ck-body-2 flex gap-2">
+                          <span>{campaignData.company.contactPerson}</span>|
+                          <span>{campaignData.company.phoneNumber}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
-          </CardTitle>
-        </CardHeader>
-        {campaignData.approvalStatus === "대기중" && (
-          <div>
-            <CardContent className="flex flex-col gap-2">
-              <p className="ck-body-2-bold">처리 코멘트</p>
-              <Input
-                id="comment"
-                name="comment"
-                value={comment}
-                onChange={handleInputChange}
-                placeholder="처리 코멘트 입력해주세요"
-                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
-              ></Input>
-            </CardContent>
-          </div>
-        )}
-        <CardContent>
-          <img
-            src={campaignData.thumbnailUrl}
-            className="h-54 w-96 rounded-md"
-          ></img>
-        </CardContent>
-        {CampaignInfo().map((item) => (
-          <CampaignInfoComponent
-            key={item.key}
-            label={item.label}
-            value={item.value}
-          />
-        ))}
-      </Card>
-
-      {/* 크리에이터 정보 */}
-      {campaignData.creator && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="ck-sub-title-1 flex items-center">
-              크리에이터 정보
-            </CardTitle>
-          </CardHeader>
-          {CreatorInfo().map((item) => (
-            <CampaignInfoComponent
-              key={item.key}
-              label={item.label}
-              value={item.value}
-            />
-          ))}
+          </CardContent>
         </Card>
-      )}
-
-      {/* 회사 정보 */}
-      {campaignData.company && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="ck-sub-title-1">회사 정보</CardTitle>
-          </CardHeader>
-          {CompanyInfo().map((item) => (
-            <CampaignInfoComponent
-              key={item.key}
-              label={item.label}
-              value={item.value}
-            />
-          ))}
-        </Card>
-      )}
+      </div>
     </div>
   );
 }
