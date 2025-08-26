@@ -3,9 +3,6 @@ import { PaginationDemo } from "./UserPagination";
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "react-toastify";
-import { AxiosError } from "axios";
-import { useNavigate } from "react-router-dom";
 import {
   type ColumnFiltersState,
   type VisibilityState,
@@ -60,7 +57,6 @@ export default function UserTablePage() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [isLoading, setIsLoading] = useState<Boolean>(false);
-  const navigate = useNavigate();
   const headerMenu = [
     { id: "id", label: "ID" },
     { id: "nickname", label: "닉네임" },
@@ -153,7 +149,7 @@ export default function UserTablePage() {
         </div>
       </div>
 
-      {!userData || !pageData || isLoading ? (
+      {isLoading ? (
         <div className="overflow-x-auto rounded-md border">
           <Table className="table-fixed" style={{ minWidth: `${1000}px` }}>
             <TableHeader>
@@ -180,6 +176,10 @@ export default function UserTablePage() {
               ))}
             </TableBody>
           </Table>
+        </div>
+      ) : !userData || !pageData ? (
+        <div className="text-ck-gray-600 ck-body-2 flex items-center justify-center rounded-md border py-10">
+          데이터가 없습니다.
         </div>
       ) : (
         <>

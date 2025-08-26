@@ -16,7 +16,7 @@ interface ImageSize {
   height: string;
 }
 export default function MarkdownEditor() {
-  const [value, setValue] = useState<string | undefined>("**Hello Markdown!**");
+  const [value, setValue] = useState<string | undefined>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [presignedUrl, setPresignedUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -155,9 +155,6 @@ export default function MarkdownEditor() {
             commands.help,
           ]}
         />
-        <div className="ck-caption-1 text-ck-gray-500 flex justify-end">
-          드래그로 높이 조정 가능
-        </div>
       </div>
 
       {/* 이미지 크기 설정 모달 */}

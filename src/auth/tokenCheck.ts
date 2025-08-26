@@ -13,8 +13,7 @@ export const PrivateComponent: React.FC<PrivateComponentProps> = ({
   const navigate = useNavigate();
   useEffect(() => {
     if (!tokenCheck()) {
-      toast.error("토큰이 만료되었습니다. 다시 로그인 해주세요.");
-      alert("토큰이 만료되었습니다. 다시 로그인 해주세요.");
+      toast.error("토큰이 없습니다. 로그인이 필요합니다.");
       navigate("/login", { replace: true });
     }
   }, [navigate]);

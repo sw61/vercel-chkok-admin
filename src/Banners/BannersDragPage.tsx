@@ -4,7 +4,6 @@ import {
   DndContext,
   type DragEndEvent,
   type DragStartEvent,
-  type UniqueIdentifier,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { useSensors, useSensor, MouseSensor, TouchSensor } from "@dnd-kit/core";
@@ -31,13 +30,13 @@ interface BannerData {
 
 export default function BannersDragPage() {
   const [bannerData, setBannerData] = useState<BannerData[]>([]);
-  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [presignedUrl, setPresignedUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null); // 파일 입력 참조
   const [createMode, setCreateMode] = useState<boolean>(false);
   const [isCreating, setIsCreating] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [createBannerData, setCreateBannerData] = useState({
     redirectUrl: "",
@@ -49,6 +48,7 @@ export default function BannersDragPage() {
 
   // 배너 이미지 목록 조회
   const getBannersTable = async () => {
+    setIsLoading(true);
     try {
       const response = await axiosInterceptor.get("/api/banners");
       const data = response.data.data;
@@ -68,6 +68,8 @@ export default function BannersDragPage() {
       });
     } catch (error) {
       console.error("배너 목록 조회 중 오류 발생:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
   // 파일 선택 버튼 클릭 시 파일 입력 창 띄우기
@@ -141,7 +143,7 @@ export default function BannersDragPage() {
       return;
     }
     try {
-      const response = await axiosInterceptor.post("/api/banners", {
+      await axiosInterceptor.post("/api/banners", {
         bannerUrl: presignedUrl,
         redirectUrl: createBannerData.redirectUrl,
         title: createBannerData.title,
@@ -219,9 +221,7 @@ export default function BannersDragPage() {
     }),
   );
   // 드래그 시작 함수
-  const handleDragStart = ({ active }: DragStartEvent) => {
-    setActiveId(active.id);
-  };
+  const handleDragStart = (_: DragStartEvent) => {};
   // 드래그 종료 함수
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (over && active.id !== over.id) {
@@ -246,14 +246,14 @@ export default function BannersDragPage() {
         updateBannerOrder(updatedBanners); // 서버에 PATCH 요청
       }
     }
-    setActiveId(null);
+    // no-op
   };
 
   useEffect(() => {
     getBannersTable();
   }, []);
 
-  if (!bannerData.length) {
+  if (isLoading) {
     return (
       <Card className="flex w-full flex-col gap-4 rounded-xl px-6 py-4">
         <CardTitle className="flex justify-between">
@@ -285,6 +285,26 @@ export default function BannersDragPage() {
             </div>
           </div>
         ))}
+      </Card>
+    );
+  }
+
+  if (!bannerData.length) {
+    return (
+      <Card className="flex w-full flex-col gap-4 rounded-xl px-6 py-4">
+        <CardTitle className="flex justify-between">
+          <div className="ck-title flex items-center">배너 목록</div>
+          <Button
+            onClick={toggleCreateMode}
+            className="ck-body-1 cursor-pointer"
+            variant="outline"
+          >
+            배너 추가
+          </Button>
+        </CardTitle>
+        <div className="text-ck-gray-600 ck-body-2 flex h-40 items-center justify-center rounded-md border py-10">
+          데이터가 없습니다.
+        </div>
       </Card>
     );
   }

@@ -87,6 +87,7 @@ export default function CampaignTablePage() {
     // 캠페인 검색 함수
   };
   const handleSearch = async (page: number = 0) => {
+    setIsLoading(true);
     try {
       const response = await axiosInterceptor.get(
         `/campaigns/search?keyword=${searchKey}&page=${page}&size=10`,
@@ -96,6 +97,8 @@ export default function CampaignTablePage() {
       setPageData(campaignData.pagination);
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -188,7 +191,7 @@ export default function CampaignTablePage() {
         </div>
       </div>
 
-      {!campaignData || !pageData || isLoading ? (
+      {isLoading ? (
         <div className="overflow-x-auto rounded-md border">
           <Table className="table-fixed" style={{ minWidth: `${1130}px` }}>
             <TableHeader>
@@ -217,6 +220,13 @@ export default function CampaignTablePage() {
               ))}
             </TableBody>
           </Table>
+        </div>
+      ) : !campaignData ||
+        !pageData ||
+        campaignData.length === 0 ||
+        pageData.totalElements === 0 ? (
+        <div className="text-ck-gray-600 ck-body-2 flex h-40 items-center justify-center rounded-md border">
+          캠페인 데이터가 없습니다.
         </div>
       ) : (
         <>

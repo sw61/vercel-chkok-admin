@@ -4,11 +4,10 @@ import "react-toastify/dist/ReactToastify.css";
 // page
 import MainPage from "./Pages/MainPage";
 import UserTablePage from "./Users/UserTablePage";
-import UserDetail from "./Users/UserDetail";
 import CampaignTablePage from "./Campaigns/CampaignTablePage";
 import CampaignDetail from "./Campaigns/CampaignDetail";
 import SideBar from "./SideBar/SideBar";
-
+import UserDetail from "./Users/UserDetail";
 import AdminDetail from "./AdminAccount/AdminDetail";
 import BannersDragpage from "./Banners/BannersDragPage";
 import NotFoundPage from "./Pages/NotFoundPage";
@@ -64,7 +63,7 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
-            {/* 캠페인 상세 페이지 */}
+            {/* 캠페인 상세 페이지 테스트*/}
             <Route
               path="/campaigns/:campaignId"
               element={
@@ -73,6 +72,7 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
+
             {/* 배너 목록 페이지 */}
             <Route
               path="/banners"
@@ -111,7 +111,7 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
-            {/* 마크다운 에디터 테스트 */}
+            {/* 마크다운 에디터 */}
             <Route
               path="/editor"
               element={

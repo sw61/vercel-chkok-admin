@@ -124,7 +124,6 @@ function ServerDashboardSkeleton() {
 export default function ServerDashBoard() {
   const [serverData, setServerData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const getServerData = async () => {
@@ -135,10 +134,9 @@ export default function ServerDashBoard() {
         );
         const data = response.data;
         setServerData(data);
-        setError(null);
         console.log(data);
-      } catch (err) {
-        setError("데이터 로딩 실패: " + (err as Error).message);
+      } catch (error) {
+        console.log(error);
       } finally {
         setLoading(false);
       }
@@ -149,13 +147,7 @@ export default function ServerDashBoard() {
   }, []);
 
   if (loading) return <ServerDashboardSkeleton />;
-  if (error)
-    return (
-      <Alert variant="destructive">
-        <AlertTitle>에러</AlertTitle>
-        <AlertDescription>{error}</AlertDescription>
-      </Alert>
-    );
+
   if (!serverData)
     return (
       <Alert>
