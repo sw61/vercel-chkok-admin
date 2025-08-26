@@ -19,7 +19,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import BannersDetail from "./Banners/BannersDetail";
 import ServerDashBoard from "./Server/ServerDashBoard";
-import MarkdownEditor from "./Editor/MarkdownEditor";
+import MarkdownEditor from "./Markdown/MarkdownEditor";
+import MarkdownPage from "./\bMarkdown/MarkdownPage";
 
 function App() {
   return (
@@ -72,7 +73,6 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
-
             {/* 배너 목록 페이지 */}
             <Route
               path="/banners"
@@ -82,7 +82,6 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
-
             {/* 배너 상세 페이지 */}
             <Route
               path="/banners/:bannerId"
@@ -92,7 +91,6 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
-
             {/* 관리자 계정 페이지 */}
             <Route
               path="/admin"
@@ -113,10 +111,10 @@ function App() {
             ></Route>
             {/* 마크다운 에디터 */}
             <Route
-              path="/editor"
+              path="/documents"
               element={
                 <PrivateComponent>
-                  <MarkdownEditor />
+                  <MarkdownPage />
                 </PrivateComponent>
               }
             ></Route>

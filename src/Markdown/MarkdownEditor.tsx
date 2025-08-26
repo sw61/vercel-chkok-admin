@@ -4,23 +4,27 @@ import MDEditor, {
   type ICommand,
   type TextState,
 } from "@uiw/react-md-editor";
-
 import "@uiw/react-md-editor/markdown-editor.css";
 import { toast } from "react-toastify";
 import axiosInterceptor from "@/lib/axios-interceptors";
 import axios from "axios";
+import rehypeRaw from "rehype-raw";
+import ReactMarkdown from "react-markdown";
+import { renderToStaticMarkup } from "react-dom/server";
 
 // 이미지 크기 설정을 위한 인터페이스
 interface ImageSize {
   width: string;
   height: string;
 }
+
 export default function MarkdownEditor() {
   const [value, setValue] = useState<string | undefined>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [presignedUrl, setPresignedUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [showImageSizeModal, setShowImageSizeModal] = useState<boolean>(false);
+  const [htmlOutput, setHtmlOutput] = useState<string>(""); // New state for HTML output
   const [pendingImageData, setPendingImageData] = useState<{
     url: string;
     name: string;
@@ -40,7 +44,9 @@ export default function MarkdownEditor() {
       toast.info("이미지 업로드 중 입니다...");
       const response = await axiosInterceptor.post(
         "/api/images/banners/presigned-url",
-        { fileExtension },
+        {
+          fileExtension,
+        },
       );
       console.log("Presigned URL 응답:", response);
       const presignedUrl = response.data.data.presignedUrl.split("?")[0];
@@ -79,11 +85,27 @@ export default function MarkdownEditor() {
     editorApi.replaceSelection(markdownImage);
 
     // 모달 닫기 및 상태 초기화
-
     setShowImageSizeModal(false);
     toast.success("이미지가 삽입 되었습니다.");
     setPendingImageData(null);
     setImageSize({ width: "300", height: "200" });
+  };
+
+  // HTML 추출 함수
+  const extractHtml = () => {
+    if (!value) {
+      toast.error("마크다운 내용이 없습니다.");
+      return;
+    }
+
+    // Convert markdown to HTML using ReactMarkdown and renderToStaticMarkup
+    const markdownComponent = (
+      <ReactMarkdown rehypePlugins={[rehypeRaw]}>{value}</ReactMarkdown>
+    );
+    const html = renderToStaticMarkup(markdownComponent);
+    setHtmlOutput(html);
+    console.log(html);
+    toast.success("HTML 코드가 추출되었습니다.");
   };
 
   // 커스텀 이미지 업로드 커맨드
@@ -156,10 +178,17 @@ export default function MarkdownEditor() {
           ]}
         />
       </div>
+      {/* HTML 추출 버튼 */}
+      <button
+        onClick={extractHtml}
+        className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+      >
+        HTML 코드 추출
+      </button>
 
       {/* 이미지 크기 설정 모달 */}
       {showImageSizeModal && (
-        <div className="top-50% left-50% absolute inset-0 z-1 flex h-full w-full items-center justify-center backdrop-blur-xs">
+        <div className="absolute inset-0 z-10 flex h-full w-full items-center justify-center backdrop-blur-sm">
           <div className="w-96 rounded-lg border bg-white p-6">
             <h3 className="mb-4 text-lg font-semibold">이미지 크기 설정</h3>
             <div className="mb-4">
@@ -174,7 +203,6 @@ export default function MarkdownEditor() {
                 />
               </div>
             </div>
-
             <div className="mb-6 grid grid-cols-2 gap-4">
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -191,7 +219,7 @@ export default function MarkdownEditor() {
                 />
               </div>
               <div>
-                <label className="label mb-2 text-sm font-medium text-gray-700">
+                <label className="mb-2 block text-sm font-medium text-gray-700">
                   높이 (px)
                 </label>
                 <input
@@ -208,7 +236,6 @@ export default function MarkdownEditor() {
                 />
               </div>
             </div>
-
             <div className="flex gap-3">
               <button
                 onClick={() => {
@@ -221,7 +248,7 @@ export default function MarkdownEditor() {
               </button>
               <button
                 onClick={insertImageWithSize}
-                className="bg-ck-blue-500 flex-1 rounded-md px-4 py-2 text-white transition-colors hover:bg-blue-700"
+                className="flex-1 rounded-md bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-700"
               >
                 설정
               </button>

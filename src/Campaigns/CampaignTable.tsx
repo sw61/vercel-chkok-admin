@@ -11,17 +11,9 @@ import {
   type VisibilityState,
   type ColumnFiltersState,
 } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal, Settings, Copy } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import {
   Table,
   TableBody,
@@ -189,7 +181,7 @@ const columns: ColumnDef<Campaign>[] = [
         className="has-[>svg]:px-0"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        상품 간단 정보
+        상품 간단 소개
         <ArrowUpDown />
       </Button>
     ),
