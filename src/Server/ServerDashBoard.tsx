@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Tooltip,
@@ -16,6 +15,7 @@ import {
 } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
+import axiosInterceptor from "@/lib/axios-interceptors";
 
 // API 응답 타입 정의
 interface MetricStats {
@@ -129,12 +129,11 @@ export default function ServerDashBoard() {
     const getServerData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<ApiResponse>(
+        const response = await axiosInterceptor.get<ApiResponse>(
           "http://jenkins.chkok.kr:8000/api/monitor?format=json&key=A2F1BFBCF4F802DBA645B5076ACAE2D1FD3EF404CF0DC3F988B93C47239C00B167F4B6F0274AF4E6D4B954CE020B71F99E1264FFB7EE1AD58E3108DE83BBADD0",
         );
         const data = response.data;
         setServerData(data);
-        console.log(data);
       } catch (error) {
         console.log(error);
       } finally {

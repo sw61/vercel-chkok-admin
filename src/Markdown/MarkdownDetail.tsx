@@ -1,4 +1,4 @@
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useEffect, useState } from "react";
@@ -15,6 +15,7 @@ import rehypeRaw from "rehype-raw";
 import ReactMarkdown from "react-markdown";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Button } from "@/components/ui/button";
+import TurndownService from "turndown";
 
 interface MarkdownData {
   id: number;
@@ -55,14 +56,24 @@ export default function MarkdownDetail() {
   });
   const [editorApi, setEditorApi] = useState<any>(null);
 
+  // Initialize Turndown service
+  const turndownService = new TurndownService({
+    headingStyle: "atx", // Use # for headings
+    codeBlockStyle: "fenced", // Use ``` for code blocks
+  });
+
   const getMarkdownDetail = async (id: string) => {
     setIsLoading(true);
     try {
       const response = await axiosInterceptor.get(`/api/admin/markdowns/${id}`);
       const data = response.data.data;
+
+      // Convert HTML content to Markdown
+      const markdownContent = turndownService.turndown(data.content);
+
       setMarkdownData(data);
-      setEditData({ title: data.title, content: data.content });
-      console.log(response);
+      setEditData({ title: data.title, content: markdownContent });
+      console.log(data);
     } catch (error) {
       console.log(error);
       toast.error("마크다운 문서를 불러오는데 실패했습니다.");
@@ -87,6 +98,7 @@ export default function MarkdownDetail() {
           content: html,
         },
       );
+      navigate("/documents");
       toast.success("문서가 수정되었습니다.");
       console.log(response);
       await getMarkdownDetail(markdownId!);
@@ -101,8 +113,8 @@ export default function MarkdownDetail() {
     if (window.confirm("문서를 삭제하시겠습니까?")) {
       try {
         await axiosInterceptor.delete(`/api/admin/markdowns/${id}`);
-        toast.success("문서가 삭제되었습니다.");
         navigate("/documents");
+        toast.success("문서가 삭제되었습니다.");
       } catch (error) {
         console.log(error);
         toast.error("문서 삭제에 실패했습니다.");
@@ -201,9 +213,34 @@ export default function MarkdownDetail() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-start p-6">
-      <Card className="w-full max-w-4xl px-6 py-4">
-        <CardTitle className="ck-title mb-4">마크다운 문서</CardTitle>
+    <div className="flex w-full flex-col items-center justify-start p-6">
+      <Card className="w-full px-6 py-4">
+        <div className="flex items-center justify-between px-6">
+          <CardTitle className="ck-title">마크다운 문서</CardTitle>
+          <div className="flex gap-3">
+            <Button
+              onClick={() => editMarkdown(markdownData.id)}
+              className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
+              variant="outline"
+            >
+              수정
+            </Button>
+            <Button
+              onClick={() => deleteMarkdown(markdownData.id)}
+              className="hover:bg-ck-red-500 px-4 py-2 hover:text-white"
+              variant="outline"
+            >
+              삭제
+            </Button>
+          </div>
+        </div>
+        <CardContent className="ck-body-2 flex justify-end gap-6">
+          <p>작성자: {markdownData?.authorName}</p>
+          <p>생성일: {markdownData?.createdAt}</p>
+          <p>수정일: {markdownData?.updatedAt}</p>
+          <p>조회수: {markdownData?.viewCount}</p>
+        </CardContent>
+
         <CardContent>
           <div className="mb-4">
             <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -251,28 +288,6 @@ export default function MarkdownDetail() {
                 commands.help,
               ]}
             />
-          </div>
-          <div className="mb-4">
-            <p>작성자: {markdownData?.authorName}</p>
-            <p>조회수: {markdownData?.viewCount}</p>
-            <p>생성일: {markdownData?.createdAt}</p>
-            <p>수정일: {markdownData?.updatedAt}</p>
-          </div>
-          <div className="flex gap-3">
-            <Button
-              onClick={() => editMarkdown(markdownData.id)}
-              className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
-              variant="outline"
-            >
-              수정
-            </Button>
-            <Button
-              onClick={() => deleteMarkdown(markdownData.id)}
-              className="hover:bg-ck-red-500 px-4 py-2 hover:text-white"
-              variant="outline"
-            >
-              삭제
-            </Button>
           </div>
         </CardContent>
       </Card>

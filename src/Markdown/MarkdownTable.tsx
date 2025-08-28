@@ -11,7 +11,7 @@ import {
   type VisibilityState,
   type ColumnFiltersState,
 } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -21,9 +21,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInterceptor from "@/lib/axios-interceptors";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 
 interface MarkdownData {
   id: number;
@@ -148,6 +150,8 @@ export default function MarkdownTable() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+
+  const [searchKey, setSearchKey] = useState<string>("");
   const navigate = useNavigate();
 
   const getMarkdownData = async () => {
@@ -170,6 +174,22 @@ export default function MarkdownTable() {
       setError("마크다운 데이터를 불러오지 못했습니다.");
     } finally {
       setIsLoading(false);
+    }
+  };
+  const handleSearch = async () => {
+    try {
+      const response = await axiosInterceptor.get(
+        `/api/admin/markdowns/search?title=${searchKey}`,
+      );
+      const data = response.data.data.markdowns;
+      setMarkdownData(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleEnterSearch = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleSearch();
     }
   };
 
@@ -205,8 +225,30 @@ export default function MarkdownTable() {
     return <div>{error}</div>;
   }
 
-  return (    
-    <div className="w-full">
+  return (
+    <Card className="w-full p-6">
+      <div className="mb-4 flex justify-between">
+        <Button variant="outline" onClick={() => navigate("/documents/create")}>
+          마크다운 문서 생성하러 가기
+        </Button>
+
+        {/* 검색창 */}
+        <div className="relative">
+          <Input
+            placeholder="문서 제목 검색"
+            value={searchKey}
+            onChange={(e) => setSearchKey(e.target.value)}
+            className="pr-12"
+            onKeyDown={handleEnterSearch}
+          />
+          <button
+            className="absolute top-0 right-0 h-full w-10 cursor-pointer"
+            onClick={handleSearch}
+          >
+            <Search />
+          </button>
+        </div>
+      </div>
       <div className="overflow-x-auto rounded-md border">
         <Table
           className="table-fixed"
@@ -269,12 +311,6 @@ export default function MarkdownTable() {
           </TableBody>
         </Table>
       </div>
-
-      <div>
-        <Button onClick={() => navigate("/documents/create")}>
-          마크다운 문서 생성하러 가기
-        </Button>
-      </div>
-    </div>
+    </Card>
   );
 }

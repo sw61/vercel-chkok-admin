@@ -64,7 +64,6 @@ export default function UserDetail() {
       };
       setUserData(mappedData);
       setUserMemo(userData.memo || "");
-      console.log(userData);
     } catch (error) {
       toast.error("유저 정보 조회에 실패했습니다.");
       console.log(error);
@@ -254,9 +253,9 @@ export default function UserDetail() {
               <div>
                 <p className="ck-caption-1 text-ck-gray-600">계정 상태</p>
                 {userData.active ? (
-                  <p className="ck-body-2 text-green-600">활성화</p>
+                  <p className="ck-body-2 text-ck-blue-500">활성화</p>
                 ) : (
-                  <p className="ck-body-2 text-ck-red-600">비활성화</p>
+                  <p className="ck-body-2 text-ck-red-500">비활성화</p>
                 )}
               </div>
               <div>
@@ -282,7 +281,11 @@ export default function UserDetail() {
               <div>
                 <p className="text-ck-gray-600 ck-caption-1">이메일 인증</p>
                 <p className="ck-body-2">
-                  {userData.emailVerified ? "인증됨" : "인증 필요"}
+                  {userData.emailVerified ? (
+                    <p className="text-ck-blue-500 ck-body-2">인증됨</p>
+                  ) : (
+                    <p className="text-ck-red-500 ck-body-2">인증 필요</p>
+                  )}
                 </p>
               </div>
             </div>
