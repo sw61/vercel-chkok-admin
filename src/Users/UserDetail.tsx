@@ -84,9 +84,10 @@ export default function UserDetail() {
   const deleteUser = async (id: number) => {
     if (window.confirm("사용자를 삭제하시겠습니까?")) {
       try {
-        await axiosInterceptor.delete(`/users/${id}`);
+        const response = await axiosInterceptor.delete(`/users/${id}`);
         navigate("/users");
         toast.success("사용자가 삭제되었습니다.");
+        console.log(response);
       } catch (error) {
         console.log(error);
       }
