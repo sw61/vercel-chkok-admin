@@ -19,7 +19,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import BannersDetail from "./Banners/BannersDetail";
 import ServerDashBoard from "./Server/ServerDashBoard";
-import MarkdownEditor from "./Editor/MarkdownEditor";
+import MarkdownDetail from "./Markdown/MarkdownDetail";
+import MarkdownTable from "./Markdown/MarkdownTable";
+import MarkdownCreate from "./\bMarkdown/MarkdownCreate";
 
 function App() {
   return (
@@ -72,7 +74,6 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
-
             {/* 배너 목록 페이지 */}
             <Route
               path="/banners"
@@ -82,7 +83,6 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
-
             {/* 배너 상세 페이지 */}
             <Route
               path="/banners/:bannerId"
@@ -92,7 +92,6 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
-
             {/* 관리자 계정 페이지 */}
             <Route
               path="/admin"
@@ -111,12 +110,30 @@ function App() {
                 </PrivateComponent>
               }
             ></Route>
-            {/* 마크다운 에디터 */}
+            {/* 마크다운 문서 목록 */}
             <Route
-              path="/editor"
+              path="/documents"
               element={
                 <PrivateComponent>
-                  <MarkdownEditor />
+                  <MarkdownTable />
+                </PrivateComponent>
+              }
+            ></Route>
+            {/* 마크다운 문서 상세 페이지 */}
+            <Route
+              path="/documents/:markdownId"
+              element={
+                <PrivateComponent>
+                  <MarkdownDetail />
+                </PrivateComponent>
+              }
+            ></Route>
+            {/* 마크다운 문서 상세 페이지 */}
+            <Route
+              path="/documents/create"
+              element={
+                <PrivateComponent>
+                  <MarkdownCreate />
                 </PrivateComponent>
               }
             ></Route>

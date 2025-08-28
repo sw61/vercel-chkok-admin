@@ -75,27 +75,27 @@ export function UserPieChartCount() {
   }
   const chartData = [
     {
+      status: "userCount",
+      visitors: userStatus?.userCount,
+      fill: "#2388FF",
+    },
+    {
       status: "client",
       visitors: userStatus?.clientCount,
       fill: "oklch(79.5% 0.184 86.047)",
-    },
-    {
-      status: "userCount",
-      visitors: userStatus?.userCount,
-      fill: "oklch(72.3% 0.219 149.579)",
     },
   ];
   const chartConfig = {
     visitors: {
       label: "Visitors",
     },
-    client: {
-      label: "클라이언트",
-      color: "var(--chart-2)",
-    },
     userCount: {
       label: "일반 사용자",
       color: "var(--chart-3)",
+    },
+    client: {
+      label: "클라이언트",
+      color: "var(--chart-2)",
     },
   } satisfies ChartConfig;
 

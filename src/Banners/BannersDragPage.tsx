@@ -248,7 +248,6 @@ export default function BannersDragPage() {
     }
     // no-op
   };
-
   useEffect(() => {
     getBannersTable();
   }, []);
@@ -294,17 +293,142 @@ export default function BannersDragPage() {
       <Card className="flex w-full flex-col gap-4 rounded-xl px-6 py-4">
         <CardTitle className="flex justify-between">
           <div className="ck-title flex items-center">배너 목록</div>
-          <Button
-            onClick={toggleCreateMode}
-            className="ck-body-1 cursor-pointer"
-            variant="outline"
-          >
-            배너 추가
-          </Button>
+          <div className="flex gap-4">
+            {createMode ? (
+              <>
+                <div className="flex items-center gap-2">
+                  {/* 숨겨진 파일 입력 */}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    ref={fileInputRef}
+                  />
+                  {/* 파일 선택 버튼 */}
+                  <Button
+                    className="ck-body-1 bg-ck-white text-ck-gray-900 hover:bg-ck-gray-300 border-1"
+                    onClick={handleFileSelect}
+                  >
+                    <FolderInput />
+                    파일 선택
+                  </Button>
+
+                  {/* 선택된 파일 정보 표시 */}
+                  {imageFile && (
+                    <div className="text-sm text-gray-700">
+                      <span className="ck-body-2">
+                        선택된 파일 : {imageFile.name}
+                      </span>
+                      <span className="ck-body-2 ml-2">
+                        ({(imageFile.size / 1024).toFixed(2)} KB)
+                      </span>
+                    </div>
+                  )}
+                  {/* 파일 업로드 버튼 */}
+                  {imageFile && (
+                    <Button
+                      onClick={handleUrlUpload}
+                      disabled={isUploading || !imageFile}
+                      className="ck-body-1 bg-ck-white text-ck-gray-900 border-1 hover:bg-gray-300"
+                    >
+                      <Upload />
+                      {isUploading ? "업로드 중..." : "파일 업로드"}
+                    </Button>
+                  )}
+                </div>
+                <Button
+                  onClick={() => createBanner()}
+                  disabled={!presignedUrl || isCreating}
+                  className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                  variant="outline"
+                >
+                  {isCreating ? "생성 중..." : "생성"}
+                </Button>
+                <Button
+                  onClick={toggleCreateMode}
+                  className="ck-body-1 hover:bg-ck-gray-600 cursor-pointer hover:text-white"
+                  variant="outline"
+                >
+                  취소
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  onClick={toggleCreateMode}
+                  className="ck-body-1 cursor-pointer"
+                  variant="outline"
+                >
+                  배너 추가
+                </Button>
+              </>
+            )}
+          </div>
         </CardTitle>
-        <div className="text-ck-gray-600 ck-body-2 flex h-40 items-center justify-center rounded-md border py-10">
-          데이터가 없습니다.
-        </div>
+        {createMode ? (
+          <CardContent className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <p className="ck-body-2-bold">배너 이름</p>
+              <Input
+                id="title"
+                name="title"
+                value={createBannerData.title}
+                onChange={handleInputChange}
+                placeholder="배너 이름을 입력하세요"
+                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="ck-body-2-bold">Redirect URL</p>
+              <Input
+                id="redirectUrl"
+                name="redirectUrl"
+                value={createBannerData.redirectUrl}
+                onChange={handleInputChange}
+                placeholder="Redirect URL을 입력하세요"
+                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="ck-body-2-bold">설명</p>
+              <Input
+                id="description"
+                name="description"
+                value={createBannerData.description}
+                onChange={handleInputChange}
+                placeholder="설명을 입력하세요"
+                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="ck-body-2-bold">배너 위치</p>
+              <Input
+                id="position"
+                name="position"
+                value={createBannerData.position}
+                onChange={handleInputChange}
+                placeholder="배너 위치를 입력하세요"
+                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="ck-body-2-bold">배너 순서</p>
+              <Input
+                id="displayOrder"
+                name="displayOrder"
+                value={createBannerData.displayOrder}
+                onChange={handleInputChange}
+                placeholder="배너 순서 번호를 입력하세요"
+                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
+              />
+            </div>
+          </CardContent>
+        ) : (
+          <div className="text-ck-gray-600 ck-body-2 flex h-40 items-center justify-center rounded-md border py-10">
+            데이터가 없습니다.
+          </div>
+        )}
       </Card>
     );
   }

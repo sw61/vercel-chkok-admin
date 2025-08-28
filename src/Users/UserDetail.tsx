@@ -83,9 +83,10 @@ export default function UserDetail() {
   const deleteUser = async (id: number) => {
     if (window.confirm("사용자를 삭제하시겠습니까?")) {
       try {
-        await axiosInterceptor.delete(`/users/${id}`);
+        const response = await axiosInterceptor.delete(`/users/${id}`);
         navigate("/users");
         toast.success("사용자가 삭제되었습니다.");
+        console.log(response);
       } catch (error) {
         console.log(error);
       }
@@ -193,7 +194,7 @@ export default function UserDetail() {
                   <AvatarFallback></AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="ck-body-1-bold">
+                  <p className="ck-body-2">
                     {userData.nickname} ({userData.gender},{" "}
                     {userData.age || "나이 미상"})
                   </p>
@@ -242,55 +243,55 @@ export default function UserDetail() {
 
             <div className="mb-6 grid grid-cols-3 gap-6">
               <div>
-                <p className="ck-body-2-bold text-ck-gray-600">사용자 ID</p>
-                <p className="ck-body-1-bold">{userData.id}</p>
+                <p className="ck-caption-1 text-ck-gray-600">사용자 ID</p>
+                <p className="ck-body-2">{userData.id}</p>
               </div>
               <div>
-                <p className="ck-body-2-bold text-ck-gray-600">권한</p>
-                <p className="ck-body-1-bold">{userData.role}</p>
+                <p className="ck-caption-1 text-ck-gray-600">권한</p>
+                <p className="ck-body-2">{userData.role}</p>
               </div>
               <div>
-                <p className="ck-body-2-bold text-ck-gray-600">계정 상태</p>
+                <p className="ck-caption-1 text-ck-gray-600">계정 상태</p>
                 {userData.active ? (
-                  <p className="ck-body-1-bold text-green-600">활성화</p>
+                  <p className="ck-body-2 text-ck-blue-500">활성화</p>
                 ) : (
-                  <p className="ck-body-1-bold text-ck-red-600">비활성화</p>
+                  <p className="ck-body-2 text-ck-red-500">비활성화</p>
                 )}
               </div>
               <div>
-                <p className="text-ck-gray-600 ck-body-2-bold">계정 서비스</p>
-                <p className="ck-body-1-bold">{userData.provider}</p>
+                <p className="text-ck-gray-600 ck-caption-1">계정 서비스</p>
+                <p className="ck-body-2">{userData.provider}</p>
               </div>
               <div>
-                <p className="text-ck-gray-600 ck-body-2-bold">계정 타입</p>
-                <p className="ck-body-1-bold">{userData.accountType}</p>
+                <p className="text-ck-gray-600 ck-caption-1">계정 타입</p>
+                <p className="ck-body-2">{userData.accountType}</p>
               </div>
               <div>
-                <p className="text-ck-gray-600 ck-body-2-bold">계정 플랫폼</p>
-                <p className="ck-body-1-bold">{userData.platforms ?? "N/A"}</p>
+                <p className="text-ck-gray-600 ck-caption-1">계정 플랫폼</p>
+                <p className="ck-body-2">{userData.platforms ?? "N/A"}</p>
               </div>
               <div>
-                <p className="text-ck-gray-600 ck-body-2-bold">생성일</p>
-                <p className="ck-body-1-bold">
-                  {userData.createdAt.split("T")[0]}
-                </p>
+                <p className="text-ck-gray-600 ck-caption-1">생성일</p>
+                <p className="ck-body-2">{userData.createdAt.split("T")[0]}</p>
               </div>
               <div>
-                <p className="text-ck-gray-600 ck-body-2-bold">업데이트일</p>
-                <p className="ck-body-1-bold">
-                  {userData.updatedAt.split("T")[0]}
-                </p>
+                <p className="text-ck-gray-600 ck-caption-1">업데이트일</p>
+                <p className="ck-body-2">{userData.updatedAt.split("T")[0]}</p>
               </div>
               <div>
-                <p className="text-ck-gray-600 ck-body-2-bold">이메일 인증</p>
-                <p className="ck-body-1-bold">
-                  {userData.emailVerified ? "인증됨" : "인증 필요"}
+                <p className="text-ck-gray-600 ck-caption-1">이메일 인증</p>
+                <p className="ck-body-2">
+                  {userData.emailVerified ? (
+                    <p className="text-ck-blue-500 ck-body-2">인증됨</p>
+                  ) : (
+                    <p className="text-ck-red-500 ck-body-2">인증 필요</p>
+                  )}
                 </p>
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <p className="ck-body-2-bold">사용자 메모</p>
+              <p className="ck-body-2">사용자 메모</p>
               <div className="ck-body-2 border-ck-gray-300 rounded-md border bg-transparent px-3 py-2">
                 {userData.memo ? userData.memo : "내용이 없습니다."}
               </div>

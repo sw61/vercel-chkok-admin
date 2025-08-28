@@ -9,11 +9,12 @@ import {
   Earth,
   Server,
   Edit,
+  BookOpenText,
 } from "lucide-react";
 
 import { NavMain } from "@/SideBar/nav-main";
 // import { NavProjects } from "@/SideBar/nav-projects";
-import { NavSecondary } from "@/SideBar/nav-secondary";
+// import { NavSecondary } from "@/SideBar/nav-secondary";
 import { NavUser } from "@/SideBar/nav-user";
 
 import chkokLogo from "../Image/chkokLogo.png";
@@ -28,18 +29,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-interface AdminData {
-  id: number;
-  name: string;
-  email: string;
-  accountType: string;
-  role: string;
-  createdAt: string;
-  lastLoginAt: string;
-  isActive: boolean;
-  loginCount: number;
-  thumbnailUrl: string;
-}
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const data = {
@@ -65,9 +54,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: Server,
       },
       {
-        title: "마크다운 에디터",
-        url: "/editor",
-        icon: Edit,
+        title: "마크다운 문서",
+        url: "/documents",
+        icon: BookOpenText,
       },
     ],
     navSecondary: [
