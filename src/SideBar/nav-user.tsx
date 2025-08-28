@@ -19,11 +19,9 @@ import {
 import { useLogout } from "@/auth/useLogout";
 import { useNavigate } from "react-router-dom";
 import axiosInterceptor from "@/lib/axios-interceptors";
-import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
 import usericon from "../Image/usericon.png";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
 interface AdminData {
   id: number;
@@ -49,16 +47,6 @@ export function NavUser() {
       setAdminData(data);
     } catch (err) {
       console.log(err);
-      if (axios.isAxiosError(err)) {
-        if (err.response?.status === 403) {
-          navigate("/login");
-          toast.warn("토큰이 만료되었습니다. 다시 로그인해주세요.");
-        } else {
-          toast.error("관리자 정보를 불러오는데 실패했습니다.");
-        }
-      } else {
-        toast.error("알 수 없는 오류가 발생했습니다.");
-      }
     } finally {
       setIsLoading(false);
     }

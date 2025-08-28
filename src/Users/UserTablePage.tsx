@@ -1,7 +1,7 @@
 import { UserTable } from "./UserTable";
 import { PaginationDemo } from "./UserPagination";
 import axiosInterceptor from "@/lib/axios-interceptors";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type KeyboardEvent } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   type ColumnFiltersState,
@@ -98,6 +98,11 @@ export default function UserTablePage() {
   const handlePageChange = (page: number) => {
     getUserTable(page);
   };
+  const handleEnterSearch = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleSearch();
+    }
+  };
   useEffect(() => {
     getUserTable();
   }, []);
@@ -138,11 +143,12 @@ export default function UserTablePage() {
             placeholder="사용자 이름 검색"
             value={searchKey}
             onChange={(e) => setSearchKey(e.target.value)}
+            onKeyDown={handleEnterSearch}
             className="pr-12"
           />
           <button
             className="absolute top-0 right-0 h-full w-10 cursor-pointer"
-            onClick={() => handleSearch()}
+            onClick={handleSearch}
           >
             <Search />
           </button>

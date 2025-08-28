@@ -217,9 +217,10 @@ export default function CampaignDetail() {
   const deleteCampaign = async (id: number) => {
     if (window.confirm("캠페인을 삭제하시겠습니까?")) {
       try {
-        await axiosInterceptor.delete(`/campaigns/${id}`);
+        const response = await axiosInterceptor.delete(`/campaigns/${id}`);
         navigate("/campaigns");
         toast.success("캠페인이 삭제되었습니다.");
+        console.log(response);
       } catch (error) {
         toast.error("캠페인 삭제 중 오류가 발생했습니다.");
       }
@@ -365,31 +366,33 @@ export default function CampaignDetail() {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-2xl font-bold">{campaignData.title}</h2>
         <div className="px-4">
-          <Button
-            className="flex items-center border text-sm hover:bg-red-500 hover:text-white"
-            onClick={() => deleteCampaign(campaignData.id)}
-            variant="outline"
-          >
-            삭제
-          </Button>
-          {campaignData.approvalStatus === "대기중" && (
-            <>
-              <Button
-                className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
-                onClick={() => approveCampaign(campaignData.id)}
-                variant="outline"
-              >
-                승인
-              </Button>
-              <Button
-                className="ck-body-1 hover:bg-ck-red-500 cursor-pointer hover:text-white"
-                onClick={() => rejectCampaign(campaignData.id)}
-                variant="outline"
-              >
-                거절
-              </Button>
-            </>
-          )}
+          <div className="flex gap-2">
+            {campaignData.approvalStatus === "대기중" && (
+              <>
+                <Button
+                  className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
+                  onClick={() => approveCampaign(campaignData.id)}
+                  variant="outline"
+                >
+                  승인
+                </Button>
+                <Button
+                  className="ck-body-1 hover:bg-ck-red-500 cursor-pointer hover:text-white"
+                  onClick={() => rejectCampaign(campaignData.id)}
+                  variant="outline"
+                >
+                  거절
+                </Button>
+              </>
+            )}
+            <Button
+              className="flex items-center border text-sm hover:bg-red-500 hover:text-white"
+              onClick={() => deleteCampaign(campaignData.id)}
+              variant="outline"
+            >
+              삭제
+            </Button>
+          </div>
         </div>
       </div>
       <img
@@ -434,34 +437,35 @@ export default function CampaignDetail() {
                 <p className="ck-caption-1 text-ck-gray-600">승인 코멘트</p>
                 <p className="ck-body-2">{campaignData.approvalComment}</p>
               </div>
-
-              <div className="flex flex-col gap-1">
+              (campaignData.approver && (
+              <div className="flex flex-col">
                 <div className="flex flex-col">
-                  <div className="ck-body-2 flex gap-2">
-                    <div className="ck-caption-1 text-ck-gray-600">
+                  <div className="ck-body-2 flex">
+                    <div className="ck-caption-1 text-ck-gray-600 flex w-[85px] items-center border-r pr-2">
                       캠페인 승인인
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pl-3">
                       <div className="flex flex-col">
                         <span className="ck-body-2-bold flex gap-2">
-                          {campaignData.approver.nickname}
+                          {campaignData.approver?.nickname}
                         </span>
                         <span className="ck-caption-2 text-ck-gray-600">
-                          {campaignData.approver.email}
+                          {campaignData.approver?.email}
                         </span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+              ) )
               {campaignData.creator && (
                 <div className="flex flex-col gap-1">
                   <div className="flex flex-col">
                     <div className="ck-body-2 flex gap-2">
-                      <div className="ck-caption-1 text-ck-gray-600">
+                      <div className="ck-caption-1 text-ck-gray-600 flex w-[85px] items-center border-r pr-2">
                         캠페인 생성인
                       </div>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 pl-3">
                         <div className="flex flex-col">
                           <span className="ck-body-2-bold flex gap-2">
                             {campaignData.creator.nickname}
@@ -480,7 +484,7 @@ export default function CampaignDetail() {
                 <div className="flex flex-col gap-1">
                   <div className="flex flex-col">
                     <div className="ck-body-2 flex gap-2">
-                      <div className="ck-caption-1 text-ck-gray-600">
+                      <div className="ck-caption-1 text-ck-gray-600 flex w-[85px] items-center border-r pr-2">
                         회사 연락처
                       </div>
                       <div>

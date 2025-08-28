@@ -1,7 +1,7 @@
 import { CampaignPagination } from "@/Campaigns/CampaignPagination";
 import { CampaignTable } from "@/Campaigns/CampaignTable";
 import axiosInterceptor from "@/lib/axios-interceptors";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type KeyboardEvent } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import {
@@ -121,6 +121,11 @@ export default function CampaignTablePage() {
   const handleType = (type: typeof campaignType) => {
     setCampaignType(type);
   };
+  const handleEnterSearch = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleSearch();
+    }
+  };
 
   const currentLabel =
     typeValues.find((item) => item.type === campaignType)?.label ||
@@ -180,6 +185,7 @@ export default function CampaignTablePage() {
             placeholder="캠페인 이름 검색"
             value={searchKey}
             onChange={(event) => setSearchKey(event.target.value)}
+            onKeyDown={handleEnterSearch}
             className="pr-12"
           />
           <button

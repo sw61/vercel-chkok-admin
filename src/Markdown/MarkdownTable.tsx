@@ -11,9 +11,8 @@ import {
   type VisibilityState,
   type ColumnFiltersState,
 } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 import {
   Table,
   TableBody,
@@ -22,33 +21,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
+import { useState, useEffect, type KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import axiosInterceptor from "@/lib/axios-interceptors";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 
-interface Campaign {
+interface MarkdownData {
   id: number;
   title: string;
-  campaignType: string;
-  recruitmentStartDate: string; // 모집 시작일
-  approvalStatus: string;
-  approvalComment: string;
-  approvalDate: string;
+  viewCount: number;
+  authorId: number;
+  authorName: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 interface CustomColumnMeta {
   label?: string;
 }
 
-interface CampaignDataTableProps {
-  campaignData: Campaign[];
-  columnFilters: ColumnFiltersState;
-  setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
-  columnVisibility: VisibilityState;
-  setColumnVisibility: React.Dispatch<React.SetStateAction<VisibilityState>>;
-}
-
-const columns: ColumnDef<Campaign>[] = [
+const columns: ColumnDef<MarkdownData>[] = [
   {
     accessorKey: "id",
     header: ({ column }) => (
@@ -76,7 +69,7 @@ const columns: ColumnDef<Campaign>[] = [
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          캠페인 이름
+          문서 제목
           <ArrowUpDown />
         </Button>
       </div>
@@ -86,151 +79,61 @@ const columns: ColumnDef<Campaign>[] = [
         {row.getValue("title")}
       </div>
     ),
-    meta: { label: "캠페인 이름" } as CustomColumnMeta,
-    size: 250,
+    meta: { label: "문서 제목" } as CustomColumnMeta,
+    size: 200,
   },
   {
-    accessorKey: "campaignType",
+    accessorKey: "authorName",
     header: ({ column }) => (
       <Button
         variant="ghost"
         className="has-[>svg]:px-0"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        캠페인 유형
+        문서 제작자
         <ArrowUpDown />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("campaignType")}</div>
+      <div className="lowercase">{row.getValue("authorName")}</div>
     ),
-    meta: { label: "캠페인 유형" } as CustomColumnMeta,
+    meta: { label: "문서 제작자" } as CustomColumnMeta,
     size: 120,
   },
   {
-    accessorKey: "approvalStatus",
+    accessorKey: "createdAt",
     header: ({ column }) => (
       <Button
         variant="ghost"
         className="has-[>svg]:px-0"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        처리 상태
+        생성일
         <ArrowUpDown />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("approvalStatus")}</div>
+      <div className="lowercase">{row.getValue("createdAt")}</div>
     ),
-    meta: { label: "처리 상태" } as CustomColumnMeta,
-    size: 100,
+    meta: { label: "생성일" } as CustomColumnMeta,
+    size: 150,
   },
   {
-    accessorKey: "recruitmentStartDate",
+    accessorKey: "viewCount",
     header: ({ column }) => (
       <Button
         variant="ghost"
         className="has-[>svg]:px-0"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        모집 시작일
+        조회수
         <ArrowUpDown />
       </Button>
     ),
-    cell: ({ row }) => <div>{row.getValue("recruitmentStartDate")}</div>,
-    meta: { label: "모집 시작일" } as CustomColumnMeta,
-    size: 120,
+    cell: ({ row }) => <div>{row.getValue("viewCount")}</div>,
+    meta: { label: "조회수" } as CustomColumnMeta,
+    size: 80,
   },
-  {
-    accessorKey: "recruitmentEndDate",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        className="has-[>svg]:px-0"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        모집 마감일
-        <ArrowUpDown />
-      </Button>
-    ),
-    cell: ({ row }) => <div>{row.getValue("recruitmentEndDate")}</div>,
-    meta: { label: "모집 마감일" } as CustomColumnMeta,
-    size: 120,
-  },
-  {
-    accessorKey: "reviewDeadlineDate",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        className="has-[>svg]:px-0"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        리뷰 마감일
-        <ArrowUpDown />
-      </Button>
-    ),
-    cell: ({ row }) => <div>{row.getValue("reviewDeadlineDate")}</div>,
-    meta: { label: "리뷰 마감일" } as CustomColumnMeta,
-    size: 120,
-  },
-  {
-    accessorKey: "productShortInfo",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        className="has-[>svg]:px-0"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        상품 간단 소개
-        <ArrowUpDown />
-      </Button>
-    ),
-    cell: ({ row }) => (
-      <div className="overflow-hidden text-ellipsis">
-        {row.getValue("productShortInfo")}
-      </div>
-    ),
-    meta: { label: "상품 간단 정보" } as CustomColumnMeta,
-    size: 250,
-  },
-  // {
-  //   id: "actions",
-  //   enableHiding: false,
-  //   cell: ({ row }) => {
-  //     const campaign = row.original as Campaign;
-  //     const navigate = useNavigate();
-
-  //     return (
-  //       <DropdownMenu>
-  //         <DropdownMenuTrigger asChild>
-  //           <Button variant="ghost" className="h-8 w-8 p-0">
-  //             <span className="sr-only">Open menu</span>
-  //             <MoreHorizontal />
-  //           </Button>
-  //         </DropdownMenuTrigger>
-  //         <DropdownMenuContent align="end">
-  //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-  //           <DropdownMenuSeparator />
-  //           <DropdownMenuItem
-  //             onClick={() =>
-  //               navigator.clipboard.writeText(campaign.title.toString())
-  //             }
-  //           >
-  //             <Copy />
-  //             이름 복사하기
-  //           </DropdownMenuItem>
-  //           <DropdownMenuItem
-  //             onClick={() => navigate(`/campaigns/${campaign.id}`)}
-  //           >
-  //             <Settings />
-  //             캠페인 상세 정보
-  //           </DropdownMenuItem>
-  //         </DropdownMenuContent>
-  //       </DropdownMenu>
-  //     );
-  //   },
-  //   size: 50,
-  // },
 ];
 
 // ColumnDef의 size 합계 계산
@@ -239,19 +142,63 @@ const totalColumnWidth = columns.reduce(
   0,
 );
 
-export function CampaignTable({
-  campaignData,
-  columnFilters,
-  setColumnFilters,
-  columnVisibility,
-  setColumnVisibility,
-}: CampaignDataTableProps) {
+export default function MarkdownTable() {
+  const [markdownData, setMarkdownData] = useState<MarkdownData[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+
+  const [searchKey, setSearchKey] = useState<string>("");
   const navigate = useNavigate();
 
+  const getMarkdownData = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await axiosInterceptor.get("/api/admin/markdowns");
+      const data = response.data.data.markdowns;
+      console.log("API 응답 데이터:", data); // 디버깅용 로그
+      if (Array.isArray(data)) {
+        setMarkdownData(data);
+      } else {
+        console.error("API 응답이 배열이 아닙니다:", data);
+        setMarkdownData([]);
+        setError("서버에서 잘못된 데이터 형식을 받았습니다.");
+      }
+    } catch (error) {
+      console.error("마크다운 데이터를 가져오는데 실패했습니다:", error);
+      setMarkdownData([]);
+      setError("마크다운 데이터를 불러오지 못했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleSearch = async () => {
+    try {
+      const response = await axiosInterceptor.get(
+        `/api/admin/markdowns/search?title=${searchKey}`,
+      );
+      const data = response.data.data.markdowns;
+      setMarkdownData(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleEnterSearch = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+  useEffect(() => {
+    getMarkdownData();
+  }, []);
+
   const table = useReactTable({
-    data: campaignData,
+    data: markdownData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -270,8 +217,38 @@ export function CampaignTable({
     enableColumnResizing: false,
   });
 
+  if (isLoading) {
+    return <div>스켈레톤 UI</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
-    <div className="w-full">
+    <Card className="w-full p-6">
+      <div className="mb-4 flex justify-between">
+        <Button variant="outline" onClick={() => navigate("/documents/create")}>
+          마크다운 문서 생성하러 가기
+        </Button>
+
+        {/* 검색창 */}
+        <div className="relative">
+          <Input
+            placeholder="문서 제목 검색"
+            value={searchKey}
+            onChange={(e) => setSearchKey(e.target.value)}
+            className="pr-12"
+            onKeyDown={handleEnterSearch}
+          />
+          <button
+            className="absolute top-0 right-0 h-full w-10 cursor-pointer"
+            onClick={handleSearch}
+          >
+            <Search />
+          </button>
+        </div>
+      </div>
       <div className="overflow-x-auto rounded-md border">
         <Table
           className="table-fixed"
@@ -305,7 +282,7 @@ export function CampaignTable({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   className="cursor-pointer"
-                  onClick={() => navigate(`/campaigns/${row.original.id}`)}
+                  onClick={() => navigate(`/documents/${row.original.id}`)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
@@ -327,19 +304,13 @@ export function CampaignTable({
                   colSpan={columns.length}
                   className="h-24 text-center whitespace-nowrap"
                 >
-                  No results.
+                  데이터가 없습니다.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-2">
-        <div className="ck-caption-1 text-ck-gray-600 flex-1">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
-      </div>
-    </div>
+    </Card>
   );
 }

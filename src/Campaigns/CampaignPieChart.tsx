@@ -82,11 +82,6 @@ export function CamapaignPieChart() {
   }
   const chartData = [
     {
-      status: "pending",
-      visitors: campaignStatus?.pendingCampaigns,
-      fill: "#FBC02D",
-    },
-    {
       status: "approved",
       visitors: campaignStatus?.approvedCampaigns,
       fill: "#2388FF",
@@ -95,6 +90,11 @@ export function CamapaignPieChart() {
       status: "rejected",
       visitors: campaignStatus?.rejectedCampaigns,
       fill: "#FB2C36",
+    },
+    {
+      status: "pending",
+      visitors: campaignStatus?.pendingCampaigns,
+      fill: "#FBC02D",
     },
     {
       status: "expired",

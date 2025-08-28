@@ -90,6 +90,7 @@ export default function BannersDetail() {
     try {
       const response = await axiosInterceptor.get(`/api/banners/${id}`);
       const data = response.data.data;
+      console.log(response);
       setBannerData(data);
       // 폼 데이터 초기화
       setEditBannerData({
