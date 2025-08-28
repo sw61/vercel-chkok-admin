@@ -210,6 +210,7 @@ export default function CampaignDetail() {
           dataMap[campaignData.creator.accountType] || campaignData.accountType,
       };
       setCampaignData(mappedData);
+      console.log(mappedData);
     } catch (error) {
       console.log(error);
     }
@@ -420,9 +421,9 @@ export default function CampaignDetail() {
                 </div>
               ))}
             </div>
-            {campaignData.approvalStatus === "대기중" && (
-              <div className="flex flex-col gap-2">
-                <p className="ck-caption-1 text-ck-gray-600">승인 코멘트</p>
+            <div className="mb-4 flex flex-col gap-2">
+              <p className="ck-caption-1 text-ck-gray-600">승인 코멘트</p>
+              {campaignData.approvalStatus === "대기중" ? (
                 <Input
                   id="comment"
                   name="comment"
@@ -430,34 +431,33 @@ export default function CampaignDetail() {
                   onChange={handleInputChange}
                   placeholder="승인 코멘트를 입력해주세요."
                 />
-              </div>
-            )}
-            <div className="flex flex-col gap-4">
-              <div>
-                <p className="ck-caption-1 text-ck-gray-600">승인 코멘트</p>
+              ) : (
                 <p className="ck-body-2">{campaignData.approvalComment}</p>
-              </div>
-              (campaignData.approver && (
-              <div className="flex flex-col">
+              )}
+            </div>
+
+            <div className="flex flex-col gap-4">
+              {campaignData.approver && (
                 <div className="flex flex-col">
-                  <div className="ck-body-2 flex">
-                    <div className="ck-caption-1 text-ck-gray-600 flex w-[85px] items-center border-r pr-2">
-                      캠페인 승인인
-                    </div>
-                    <div className="flex items-center gap-3 pl-3">
-                      <div className="flex flex-col">
-                        <span className="ck-body-2-bold flex gap-2">
-                          {campaignData.approver?.nickname}
-                        </span>
-                        <span className="ck-caption-2 text-ck-gray-600">
-                          {campaignData.approver?.email}
-                        </span>
+                  <div className="flex flex-col">
+                    <div className="ck-body-2 flex">
+                      <div className="ck-caption-1 text-ck-gray-600 flex w-[85px] items-center border-r pr-2">
+                        캠페인 승인인
+                      </div>
+                      <div className="flex items-center gap-3 pl-3">
+                        <div className="flex flex-col">
+                          <span className="ck-body-2-bold flex gap-2">
+                            {campaignData.approver?.nickname}
+                          </span>
+                          <span className="ck-caption-2 text-ck-gray-600">
+                            {campaignData.approver?.email}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              ) )
+              )}
               {campaignData.creator && (
                 <div className="flex flex-col gap-1">
                   <div className="flex flex-col">

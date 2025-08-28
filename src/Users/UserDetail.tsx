@@ -292,10 +292,30 @@ export default function UserDetail() {
 
             <div className="flex flex-col gap-2">
               <p className="ck-body-2">사용자 메모</p>
-              <div className="ck-body-2 border-ck-gray-300 rounded-md border bg-transparent px-3 py-2">
-                {userData.memo ? userData.memo : "내용이 없습니다."}
-              </div>
-              {!hideMemo && (
+              {hideMemo ? (
+                <div className="flex flex-col gap-4">
+                  <Textarea
+                    placeholder="텍스트를 입력하세요."
+                    value={userMemo}
+                    onChange={handleTextAreaChange}
+                  />
+                </div>
+              ) : (
+                <div className="ck-body-2 border-ck-gray-300 rounded-md border bg-transparent px-3 py-2">
+                  {userData.memo ? userData.memo : "내용이 없습니다."}
+                </div>
+              )}
+
+              {hideMemo ? (
+                <div className="flex justify-end">
+                  <Button
+                    className="ck-body-1 text-ck-gray-900 hover:bg-ck-gray-300 cursor-pointer border bg-white"
+                    onClick={() => putMemoUpdate(userData.id, userMemo || "")}
+                  >
+                    저장
+                  </Button>
+                </div>
+              ) : (
                 <div className="flex justify-end">
                   <Button
                     className="ck-body-1 text-ck-gray-900 hover:bg-ck-gray-300 cursor-pointer border bg-white"
@@ -303,23 +323,6 @@ export default function UserDetail() {
                   >
                     수정
                   </Button>
-                </div>
-              )}
-              {hideMemo && (
-                <div className="flex flex-col gap-4">
-                  <Textarea
-                    placeholder="텍스트를 입력하세요."
-                    value={userMemo}
-                    onChange={handleTextAreaChange}
-                  />
-                  <div className="flex justify-end">
-                    <Button
-                      className="ck-body-1 text-ck-gray-900 hover:bg-ck-gray-300 cursor-pointer border bg-white"
-                      onClick={() => putMemoUpdate(userData.id, userMemo || "")}
-                    >
-                      저장
-                    </Button>
-                  </div>
                 </div>
               )}
             </div>
