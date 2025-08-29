@@ -10,7 +10,6 @@ import { useSensors, useSensor, MouseSensor, TouchSensor } from "@dnd-kit/core";
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { toast } from "react-toastify";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { FolderInput, Upload } from "lucide-react";

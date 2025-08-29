@@ -1,7 +1,4 @@
-"use client";
-
 import { Pie, PieChart } from "recharts";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   type ChartConfig,

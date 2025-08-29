@@ -2,7 +2,6 @@ import { CampaignPagination } from "@/Campaigns/CampaignPagination";
 import { CampaignTable } from "@/Campaigns/CampaignTable";
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect, type KeyboardEvent } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,14 +16,6 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table";
 import { Card } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import CampaignTableSkeleton from "@/Skeleton/CampaignTableSkeleton";
 
 interface Campaign {

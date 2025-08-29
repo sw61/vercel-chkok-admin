@@ -21,14 +21,7 @@ import { Input } from "@/components/ui/input";
 import { ChevronDown } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Search } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import UserTableSkeleton from "@/Skeleton/UserTableSkeleton";
 
 interface User {
   id: number;
@@ -156,33 +149,7 @@ export default function UserTablePage() {
       </div>
 
       {isLoading ? (
-        <div className="overflow-x-auto rounded-md border">
-          <Table className="table-fixed" style={{ minWidth: `${1000}px` }}>
-            <TableHeader>
-              <TableRow>
-                {[80, 150, 200, 100, 120, 150, 150].map((width, idx) => (
-                  <TableHead key={idx} style={{ width: `${width}px` }}>
-                    <Skeleton className="h-4 w-3/4" />
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {Array.from({ length: 10 }).map((_, rowIdx) => (
-                <TableRow key={rowIdx}>
-                  {[80, 150, 200, 100, 120, 150, 150].map((width, colIdx) => (
-                    <TableCell
-                      key={`${rowIdx}-${colIdx}`}
-                      style={{ width: `${width}px` }}
-                    >
-                      <Skeleton className="h-4 w-full" />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <UserTableSkeleton />
       ) : !userData || !pageData ? (
         <div className="text-ck-gray-600 ck-body-2 flex items-center justify-center rounded-md border py-10">
           데이터가 없습니다.

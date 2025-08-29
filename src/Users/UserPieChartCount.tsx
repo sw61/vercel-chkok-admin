@@ -1,7 +1,4 @@
-"use client";
-
 import { Pie, PieChart } from "recharts";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   type ChartConfig,
@@ -11,7 +8,6 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart";
-import { Skeleton } from "@/components/ui/skeleton";
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect } from "react";
 import PieChartSkeleton from "@/Skeleton/PieChartSkeleton";

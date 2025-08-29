@@ -1,5 +1,3 @@
-"use client";
-
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -12,9 +10,7 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
-
 import {
   Table,
   TableBody,
@@ -25,6 +21,7 @@ import {
 } from "@/components/ui/table";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 interface User {
   id: number;
   name: string;

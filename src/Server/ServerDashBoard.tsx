@@ -14,7 +14,6 @@ import {
   ChartLegend,
 } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis } from "recharts";
-import { Skeleton } from "@/components/ui/skeleton";
 import axiosInterceptor from "@/lib/axios-interceptors";
 import ServerDashboardSkeleton from "@/Skeleton/ServerDashboardSkeleton";
 
