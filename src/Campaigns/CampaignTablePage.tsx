@@ -25,6 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import CampaignTableSkeleton from "@/Skeleton/CampaignTableSkeleton";
 
 interface Campaign {
   id: number;
@@ -102,10 +103,6 @@ export default function CampaignTablePage() {
     }
   };
 
-  useEffect(() => {
-    getCampaignTable(0, campaignType);
-  }, [campaignType]);
-
   const typeValues = [
     { type: "ALL", label: "전체 캠페인" },
     { type: "PENDING", label: "승인 대기 캠페인" },
@@ -126,10 +123,9 @@ export default function CampaignTablePage() {
       handleSearch();
     }
   };
-
-  const currentLabel =
-    typeValues.find((item) => item.type === campaignType)?.label ||
-    "캠페인 필터";
+  useEffect(() => {
+    getCampaignTable(0, campaignType);
+  }, [campaignType]);
 
   return (
     <Card className="px-6 py-4">
@@ -138,7 +134,8 @@ export default function CampaignTablePage() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
-                {currentLabel}
+                {typeValues.find((item) => item.type === campaignType)?.label ||
+                  "캠페인 필터"}
                 <ChevronDown />
               </Button>
             </DropdownMenuTrigger>
@@ -198,35 +195,7 @@ export default function CampaignTablePage() {
       </div>
 
       {isLoading ? (
-        <div className="overflow-x-auto rounded-md border">
-          <Table className="table-fixed" style={{ minWidth: `${1130}px` }}>
-            <TableHeader>
-              <TableRow>
-                {[50, 250, 120, 100, 120, 120, 120, 250].map((width, idx) => (
-                  <TableHead key={idx} style={{ width: `${width}px` }}>
-                    <Skeleton className="h-4 w-3/4" />
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {Array.from({ length: 10 }).map((_, rowIdx) => (
-                <TableRow key={rowIdx}>
-                  {[50, 250, 120, 100, 120, 120, 120, 250].map(
-                    (width, colIdx) => (
-                      <TableCell
-                        key={`${rowIdx}-${colIdx}`}
-                        style={{ width: `${width}px` }}
-                      >
-                        <Skeleton className="h-4 w-full" />
-                      </TableCell>
-                    ),
-                  )}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <CampaignTableSkeleton />
       ) : !campaignData ||
         !pageData ||
         campaignData.length === 0 ||

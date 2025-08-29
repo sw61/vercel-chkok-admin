@@ -16,6 +16,7 @@ import ReactMarkdown from "react-markdown";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Button } from "@/components/ui/button";
 import TurndownService from "turndown";
+import MarkdownDetailSkeleton from "../Skeleton/MarkdownDetailSkeleton";
 
 interface MarkdownData {
   id: number;
@@ -190,7 +191,7 @@ export default function MarkdownDetail() {
   }, [markdownId]);
 
   if (isLoading) {
-    return <div>로딩 중</div>;
+    return <MarkdownDetailSkeleton />;
   }
   if (!markdownData) {
     return <div>데이터 없음</div>;

@@ -26,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import MarkdownTableSkeleton from "../Skeleton/MakrdownTableSkeleton";
 
 interface MarkdownData {
   id: number;
@@ -207,7 +208,7 @@ export default function MarkdownTable() {
   });
 
   if (isLoading) {
-    return <div>스켈레톤 UI</div>;
+    return <MarkdownTableSkeleton />;
   }
 
   return (

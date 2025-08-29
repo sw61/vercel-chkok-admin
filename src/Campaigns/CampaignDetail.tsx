@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import CampaignDetailSkeleton from "@/Skeleton/CampaignDetailSkeleton";
 
 interface Campaign {
   id: number;
@@ -81,6 +82,7 @@ export default function CampaignDetail() {
   const { campaignId } = useParams<{ campaignId: string }>();
   const [campaignData, setCampaignData] = useState<Campaign | null>(null);
   const [comment, setComment] = useState<string>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const dataMap: Record<string, string> = {
     USER: "사용자",
@@ -197,8 +199,9 @@ export default function CampaignDetail() {
       value: campaignData?.missionInfo.updatedAt.split("T")[0] ?? "정보 없음",
     },
   ];
-
+  // 캠페인 상세 내용 조회
   const getCampaignDetail = async (id: string) => {
+    setIsLoading(true);
     try {
       const response = await axiosInterceptor.get(`/campaigns/${id}`);
       const campaignData = response.data.data;
@@ -213,8 +216,11 @@ export default function CampaignDetail() {
       console.log(mappedData);
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
+  // 캠페인 삭제
   const deleteCampaign = async (id: number) => {
     if (window.confirm("캠페인을 삭제하시겠습니까?")) {
       try {
@@ -227,7 +233,7 @@ export default function CampaignDetail() {
       }
     }
   };
-
+  // 캠페인 승인
   const approveCampaign = async (id: number) => {
     if (window.confirm("캠페인을 승인하시겠습니까?")) {
       try {
@@ -246,7 +252,7 @@ export default function CampaignDetail() {
       }
     }
   };
-
+  // 캠페인 거절
   const rejectCampaign = async (id: number) => {
     if (window.confirm("캠페인을 거절하시겠습니까?")) {
       try {
@@ -267,8 +273,7 @@ export default function CampaignDetail() {
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setComment(value);
+    setComment(e.target.value);
   };
 
   useEffect(() => {
@@ -277,89 +282,11 @@ export default function CampaignDetail() {
     }
   }, [campaignId]);
   // 스켈레톤 ui
+  if (isLoading) {
+    return <CampaignDetailSkeleton />;
+  }
   if (!campaignData) {
-    return (
-      <div className="p-6">
-        <div className="mb-6 flex items-center justify-between">
-          <Skeleton className="h-8 w-64" />
-          <div className="space-x-4">
-            <Skeleton className="h-10 w-24" />
-            <Skeleton className="h-10 w-24" />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">
-                <Skeleton className="h-6 w-32" />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between">
-                <div className="flex items-center gap-4">
-                  <Skeleton className="h-16 w-16 rounded-full" />
-                  <div>
-                    <Skeleton className="mb-2 h-6 w-32" />
-                    <Skeleton className="mb-1 h-4 w-40" />
-                    <Skeleton className="h-4 w-36" />
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Skeleton className="h-10 w-24" />
-                  <Skeleton className="h-10 w-24" />
-                  <Skeleton className="h-10 w-24" />
-                </div>
-              </div>
-              <div className="mb-6 grid grid-cols-3 gap-6">
-                {Array.from({ length: 9 }).map((_, index) => (
-                  <div key={index}>
-                    <Skeleton className="mb-2 h-4 w-20" />
-                    <Skeleton className="h-6 w-24" />
-                  </div>
-                ))}
-              </div>
-              <div className="flex flex-col gap-2">
-                <Skeleton className="mb-2 h-4 w-24" />
-                <Skeleton className="h-20 w-full" />
-                <div className="flex justify-end">
-                  <Skeleton className="h-10 w-16" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">
-                <Skeleton className="h-6 w-32" />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <div key={index} className="grid grid-cols-2 gap-4">
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-6 w-24" />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">
-                <Skeleton className="h-6 w-32" />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <div key={index} className="grid grid-cols-2 gap-4">
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-6 w-24" />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
+    return <p>데이터가 없습니다.</p>;
   }
 
   return (

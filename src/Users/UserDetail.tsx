@@ -1,14 +1,14 @@
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect, type ChangeEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "react-toastify";
 import { ArrowUpNarrowWide, Trash, UserCheck, UserX } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import UserDetailSkeleton from "@/Skeleton/UserDetailSkeleton";
 
 interface User {
   id: number;
@@ -34,7 +34,8 @@ export default function UserDetail() {
   const { userId } = useParams<{ userId: string }>();
   const [userData, setUserData] = useState<User | null>(null);
   const [userMemo, setUserMemo] = useState<string>("");
-  const [hideMemo, setHideMemo] = useState<Boolean>(false);
+  const [hideMemo, setHideMemo] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const dataMap: Record<string, string> = {
     GOOGLE: "구글",
     kakao: "카카오",
@@ -48,11 +49,9 @@ export default function UserDetail() {
     FEMALE: "여성",
   };
 
-  // 사용자 메모 수정 핸들러
-  const handleTextAreaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setUserMemo(event.target.value);
-  };
+  // 사용자 상세 정보 호출
   const getUserDetail = async (id: string) => {
+    setIsLoading(true);
     try {
       const response = await axiosInterceptor.get(`/users/${id}`);
       const userData = response.data.data;
@@ -68,8 +67,11 @@ export default function UserDetail() {
     } catch (error) {
       toast.error("유저 정보 조회에 실패했습니다.");
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
+  // 사용자 상태 변경
   const putUserStatus = async (id: number) => {
     try {
       const response = await axiosInterceptor.put(`/users/${id}/status`);
@@ -81,6 +83,7 @@ export default function UserDetail() {
       toast.error("상태 변경에 실패했습니다.");
     }
   };
+  // 사용자 삭제
   const deleteUser = async (id: number) => {
     if (window.confirm("사용자를 삭제하시겠습니까?")) {
       try {
@@ -93,6 +96,7 @@ export default function UserDetail() {
       }
     }
   };
+  // 메모 수정
   const putMemoUpdate = async (id: number, memo: string) => {
     try {
       const response = await axiosInterceptor.put(
@@ -110,6 +114,10 @@ export default function UserDetail() {
       toast.error("메모 업데이트에 실패했습니다.");
       console.log(error);
     }
+  };
+  // 사용자 메모 수정 핸들러
+  const handleTextAreaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setUserMemo(event.target.value);
   };
   const userToClient = async (id: number) => {
     if (window.confirm("클라이언트로 승급하시겠습니까?")) {
@@ -129,52 +137,12 @@ export default function UserDetail() {
     }
   }, [userId]);
   if (!userData) {
-    return (
-      <div className="p-6">
-        <div className="grid grid-cols-1 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="ck-title mb-2">계정 정보</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between">
-                <div className="flex items-center gap-4">
-                  <Skeleton className="h-16 w-16 rounded-full" />
-                  <div>
-                    <Skeleton className="mb-2 h-6 w-32" />
-                    <Skeleton className="mb-1 h-4 w-40" />
-                    <Skeleton className="h-4 w-36" />
-                  </div>
-                </div>
-
-                <div className="flex gap-2">
-                  <Skeleton className="h-10 w-24" />
-                  <Skeleton className="h-10 w-24" />
-                  <Skeleton className="h-10 w-24" />
-                </div>
-              </div>
-
-              <div className="mb-6 grid grid-cols-3 gap-6">
-                {Array.from({ length: 9 }).map((_, index) => (
-                  <div key={index}>
-                    <Skeleton className="mb-2 h-4 w-20" />
-                    <Skeleton className="h-6 w-24" />
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <Skeleton className="mb-2 h-4 w-24" />
-                <Skeleton className="h-20 w-full" />
-                <div className="flex justify-end">
-                  <Skeleton className="h-10 w-16" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
+    return <div>데이터가 없습니다.</div>;
+  }
+  if (isLoading) {
+    <>
+      <UserDetailSkeleton />
+    </>;
   }
 
   return (
