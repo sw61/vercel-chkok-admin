@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "react-toastify";
 import { ArrowUpNarrowWide, Trash, UserCheck, UserX } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
 interface User {
   id: number;
@@ -180,9 +181,10 @@ export default function UserDetail() {
     <div className="min-w-[650px]">
       <div className="grid grid-cols-1 gap-6">
         <Card>
-          <CardHeader>
-            <CardTitle className="ck-title">계정 정보</CardTitle>
-          </CardHeader>
+          <div className="flex gap-4 px-6">
+            <CardTitle className="ck-title">사용자 정보</CardTitle>
+            <Badge>{userData.role}</Badge>
+          </div>
           <CardContent className="pt-2">
             <div className="flex justify-between pb-4">
               <div className="flex items-center gap-4">
@@ -246,10 +248,7 @@ export default function UserDetail() {
                 <p className="ck-caption-1 text-ck-gray-600">사용자 ID</p>
                 <p className="ck-body-2">{userData.id}</p>
               </div>
-              <div>
-                <p className="ck-caption-1 text-ck-gray-600">권한</p>
-                <p className="ck-body-2">{userData.role}</p>
-              </div>
+
               <div>
                 <p className="ck-caption-1 text-ck-gray-600">계정 상태</p>
                 {userData.active ? (
@@ -257,6 +256,16 @@ export default function UserDetail() {
                 ) : (
                   <p className="ck-body-2 text-ck-red-500">비활성화</p>
                 )}
+              </div>
+              <div>
+                <p className="text-ck-gray-600 ck-caption-1">이메일 인증</p>
+                <p className="ck-body-2">
+                  {userData.emailVerified ? (
+                    <p className="text-ck-blue-500 ck-body-2">인증됨</p>
+                  ) : (
+                    <p className="text-ck-red-500 ck-body-2">인증 필요</p>
+                  )}
+                </p>
               </div>
               <div>
                 <p className="text-ck-gray-600 ck-caption-1">계정 서비스</p>
@@ -277,16 +286,6 @@ export default function UserDetail() {
               <div>
                 <p className="text-ck-gray-600 ck-caption-1">업데이트일</p>
                 <p className="ck-body-2">{userData.updatedAt.split("T")[0]}</p>
-              </div>
-              <div>
-                <p className="text-ck-gray-600 ck-caption-1">이메일 인증</p>
-                <p className="ck-body-2">
-                  {userData.emailVerified ? (
-                    <p className="text-ck-blue-500 ck-body-2">인증됨</p>
-                  ) : (
-                    <p className="text-ck-red-500 ck-body-2">인증 필요</p>
-                  )}
-                </p>
               </div>
             </div>
 

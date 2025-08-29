@@ -145,7 +145,6 @@ const totalColumnWidth = columns.reduce(
 export default function MarkdownTable() {
   const [markdownData, setMarkdownData] = useState<MarkdownData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -156,22 +155,12 @@ export default function MarkdownTable() {
 
   const getMarkdownData = async () => {
     setIsLoading(true);
-    setError(null);
     try {
       const response = await axiosInterceptor.get("/api/admin/markdowns");
       const data = response.data.data.markdowns;
-      console.log("API 응답 데이터:", data); // 디버깅용 로그
-      if (Array.isArray(data)) {
-        setMarkdownData(data);
-      } else {
-        console.error("API 응답이 배열이 아닙니다:", data);
-        setMarkdownData([]);
-        setError("서버에서 잘못된 데이터 형식을 받았습니다.");
-      }
+      setMarkdownData(data);
     } catch (error) {
-      console.error("마크다운 데이터를 가져오는데 실패했습니다:", error);
-      setMarkdownData([]);
-      setError("마크다운 데이터를 불러오지 못했습니다.");
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -221,19 +210,14 @@ export default function MarkdownTable() {
     return <div>스켈레톤 UI</div>;
   }
 
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   return (
     <Card className="w-full p-6">
-      <div className="mb-4 flex justify-between">
+      <div className="mb-2 flex justify-between">
         <Button variant="outline" onClick={() => navigate("/documents/create")}>
           마크다운 문서 생성하러 가기
         </Button>
-
         {/* 검색창 */}
-        <div className="relative">
+        <div className="ck-caption-1 relative">
           <Input
             placeholder="문서 제목 검색"
             value={searchKey}

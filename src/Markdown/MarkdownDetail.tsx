@@ -28,11 +28,6 @@ interface MarkdownData {
   updatedAt: string;
 }
 
-interface ImageSize {
-  width: string;
-  height: string;
-}
-
 export default function MarkdownDetail() {
   const { markdownId } = useParams<{ markdownId: string }>();
   const navigate = useNavigate();
@@ -42,21 +37,15 @@ export default function MarkdownDetail() {
     content: "",
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [presignedUrl, setPresignedUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [showImageSizeModal, setShowImageSizeModal] = useState<boolean>(false);
+  const [showImageModal, setShowImageModal] = useState<boolean>(false);
   const [pendingImageData, setPendingImageData] = useState<{
     url: string;
     name: string;
   } | null>(null);
-  const [imageSize, setImageSize] = useState<ImageSize>({
-    width: "300",
-    height: "200",
-  });
   const [editorApi, setEditorApi] = useState<any>(null);
 
-  // Initialize Turndown service
+  // html -> Markdown 변환
   const turndownService = new TurndownService({
     headingStyle: "atx", // Use # for headings
     codeBlockStyle: "fenced", // Use ``` for code blocks
@@ -122,7 +111,7 @@ export default function MarkdownDetail() {
     }
   };
 
-  // Upload image to S3
+  // S3 이미지 업로드
   const uploadImageFile = async (file: File): Promise<string> => {
     setIsUploading(true);
     const fileExtension = file.name.split(".").pop()?.toLowerCase() || "jpg";
@@ -135,7 +124,6 @@ export default function MarkdownDetail() {
         },
       );
       const presignedUrl = response.data.data.presignedUrl.split("?")[0];
-      setPresignedUrl(presignedUrl);
       const contentType = file.type || "image/jpeg";
       await axios.put(presignedUrl, file, {
         headers: { "Content-Type": contentType },
@@ -149,27 +137,24 @@ export default function MarkdownDetail() {
     }
   };
 
-  // Open image size modal
-  const openImageSizeModal = (url: string, name: string) => {
+  // 이미지 삽입 모달
+  const openImageModal = (url: string, name: string) => {
     setPendingImageData({ url, name });
-    setShowImageSizeModal(true);
+    setShowImageModal(true);
   };
 
-  // Insert image with size
-  const insertImageWithSize = () => {
+  // 이미지 삽입
+  const insertImage = () => {
     if (!pendingImageData || !editorApi) return;
     const { url, name } = pendingImageData;
-    const { width, height } = imageSize;
-    const markdownImage = `<img src="${url}" alt="${name}" width="${width}" height="${height}" />`;
+    const markdownImage = `![${name}](${url})`;
     editorApi.replaceSelection(markdownImage);
-    setShowImageSizeModal(false);
+    setShowImageModal(false);
     toast.success("이미지가 삽입되었습니다.");
     setPendingImageData(null);
-    setImageSize({ width: "300", height: "200" });
-    setEditData((prev) => ({ ...prev, content: editorApi.getValue() }));
   };
 
-  // Custom image upload command
+  // 이미지 업로드 커맨드
   const imageUploadCommand: ICommand = {
     name: "imageUpload",
     keyCommand: "imageUpload",
@@ -190,9 +175,8 @@ export default function MarkdownDetail() {
       input.onchange = async () => {
         if (input.files && input.files[0]) {
           const file = input.files[0];
-          setImageFile(file);
           const url = await uploadImageFile(file);
-          openImageSizeModal(url, file.name);
+          openImageModal(url, file.name);
         }
       };
       input.click();
@@ -219,18 +203,18 @@ export default function MarkdownDetail() {
           <CardTitle className="ck-title">마크다운 문서</CardTitle>
           <div className="flex gap-3">
             <Button
-              onClick={() => editMarkdown(markdownData.id)}
-              className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
-              variant="outline"
-            >
-              수정
-            </Button>
-            <Button
               onClick={() => deleteMarkdown(markdownData.id)}
               className="hover:bg-ck-red-500 px-4 py-2 hover:text-white"
               variant="outline"
             >
               삭제
+            </Button>
+            <Button
+              onClick={() => editMarkdown(markdownData.id)}
+              className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
+              variant="outline"
+            >
+              수정
             </Button>
           </div>
         </div>
@@ -292,11 +276,10 @@ export default function MarkdownDetail() {
         </CardContent>
       </Card>
 
-      {/* Image size modal */}
-      {showImageSizeModal && (
+      {/* 이미지 설정 모달 */}
+      {showImageModal && (
         <div className="absolute inset-0 z-10 flex h-full w-full items-center justify-center backdrop-blur-sm">
           <div className="w-96 rounded-lg border bg-white p-6">
-            <h3 className="mb-4 text-lg font-semibold">이미지 크기 설정</h3>
             <div className="mb-4">
               <label className="mb-2 block text-sm font-medium text-gray-700">
                 이미지 미리보기
@@ -309,43 +292,11 @@ export default function MarkdownDetail() {
                 />
               </div>
             </div>
-            <div className="mb-6 grid grid-cols-2 gap-4">
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
-                  너비 (px)
-                </label>
-                <input
-                  type="number"
-                  value={imageSize.width}
-                  onChange={(e) =>
-                    setImageSize((prev) => ({ ...prev, width: e.target.value }))
-                  }
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  min="1"
-                />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
-                  높이 (px)
-                </label>
-                <input
-                  type="number"
-                  value={imageSize.height}
-                  onChange={(e) =>
-                    setImageSize((prev) => ({
-                      ...prev,
-                      height: e.target.value,
-                    }))
-                  }
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  min="1"
-                />
-              </div>
-            </div>
+            <div className="mb-6 grid grid-cols-2 gap-4"></div>
             <div className="flex gap-3">
               <button
                 onClick={() => {
-                  setShowImageSizeModal(false);
+                  setShowImageModal(false);
                   setPendingImageData(null);
                 }}
                 className="flex-1 rounded-md bg-gray-200 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-300"
@@ -353,7 +304,7 @@ export default function MarkdownDetail() {
                 취소
               </button>
               <button
-                onClick={insertImageWithSize}
+                onClick={insertImage}
                 className="flex-1 rounded-md bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-700"
               >
                 설정

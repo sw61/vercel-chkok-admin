@@ -11,6 +11,9 @@ import UserDetail from "./Users/UserDetail";
 import AdminDetail from "./AdminAccount/AdminDetail";
 import BannersDragpage from "./Banners/BannersDragPage";
 import NotFoundPage from "./Pages/NotFoundPage";
+import MarkdownDetail from "./Markdown/MarkdownDetail";
+import MarkdownTable from "./Markdown/MarkdownTable";
+import MarkdownCreate from "./Markdown/MarkdownCreate";
 // ts file
 import { LoginForm } from "./auth/login-form";
 import { PrivateComponent } from "./auth/tokenCheck";
@@ -19,9 +22,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import BannersDetail from "./Banners/BannersDetail";
 import ServerDashBoard from "./Server/ServerDashBoard";
-import MarkdownDetail from "./Markdown/MarkdownDetail";
-import MarkdownTable from "./Markdown/MarkdownTable";
-import MarkdownCreate from "./\bMarkdown/MarkdownCreate";
 
 function App() {
   return (
