@@ -1,12 +1,13 @@
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect, type ChangeEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
 import { Badge } from "@/components/ui/badge";
 import CampaignDetailSkeleton from "@/Skeleton/CampaignDetailSkeleton";
+import { Image, SquarePlay, Type } from "lucide-react";
 
 interface Campaign {
   id: number;
@@ -57,8 +58,8 @@ interface Campaign {
   };
   missionInfo: {
     id: number;
-    titleKeyWords: string;
-    bodyKeywords: string;
+    titleKeyWords: string[];
+    bodyKeywords: string[];
     numberOfVideo: number;
     numberOfImage: number;
     numberOfText: number;
@@ -143,49 +144,9 @@ export default function CampaignDetail() {
   ];
   const MissionInfo = (): CampaignInfo[] => [
     {
-      key: "id",
-      label: "미션 ID",
-      value: campaignData?.missionInfo.id ?? "정보 없음",
-    },
-    {
-      key: "titleKeywords",
-      label: "제목 키워드",
-      value: campaignData?.missionInfo.titleKeyWords ?? "정보 없음",
-    },
-    {
-      key: "bodyKeywords",
-      label: "내용 키워드",
-      value: campaignData?.missionInfo.bodyKeywords ?? "정보 없음",
-    },
-    {
-      key: "numberOfvideo",
-      label: "영상 개수",
-      value: campaignData?.missionInfo.numberOfVideo ?? "정보 없음",
-    },
-    {
-      key: "numberOfImage",
-      label: "이미지 개수",
-      value: campaignData?.missionInfo.numberOfImage ?? "정보 없음",
-    },
-    {
-      key: "numberOfText",
-      label: "텍스트 길이",
-      value: campaignData?.missionInfo.numberOfText ?? "정보 없음",
-    },
-    {
-      key: "missionGuide",
-      label: "미션 가이드",
-      value: campaignData?.missionInfo.missionGuide ?? "정보 없음",
-    },
-    {
       key: "missionStartDate",
       label: "미션 시작일",
       value: campaignData?.missionInfo.missionStartDate ?? "정보 없음",
-    },
-    {
-      key: "missionDeadlineDate",
-      label: "미션 가이드",
-      value: campaignData?.missionInfo.missionGuide ?? "정보 없음",
     },
     {
       key: "createdAt",
@@ -331,10 +292,10 @@ export default function CampaignDetail() {
           <CardContent className="pt-2">
             <div className="flex justify-between pb-4">
               <div className="flex items-center gap-4">
-                <div>
+                <div className="flex flex-col gap-2">
                   <p className="ck-body-1-bold">{campaignData.title}</p>
                   <p className="ck-caption-1">
-                    간단 소개 : {campaignData.productShortInfo || "No Info"}
+                    {campaignData.productShortInfo || "간단 소개 정보 없음"}
                   </p>
                 </div>
               </div>
@@ -342,94 +303,163 @@ export default function CampaignDetail() {
             <div className="mb-6 grid grid-cols-3 gap-6">
               {CampaignInfo().map((item) => (
                 <div key={item.key}>
-                  <p className="ck-caption-1 text-ck-gray-600">{item.label}</p>
-                  <p className="ck-body-2">{item.value}</p>
+                  <p className="ck-body-2-bold">{item.label}</p>
+                  <p className="ck-body-2 text-ck-gray-700">{item.value}</p>
                 </div>
               ))}
             </div>
-            <div className="mb-4 flex flex-col gap-2">
-              <p className="ck-caption-1 text-ck-gray-600">승인 코멘트</p>
-              {campaignData.approvalStatus === "대기중" ? (
-                <Input
-                  id="comment"
-                  name="comment"
-                  value={comment}
-                  onChange={handleInputChange}
-                  placeholder="승인 코멘트를 입력해주세요."
-                />
-              ) : (
-                <p className="ck-body-2">{campaignData.approvalComment}</p>
-              )}
-            </div>
-
             <div className="flex flex-col gap-4">
-              {campaignData.approver && (
-                <div className="flex flex-col">
-                  <div className="flex flex-col">
-                    <div className="ck-body-2 flex">
-                      <div className="ck-caption-1 text-ck-gray-600 flex w-[85px] items-center border-r pr-2">
-                        캠페인 승인인
-                      </div>
-                      <div className="flex items-center gap-3 pl-3">
-                        <div className="flex flex-col">
-                          <span className="ck-body-2-bold flex gap-2">
-                            {campaignData.approver?.nickname}
-                          </span>
-                          <span className="ck-caption-2 text-ck-gray-600">
-                            {campaignData.approver?.email}
-                          </span>
-                        </div>
-                      </div>
+              {/* 간단 소개 */}
+              <div className="flex items-center gap-4">
+                <div className="flex flex-col gap-2">
+                  <p className="ck-body-2-bold">간단 소개</p>
+                  <p className="ck-body-2 text-ck-gray-700">
+                    {campaignData.productShortInfo || "간단 소개 정보 없음"}
+                  </p>
+                </div>
+              </div>
+              {/* 승인 코멘트 */}
+              <div className="flex flex-col gap-2">
+                <p className="ck-body-2-bold">승인 코멘트</p>
+                {campaignData.approvalStatus === "대기중" ? (
+                  <Input
+                    id="comment"
+                    name="comment"
+                    value={comment}
+                    onChange={handleInputChange}
+                    placeholder="승인 코멘트를 입력해주세요."
+                  />
+                ) : (
+                  <p className="ck-body-2 text-ck-gray-700">
+                    {campaignData.approvalComment ?? "코멘트가 없습니다."}
+                  </p>
+                )}
+              </div>
+              {/* 캠페인 승인인 */}
+              <div className="flex flex-col gap-4">
+                {campaignData.approver && (
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col gap-2">
+                      <p className="ck-body-2-bold">캠페인 승인인</p>
+                      <p className="ck-body-2 text-ck-gray-700">
+                        {campaignData.approver.nickname} |&nbsp;
+                        {campaignData.approver.email}
+                      </p>
                     </div>
                   </div>
-                </div>
-              )}
-              {campaignData.creator && (
-                <div className="flex flex-col gap-1">
-                  <div className="flex flex-col">
-                    <div className="ck-body-2 flex gap-2">
-                      <div className="ck-caption-1 text-ck-gray-600 flex w-[85px] items-center border-r pr-2">
-                        캠페인 생성인
-                      </div>
-                      <div className="flex items-center gap-3 pl-3">
-                        <div className="flex flex-col">
-                          <span className="ck-body-2-bold flex gap-2">
-                            {campaignData.creator.nickname}
-                            <Badge>{campaignData.creatorRole}</Badge>
-                          </span>
-                          <span className="ck-caption-2 text-ck-gray-600">
-                            {campaignData.creator.email}
-                          </span>
-                        </div>
-                      </div>
+                )}
+                {/* 캠페인 생성인 */}
+                {campaignData.creator && (
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col gap-2">
+                      <p className="ck-body-2-bold">캠페인 생성인</p>
+                      <p className="ck-body-2 text-ck-gray-700">
+                        {campaignData.creator.nickname} |&nbsp;
+                        {campaignData.creator.email}{" "}
+                        <Badge>{campaignData.creatorRole}</Badge>&nbsp;
+                      </p>
                     </div>
                   </div>
-                </div>
-              )}
-              {campaignData.company && (
-                <div className="flex flex-col gap-1">
-                  <div className="flex flex-col">
-                    <div className="ck-body-2 flex gap-2">
-                      <div className="ck-caption-1 text-ck-gray-600 flex w-[85px] items-center border-r pr-2">
-                        회사 연락처
-                      </div>
+                )}
+                {campaignData.company && (
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col gap-2">
                       <div>
-                        <div className="ck-body-2 flex gap-2">
-                          <span>{campaignData.company.companyName}</span>|
-                          <span>{campaignData.creator.email}</span>
-                        </div>
-                        <div className="ck-body-2 flex gap-2">
-                          <span>{campaignData.company.contactPerson}</span>|
+                        <p className="ck-body-2-bold">회사 정보</p>
+                        <div className="ck-body-2 text-ck-gray-700 grid grid-cols-3">
+                          <span>{campaignData.company.companyName}</span>
+                          <span>{campaignData.company.contactPerson}</span>
                           <span>{campaignData.company.phoneNumber}</span>
                         </div>
                       </div>
+                      <div>
+                        <p className="ck-body-2-bold">사업자 등록 번호</p>
+                        <div className="ck-body-2 text-ck-gray-700">
+                          {campaignData.company.businessRegistrationNumber ??
+                            "사업자 등록 번호 없음"}
+                        </div>
+                      </div>
                     </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+          {/* 미션 정보 */}
+        </Card>
+        {campaignData.missionInfo && (
+          <Card>
+            <CardContent>
+              <p className="ck-sub-title-1 mb-2">미션 정보</p>
+            </CardContent>
+            <CardContent>
+              <div className="mb-4 grid grid-cols-3 gap-6">
+                {MissionInfo().map((item) => (
+                  <div key={item.key}>
+                    <p className="ck-body-2-bold">{item.label}</p>
+                    <p className="ck-body-2 text-ck-gray-700">{item.value}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+            <CardContent>
+              <p className="ck-sub-title-1 mb-2">미션 가이드</p>
+              <div className="ck-body-1 mb-2 flex items-center gap-4">
+                <div className="grid w-14 place-items-center gap-2">
+                  <Type />
+                  <div className="ck-caption-2">
+                    {campaignData.missionInfo.numberOfText}자↑
+                  </div>
+                </div>
+                <div className="grid w-14 place-items-center gap-2">
+                  <Image />
+                  <div className="ck-caption-2">
+                    {campaignData.missionInfo.numberOfImage}장↑
+                  </div>
+                </div>
+                <div className="grid w-14 place-items-center gap-2">
+                  <SquarePlay />
+                  <div className="ck-caption-2">
+                    {campaignData.missionInfo.numberOfVideo}개↑
+                  </div>
+                </div>
+              </div>
+              <p className="ck-body-2 mb-4 whitespace-pre-line">
+                {campaignData.missionInfo.missionGuide}
+              </p>
+              {/* 제목 키워드 */}
+              {campaignData.missionInfo.titleKeyWords && (
+                <div className="flex flex-wrap gap-2">
+                  <p className="ck-body-2-bold">제목 키워드</p>
+                  {Array.isArray(campaignData.missionInfo.titleKeyWords) &&
+                    campaignData.missionInfo.titleKeyWords.map(
+                      (keyword, index) => (
+                        <Badge key={index} variant="blue">
+                          #{keyword}
+                        </Badge>
+                      ),
+                    )}
+                </div>
+              )}
+              {/* 내용 키워드 */}
+              {campaignData.missionInfo.bodyKeywords && (
+                <div className="flex flex-col gap-2">
+                  <p className="ck-body-2-bold">내용 키워드</p>
+                  <div className="flex gap-2">
+                    {Array.isArray(campaignData.missionInfo.bodyKeywords) &&
+                      campaignData.missionInfo.bodyKeywords.map(
+                        (keyword, index) => (
+                          <Badge key={index} variant="blue">
+                            #{keyword}
+                          </Badge>
+                        ),
+                      )}
                   </div>
                 </div>
               )}
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

@@ -22,6 +22,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import BannersDetail from "./Banners/BannersDetail";
 import ServerDashBoard from "./Server/ServerDashBoard";
+import BasicMap from "./KakaoMap/MapTest";
 
 function App() {
   return (
@@ -134,6 +135,14 @@ function App() {
               element={
                 <PrivateComponent>
                   <MarkdownCreate />
+                </PrivateComponent>
+              }
+            ></Route>
+            <Route
+              path="/map"
+              element={
+                <PrivateComponent>
+                  <BasicMap />
                 </PrivateComponent>
               }
             ></Route>
