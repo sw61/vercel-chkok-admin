@@ -1,5 +1,5 @@
-import { Pie, PieChart } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Pie, PieChart } from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   type ChartConfig,
   ChartContainer,
@@ -7,12 +7,11 @@ import {
   ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
-} from "@/components/ui/chart";
-import axiosInterceptor from "@/lib/axios-interceptors";
-import { useState, useEffect } from "react";
-import PieChartSkeleton from "@/Skeleton/PieChartSkeleton";
+} from '@/components/ui/chart';
+import axiosInterceptor from '@/lib/axios-interceptors';
+import { useState, useEffect } from 'react';
+import PieChartSkeleton from '@/Skeleton/PieChartSkeleton';
 
-export const description = "A pie chart with a label";
 interface Status {
   totalUsers: number; // 등록된 전체 사용자 수
   clientCount: number; // Client 권한 가진 사용자 수
@@ -28,7 +27,7 @@ export function UserPieChartActive() {
   const getUserStatus = async () => {
     try {
       setIsLoading(true);
-      const response = await axiosInterceptor.get("/users/stats");
+      const response = await axiosInterceptor.get('/users/stats');
       const userStatus = response.data.data;
       setUserStatus(userStatus);
     } catch (error) {
@@ -45,27 +44,27 @@ export function UserPieChartActive() {
   }
   const chartData = [
     {
-      status: "active",
+      status: 'active',
       visitors: userStatus?.activeUsers,
-      fill: "#2388FF",
+      fill: '#2388FF',
     },
     {
-      status: "inactive",
+      status: 'inactive',
       visitors: userStatus?.inactiveUsers,
-      fill: "#FB2C36",
+      fill: '#FB2C36',
     },
   ];
   const chartConfig = {
     visitors: {
-      label: "Visitors",
+      label: 'Visitors',
     },
     active: {
-      label: "활성화 계정",
-      color: "var(--chart-4)",
+      label: '활성화 계정',
+      color: 'var(--chart-4)',
     },
     inactive: {
-      label: "비활성화 계정",
-      color: "var(--chart-5)",
+      label: '비활성화 계정',
+      color: 'var(--chart-5)',
     },
   } satisfies ChartConfig;
 

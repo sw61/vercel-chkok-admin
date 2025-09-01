@@ -1,5 +1,5 @@
-import { Pie, PieChart } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Pie, PieChart } from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   type ChartConfig,
   ChartContainer,
@@ -7,12 +7,11 @@ import {
   ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
-} from "@/components/ui/chart";
-import axiosInterceptor from "@/lib/axios-interceptors";
-import { useState, useEffect } from "react";
-import PieChartSkeleton from "@/Skeleton/PieChartSkeleton";
+} from '@/components/ui/chart';
+import axiosInterceptor from '@/lib/axios-interceptors';
+import { useState, useEffect } from 'react';
+import PieChartSkeleton from '@/Skeleton/PieChartSkeleton';
 
-export const description = "A pie chart with a label";
 interface Status {
   totalCampaigns: number;
   pendingCampaigns: number;
@@ -45,45 +44,45 @@ export function CamapaignPieChart() {
 
   const chartData = [
     {
-      status: "approved",
+      status: 'approved',
       visitors: campaignStatus?.approvedCampaigns,
-      fill: "#2388FF",
+      fill: '#2388FF',
     },
     {
-      status: "rejected",
+      status: 'rejected',
       visitors: campaignStatus?.rejectedCampaigns,
-      fill: "#FB2C36",
+      fill: '#FB2C36',
     },
     {
-      status: "pending",
+      status: 'pending',
       visitors: campaignStatus?.pendingCampaigns,
-      fill: "#FBC02D",
+      fill: '#FBC02D',
     },
     {
-      status: "expired",
+      status: 'expired',
       visitors: campaignStatus?.expiredCampaigns,
-      fill: "#FFA2A2",
+      fill: '#FFA2A2',
     },
   ];
   const chartConfig = {
     visitors: {
-      label: "Visitors",
+      label: 'Visitors',
     },
     pending: {
-      label: "승인 대기중",
-      color: "var(--chart-1)",
+      label: '승인 대기중',
+      color: 'var(--chart-1)',
     },
     approved: {
-      label: "승인됨",
-      color: "var(--chart-2)",
+      label: '승인됨',
+      color: 'var(--chart-2)',
     },
     rejected: {
-      label: "승인 거절",
-      color: "var(--chart-3)",
+      label: '승인 거절',
+      color: 'var(--chart-3)',
     },
     expired: {
-      label: "종료됨",
-      color: "var(--chart-4)",
+      label: '종료됨',
+      color: 'var(--chart-4)',
     },
   } satisfies ChartConfig;
 

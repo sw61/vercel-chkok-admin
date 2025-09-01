@@ -1,5 +1,5 @@
-import { Pie, PieChart } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Pie, PieChart } from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   type ChartConfig,
   ChartContainer,
@@ -7,12 +7,11 @@ import {
   ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
-} from "@/components/ui/chart";
-import axiosInterceptor from "@/lib/axios-interceptors";
-import { useState, useEffect } from "react";
-import PieChartSkeleton from "@/Skeleton/PieChartSkeleton";
+} from '@/components/ui/chart';
+import axiosInterceptor from '@/lib/axios-interceptors';
+import { useState, useEffect } from 'react';
+import PieChartSkeleton from '@/Skeleton/PieChartSkeleton';
 
-export const description = "A pie chart with a label";
 interface Status {
   totalUsers: number; // 등록된 전체 사용자 수
   clientCount: number; // Client 권한 가진 사용자 수
@@ -44,27 +43,27 @@ export function UserPieChartCount() {
   }
   const chartData = [
     {
-      status: "userCount",
+      status: 'userCount',
       visitors: userStatus?.userCount,
-      fill: "#2388FF",
+      fill: '#2388FF',
     },
     {
-      status: "client",
+      status: 'client',
       visitors: userStatus?.clientCount,
-      fill: "oklch(79.5% 0.184 86.047)",
+      fill: 'oklch(79.5% 0.184 86.047)',
     },
   ];
   const chartConfig = {
     visitors: {
-      label: "Visitors",
+      label: 'Visitors',
     },
     userCount: {
-      label: "일반 사용자",
-      color: "var(--chart-3)",
+      label: '일반 사용자',
+      color: 'var(--chart-3)',
     },
     client: {
-      label: "클라이언트",
-      color: "var(--chart-2)",
+      label: '클라이언트',
+      color: 'var(--chart-2)',
     },
   } satisfies ChartConfig;
 

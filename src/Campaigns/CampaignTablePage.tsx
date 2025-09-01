@@ -1,22 +1,22 @@
-import { CampaignPagination } from "@/Campaigns/CampaignPagination";
-import { CampaignTable } from "@/Campaigns/CampaignTable";
-import axiosInterceptor from "@/lib/axios-interceptors";
-import { useState, useEffect, type KeyboardEvent } from "react";
-import { Button } from "@/components/ui/button";
+import { CampaignTable } from '@/Campaigns/CampaignTable';
+import axiosInterceptor from '@/lib/axios-interceptors';
+import { useState, useEffect, type KeyboardEvent } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { ChevronDown, Search } from "lucide-react";
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { ChevronDown, Search } from 'lucide-react';
 import {
   type ColumnFiltersState,
   type VisibilityState,
-} from "@tanstack/react-table";
-import { Card } from "@/components/ui/card";
-import CampaignTableSkeleton from "@/Skeleton/CampaignTableSkeleton";
+} from '@tanstack/react-table';
+import { Card } from '@/components/ui/card';
+import CampaignTableSkeleton from '@/Skeleton/CampaignTableSkeleton';
+import { PaginationHook } from '@/hooks/PaginationHook';
 
 interface Campaign {
   id: number;
@@ -41,29 +41,29 @@ interface PaginationData {
 export default function CampaignTablePage() {
   const [campaignData, setCampaignData] = useState<Campaign[] | null>();
   const [pageData, setPageData] = useState<PaginationData | null>();
-  const [searchKey, setSearchKey] = useState<string>("");
-  const [campaignType, setCampaignType] = useState<string>("ALL");
-  const [isLoading, setIsLoading] = useState<Boolean>(false);
+  const [searchKey, setSearchKey] = useState<string>('');
+  const [campaignType, setCampaignType] = useState<string>('ALL');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const headerMenu = [
-    { id: "id", label: "ID" },
-    { id: "title", label: "캠페인 이름" },
-    { id: "campaignType", label: "캠페인 유형" },
-    { id: "approvalStatus", label: "처리 상태" },
-    { id: "approvalDate", label: "처리일" },
-    { id: "createdAt", label: "생성일" },
-    { id: "approvalComment", label: "처리 코멘트" },
+    { id: 'id', label: 'ID' },
+    { id: 'title', label: '캠페인 이름' },
+    { id: 'campaignType', label: '캠페인 유형' },
+    { id: 'approvalStatus', label: '처리 상태' },
+    { id: 'approvalDate', label: '처리일' },
+    { id: 'createdAt', label: '생성일' },
+    { id: 'approvalComment', label: '처리 코멘트' },
   ];
   // 캠페인 테이블 조회
   const getCampaignTable = async (
     page: number = 0,
-    type: typeof campaignType,
+    type: typeof campaignType
   ) => {
     setIsLoading(true);
     try {
       const url =
-        type === "ALL"
+        type === 'ALL'
           ? `/campaigns?page=${page}&size=10`
           : `/campaigns?approvalStatus=${type}&page=${page}&size=10`;
       const response = await axiosInterceptor.get(url);
@@ -82,7 +82,7 @@ export default function CampaignTablePage() {
     setIsLoading(true);
     try {
       const response = await axiosInterceptor.get(
-        `/campaigns/search?keyword=${searchKey}&page=${page}&size=10`,
+        `/campaigns/search?keyword=${searchKey}&page=${page}&size=10`
       );
       const campaignData = response.data.data;
       setCampaignData(campaignData.content);
@@ -95,11 +95,11 @@ export default function CampaignTablePage() {
   };
 
   const typeValues = [
-    { type: "ALL", label: "전체 캠페인" },
-    { type: "PENDING", label: "승인 대기 캠페인" },
-    { type: "APPROVED", label: "승인된 캠페인" },
-    { type: "REJECTED", label: "거절된 캠페인" },
-    { type: "EXPIRED", label: "만료된 캠페인" },
+    { type: 'ALL', label: '전체 캠페인' },
+    { type: 'PENDING', label: '승인 대기 캠페인' },
+    { type: 'APPROVED', label: '승인된 캠페인' },
+    { type: 'REJECTED', label: '거절된 캠페인' },
+    { type: 'EXPIRED', label: '만료된 캠페인' },
   ];
 
   const handlePageChange = (page: number) => {
@@ -110,7 +110,7 @@ export default function CampaignTablePage() {
     setCampaignType(type);
   };
   const handleEnterSearch = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       handleSearch();
     }
   };
@@ -126,7 +126,7 @@ export default function CampaignTablePage() {
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
                 {typeValues.find((item) => item.type === campaignType)?.label ||
-                  "캠페인 필터"}
+                  '캠페인 필터'}
                 <ChevronDown />
               </Button>
             </DropdownMenuTrigger>
@@ -203,10 +203,7 @@ export default function CampaignTablePage() {
             columnVisibility={columnVisibility}
             setColumnVisibility={setColumnVisibility}
           />
-          <CampaignPagination
-            pageData={pageData}
-            onPageChange={handlePageChange}
-          />
+          <PaginationHook pageData={pageData} onPageChange={handlePageChange} />
         </>
       )}
     </Card>

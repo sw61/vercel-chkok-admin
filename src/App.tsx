@@ -1,28 +1,28 @@
 // css
-import "./App.css";
-import "react-toastify/dist/ReactToastify.css";
+import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
 // page
-import MainPage from "./Pages/MainPage";
-import UserTablePage from "./Users/UserTablePage";
-import CampaignTablePage from "./Campaigns/CampaignTablePage";
-import CampaignDetail from "./Campaigns/CampaignDetail";
-import SideBar from "./SideBar/SideBar";
-import UserDetail from "./Users/UserDetail";
-import AdminDetail from "./AdminAccount/AdminDetail";
-import BannersDragpage from "./Banners/BannersDragPage";
-import NotFoundPage from "./Pages/NotFoundPage";
-import MarkdownDetail from "./Markdown/MarkdownDetail";
-import MarkdownTable from "./Markdown/MarkdownTable";
-import MarkdownCreate from "./Markdown/MarkdownCreate";
-import BannersDetail from "./Banners/BannersDetail";
-import ServerDashBoard from "./Server/ServerDashBoard";
-import KakaoMap from "./KakaoMap/KakaoMap";
+import MainPage from './Pages/MainPage';
+import UserTablePage from './Users/UserTablePage';
+import CampaignTablePage from './Campaigns/CampaignTablePage';
+import CampaignDetail from './Campaigns/CampaignDetail';
+import SideBar from './SideBar/SideBar';
+import UserDetail from './Users/UserDetail';
+import AdminDetail from './AdminAccount/AdminDetail';
+import BannersDragpage from './Banners/BannersDragPage';
+import NotFoundPage from './Pages/NotFoundPage';
+import MarkdownDetail from './Markdown/MarkdownDetail';
+import MarkdownTable from './Markdown/MarkdownTable';
+import MarkdownCreate from './Markdown/MarkdownCreate';
+import BannersDetail from './Banners/BannersDetail';
+import ServerDashBoard from './Server/ServerDashBoard';
+import CompanyTablePage from './Company/CompanyTablePage';
 // ts file
-import { LoginForm } from "./auth/login-form";
-import { PrivateComponent } from "./auth/tokenCheck";
+import { LoginForm } from './auth/login-form';
+import { PrivateComponent } from './auth/tokenCheck';
 // library
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
@@ -54,6 +54,15 @@ function App() {
               element={
                 <PrivateComponent>
                   <UserDetail />
+                </PrivateComponent>
+              }
+            ></Route>
+            {/* 클라이언트 심사 목록 */}
+            <Route
+              path="/companies"
+              element={
+                <PrivateComponent>
+                  <CompanyTablePage />
                 </PrivateComponent>
               }
             ></Route>
@@ -135,14 +144,6 @@ function App() {
               element={
                 <PrivateComponent>
                   <MarkdownCreate />
-                </PrivateComponent>
-              }
-            ></Route>
-            <Route
-              path="/map"
-              element={
-                <PrivateComponent>
-                  <KakaoMap />
                 </PrivateComponent>
               }
             ></Route>
