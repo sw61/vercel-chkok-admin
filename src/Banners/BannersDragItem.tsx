@@ -46,7 +46,7 @@ const Item = ({ banner }: ItemProps) => {
       }}
       onClick={() => navigate(`/banners/${banner.id}`)}
     >
-      <div className="flex items-center">
+      <div className="flex items-center p-2">
         <img
           src={banner.bannerUrl}
           alt={banner.title}

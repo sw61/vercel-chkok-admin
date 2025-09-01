@@ -1,44 +1,47 @@
-import { UserTable } from "./UserTable";
-import { PaginationDemo } from "./UserPagination";
-import axiosInterceptor from "@/lib/axios-interceptors";
-import { useState, useEffect, type KeyboardEvent } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useState, useEffect, type KeyboardEvent } from 'react';
 import {
   type ColumnFiltersState,
   type VisibilityState,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
+import { Search, ChevronDown } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  // DropdownMenuItem,
-  // DropdownMenuLabel,
-  // DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ChevronDown } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Search } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/dropdown-menu';
+import axiosInterceptor from '@/lib/axios-interceptors';
+import { UserTable } from '@/Users/UserTable';
+import { CompanyTable } from '@/Company/CompanyTable';
+import UserTableSkeleton from '@/Skeleton/UserTableSkeleton';
+import { PaginationHook } from '@/hooks/PaginationHook';
 
 interface User {
   id: number;
   name: string;
   email: string;
-  nickname: string;
   active: boolean;
+  nickname: string;
   createdAt: string;
   updatedAt: string;
+  userId: number;
+  companyName: string;
+  businessRegistrationNumber: string;
   role: string;
+  contactPerson: string;
+  phoneNumber: string;
+}
+
+interface Company {
+  id: number;
+  userId: number;
+  companyName: string;
+  businessRegistrationNumber: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface PaginationData {
@@ -50,28 +53,43 @@ interface PaginationData {
   totalPages: number;
 }
 
-export default function UserTablePage() {
-  const [userData, setUserData] = useState<User[]>();
-  const [pageData, setPageData] = useState<PaginationData | null>();
-  const [searchKey, setSearchKey] = useState<string>("");
+export default function TableView() {
+  const [toggle, setToggle] = useState<boolean>(false); // false: UserTable, true: CompanyTable
+  const [userData, setUserData] = useState<User[] | null>(null);
+  const [companyData, setCompanyData] = useState<Company[] | null>(null);
+  const [pageData, setPageData] = useState<PaginationData | null>(null);
+  const [searchKey, setSearchKey] = useState<string>('');
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [isLoading, setIsLoading] = useState<Boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [sortConfig, setSortConfig] = useState<{
+    column: string;
+    direction: string;
+  }>({
+    column: 'id',
+    direction: 'ASC',
+  });
+
   const headerMenu = [
-    { id: "id", label: "ID" },
-    { id: "nickname", label: "닉네임" },
-    { id: "email", label: "이메일" },
-    { id: "role", label: "권한" },
-    { id: "active", label: "활성화 상태" },
-    { id: "createdAt", label: "생성일" },
-    { id: "updatedAt", label: "갱신일" },
+    { id: 'id', label: 'ID' },
+    { id: 'nickname', label: '닉네임' },
+    { id: 'email', label: '이메일' },
+    { id: 'role', label: '권한' },
+    { id: 'active', label: '활성화 상태' },
+    { id: 'createdAt', label: '생성일' },
+    { id: 'updatedAt', label: '갱신일' },
   ];
-  // 사용자 테이블 조회
-  const getUserTable = async (page: number = 0) => {
+
+  // 사용자 데이터 목록 조회
+  const getUserTable = async (
+    page: number = 0,
+    sort: string = sortConfig.column,
+    direction: string = sortConfig.direction
+  ) => {
     setIsLoading(true);
     try {
       const response = await axiosInterceptor.get(
-        `/users?page=${page}&size=10`,
+        `/users?page=${page}&size=10&sortBy=${sort}&sortDirection=${direction}`
       );
       const data = response.data.data;
       setUserData(data.content);
@@ -82,121 +100,168 @@ export default function UserTablePage() {
       setIsLoading(false);
     }
   };
-  const handleSearch = async () => {
+
+  // 클라이언트 승급 심사 목록 조회
+  const getCompanyTable = async (page: number = 0) => {
+    setIsLoading(true);
     try {
       const response = await axiosInterceptor.get(
-        `/users/search?keyword=${searchKey}&size=10`,
+        `/api/companies/examine?page=${page}&size=10`
       );
-      const userData = response.data.data;
-      setUserData(userData.content);
-      setPageData(userData.pagination);
+      const data = response.data.data;
+      setCompanyData(data.companies);
+      setPageData(data.pagination);
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handlePageChange = (page: number) => {
-    getUserTable(page);
+  // 사용자 검색 기능
+  const handleSearch = async () => {
+    if (!toggle) {
+      try {
+        const response = await axiosInterceptor.get(
+          `/users/search?keyword=${searchKey}&size=10`
+        );
+        const userData = response.data.data;
+        setUserData(userData.content);
+        setPageData(userData.pagination);
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
+
+  // Enter 검색 기능
   const handleEnterSearch = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       handleSearch();
     }
   };
+
+  // 페이지네이션
+  const handlePageChange = (page: number) => {
+    if (toggle) {
+      getCompanyTable(page);
+    } else {
+      getUserTable(page);
+    }
+  };
+
+  // 사용자 목록 정렬
+  const handleSortChange = (column: string) => {
+    if (!toggle) {
+      let newDirection = 'ASC';
+      if (sortConfig.column === column) {
+        newDirection = sortConfig.direction === 'ASC' ? 'DESC' : 'ASC';
+      }
+      setSortConfig({ column, direction: newDirection });
+      getUserTable(0, column, newDirection);
+    }
+  };
+
   useEffect(() => {
-    getUserTable();
-  }, []);
+    if (toggle) {
+      getCompanyTable();
+    } else {
+      getUserTable();
+    }
+  }, [toggle]);
 
   return (
     <Card className="px-6 py-4">
       <div className="mb-2 flex items-center justify-between">
-        <div>
-          {/* 테이블 헤더 카테고리 */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                항목 <ChevronDown />
+        <div className="flex gap-2">
+          {!toggle ? (
+            <>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="ml-auto">
+                    항목 <ChevronDown />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {headerMenu.map((column) => (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={columnVisibility[column.id] !== false}
+                      onCheckedChange={(value) =>
+                        setColumnVisibility((prev) => ({
+                          ...prev,
+                          [column.id]: value,
+                        }))
+                      }
+                    >
+                      {column.label}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button
+                onClick={() => setToggle(true)}
+                variant={toggle ? 'default' : 'outline'}
+              >
+                클라이언트 심사
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {headerMenu.map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={columnVisibility[column.id] !== false}
-                  onCheckedChange={(value) =>
-                    setColumnVisibility((prev) => ({
-                      ...prev,
-                      [column.id]: value,
-                    }))
-                  }
-                >
-                  {column.label}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </>
+          ) : (
+            <Button
+              onClick={() => setToggle(false)}
+              variant={toggle ? 'outline' : 'default'}
+            >
+              사용자 목록
+            </Button>
+          )}
         </div>
-        {/* 검색창 */}
-        <div className="relative">
-          <Input
-            placeholder="사용자 이름 검색"
-            value={searchKey}
-            onChange={(e) => setSearchKey(e.target.value)}
-            onKeyDown={handleEnterSearch}
-            className="pr-12"
-          />
-          <button
-            className="absolute top-0 right-0 h-full w-10 cursor-pointer"
-            onClick={handleSearch}
-          >
-            <Search />
-          </button>
-        </div>
+        {!toggle && (
+          <div className="relative">
+            <Input
+              placeholder="사용자 이름 검색"
+              value={searchKey}
+              onChange={(e) => setSearchKey(e.target.value)}
+              onKeyDown={handleEnterSearch}
+              className="pr-12"
+            />
+            <button
+              className="absolute top-0 right-0 h-full w-10 cursor-pointer"
+              onClick={handleSearch}
+            >
+              <Search />
+            </button>
+          </div>
+        )}
       </div>
 
       {isLoading ? (
-        <div className="overflow-x-auto rounded-md border">
-          <Table className="table-fixed" style={{ minWidth: `${1000}px` }}>
-            <TableHeader>
-              <TableRow>
-                {[80, 150, 200, 100, 120, 150, 150].map((width, idx) => (
-                  <TableHead key={idx} style={{ width: `${width}px` }}>
-                    <Skeleton className="h-4 w-3/4" />
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {Array.from({ length: 10 }).map((_, rowIdx) => (
-                <TableRow key={rowIdx}>
-                  {[80, 150, 200, 100, 120, 150, 150].map((width, colIdx) => (
-                    <TableCell
-                      key={`${rowIdx}-${colIdx}`}
-                      style={{ width: `${width}px` }}
-                    >
-                      <Skeleton className="h-4 w-full" />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      ) : !userData || !pageData ? (
+        <UserTableSkeleton />
+      ) : (!toggle && !userData) || (toggle && !companyData) || !pageData ? (
         <div className="text-ck-gray-600 ck-body-2 flex items-center justify-center rounded-md border py-10">
           데이터가 없습니다.
         </div>
       ) : (
         <>
-          <UserTable
-            userData={userData}
-            columnFilters={columnFilters}
-            setColumnFilters={setColumnFilters}
-            columnVisibility={columnVisibility}
-            setColumnVisibility={setColumnVisibility}
-          />
-          <PaginationDemo pageData={pageData} onPageChange={handlePageChange} />
+          {toggle ? (
+            <CompanyTable
+              companyData={companyData!}
+              columnFilters={columnFilters}
+              setColumnFilters={setColumnFilters}
+              columnVisibility={columnVisibility}
+              setColumnVisibility={setColumnVisibility}
+            />
+          ) : (
+            <UserTable
+              userData={userData!}
+              columnFilters={columnFilters}
+              setColumnFilters={setColumnFilters}
+              columnVisibility={columnVisibility}
+              setColumnVisibility={setColumnVisibility}
+              handleSortChange={handleSortChange}
+            />
+          )}
+          <PaginationHook pageData={pageData} onPageChange={handlePageChange} />
         </>
       )}
     </Card>

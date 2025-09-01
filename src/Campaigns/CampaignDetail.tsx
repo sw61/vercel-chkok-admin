@@ -1,12 +1,27 @@
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect, type ChangeEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import CampaignDetailSkeleton from "@/Skeleton/CampaignDetailSkeleton";
+import {
+  Image,
+  Link,
+  MapPin,
+  Phone,
+  SquarePlay,
+  Star,
+  Type,
+} from "lucide-react";
+import KakaoMap from "@/KakaoMap/KakaoMap";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Campaign {
   id: number;
@@ -57,8 +72,8 @@ interface Campaign {
   };
   missionInfo: {
     id: number;
-    titleKeyWords: string;
-    bodyKeywords: string;
+    titleKeyWords: string[];
+    bodyKeywords: string[];
     numberOfVideo: number;
     numberOfImage: number;
     numberOfText: number;
@@ -81,6 +96,7 @@ export default function CampaignDetail() {
   const { campaignId } = useParams<{ campaignId: string }>();
   const [campaignData, setCampaignData] = useState<Campaign | null>(null);
   const [comment, setComment] = useState<string>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const dataMap: Record<string, string> = {
     USER: "사용자",
@@ -140,65 +156,10 @@ export default function CampaignDetail() {
       value: campaignData?.selectionDate ?? "정보 없음",
     },
   ];
-  const MissionInfo = (): CampaignInfo[] => [
-    {
-      key: "id",
-      label: "미션 ID",
-      value: campaignData?.missionInfo.id ?? "정보 없음",
-    },
-    {
-      key: "titleKeywords",
-      label: "제목 키워드",
-      value: campaignData?.missionInfo.titleKeyWords ?? "정보 없음",
-    },
-    {
-      key: "bodyKeywords",
-      label: "내용 키워드",
-      value: campaignData?.missionInfo.bodyKeywords ?? "정보 없음",
-    },
-    {
-      key: "numberOfvideo",
-      label: "영상 개수",
-      value: campaignData?.missionInfo.numberOfVideo ?? "정보 없음",
-    },
-    {
-      key: "numberOfImage",
-      label: "이미지 개수",
-      value: campaignData?.missionInfo.numberOfImage ?? "정보 없음",
-    },
-    {
-      key: "numberOfText",
-      label: "텍스트 길이",
-      value: campaignData?.missionInfo.numberOfText ?? "정보 없음",
-    },
-    {
-      key: "missionGuide",
-      label: "미션 가이드",
-      value: campaignData?.missionInfo.missionGuide ?? "정보 없음",
-    },
-    {
-      key: "missionStartDate",
-      label: "미션 시작일",
-      value: campaignData?.missionInfo.missionStartDate ?? "정보 없음",
-    },
-    {
-      key: "missionDeadlineDate",
-      label: "미션 가이드",
-      value: campaignData?.missionInfo.missionGuide ?? "정보 없음",
-    },
-    {
-      key: "createdAt",
-      label: "생성일",
-      value: campaignData?.missionInfo.createdAt.split("T")[0] ?? "정보 없음",
-    },
-    {
-      key: "updatedAt",
-      label: "업데이트일",
-      value: campaignData?.missionInfo.updatedAt.split("T")[0] ?? "정보 없음",
-    },
-  ];
 
+  // 캠페인 상세 내용 조회
   const getCampaignDetail = async (id: string) => {
+    setIsLoading(true);
     try {
       const response = await axiosInterceptor.get(`/campaigns/${id}`);
       const campaignData = response.data.data;
@@ -213,8 +174,11 @@ export default function CampaignDetail() {
       console.log(mappedData);
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
+  // 캠페인 삭제
   const deleteCampaign = async (id: number) => {
     if (window.confirm("캠페인을 삭제하시겠습니까?")) {
       try {
@@ -223,11 +187,12 @@ export default function CampaignDetail() {
         toast.success("캠페인이 삭제되었습니다.");
         console.log(response);
       } catch (error) {
+        console.log(error);
         toast.error("캠페인 삭제 중 오류가 발생했습니다.");
       }
     }
   };
-
+  // 캠페인 승인
   const approveCampaign = async (id: number) => {
     if (window.confirm("캠페인을 승인하시겠습니까?")) {
       try {
@@ -246,7 +211,7 @@ export default function CampaignDetail() {
       }
     }
   };
-
+  // 캠페인 거절
   const rejectCampaign = async (id: number) => {
     if (window.confirm("캠페인을 거절하시겠습니까?")) {
       try {
@@ -267,8 +232,7 @@ export default function CampaignDetail() {
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setComment(value);
+    setComment(e.target.value);
   };
 
   useEffect(() => {
@@ -277,93 +241,15 @@ export default function CampaignDetail() {
     }
   }, [campaignId]);
   // 스켈레톤 ui
+  if (isLoading) {
+    return <CampaignDetailSkeleton />;
+  }
   if (!campaignData) {
-    return (
-      <div className="p-6">
-        <div className="mb-6 flex items-center justify-between">
-          <Skeleton className="h-8 w-64" />
-          <div className="space-x-4">
-            <Skeleton className="h-10 w-24" />
-            <Skeleton className="h-10 w-24" />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">
-                <Skeleton className="h-6 w-32" />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between">
-                <div className="flex items-center gap-4">
-                  <Skeleton className="h-16 w-16 rounded-full" />
-                  <div>
-                    <Skeleton className="mb-2 h-6 w-32" />
-                    <Skeleton className="mb-1 h-4 w-40" />
-                    <Skeleton className="h-4 w-36" />
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Skeleton className="h-10 w-24" />
-                  <Skeleton className="h-10 w-24" />
-                  <Skeleton className="h-10 w-24" />
-                </div>
-              </div>
-              <div className="mb-6 grid grid-cols-3 gap-6">
-                {Array.from({ length: 9 }).map((_, index) => (
-                  <div key={index}>
-                    <Skeleton className="mb-2 h-4 w-20" />
-                    <Skeleton className="h-6 w-24" />
-                  </div>
-                ))}
-              </div>
-              <div className="flex flex-col gap-2">
-                <Skeleton className="mb-2 h-4 w-24" />
-                <Skeleton className="h-20 w-full" />
-                <div className="flex justify-end">
-                  <Skeleton className="h-10 w-16" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">
-                <Skeleton className="h-6 w-32" />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <div key={index} className="grid grid-cols-2 gap-4">
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-6 w-24" />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">
-                <Skeleton className="h-6 w-32" />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <div key={index} className="grid grid-cols-2 gap-4">
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-6 w-24" />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
+    return <p>데이터가 없습니다.</p>;
   }
 
   return (
-    <div className="p-6">
+    <div className="min-w-[810px] p-6">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-2xl font-bold">{campaignData.title}</h2>
         <div className="px-4">
@@ -400,15 +286,16 @@ export default function CampaignDetail() {
         src={campaignData.thumbnailUrl}
         className="max-h-[400px] object-contain"
       ></img>
-      <div className="grid grid-cols-2 gap-6 pt-6">
+      {/* 상세 정보 부분 */}
+      <div className="grid grid-cols-2 items-start gap-6 pt-6">
         <Card>
-          <CardContent className="pt-2">
+          <CardContent className="min-w-[400px] pt-2">
             <div className="flex justify-between pb-4">
               <div className="flex items-center gap-4">
-                <div>
+                <div className="flex flex-col gap-2">
                   <p className="ck-body-1-bold">{campaignData.title}</p>
                   <p className="ck-caption-1">
-                    간단 소개 : {campaignData.productShortInfo || "No Info"}
+                    {campaignData.productShortInfo || "간단 소개 정보 없음"}
                   </p>
                 </div>
               </div>
@@ -416,94 +303,219 @@ export default function CampaignDetail() {
             <div className="mb-6 grid grid-cols-3 gap-6">
               {CampaignInfo().map((item) => (
                 <div key={item.key}>
-                  <p className="ck-caption-1 text-ck-gray-600">{item.label}</p>
-                  <p className="ck-body-2">{item.value}</p>
+                  <p className="ck-body-2-bold">{item.label}</p>
+                  <p className="ck-body-2 text-ck-gray-700">{item.value}</p>
                 </div>
               ))}
             </div>
-            <div className="mb-4 flex flex-col gap-2">
-              <p className="ck-caption-1 text-ck-gray-600">승인 코멘트</p>
-              {campaignData.approvalStatus === "대기중" ? (
-                <Input
-                  id="comment"
-                  name="comment"
-                  value={comment}
-                  onChange={handleInputChange}
-                  placeholder="승인 코멘트를 입력해주세요."
-                />
-              ) : (
-                <p className="ck-body-2">{campaignData.approvalComment}</p>
-              )}
-            </div>
-
             <div className="flex flex-col gap-4">
-              {campaignData.approver && (
-                <div className="flex flex-col">
-                  <div className="flex flex-col">
-                    <div className="ck-body-2 flex">
-                      <div className="ck-caption-1 text-ck-gray-600 flex w-[85px] items-center border-r pr-2">
-                        캠페인 승인인
-                      </div>
-                      <div className="flex items-center gap-3 pl-3">
-                        <div className="flex flex-col">
-                          <span className="ck-body-2-bold flex gap-2">
-                            {campaignData.approver?.nickname}
-                          </span>
-                          <span className="ck-caption-2 text-ck-gray-600">
-                            {campaignData.approver?.email}
-                          </span>
-                        </div>
-                      </div>
+              {/* 간단 소개 */}
+              <div className="flex items-center gap-4">
+                <div className="flex flex-col gap-2">
+                  <p className="ck-body-2-bold">간단 소개</p>
+                  <p className="ck-body-2 text-ck-gray-700">
+                    {campaignData.productShortInfo || "간단 소개 정보 없음"}
+                  </p>
+                </div>
+              </div>
+              {/* 승인 코멘트 */}
+              <div className="flex flex-col gap-2">
+                <p className="ck-body-2-bold">승인 코멘트</p>
+                {campaignData.approvalStatus === "대기중" ? (
+                  <Input
+                    id="comment"
+                    name="comment"
+                    value={comment}
+                    onChange={handleInputChange}
+                    placeholder="승인 코멘트를 입력해주세요."
+                  />
+                ) : (
+                  <p className="ck-body-2 text-ck-gray-700">
+                    {campaignData.approvalComment ?? "코멘트가 없습니다."}
+                  </p>
+                )}
+              </div>
+              {/* 캠페인 승인인 */}
+              <div className="flex flex-col gap-4">
+                {campaignData.approver && (
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col gap-2">
+                      <p className="ck-body-2-bold">캠페인 승인인</p>
+                      <p className="ck-body-2 text-ck-gray-700">
+                        {campaignData.approver.nickname} |&nbsp;
+                        {campaignData.approver.email}
+                      </p>
                     </div>
                   </div>
-                </div>
-              )}
-              {campaignData.creator && (
-                <div className="flex flex-col gap-1">
-                  <div className="flex flex-col">
-                    <div className="ck-body-2 flex gap-2">
-                      <div className="ck-caption-1 text-ck-gray-600 flex w-[85px] items-center border-r pr-2">
-                        캠페인 생성인
-                      </div>
-                      <div className="flex items-center gap-3 pl-3">
-                        <div className="flex flex-col">
-                          <span className="ck-body-2-bold flex gap-2">
-                            {campaignData.creator.nickname}
-                            <Badge>{campaignData.creatorRole}</Badge>
-                          </span>
-                          <span className="ck-caption-2 text-ck-gray-600">
-                            {campaignData.creator.email}
-                          </span>
-                        </div>
-                      </div>
+                )}
+                {/* 캠페인 생성인 */}
+                {campaignData.creator && (
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col gap-2">
+                      <p className="ck-body-2-bold">캠페인 생성인</p>
+                      <p className="ck-body-2 text-ck-gray-700">
+                        {campaignData.creator.nickname} |&nbsp;
+                        {campaignData.creator.email}{" "}
+                        <Badge>{campaignData.creatorRole}</Badge>&nbsp;
+                      </p>
                     </div>
                   </div>
-                </div>
-              )}
-              {campaignData.company && (
-                <div className="flex flex-col gap-1">
-                  <div className="flex flex-col">
-                    <div className="ck-body-2 flex gap-2">
-                      <div className="ck-caption-1 text-ck-gray-600 flex w-[85px] items-center border-r pr-2">
-                        회사 연락처
-                      </div>
+                )}
+                {campaignData.company && (
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col gap-2">
                       <div>
-                        <div className="ck-body-2 flex gap-2">
-                          <span>{campaignData.company.companyName}</span>|
-                          <span>{campaignData.creator.email}</span>
-                        </div>
-                        <div className="ck-body-2 flex gap-2">
-                          <span>{campaignData.company.contactPerson}</span>|
+                        <p className="ck-body-2-bold">회사 정보</p>
+                        <div className="ck-body-2 text-ck-gray-700 grid grid-cols-3">
+                          <span>{campaignData.company.companyName}</span>
+                          <span>{campaignData.company.contactPerson}</span>
                           <span>{campaignData.company.phoneNumber}</span>
                         </div>
                       </div>
+                      <div>
+                        <p className="ck-body-2-bold">사업자 등록 번호</p>
+                        <div className="ck-body-2 text-ck-gray-700">
+                          {campaignData.company.businessRegistrationNumber ??
+                            "사업자 등록 번호 없음"}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+          {/* 미션 정보 */}
+        </Card>
+        {campaignData.missionInfo && (
+          <Card className="min-w-[400px]">
+            <div className="flex flex-col gap-6">
+              <CardContent>
+                <p className="ck-title mb-2">미션 정보</p>
+                <div className="flex gap-6">
+                  <div className="ck-body-2-bold">
+                    <p>미션 기간</p>
+                    <p>생성일</p>
+                    <p>업데이트일</p>
+                  </div>
+                  <div className="ck-body-2">
+                    <p>
+                      {campaignData.missionInfo.missionStartDate} ~{" "}
+                      {campaignData.missionInfo.missionDeadlineDate}
+                    </p>
+                    <p>{campaignData.missionInfo.createdAt.split("T")[0]}</p>
+                    <p>{campaignData.missionInfo.updatedAt.split("T")[0]}</p>
+                  </div>
+                </div>
+              </CardContent>
+              <CardContent>
+                <p className="ck-title mb-2">미션 가이드</p>
+                <div className="ck-body-1 mb-2 flex items-center gap-4">
+                  <div className="grid w-14 place-items-center gap-2">
+                    <Type />
+                    <div className="ck-caption-2">
+                      {campaignData.missionInfo.numberOfText}자↑
+                    </div>
+                  </div>
+                  <div className="grid w-14 place-items-center gap-2">
+                    <Image />
+                    <div className="ck-caption-2">
+                      {campaignData.missionInfo.numberOfImage}장↑
+                    </div>
+                  </div>
+                  <div className="grid w-14 place-items-center gap-2">
+                    <SquarePlay />
+                    <div className="ck-caption-2">
+                      {campaignData.missionInfo.numberOfVideo}개↑
                     </div>
                   </div>
                 </div>
+                <p className="ck-body-2 mb-4 whitespace-pre-line">
+                  {campaignData.missionInfo.missionGuide}
+                </p>
+                {/* 제목 키워드 */}
+                {campaignData.missionInfo.titleKeyWords && (
+                  <div className="flex flex-wrap gap-2">
+                    <p className="ck-body-2-bold">제목 키워드</p>
+                    {Array.isArray(campaignData.missionInfo.titleKeyWords) &&
+                      campaignData.missionInfo.titleKeyWords.map(
+                        (keyword, index) => (
+                          <Badge key={index} variant="blue">
+                            #{keyword}
+                          </Badge>
+                        ),
+                      )}
+                  </div>
+                )}
+                {/* 내용 키워드 */}
+                {campaignData.missionInfo.bodyKeywords && (
+                  <div className="flex flex-col gap-2">
+                    <p className="ck-body-2-bold">내용 키워드</p>
+                    <div className="flex gap-2">
+                      {Array.isArray(campaignData.missionInfo.bodyKeywords) &&
+                        campaignData.missionInfo.bodyKeywords.map(
+                          (keyword, index) => (
+                            <Badge key={index} variant="blue">
+                              #{keyword}
+                            </Badge>
+                          ),
+                        )}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+              {campaignData.missionInfo.isMap && (
+                <CardContent>
+                  <p className="ck-title my-4">위치 정보</p>
+                  <KakaoMap
+                    latitude={campaignData.location.latitude}
+                    longitude={campaignData.location.longitude}
+                    hasCoordinates={campaignData.location.hasCoordinates}
+                  />
+                  <div className="mt-4 flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <MapPin size={16} />
+                      <p className="ck-body-2">
+                        {campaignData.location.businessAddress}
+                        {"  "}
+                        {campaignData.location.businessDetailAddress}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Phone size={16} />
+                      <p className="ck-body-2">
+                        {campaignData.location.contactPhone}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Link size={16} />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <a
+                            className="ck-body-2 hover:underline"
+                            href={campaignData.location.homepage}
+                            target="block"
+                          >
+                            공식 홈페이지 바로 가기
+                          </a>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{campaignData.location.homepage}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Star size={16} />
+                      <p className="ck-body-2">
+                        {campaignData.location.visitAndReservationInfo}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </Card>
+        )}
       </div>
     </div>
   );
