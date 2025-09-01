@@ -19,7 +19,6 @@ import { Card } from "@/components/ui/card";
 export default function MarkdownCreate() {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string | undefined>("");
-  const [isUploading, setIsUploading] = useState<boolean>(false);
   const [showImageSizeModal, setShowImageSizeModal] = useState<boolean>(false);
   const [pendingImageData, setPendingImageData] = useState<{
     url: string;
@@ -62,7 +61,6 @@ export default function MarkdownCreate() {
 
   // 파일을 직접 받아서 S3 업로드 처리하는 함수
   const uploadImageFile = async (file: File): Promise<string> => {
-    setIsUploading(true);
     const fileExtension = file.name.split(".").pop()?.toLowerCase() || "jpg";
 
     try {
@@ -82,11 +80,9 @@ export default function MarkdownCreate() {
         },
       });
       return presignedUrl;
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error("이미지 업로드에 실패했습니다.");
       throw error;
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -155,13 +151,22 @@ export default function MarkdownCreate() {
           <div className="mb-4">
             <div className="mb-2 flex justify-between">
               <div className="ck-body-2 flex flex-col justify-end">제목</div>
-              <Button
-                onClick={createMarkdown}
-                className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
-                variant="outline"
-              >
-                생성
-              </Button>
+              <div className="flex gap-4">
+                <Button
+                  onClick={() => navigate("/documents")}
+                  className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
+                  variant="outline"
+                >
+                  취소
+                </Button>
+                <Button
+                  onClick={createMarkdown}
+                  className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
+                  variant="outline"
+                >
+                  생성
+                </Button>
+              </div>
             </div>
 
             <Input

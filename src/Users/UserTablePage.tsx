@@ -79,6 +79,7 @@ export default function UserTablePage() {
       const data = response.data.data;
       setUserData(data.content);
       setPageData(data.pagination);
+      console.log(data);
     } catch (error) {
       console.log(error);
     } finally {

@@ -57,7 +57,14 @@ export function UserTable({
 
   // columns 재정의: nickname, email, role, createdAt, updatedAt 순서
   const navigate = useNavigate();
-  const sortableColumns = ["id", "nickname", "email", "createdAt", "updatedAt"];
+  const sortableColumns = [
+    "id",
+    "nickname",
+    "email",
+    "role",
+    "createdAt",
+    "updatedAt",
+  ];
   const columns: ColumnDef<User, unknown>[] = [
     {
       accessorKey: "id",

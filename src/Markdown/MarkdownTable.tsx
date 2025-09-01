@@ -9,7 +9,7 @@ import {
   type VisibilityState,
   type ColumnFiltersState,
 } from "@tanstack/react-table";
-import { ArrowUpDown, Search } from "lucide-react";
+import { ArrowUpDown, ChevronDown, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -25,6 +25,12 @@ import axiosInterceptor from "@/lib/axios-interceptors";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import MarkdownTableSkeleton from "../Skeleton/MakrdownTableSkeleton";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface MarkdownData {
   id: number;
@@ -111,9 +117,11 @@ const columns: ColumnDef<MarkdownData>[] = [
         <ArrowUpDown />
       </Button>
     ),
-    cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("createdAt")}</div>
-    ),
+    cell: ({ row }) => {
+      const fullDate = row.getValue("createdAt") as string;
+      const date = fullDate.split("T")[0];
+      return <div>{date}</div>;
+    },
     meta: { label: "생성일" } as CustomColumnMeta,
     size: 150,
   },
@@ -148,8 +156,14 @@ export default function MarkdownTable() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-
   const [searchKey, setSearchKey] = useState<string>("");
+  const headerMenu = [
+    { id: "id", label: "ID" },
+    { id: "title", label: "문서 제목" },
+    { id: "authorName", label: "문서 제작자" },
+    { id: "createdAt", label: "생성일" },
+    { id: "viewCount", label: "조회수" },
+  ];
   const navigate = useNavigate();
 
   const getMarkdownData = async () => {
@@ -158,6 +172,7 @@ export default function MarkdownTable() {
       const response = await axiosInterceptor.get("/api/admin/markdowns");
       const data = response.data.data.markdowns;
       setMarkdownData(data);
+      console.log(data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -212,9 +227,42 @@ export default function MarkdownTable() {
   return (
     <Card className="w-full p-6">
       <div className="mb-2 flex justify-between">
-        <Button variant="outline" onClick={() => navigate("/documents/create")}>
-          마크다운 문서 생성하러 가기
-        </Button>
+        <div className="flex gap-4">
+          <div>
+            {/* 테이블 헤더 카테고리 */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="ml-auto">
+                  항목 <ChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {headerMenu.map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={columnVisibility[column.id] !== false}
+                    onCheckedChange={(value) =>
+                      setColumnVisibility((prev) => ({
+                        ...prev,
+                        [column.id]: value,
+                      }))
+                    }
+                  >
+                    {column.label}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => navigate("/documents/create")}
+          >
+            마크다운 문서 생성하러 가기
+          </Button>
+        </div>
+
         {/* 검색창 */}
         <div className="ck-caption-1 relative">
           <Input
