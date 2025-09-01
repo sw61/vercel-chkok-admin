@@ -1,13 +1,27 @@
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect, type ChangeEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
 import { Badge } from "@/components/ui/badge";
 import CampaignDetailSkeleton from "@/Skeleton/CampaignDetailSkeleton";
-import { Image, SquarePlay, Type } from "lucide-react";
+import {
+  Image,
+  Link,
+  MapPin,
+  Phone,
+  SquarePlay,
+  Star,
+  Type,
+} from "lucide-react";
+import KakaoMap from "@/KakaoMap/KakaoMap";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Campaign {
   id: number;
@@ -142,23 +156,7 @@ export default function CampaignDetail() {
       value: campaignData?.selectionDate ?? "정보 없음",
     },
   ];
-  const MissionInfo = (): CampaignInfo[] => [
-    {
-      key: "missionStartDate",
-      label: "미션 시작일",
-      value: campaignData?.missionInfo.missionStartDate ?? "정보 없음",
-    },
-    {
-      key: "createdAt",
-      label: "생성일",
-      value: campaignData?.missionInfo.createdAt.split("T")[0] ?? "정보 없음",
-    },
-    {
-      key: "updatedAt",
-      label: "업데이트일",
-      value: campaignData?.missionInfo.updatedAt.split("T")[0] ?? "정보 없음",
-    },
-  ];
+
   // 캠페인 상세 내용 조회
   const getCampaignDetail = async (id: string) => {
     setIsLoading(true);
@@ -189,6 +187,7 @@ export default function CampaignDetail() {
         toast.success("캠페인이 삭제되었습니다.");
         console.log(response);
       } catch (error) {
+        console.log(error);
         toast.error("캠페인 삭제 중 오류가 발생했습니다.");
       }
     }
@@ -250,7 +249,7 @@ export default function CampaignDetail() {
   }
 
   return (
-    <div className="p-6">
+    <div className="min-w-[810px] p-6">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-2xl font-bold">{campaignData.title}</h2>
         <div className="px-4">
@@ -287,9 +286,10 @@ export default function CampaignDetail() {
         src={campaignData.thumbnailUrl}
         className="max-h-[400px] object-contain"
       ></img>
-      <div className="grid grid-cols-2 gap-6 pt-6">
+      {/* 상세 정보 부분 */}
+      <div className="grid grid-cols-2 items-start gap-6 pt-6">
         <Card>
-          <CardContent className="pt-2">
+          <CardContent className="min-w-[400px] pt-2">
             <div className="flex justify-between pb-4">
               <div className="flex items-center gap-4">
                 <div className="flex flex-col gap-2">
@@ -388,66 +388,57 @@ export default function CampaignDetail() {
           {/* 미션 정보 */}
         </Card>
         {campaignData.missionInfo && (
-          <Card>
-            <CardContent>
-              <p className="ck-sub-title-1 mb-2">미션 정보</p>
-            </CardContent>
-            <CardContent>
-              <div className="mb-4 grid grid-cols-3 gap-6">
-                {MissionInfo().map((item) => (
-                  <div key={item.key}>
-                    <p className="ck-body-2-bold">{item.label}</p>
-                    <p className="ck-body-2 text-ck-gray-700">{item.value}</p>
+          <Card className="min-w-[400px]">
+            <div className="flex flex-col gap-6">
+              <CardContent>
+                <p className="ck-title mb-2">미션 정보</p>
+                <div className="flex gap-6">
+                  <div className="ck-body-2-bold">
+                    <p>미션 기간</p>
+                    <p>생성일</p>
+                    <p>업데이트일</p>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-            <CardContent>
-              <p className="ck-sub-title-1 mb-2">미션 가이드</p>
-              <div className="ck-body-1 mb-2 flex items-center gap-4">
-                <div className="grid w-14 place-items-center gap-2">
-                  <Type />
-                  <div className="ck-caption-2">
-                    {campaignData.missionInfo.numberOfText}자↑
+                  <div className="ck-body-2">
+                    <p>
+                      {campaignData.missionInfo.missionStartDate} ~{" "}
+                      {campaignData.missionInfo.missionDeadlineDate}
+                    </p>
+                    <p>{campaignData.missionInfo.createdAt.split("T")[0]}</p>
+                    <p>{campaignData.missionInfo.updatedAt.split("T")[0]}</p>
                   </div>
                 </div>
-                <div className="grid w-14 place-items-center gap-2">
-                  <Image />
-                  <div className="ck-caption-2">
-                    {campaignData.missionInfo.numberOfImage}장↑
+              </CardContent>
+              <CardContent>
+                <p className="ck-title mb-2">미션 가이드</p>
+                <div className="ck-body-1 mb-2 flex items-center gap-4">
+                  <div className="grid w-14 place-items-center gap-2">
+                    <Type />
+                    <div className="ck-caption-2">
+                      {campaignData.missionInfo.numberOfText}자↑
+                    </div>
+                  </div>
+                  <div className="grid w-14 place-items-center gap-2">
+                    <Image />
+                    <div className="ck-caption-2">
+                      {campaignData.missionInfo.numberOfImage}장↑
+                    </div>
+                  </div>
+                  <div className="grid w-14 place-items-center gap-2">
+                    <SquarePlay />
+                    <div className="ck-caption-2">
+                      {campaignData.missionInfo.numberOfVideo}개↑
+                    </div>
                   </div>
                 </div>
-                <div className="grid w-14 place-items-center gap-2">
-                  <SquarePlay />
-                  <div className="ck-caption-2">
-                    {campaignData.missionInfo.numberOfVideo}개↑
-                  </div>
-                </div>
-              </div>
-              <p className="ck-body-2 mb-4 whitespace-pre-line">
-                {campaignData.missionInfo.missionGuide}
-              </p>
-              {/* 제목 키워드 */}
-              {campaignData.missionInfo.titleKeyWords && (
-                <div className="flex flex-wrap gap-2">
-                  <p className="ck-body-2-bold">제목 키워드</p>
-                  {Array.isArray(campaignData.missionInfo.titleKeyWords) &&
-                    campaignData.missionInfo.titleKeyWords.map(
-                      (keyword, index) => (
-                        <Badge key={index} variant="blue">
-                          #{keyword}
-                        </Badge>
-                      ),
-                    )}
-                </div>
-              )}
-              {/* 내용 키워드 */}
-              {campaignData.missionInfo.bodyKeywords && (
-                <div className="flex flex-col gap-2">
-                  <p className="ck-body-2-bold">내용 키워드</p>
-                  <div className="flex gap-2">
-                    {Array.isArray(campaignData.missionInfo.bodyKeywords) &&
-                      campaignData.missionInfo.bodyKeywords.map(
+                <p className="ck-body-2 mb-4 whitespace-pre-line">
+                  {campaignData.missionInfo.missionGuide}
+                </p>
+                {/* 제목 키워드 */}
+                {campaignData.missionInfo.titleKeyWords && (
+                  <div className="flex flex-wrap gap-2">
+                    <p className="ck-body-2-bold">제목 키워드</p>
+                    {Array.isArray(campaignData.missionInfo.titleKeyWords) &&
+                      campaignData.missionInfo.titleKeyWords.map(
                         (keyword, index) => (
                           <Badge key={index} variant="blue">
                             #{keyword}
@@ -455,9 +446,74 @@ export default function CampaignDetail() {
                         ),
                       )}
                   </div>
-                </div>
+                )}
+                {/* 내용 키워드 */}
+                {campaignData.missionInfo.bodyKeywords && (
+                  <div className="flex flex-col gap-2">
+                    <p className="ck-body-2-bold">내용 키워드</p>
+                    <div className="flex gap-2">
+                      {Array.isArray(campaignData.missionInfo.bodyKeywords) &&
+                        campaignData.missionInfo.bodyKeywords.map(
+                          (keyword, index) => (
+                            <Badge key={index} variant="blue">
+                              #{keyword}
+                            </Badge>
+                          ),
+                        )}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+              {campaignData.missionInfo.isMap && (
+                <CardContent>
+                  <p className="ck-title my-4">위치 정보</p>
+                  <KakaoMap
+                    latitude={campaignData.location.latitude}
+                    longitude={campaignData.location.longitude}
+                    hasCoordinates={campaignData.location.hasCoordinates}
+                  />
+                  <div className="mt-4 flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <MapPin size={16} />
+                      <p className="ck-body-2">
+                        {campaignData.location.businessAddress}
+                        {"  "}
+                        {campaignData.location.businessDetailAddress}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Phone size={16} />
+                      <p className="ck-body-2">
+                        {campaignData.location.contactPhone}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Link size={16} />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <a
+                            className="ck-body-2 hover:underline"
+                            href={campaignData.location.homepage}
+                            target="block"
+                          >
+                            공식 홈페이지 바로 가기
+                          </a>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{campaignData.location.homepage}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Star size={16} />
+                      <p className="ck-body-2">
+                        {campaignData.location.visitAndReservationInfo}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
               )}
-            </CardContent>
+            </div>
           </Card>
         )}
       </div>

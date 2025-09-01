@@ -2,7 +2,6 @@ import { UserTable } from "./UserTable";
 import { PaginationDemo } from "./UserPagination";
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { useState, useEffect, type KeyboardEvent } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   type ColumnFiltersState,
   type VisibilityState,
@@ -49,7 +48,14 @@ export default function UserTablePage() {
   const [searchKey, setSearchKey] = useState<string>("");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [isLoading, setIsLoading] = useState<Boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [sortConfig, setSortConfig] = useState<{
+    column: string;
+    direction: string;
+  }>({
+    column: "id",
+    direction: "ASC", // 초기 정렬은 ASC
+  });
   const headerMenu = [
     { id: "id", label: "ID" },
     { id: "nickname", label: "닉네임" },
@@ -60,11 +66,15 @@ export default function UserTablePage() {
     { id: "updatedAt", label: "갱신일" },
   ];
   // 사용자 테이블 조회
-  const getUserTable = async (page: number = 0) => {
+  const getUserTable = async (
+    page: number = 0,
+    sort: string = sortConfig.column,
+    direction: string = sortConfig.direction,
+  ) => {
     setIsLoading(true);
     try {
       const response = await axiosInterceptor.get(
-        `/users?page=${page}&size=10`,
+        `/users?page=${page}&size=10&sortBy=${sort}&sortDirection=${direction}`,
       );
       const data = response.data.data;
       setUserData(data.content);
@@ -95,6 +105,14 @@ export default function UserTablePage() {
     if (event.key === "Enter") {
       handleSearch();
     }
+  };
+  const handleSortChange = (column: string) => {
+    let newDirection = "ASC"; // 첫 클릭 시 ASC
+    if (sortConfig.column === column) {
+      newDirection = sortConfig.direction === "ASC" ? "DESC" : "ASC"; // 동일 컬럼 클릭 시 토글
+    }
+    setSortConfig({ column, direction: newDirection });
+    getUserTable(0, column, newDirection);
   };
   useEffect(() => {
     getUserTable();
@@ -162,6 +180,7 @@ export default function UserTablePage() {
             setColumnFilters={setColumnFilters}
             columnVisibility={columnVisibility}
             setColumnVisibility={setColumnVisibility}
+            handleSortChange={handleSortChange}
           />
           <PaginationDemo pageData={pageData} onPageChange={handlePageChange} />
         </>

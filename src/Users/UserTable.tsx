@@ -41,6 +41,7 @@ interface UserDataTableProps {
   setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
   columnVisibility: VisibilityState;
   setColumnVisibility: React.Dispatch<React.SetStateAction<VisibilityState>>;
+  handleSortChange: (sort: string, direction: string) => void;
 }
 
 export function UserTable({
@@ -49,26 +50,29 @@ export function UserTable({
   setColumnFilters,
   columnVisibility,
   setColumnVisibility,
+  handleSortChange,
 }: UserDataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
 
   // columns 재정의: nickname, email, role, createdAt, updatedAt 순서
   const navigate = useNavigate();
-
+  const sortableColumns = ["id", "nickname", "email", "createdAt", "updatedAt"];
   const columns: ColumnDef<User, unknown>[] = [
     {
       accessorKey: "id",
       header: ({ column }) => (
         <div>
-          <Button
-            variant="ghost"
-            className="has-[>svg]:px-0"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            ID
-            <ArrowUpDown />
-          </Button>
+          {sortableColumns.includes(column.id) && (
+            <Button
+              variant="ghost"
+              className="has-[>svg]:px-0"
+              onClick={() => handleSortChange(column.id, "ASC")}
+            >
+              ID
+              <ArrowUpDown />
+            </Button>
+          )}
         </div>
       ),
       cell: ({ row }) => <div>{row.getValue("id")}</div>,
@@ -79,14 +83,16 @@ export function UserTable({
       accessorKey: "nickname",
       header: ({ column }) => (
         <div>
-          <Button
-            variant="ghost"
-            className="has-[>svg]:px-0"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            닉네임
-            <ArrowUpDown />
-          </Button>
+          {sortableColumns.includes(column.id) && (
+            <Button
+              variant="ghost"
+              className="has-[>svg]:px-0"
+              onClick={() => handleSortChange(column.id, "ASC")}
+            >
+              닉네임
+              <ArrowUpDown />
+            </Button>
+          )}
         </div>
       ),
       cell: ({ row }) => <div>{row.getValue("nickname")}</div>,
@@ -96,14 +102,18 @@ export function UserTable({
     {
       accessorKey: "email",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          className="has-[>svg]:px-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          이메일
-          <ArrowUpDown />
-        </Button>
+        <div>
+          {sortableColumns.includes(column.id) && (
+            <Button
+              variant="ghost"
+              className="has-[>svg]:px-0"
+              onClick={() => handleSortChange(column.id, "ASC")}
+            >
+              이메일
+              <ArrowUpDown />
+            </Button>
+          )}
+        </div>
       ),
       cell: ({ row }) => (
         <div className="lowercase">{row.getValue("email")}</div>
@@ -114,14 +124,18 @@ export function UserTable({
     {
       accessorKey: "role",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          className="has-[>svg]:px-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          권한
-          <ArrowUpDown />
-        </Button>
+        <div>
+          {sortableColumns.includes(column.id) && (
+            <Button
+              variant="ghost"
+              className="has-[>svg]:px-0"
+              onClick={() => handleSortChange(column.id, "ASC")}
+            >
+              권한
+              <ArrowUpDown />
+            </Button>
+          )}
+        </div>
       ),
 
       cell: ({ row }) => {
@@ -158,14 +172,18 @@ export function UserTable({
     {
       accessorKey: "createdAt",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          className="has-[>svg]:px-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          생성일
-          <ArrowUpDown />
-        </Button>
+        <div>
+          {sortableColumns.includes(column.id) && (
+            <Button
+              variant="ghost"
+              className="has-[>svg]:px-0"
+              onClick={() => handleSortChange(column.id, "ASC")}
+            >
+              생성일
+              <ArrowUpDown />
+            </Button>
+          )}
+        </div>
       ),
       cell: ({ row }) => {
         const fullDate = row.getValue("createdAt") as string;
@@ -178,14 +196,18 @@ export function UserTable({
     {
       accessorKey: "updatedAt",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          className="has-[>svg]:px-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          업데이트일
-          <ArrowUpDown />
-        </Button>
+        <div>
+          {sortableColumns.includes(column.id) && (
+            <Button
+              variant="ghost"
+              className="has-[>svg]:px-0"
+              onClick={() => handleSortChange(column.id, "ASC")}
+            >
+              업데이트일
+              <ArrowUpDown />
+            </Button>
+          )}
+        </div>
       ),
       cell: ({ row }) => {
         const fullDate = row.getValue("updatedAt") as string;

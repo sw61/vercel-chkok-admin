@@ -14,15 +14,15 @@ import NotFoundPage from "./Pages/NotFoundPage";
 import MarkdownDetail from "./Markdown/MarkdownDetail";
 import MarkdownTable from "./Markdown/MarkdownTable";
 import MarkdownCreate from "./Markdown/MarkdownCreate";
+import BannersDetail from "./Banners/BannersDetail";
+import ServerDashBoard from "./Server/ServerDashBoard";
+import KakaoMap from "./KakaoMap/KakaoMap";
 // ts file
 import { LoginForm } from "./auth/login-form";
 import { PrivateComponent } from "./auth/tokenCheck";
 // library
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import BannersDetail from "./Banners/BannersDetail";
-import ServerDashBoard from "./Server/ServerDashBoard";
-import BasicMap from "./KakaoMap/MapTest";
 
 function App() {
   return (
@@ -142,7 +142,7 @@ function App() {
               path="/map"
               element={
                 <PrivateComponent>
-                  <BasicMap />
+                  <KakaoMap />
                 </PrivateComponent>
               }
             ></Route>
