@@ -204,7 +204,7 @@ export default function TableView() {
                 onClick={() => setToggle(true)}
                 variant={toggle ? 'default' : 'outline'}
               >
-                클라이언트 심사
+                클라이언트 승급 심사
               </Button>
             </>
           ) : (
