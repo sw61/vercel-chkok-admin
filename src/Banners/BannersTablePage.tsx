@@ -22,7 +22,6 @@ interface BannerData {
 export default function BannersTablePage() {
   const [bannerData, setBannerData] = useState<BannerData[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [presignedUrl, setPresignedUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null); // 파일 입력 참조
 
@@ -58,10 +57,9 @@ export default function BannersTablePage() {
       );
       console.log("Presigned URL 응답:", response);
       const presignedUrl = response.data.data.presignedUrl;
-      setPresignedUrl(presignedUrl);
 
       const contentType = imageFile.type || "image/jpeg";
-      const uploadResponse = await axios.put(presignedUrl, imageFile, {
+      await axios.put(presignedUrl, imageFile, {
         headers: {
           "Content-Type": contentType,
         },

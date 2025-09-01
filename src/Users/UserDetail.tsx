@@ -1,13 +1,14 @@
-import axiosInterceptor from "@/lib/axios-interceptors";
-import { useState, useEffect, type ChangeEvent } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "react-toastify";
-import { ArrowUpNarrowWide, Trash, UserCheck, UserX } from "lucide-react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import axiosInterceptor from '@/lib/axios-interceptors';
+import { useState, useEffect, type ChangeEvent } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from 'react-toastify';
+import { ArrowUpNarrowWide, Trash, UserCheck, UserX } from 'lucide-react';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import UserDetailSkeleton from '@/Skeleton/UserDetailSkeleton';
 
 interface User {
   id: number;
@@ -32,26 +33,25 @@ export default function UserDetail() {
   const navigate = useNavigate();
   const { userId } = useParams<{ userId: string }>();
   const [userData, setUserData] = useState<User | null>(null);
-  const [userMemo, setUserMemo] = useState<string>("");
-  const [hideMemo, setHideMemo] = useState<Boolean>(false);
+  const [userMemo, setUserMemo] = useState<string>('');
+  const [hideMemo, setHideMemo] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const dataMap: Record<string, string> = {
-    GOOGLE: "구글",
-    kakao: "카카오",
-    USER: "사용자",
-    CLIENT: "클라이언트",
-    LOCAL: "로컬",
-    ADMIN: "관리자",
-    SOCIAL: "소셜",
-    UNKNOWN: "비공개",
-    MALE: "남성",
-    FEMALE: "여성",
+    GOOGLE: '구글',
+    kakao: '카카오',
+    USER: '유저',
+    CLIENT: '클라이언트',
+    LOCAL: '로컬',
+    ADMIN: '관리자',
+    SOCIAL: '소셜',
+    UNKNOWN: '비공개',
+    MALE: '남성',
+    FEMALE: '여성',
   };
 
-  // 사용자 메모 수정 핸들러
-  const handleTextAreaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setUserMemo(event.target.value);
-  };
+  // 사용자 상세 정보 호출
   const getUserDetail = async (id: string) => {
+    setIsLoading(true);
     try {
       const response = await axiosInterceptor.get(`/users/${id}`);
       const userData = response.data.data;
@@ -63,12 +63,15 @@ export default function UserDetail() {
         provider: dataMap[userData.provider] || userData.provider,
       };
       setUserData(mappedData);
-      setUserMemo(userData.memo || "");
+      setUserMemo(userData.memo || '');
     } catch (error) {
-      toast.error("유저 정보 조회에 실패했습니다.");
+      toast.error('유저 정보 조회에 실패했습니다.');
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
+  // 사용자 상태 변경
   const putUserStatus = async (id: number) => {
     try {
       const response = await axiosInterceptor.put(`/users/${id}/status`);
@@ -77,45 +80,51 @@ export default function UserDetail() {
       toast.success(response.data.message);
     } catch (error) {
       console.log(error);
-      toast.error("상태 변경에 실패했습니다.");
+      toast.error('상태 변경에 실패했습니다.');
     }
   };
+  // 사용자 삭제
   const deleteUser = async (id: number) => {
-    if (window.confirm("사용자를 삭제하시겠습니까?")) {
+    if (window.confirm('사용자를 삭제하시겠습니까?')) {
       try {
         const response = await axiosInterceptor.delete(`/users/${id}`);
-        navigate("/users");
-        toast.success("사용자가 삭제되었습니다.");
+        navigate('/users');
+        toast.success('사용자가 삭제되었습니다.');
         console.log(response);
       } catch (error) {
         console.log(error);
       }
     }
   };
+  // 메모 수정
   const putMemoUpdate = async (id: number, memo: string) => {
     try {
       const response = await axiosInterceptor.put(
         `/users/${id}/memo`,
         { memo },
         {
-          headers: { "Content-Type": "application/json" },
-        },
+          headers: { 'Content-Type': 'application/json' },
+        }
       );
       const updatedData = response.data.data;
       setUserData((prev) => ({ ...prev, ...updatedData }));
       setHideMemo(false);
-      toast.success("메모가 업데이트 되었습니다.");
+      toast.success('메모가 업데이트 되었습니다.');
     } catch (error) {
-      toast.error("메모 업데이트에 실패했습니다.");
+      toast.error('메모 업데이트에 실패했습니다.');
       console.log(error);
     }
   };
+  // 사용자 메모 수정 핸들러
+  const handleTextAreaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setUserMemo(event.target.value);
+  };
   const userToClient = async (id: number) => {
-    if (window.confirm("클라이언트로 승급하시겠습니까?")) {
+    if (window.confirm('클라이언트로 승급하시겠습니까?')) {
       try {
         await axiosInterceptor.put(`/users/${id}/promote-to-client`);
         await getUserDetail(id.toString());
-        toast.success("클라이언트로 승급되었습니다.");
+        toast.success('클라이언트로 승급되었습니다.');
       } catch (error) {
         console.log(error);
       }
@@ -127,62 +136,21 @@ export default function UserDetail() {
       getUserDetail(userId);
     }
   }, [userId]);
+  if (isLoading) {
+    return <UserDetailSkeleton />;
+  }
   if (!userData) {
-    return (
-      <div className="p-6">
-        <div className="grid grid-cols-1 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="ck-title mb-2">계정 정보</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between">
-                <div className="flex items-center gap-4">
-                  <Skeleton className="h-16 w-16 rounded-full" />
-                  <div>
-                    <Skeleton className="mb-2 h-6 w-32" />
-                    <Skeleton className="mb-1 h-4 w-40" />
-                    <Skeleton className="h-4 w-36" />
-                  </div>
-                </div>
-
-                <div className="flex gap-2">
-                  <Skeleton className="h-10 w-24" />
-                  <Skeleton className="h-10 w-24" />
-                  <Skeleton className="h-10 w-24" />
-                </div>
-              </div>
-
-              <div className="mb-6 grid grid-cols-3 gap-6">
-                {Array.from({ length: 9 }).map((_, index) => (
-                  <div key={index}>
-                    <Skeleton className="mb-2 h-4 w-20" />
-                    <Skeleton className="h-6 w-24" />
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <Skeleton className="mb-2 h-4 w-24" />
-                <Skeleton className="h-20 w-full" />
-                <div className="flex justify-end">
-                  <Skeleton className="h-10 w-16" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
+    return <div>데이터가 없습니다.</div>;
   }
 
   return (
     <div className="min-w-[650px]">
       <div className="grid grid-cols-1 gap-6">
         <Card>
-          <CardHeader>
-            <CardTitle className="ck-title">계정 정보</CardTitle>
-          </CardHeader>
+          <div className="flex gap-4 px-6">
+            <CardTitle className="ck-title">사용자 정보</CardTitle>
+            <Badge className="px-3 py-1">{userData.role}</Badge>
+          </div>
           <CardContent className="pt-2">
             <div className="flex justify-between pb-4">
               <div className="flex items-center gap-4">
@@ -195,20 +163,20 @@ export default function UserDetail() {
                 </Avatar>
                 <div>
                   <p className="ck-body-2">
-                    {userData.nickname} ({userData.gender},{" "}
-                    {userData.age || "나이 미상"})
+                    {userData.nickname} ({userData.gender},{' '}
+                    {userData.age || '나이 미상'})
                   </p>
                   <p className="ck-body-2 text-gray-500">
-                    {userData.email || "이메일 없음"}
+                    {userData.email || '이메일 없음'}
                   </p>
                   <p className="ck-body-2 text-gray-500">
-                    {userData.phone || "전화번호 없음"}
+                    {userData.phone || '전화번호 없음'}
                   </p>
                 </div>
               </div>
 
               <div className="flex gap-2 px-4">
-                {userData.role === "사용자" && (
+                {userData.role === '사용자' && (
                   <Button
                     className="ck-body-1 flex cursor-pointer items-center border"
                     onClick={() => userToClient(userData.id)}
@@ -221,14 +189,14 @@ export default function UserDetail() {
                 <Button
                   className={`ck-body-1 flex cursor-pointer items-center gap-2 rounded-md border px-4 py-2 transition-colors ${
                     userData.active
-                      ? "hover:bg-ck-red-500 hover:text-white"
-                      : "hover:bg-ck-blue-500 hover:text-white"
+                      ? 'hover:bg-ck-red-500 hover:text-white'
+                      : 'hover:bg-ck-blue-500 hover:text-white'
                   }`}
                   onClick={() => putUserStatus(userData.id)}
                   variant="outline"
                 >
                   {userData.active ? <UserX /> : <UserCheck />}
-                  {userData.active ? "비활성화" : "활성화"}
+                  {userData.active ? '비활성화' : '활성화'}
                 </Button>
                 <Button
                   className="ck-body-1 hover:bg-ck-red-500 flex cursor-pointer items-center border hover:text-white"
@@ -246,10 +214,7 @@ export default function UserDetail() {
                 <p className="ck-caption-1 text-ck-gray-600">사용자 ID</p>
                 <p className="ck-body-2">{userData.id}</p>
               </div>
-              <div>
-                <p className="ck-caption-1 text-ck-gray-600">권한</p>
-                <p className="ck-body-2">{userData.role}</p>
-              </div>
+
               <div>
                 <p className="ck-caption-1 text-ck-gray-600">계정 상태</p>
                 {userData.active ? (
@@ -257,6 +222,16 @@ export default function UserDetail() {
                 ) : (
                   <p className="ck-body-2 text-ck-red-500">비활성화</p>
                 )}
+              </div>
+              <div>
+                <p className="text-ck-gray-600 ck-caption-1">이메일 인증</p>
+                <div className="ck-body-2">
+                  {userData.emailVerified ? (
+                    <p className="text-ck-blue-500 ck-body-2">인증됨</p>
+                  ) : (
+                    <p className="text-ck-red-500 ck-body-2">인증 필요</p>
+                  )}
+                </div>
               </div>
               <div>
                 <p className="text-ck-gray-600 ck-caption-1">계정 서비스</p>
@@ -268,25 +243,15 @@ export default function UserDetail() {
               </div>
               <div>
                 <p className="text-ck-gray-600 ck-caption-1">계정 플랫폼</p>
-                <p className="ck-body-2">{userData.platforms ?? "N/A"}</p>
+                <p className="ck-body-2">{userData.platforms ?? 'N/A'}</p>
               </div>
               <div>
                 <p className="text-ck-gray-600 ck-caption-1">생성일</p>
-                <p className="ck-body-2">{userData.createdAt.split("T")[0]}</p>
+                <p className="ck-body-2">{userData.createdAt.split('T')[0]}</p>
               </div>
               <div>
                 <p className="text-ck-gray-600 ck-caption-1">업데이트일</p>
-                <p className="ck-body-2">{userData.updatedAt.split("T")[0]}</p>
-              </div>
-              <div>
-                <p className="text-ck-gray-600 ck-caption-1">이메일 인증</p>
-                <p className="ck-body-2">
-                  {userData.emailVerified ? (
-                    <p className="text-ck-blue-500 ck-body-2">인증됨</p>
-                  ) : (
-                    <p className="text-ck-red-500 ck-body-2">인증 필요</p>
-                  )}
-                </p>
+                <p className="ck-body-2">{userData.updatedAt.split('T')[0]}</p>
               </div>
             </div>
 
@@ -302,7 +267,7 @@ export default function UserDetail() {
                 </div>
               ) : (
                 <div className="ck-body-2 border-ck-gray-300 rounded-md border bg-transparent px-3 py-2">
-                  {userData.memo ? userData.memo : "내용이 없습니다."}
+                  {userData.memo ? userData.memo : '내용이 없습니다.'}
                 </div>
               )}
 
@@ -310,7 +275,7 @@ export default function UserDetail() {
                 <div className="flex justify-end">
                   <Button
                     className="ck-body-1 text-ck-gray-900 hover:bg-ck-gray-300 cursor-pointer border bg-white"
-                    onClick={() => putMemoUpdate(userData.id, userMemo || "")}
+                    onClick={() => putMemoUpdate(userData.id, userMemo || '')}
                   >
                     저장
                   </Button>

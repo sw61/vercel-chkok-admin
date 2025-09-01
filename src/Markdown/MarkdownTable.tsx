@@ -1,5 +1,3 @@
-"use client";
-
 import {
   type ColumnDef,
   flexRender,
@@ -11,7 +9,7 @@ import {
   type VisibilityState,
   type ColumnFiltersState,
 } from "@tanstack/react-table";
-import { ArrowUpDown, Search } from "lucide-react";
+import { ArrowUpDown, ChevronDown, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -26,6 +24,13 @@ import { useNavigate } from "react-router-dom";
 import axiosInterceptor from "@/lib/axios-interceptors";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import MarkdownTableSkeleton from "../Skeleton/MakrdownTableSkeleton";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface MarkdownData {
   id: number;
@@ -112,9 +117,11 @@ const columns: ColumnDef<MarkdownData>[] = [
         <ArrowUpDown />
       </Button>
     ),
-    cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("createdAt")}</div>
-    ),
+    cell: ({ row }) => {
+      const fullDate = row.getValue("createdAt") as string;
+      const date = fullDate.split("T")[0];
+      return <div>{date}</div>;
+    },
     meta: { label: "생성일" } as CustomColumnMeta,
     size: 150,
   },
@@ -145,33 +152,29 @@ const totalColumnWidth = columns.reduce(
 export default function MarkdownTable() {
   const [markdownData, setMarkdownData] = useState<MarkdownData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-
   const [searchKey, setSearchKey] = useState<string>("");
+  const headerMenu = [
+    { id: "id", label: "ID" },
+    { id: "title", label: "문서 제목" },
+    { id: "authorName", label: "문서 제작자" },
+    { id: "createdAt", label: "생성일" },
+    { id: "viewCount", label: "조회수" },
+  ];
   const navigate = useNavigate();
 
   const getMarkdownData = async () => {
     setIsLoading(true);
-    setError(null);
     try {
       const response = await axiosInterceptor.get("/api/admin/markdowns");
       const data = response.data.data.markdowns;
-      console.log("API 응답 데이터:", data); // 디버깅용 로그
-      if (Array.isArray(data)) {
-        setMarkdownData(data);
-      } else {
-        console.error("API 응답이 배열이 아닙니다:", data);
-        setMarkdownData([]);
-        setError("서버에서 잘못된 데이터 형식을 받았습니다.");
-      }
+      setMarkdownData(data);
+      console.log(data);
     } catch (error) {
-      console.error("마크다운 데이터를 가져오는데 실패했습니다:", error);
-      setMarkdownData([]);
-      setError("마크다운 데이터를 불러오지 못했습니다.");
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -218,22 +221,50 @@ export default function MarkdownTable() {
   });
 
   if (isLoading) {
-    return <div>스켈레톤 UI</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
+    return <MarkdownTableSkeleton />;
   }
 
   return (
     <Card className="w-full p-6">
-      <div className="mb-4 flex justify-between">
-        <Button variant="outline" onClick={() => navigate("/documents/create")}>
-          마크다운 문서 생성하러 가기
-        </Button>
+      <div className="mb-2 flex justify-between">
+        <div className="flex gap-4">
+          <div>
+            {/* 테이블 헤더 카테고리 */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="ml-auto">
+                  항목 <ChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {headerMenu.map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={columnVisibility[column.id] !== false}
+                    onCheckedChange={(value) =>
+                      setColumnVisibility((prev) => ({
+                        ...prev,
+                        [column.id]: value,
+                      }))
+                    }
+                  >
+                    {column.label}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => navigate("/documents/create")}
+          >
+            마크다운 문서 생성하러 가기
+          </Button>
+        </div>
 
         {/* 검색창 */}
-        <div className="relative">
+        <div className="ck-caption-1 relative">
           <Input
             placeholder="문서 제목 검색"
             value={searchKey}

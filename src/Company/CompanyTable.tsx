@@ -22,165 +22,103 @@ import {
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-interface User {
+interface Company {
   id: number;
-  name: string;
-  email: string;
-  active: boolean;
-  nickname: string;
+  userId: number;
+  companyName: string;
+  businessRegistrationNumber: string;
   createdAt: string;
   updatedAt: string;
-  role: string;
 }
-interface UserDataTableProps {
-  userData: User[];
+interface CompanyDataTableProps {
+  companyData: Company[];
   columnFilters: ColumnFiltersState;
   setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
   columnVisibility: VisibilityState;
   setColumnVisibility: React.Dispatch<React.SetStateAction<VisibilityState>>;
-  handleSortChange: (sort: string, direction: string) => void;
 }
 
-export function UserTable({
-  userData,
+export function CompanyTable({
+  companyData,
   columnFilters,
   setColumnFilters,
   columnVisibility,
   setColumnVisibility,
-  handleSortChange,
-}: UserDataTableProps) {
+}: CompanyDataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const navigate = useNavigate();
-  const sortableColumns = [
-    'id',
-    'nickname',
-    'email',
-    'role',
-    'createdAt',
-    'updatedAt',
-  ];
-  const columns: ColumnDef<User, unknown>[] = [
+  const columns: ColumnDef<Company, unknown>[] = [
     {
       accessorKey: 'id',
       header: ({ column }) => (
         <div>
-          {sortableColumns.includes(column.id) && (
-            <Button
-              variant="ghost"
-              className="has-[>svg]:px-0"
-              onClick={() => handleSortChange(column.id, 'ASC')}
-            >
-              ID
-              <ArrowUpDown />
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            className="has-[>svg]:px-0"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            ID
+            <ArrowUpDown />
+          </Button>
         </div>
       ),
       cell: ({ row }) => <div>{row.getValue('id')}</div>,
       size: 50,
     },
     {
-      accessorKey: 'nickname',
+      accessorKey: 'companyName',
       header: ({ column }) => (
         <div>
-          {sortableColumns.includes(column.id) && (
-            <Button
-              variant="ghost"
-              className="has-[>svg]:px-0"
-              onClick={() => handleSortChange(column.id, 'ASC')}
-            >
-              닉네임
-              <ArrowUpDown />
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            className="has-[>svg]:px-0"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            회사 이름
+            <ArrowUpDown />
+          </Button>
         </div>
       ),
-      cell: ({ row }) => <div>{row.getValue('nickname')}</div>,
+      cell: ({ row }) => <div>{row.getValue('companyName')}</div>,
 
       size: 80,
     },
     {
-      accessorKey: 'email',
+      accessorKey: 'businessRegistrationNumber',
       header: ({ column }) => (
         <div>
-          {sortableColumns.includes(column.id) && (
-            <Button
-              variant="ghost"
-              className="has-[>svg]:px-0"
-              onClick={() => handleSortChange(column.id, 'ASC')}
-            >
-              이메일
-              <ArrowUpDown />
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            className="has-[>svg]:px-0"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            사업자 등록 번호
+            <ArrowUpDown />
+          </Button>
         </div>
       ),
       cell: ({ row }) => (
-        <div className="lowercase">{row.getValue('email')}</div>
+        <div className="lowercase">
+          {row.getValue('businessRegistrationNumber')}
+        </div>
       ),
 
       size: 150,
     },
-    {
-      accessorKey: 'role',
-      header: ({ column }) => (
-        <div>
-          {sortableColumns.includes(column.id) && (
-            <Button
-              variant="ghost"
-              className="has-[>svg]:px-0"
-              onClick={() => handleSortChange(column.id, 'ASC')}
-            >
-              권한
-              <ArrowUpDown />
-            </Button>
-          )}
-        </div>
-      ),
 
-      cell: ({ row }) => {
-        const roleMap: Record<string, string> = {
-          USER: '사용자',
-          CLIENT: '클라이언트',
-          ADMIN: '관리자',
-        };
-        const role = row.getValue('role') as string;
-        return <div>{roleMap[role]}</div>;
-      },
-      size: 100,
-    },
-    {
-      accessorKey: 'active',
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          className="has-[>svg]:px-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          계정 상태
-          <ArrowUpDown />
-        </Button>
-      ),
-      cell: ({ row }) => (
-        <div>{row.getValue('active') ? '활성화' : '비활성화'}</div>
-      ),
-      size: 100,
-    },
     {
       accessorKey: 'createdAt',
       header: ({ column }) => (
         <div>
-          {sortableColumns.includes(column.id) && (
-            <Button
-              variant="ghost"
-              className="has-[>svg]:px-0"
-              onClick={() => handleSortChange(column.id, 'ASC')}
-            >
-              생성일
-              <ArrowUpDown />
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            className="has-[>svg]:px-0"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            생성일
+            <ArrowUpDown />
+          </Button>
         </div>
       ),
       cell: ({ row }) => {
@@ -194,16 +132,14 @@ export function UserTable({
       accessorKey: 'updatedAt',
       header: ({ column }) => (
         <div>
-          {sortableColumns.includes(column.id) && (
-            <Button
-              variant="ghost"
-              className="has-[>svg]:px-0"
-              onClick={() => handleSortChange(column.id, 'ASC')}
-            >
-              업데이트일
-              <ArrowUpDown />
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            className="has-[>svg]:px-0"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            업데이트일
+            <ArrowUpDown />
+          </Button>
         </div>
       ),
       cell: ({ row }) => {
@@ -213,42 +149,6 @@ export function UserTable({
       },
       size: 100,
     },
-    // {
-    //   id: "actions",
-    //   enableHiding: false,
-    //   cell: ({ row }) => {
-    //     const user = row.original as User;
-
-    //     return (
-    //       <DropdownMenu>
-    //         <DropdownMenuTrigger asChild>
-    //           <Button variant="ghost" className="h-8 w-8 p-0">
-    //             <span className="sr-only">Open menu</span>
-    //             <MoreHorizontal />
-    //           </Button>
-    //         </DropdownMenuTrigger>
-    //         <DropdownMenuContent align="end">
-    //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-    //           <DropdownMenuSeparator />
-    //           <DropdownMenuItem
-    //             onClick={() =>
-    //               navigator.clipboard.writeText(user.email.toString())
-    //             }
-    //           >
-    //             <Copy />
-    //             이메일 복사하기
-    //           </DropdownMenuItem>
-
-    //           <DropdownMenuItem onClick={() => navigate(`/users/${user.id}`)}>
-    //             <Settings />
-    //             사용자 상세 정보
-    //           </DropdownMenuItem>
-    //         </DropdownMenuContent>
-    //       </DropdownMenu>
-    //     );
-    //   },
-    //   size: 50,
-    // },
   ];
   const totalColumnWidth = columns.reduce(
     (sum, column) => sum + (column.size || 100),
@@ -256,7 +156,7 @@ export function UserTable({
   );
 
   const table = useReactTable({
-    data: userData,
+    data: companyData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -311,7 +211,7 @@ export function UserTable({
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   className="cursor-pointer"
-                  onClick={() => navigate(`/users/${row.original.id}`)}
+                  onClick={() => navigate(`/users/${row.original.userId}`)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell

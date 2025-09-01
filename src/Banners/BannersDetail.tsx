@@ -27,10 +27,11 @@ interface BannerInfo {
 }
 
 export default function BannersDetail() {
-  const { bannerId } = useParams<{ bannerId: string }>();
   const navigate = useNavigate();
+  const { bannerId } = useParams<{ bannerId: string }>();
   const [bannerData, setBannerData] = useState<BannerData | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [editBannerData, setEditBannerData] = useState({
     title: "",
     bannerUrl: "",
@@ -87,6 +88,7 @@ export default function BannersDetail() {
 
   // 배너 상세 정보 조회
   const getBannerDetail = async (id: string) => {
+    setIsLoading(true);
     try {
       const response = await axiosInterceptor.get(`/api/banners/${id}`);
       const data = response.data.data;
@@ -102,8 +104,10 @@ export default function BannersDetail() {
         displayOrder: data.displayOrder || "",
       });
     } catch (error) {
-      console.error("배너 상세 조회 중 오류 발생:", error);
+      console.error(error);
       toast.error("배너 정보를 불러오지 못했습니다.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -124,7 +128,7 @@ export default function BannersDetail() {
 
       await getBannerDetail(bannerId!);
     } catch (error) {
-      console.error("배너 수정 중 오류 발생:", error);
+      console.error(error);
       toast.error("배너 수정에 실패했습니다.");
     } finally {
       setIsEditing(false);
@@ -140,7 +144,7 @@ export default function BannersDetail() {
         toast.success("배너가 성공적으로 삭제되었습니다.");
         navigate("/banners");
       } catch (error) {
-        console.error("배너 삭제 중 오류 발생:", error);
+        console.error(error);
         toast.error("배너 삭제에 실패했습니다.");
       }
   };
