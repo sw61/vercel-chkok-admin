@@ -1,13 +1,14 @@
-import axiosInterceptor from "@/lib/axios-interceptors";
-import { useState, useEffect, type ChangeEvent } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "react-toastify";
-import { Badge } from "@/components/ui/badge";
-import CampaignDetailSkeleton from "@/Skeleton/CampaignDetailSkeleton";
+import axiosInterceptor from '@/lib/axios-interceptors';
+import { useState, useEffect, type ChangeEvent } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { toast } from 'react-toastify';
+import { Badge } from '@/components/ui/badge';
+import CampaignDetailSkeleton from '@/Skeleton/CampaignDetailSkeleton';
 import {
+  ChevronLeft,
   Image,
   Link,
   MapPin,
@@ -15,13 +16,13 @@ import {
   SquarePlay,
   Star,
   Type,
-} from "lucide-react";
-import KakaoMap from "@/KakaoMap/KakaoMap";
+} from 'lucide-react';
+import KakaoMap from '@/KakaoMap/KakaoMap';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 
 interface Campaign {
   id: number;
@@ -99,61 +100,61 @@ export default function CampaignDetail() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const dataMap: Record<string, string> = {
-    USER: "사용자",
-    CLIENT: "클라이언트",
-    ADMIN: "관리자",
-    SOCIAL: "소셜",
+    USER: '사용자',
+    CLIENT: '클라이언트',
+    ADMIN: '관리자',
+    SOCIAL: '소셜',
   };
 
   const CampaignInfo = (): CampaignInfo[] => [
     {
-      key: "id",
-      label: "캠페인 ID",
-      value: campaignData?.id ?? "정보 없음",
+      key: 'id',
+      label: '캠페인 ID',
+      value: campaignData?.id ?? '정보 없음',
     },
     {
-      key: "campaignType",
-      label: "캠페인 유형",
-      value: campaignData?.campaignType ?? "정보 없음",
+      key: 'campaignType',
+      label: '캠페인 유형',
+      value: campaignData?.campaignType ?? '정보 없음',
     },
     {
-      key: "maxApplicants",
-      label: "최대 신청자 수",
+      key: 'maxApplicants',
+      label: '최대 신청자 수',
       value: campaignData?.maxApplicants
         ? `${campaignData.maxApplicants}명`
-        : "정보 없음",
+        : '정보 없음',
     },
     {
-      key: "approvalStatus",
-      label: "승인 상태",
-      value: campaignData?.approvalStatus ?? "정보 없음",
+      key: 'approvalStatus',
+      label: '승인 상태',
+      value: campaignData?.approvalStatus ?? '정보 없음',
     },
     {
-      key: "recruitmentStartDate",
-      label: "모집 시작일",
-      value: campaignData?.recruitmentStartDate ?? "정보 없음",
+      key: 'recruitmentStartDate',
+      label: '모집 시작일',
+      value: campaignData?.recruitmentStartDate ?? '정보 없음',
     },
     {
-      key: "recruitmentEndDate",
-      label: "모집 마감일",
-      value: campaignData?.recruitmentEndDate ?? "정보 없음",
+      key: 'recruitmentEndDate',
+      label: '모집 마감일',
+      value: campaignData?.recruitmentEndDate ?? '정보 없음',
     },
     {
-      key: "approvalDate",
-      label: "승인일",
+      key: 'approvalDate',
+      label: '승인일',
       value: campaignData?.approvalDate
-        ? campaignData.approvalDate.split("T")[0]
-        : "정보 없음",
+        ? campaignData.approvalDate.split('T')[0]
+        : '정보 없음',
     },
     {
-      key: "reviewDeadlineDate",
-      label: "리뷰 마감일",
-      value: campaignData?.reviewDeadlineDate ?? "정보 없음",
+      key: 'reviewDeadlineDate',
+      label: '리뷰 마감일',
+      value: campaignData?.reviewDeadlineDate ?? '정보 없음',
     },
     {
-      key: "selectionDate",
-      label: "체험단 선정일",
-      value: campaignData?.selectionDate ?? "정보 없음",
+      key: 'selectionDate',
+      label: '체험단 선정일',
+      value: campaignData?.selectionDate ?? '정보 없음',
     },
   ];
 
@@ -180,32 +181,32 @@ export default function CampaignDetail() {
   };
   // 캠페인 삭제
   const deleteCampaign = async (id: number) => {
-    if (window.confirm("캠페인을 삭제하시겠습니까?")) {
+    if (window.confirm('캠페인을 삭제하시겠습니까?')) {
       try {
         const response = await axiosInterceptor.delete(`/campaigns/${id}`);
-        navigate("/campaigns");
-        toast.success("캠페인이 삭제되었습니다.");
+        navigate('/campaigns');
+        toast.success('캠페인이 삭제되었습니다.');
         console.log(response);
       } catch (error) {
         console.log(error);
-        toast.error("캠페인 삭제 중 오류가 발생했습니다.");
+        toast.error('캠페인 삭제 중 오류가 발생했습니다.');
       }
     }
   };
   // 캠페인 승인
   const approveCampaign = async (id: number) => {
-    if (window.confirm("캠페인을 승인하시겠습니까?")) {
+    if (window.confirm('캠페인을 승인하시겠습니까?')) {
       try {
         const response = await axiosInterceptor.put(
           `/campaigns/${id}/approval`,
           {
-            approvalStatus: "APPROVED",
-            comment: comment ?? "모든 조건을 만족하여 승인합니다.",
-          },
+            approvalStatus: 'APPROVED',
+            comment: comment ?? '모든 조건을 만족하여 승인합니다.',
+          }
         );
         const updatedData = response.data.data;
         setCampaignData((prev) => ({ ...prev, ...updatedData }));
-        toast.success("캠페인이 승인되었습니다.");
+        toast.success('캠페인이 승인되었습니다.');
       } catch (error) {
         toast.error(`${error}`);
       }
@@ -213,18 +214,18 @@ export default function CampaignDetail() {
   };
   // 캠페인 거절
   const rejectCampaign = async (id: number) => {
-    if (window.confirm("캠페인을 거절하시겠습니까?")) {
+    if (window.confirm('캠페인을 거절하시겠습니까?')) {
       try {
         const response = await axiosInterceptor.put(
           `/campaigns/${id}/approval`,
           {
-            approvalStatus: "REJECTED",
-            comment: comment ?? "조건을 만족하지 못하여 거절되었습니다.",
-          },
+            approvalStatus: 'REJECTED',
+            comment: comment ?? '조건을 만족하지 못하여 거절되었습니다.',
+          }
         );
         const updatedData = response.data.data;
         setCampaignData((prev) => ({ ...prev, ...updatedData }));
-        toast.success("캠페인이 거절되었습니다.");
+        toast.success('캠페인이 거절되었습니다.');
       } catch (error) {
         toast.error(`${error}`);
       }
@@ -250,11 +251,17 @@ export default function CampaignDetail() {
 
   return (
     <div className="min-w-[810px] p-6">
-      <div className="mb-4 flex items-center justify-between">
+      <div>
+        <ChevronLeft
+          onClick={() => navigate('/campaigns')}
+          className="cursor-pointer"
+        />
+      </div>
+      <div className="my-4 flex items-center justify-between">
         <h2 className="text-2xl font-bold">{campaignData.title}</h2>
         <div className="px-4">
           <div className="flex gap-2">
-            {campaignData.approvalStatus === "대기중" && (
+            {campaignData.approvalStatus === '대기중' && (
               <>
                 <Button
                   className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
@@ -295,7 +302,7 @@ export default function CampaignDetail() {
                 <div className="flex flex-col gap-2">
                   <p className="ck-body-1-bold">{campaignData.title}</p>
                   <p className="ck-caption-1">
-                    {campaignData.productShortInfo || "간단 소개 정보 없음"}
+                    {campaignData.productShortInfo || '간단 소개 정보 없음'}
                   </p>
                 </div>
               </div>
@@ -314,14 +321,14 @@ export default function CampaignDetail() {
                 <div className="flex flex-col gap-2">
                   <p className="ck-body-2-bold">간단 소개</p>
                   <p className="ck-body-2 text-ck-gray-700">
-                    {campaignData.productShortInfo || "간단 소개 정보 없음"}
+                    {campaignData.productShortInfo || '간단 소개 정보 없음'}
                   </p>
                 </div>
               </div>
               {/* 승인 코멘트 */}
               <div className="flex flex-col gap-2">
                 <p className="ck-body-2-bold">승인 코멘트</p>
-                {campaignData.approvalStatus === "대기중" ? (
+                {campaignData.approvalStatus === '대기중' ? (
                   <Input
                     id="comment"
                     name="comment"
@@ -331,7 +338,7 @@ export default function CampaignDetail() {
                   />
                 ) : (
                   <p className="ck-body-2 text-ck-gray-700">
-                    {campaignData.approvalComment ?? "코멘트가 없습니다."}
+                    {campaignData.approvalComment ?? '코멘트가 없습니다.'}
                   </p>
                 )}
               </div>
@@ -355,7 +362,7 @@ export default function CampaignDetail() {
                       <p className="ck-body-2-bold">캠페인 생성인</p>
                       <p className="ck-body-2 text-ck-gray-700">
                         {campaignData.creator.nickname} |&nbsp;
-                        {campaignData.creator.email}{" "}
+                        {campaignData.creator.email}{' '}
                         <Badge>{campaignData.creatorRole}</Badge>&nbsp;
                       </p>
                     </div>
@@ -376,7 +383,7 @@ export default function CampaignDetail() {
                         <p className="ck-body-2-bold">사업자 등록 번호</p>
                         <div className="ck-body-2 text-ck-gray-700">
                           {campaignData.company.businessRegistrationNumber ??
-                            "사업자 등록 번호 없음"}
+                            '사업자 등록 번호 없음'}
                         </div>
                       </div>
                     </div>
@@ -400,11 +407,11 @@ export default function CampaignDetail() {
                   </div>
                   <div className="ck-body-2">
                     <p>
-                      {campaignData.missionInfo.missionStartDate} ~{" "}
+                      {campaignData.missionInfo.missionStartDate} ~{' '}
                       {campaignData.missionInfo.missionDeadlineDate}
                     </p>
-                    <p>{campaignData.missionInfo.createdAt.split("T")[0]}</p>
-                    <p>{campaignData.missionInfo.updatedAt.split("T")[0]}</p>
+                    <p>{campaignData.missionInfo.createdAt.split('T')[0]}</p>
+                    <p>{campaignData.missionInfo.updatedAt.split('T')[0]}</p>
                   </div>
                 </div>
               </CardContent>
@@ -443,7 +450,7 @@ export default function CampaignDetail() {
                           <Badge key={index} variant="blue">
                             #{keyword}
                           </Badge>
-                        ),
+                        )
                       )}
                   </div>
                 )}
@@ -458,7 +465,7 @@ export default function CampaignDetail() {
                             <Badge key={index} variant="blue">
                               #{keyword}
                             </Badge>
-                          ),
+                          )
                         )}
                     </div>
                   </div>
@@ -477,7 +484,7 @@ export default function CampaignDetail() {
                       <MapPin size={16} />
                       <p className="ck-body-2">
                         {campaignData.location.businessAddress}
-                        {"  "}
+                        {'  '}
                         {campaignData.location.businessDetailAddress}
                       </p>
                     </div>

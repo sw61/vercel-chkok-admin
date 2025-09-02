@@ -1,21 +1,21 @@
-import { useState, type KeyboardEvent } from "react";
+import { useState, type KeyboardEvent } from 'react';
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { useStringInput } from "@/hooks/use-string-input";
-import { login } from "@/auth/auth";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { AxiosError } from "axios";
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { useStringInput } from '@/hooks/use-string-input';
+import { login } from '@/auth/auth';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { AxiosError } from 'axios';
 
 export function LoginForm({
   className,
   ...props
-}: React.ComponentProps<"div">) {
-  const { value: email, handleValue: handleEmail } = useStringInput("");
-  const { value: password, handleValue: handlePassword } = useStringInput("");
+}: React.ComponentProps<'div'>) {
+  const { value: email, handleValue: handleEmail } = useStringInput('');
+  const { value: password, handleValue: handlePassword } = useStringInput('');
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -23,29 +23,29 @@ export function LoginForm({
     try {
       setIsLoading(true);
       await login(email, password);
-      toast.success("로그인 성공하였습니다.");
-      navigate("/");
+      toast.success('로그인 성공하였습니다.');
+      navigate('/');
     } catch (error) {
       const axiosError = error as AxiosError;
       if (axiosError.response) {
         switch (axiosError.response.status) {
           case 400:
-            toast.error("이메일과 비밀번호는 필수입니다.");
+            toast.error('이메일과 비밀번호는 필수입니다.');
             break;
           case 401:
-            toast.error("잘못된 정보가 있어요");
+            toast.error('잘못된 정보가 있어요');
             break;
           case 403:
-            navigate("/login");
-            toast.error("관리자 권한이 필요합니다.");
+            navigate('/login');
+            toast.error('관리자 권한이 필요합니다.');
             break;
           case 429:
             toast.error(
-              "로그인 시도 횟수를 초과했습니다. 15분 후 다시 시도해주세요",
+              '로그인 시도 횟수를 초과했습니다. 15분 후 다시 시도해주세요'
             );
             break;
           case 500:
-            toast.error("로그인 처리 중 오류가 발생했습니다.");
+            toast.error('로그인 처리 중 오류가 발생했습니다.');
             break;
         }
       }
@@ -54,7 +54,7 @@ export function LoginForm({
     }
   };
   const handleEnterLogin = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       handleLogin();
     }
   };
@@ -62,7 +62,7 @@ export function LoginForm({
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
-        <div className={cn("flex flex-col gap-6", className)} {...props}>
+        <div className={cn('flex flex-col gap-6', className)} {...props}>
           <Card>
             <CardHeader>
               <CardTitle className="ck-sub-title-1">
@@ -108,7 +108,7 @@ export function LoginForm({
                   onClick={handleLogin}
                   disabled={isLoading}
                 >
-                  {isLoading ? "로그인 중입니다..." : "로그인"}
+                  {isLoading ? '로그인 중입니다...' : '로그인'}
                 </Button>
               </div>
             </CardContent>

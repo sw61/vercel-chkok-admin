@@ -1,20 +1,16 @@
-import { useState, useEffect, useRef } from "react";
-import Item from "./BannersDragItem";
-import {
-  DndContext,
-  type DragEndEvent,
-  type DragStartEvent,
-} from "@dnd-kit/core";
-import { SortableContext, arrayMove } from "@dnd-kit/sortable";
-import { useSensors, useSensor, MouseSensor, TouchSensor } from "@dnd-kit/core";
-import axiosInterceptor from "@/lib/axios-interceptors";
-import { toast } from "react-toastify";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import axios from "axios";
-import { Button } from "@/components/ui/button";
-import { FolderInput, Upload } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import BannerPageSkeleton from "@/Skeleton/BannerPageSkeleton";
+import { useState, useEffect, useRef } from 'react';
+import Item from './BannersDragItem';
+import { DndContext, type DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, arrayMove } from '@dnd-kit/sortable';
+import { useSensors, useSensor, MouseSensor, TouchSensor } from '@dnd-kit/core';
+import axiosInterceptor from '@/lib/axios-interceptors';
+import { toast } from 'react-toastify';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import axios from 'axios';
+import { Button } from '@/components/ui/button';
+import { FolderInput, Upload } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import BannerPageSkeleton from '@/Skeleton/BannerPageSkeleton';
 
 interface BannerData {
   id: number;
@@ -39,35 +35,35 @@ export default function BannersDragPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [createBannerData, setCreateBannerData] = useState({
-    redirectUrl: "",
-    title: "",
-    description: "",
-    position: "",
-    displayOrder: "",
+    redirectUrl: '',
+    title: '',
+    description: '',
+    position: '',
+    displayOrder: '',
   });
 
   // 배너 이미지 목록 조회
   const getBannersTable = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInterceptor.get("/api/banners");
+      const response = await axiosInterceptor.get('/api/banners');
       const data = response.data.data;
       // displayOrder 기준으로 정렬
       setBannerData(
         data.sort(
-          (a: BannerData, b: BannerData) => a.displayOrder - b.displayOrder,
-        ),
+          (a: BannerData, b: BannerData) => a.displayOrder - b.displayOrder
+        )
       );
       // 폼 데이터 초기화
       setCreateBannerData({
-        title: "",
-        redirectUrl: "",
-        description: "",
-        position: "",
-        displayOrder: "",
+        title: '',
+        redirectUrl: '',
+        description: '',
+        position: '',
+        displayOrder: '',
       });
     } catch (error) {
-      console.error("배너 목록 조회 중 오류 발생:", error);
+      console.error('배너 목록 조회 중 오류 발생:', error);
     } finally {
       setIsLoading(false);
     }
@@ -80,8 +76,8 @@ export default function BannersDragPage() {
   // 파일 입력 핸들러
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
-    if (file && !file.type.startsWith("image/")) {
-      toast.error("이미지 파일만 업로드 가능합니다.");
+    if (file && !file.type.startsWith('image/')) {
+      toast.error('이미지 파일만 업로드 가능합니다.');
       return;
     }
     setImageFile(file);
@@ -90,30 +86,31 @@ export default function BannersDragPage() {
   // 이미지 파일 선택 + presignedUrl 을 통해 S3 이미지 업로드
   const handleUrlUpload = async () => {
     if (!imageFile) {
-      toast.error("이미지 파일을 선택해주세요.");
+      toast.error('이미지 파일을 선택해주세요.');
       return;
     }
     setIsUploading(true);
     const fileExtension =
-      imageFile.name.split(".").pop()?.toLowerCase() || "jpg";
+      imageFile.name.split('.').pop()?.toLowerCase() || 'jpg';
 
     try {
       const response = await axiosInterceptor.post(
-        "/api/images/banners/presigned-url",
-        { fileExtension },
+        '/api/images/banners/presigned-url',
+        { fileExtension }
       );
-      console.log("Presigned URL 응답:", response);
+      console.log('Presigned URL 응답:', response);
       const presignedUrl = response.data.data.presignedUrl;
       setPresignedUrl(presignedUrl);
-      const contentType = imageFile.type || "image/jpeg";
+      const contentType = imageFile.type || 'image/jpeg';
       await axios.put(presignedUrl, imageFile, {
         headers: {
-          "Content-Type": contentType,
+          'Content-Type': contentType,
         },
       });
-      toast.success("이미지가 업로드 되었습니다.");
-    } catch (error: any) {
-      toast.error("이미지 업로드에 실패했습니다.");
+      toast.success('이미지가 업로드 되었습니다.');
+    } catch (error) {
+      toast.error('이미지 업로드에 실패했습니다.');
+      console.log(error);
     } finally {
       setIsUploading(false);
     }
@@ -122,7 +119,7 @@ export default function BannersDragPage() {
   const createBanner = async () => {
     setIsCreating(true);
     if (!presignedUrl) {
-      toast.error("이미지를 업로드 해주세요.");
+      toast.error('이미지를 업로드 해주세요.');
       setIsCreating(false);
       return;
     }
@@ -133,17 +130,17 @@ export default function BannersDragPage() {
       !createBannerData.position ||
       !createBannerData.displayOrder
     ) {
-      toast.error("모든 필수 필드를 입력해주세요.");
+      toast.error('모든 필수 필드를 입력해주세요.');
       setIsCreating(false);
       return;
     }
     if (isNaN(Number(createBannerData.displayOrder))) {
-      toast.error("배너 순서는 숫자 형식이어야 합니다.");
+      toast.error('배너 순서는 숫자 형식이어야 합니다.');
       setIsCreating(false);
       return;
     }
     try {
-      await axiosInterceptor.post("/api/banners", {
+      await axiosInterceptor.post('/api/banners', {
         bannerUrl: presignedUrl,
         redirectUrl: createBannerData.redirectUrl,
         title: createBannerData.title,
@@ -151,12 +148,12 @@ export default function BannersDragPage() {
         position: createBannerData.position,
         displayOrder: Number(createBannerData.displayOrder),
       });
-      toast.success("배너 이미지가 생성되었습니다.");
+      toast.success('배너 이미지가 생성되었습니다.');
       await getBannersTable();
       setImageFile(null);
       setPresignedUrl(null);
     } catch (error) {
-      console.error("배너 이미지 생성 중 오류 발생:", error);
+      console.error('배너 이미지 생성 중 오류 발생:', error);
     } finally {
       setCreateMode(false);
       setIsCreating(false);
@@ -167,7 +164,7 @@ export default function BannersDragPage() {
     const { name, value } = e.target;
     setCreateBannerData((prev) => ({ ...prev, [name]: value }));
     // bannerUrl 입력 시 파일 선택 초기화
-    if (name === "bannerUrl" && value) {
+    if (name === 'bannerUrl' && value) {
       setImageFile(null);
       setPresignedUrl(null);
     }
@@ -178,11 +175,11 @@ export default function BannersDragPage() {
     setImageFile(null);
     setPresignedUrl(null);
     setCreateBannerData({
-      title: "",
-      redirectUrl: "",
-      description: "",
-      position: "",
-      displayOrder: "",
+      title: '',
+      redirectUrl: '',
+      description: '',
+      position: '',
+      displayOrder: '',
     });
   };
 
@@ -196,14 +193,14 @@ export default function BannersDragPage() {
         })),
       };
       const response = await axiosInterceptor.patch(
-        "/api/banners/order",
-        requestBody,
+        '/api/banners/order',
+        requestBody
       );
-      toast.success("배너 순서 변경이 완료되었습니다.");
+      toast.success('배너 순서 변경이 완료되었습니다.');
       console.log(response);
     } catch (error) {
       console.log(error);
-      toast.error("배너 순서 업데이트 중 오류 발생");
+      toast.error('배너 순서 업데이트 중 오류 발생');
     }
   };
 
@@ -218,25 +215,23 @@ export default function BannersDragPage() {
         delay: 250,
         tolerance: 5,
       },
-    }),
+    })
   );
-  // 드래그 시작 함수
-  const handleDragStart = (_: DragStartEvent) => {};
   // 드래그 종료 함수
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (over && active.id !== over.id) {
       const activeIndex = bannerData.findIndex(
-        (item) => item.id === Number(active.id),
+        (item) => item.id === Number(active.id)
       );
       const overIndex = bannerData.findIndex(
-        (item) => item.id === Number(over.id),
+        (item) => item.id === Number(over.id)
       );
       if (activeIndex !== -1 && overIndex !== -1) {
         // 새로운 배열 생성 및 displayOrder 업데이트
         const updatedBanners = arrayMove(
           bannerData,
           activeIndex,
-          overIndex,
+          overIndex
         ).map((banner, index) => ({
           ...banner,
           displayOrder: index + 1, // 1부터 시작
@@ -315,7 +310,7 @@ export default function BannersDragPage() {
                       className="ck-body-1 bg-ck-white text-ck-gray-900 border-1 hover:bg-gray-300"
                     >
                       <Upload />
-                      {isUploading ? "업로드 중..." : "파일 업로드"}
+                      {isUploading ? '업로드 중...' : '파일 업로드'}
                     </Button>
                   )}
                 </div>
@@ -325,7 +320,7 @@ export default function BannersDragPage() {
                   className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                   variant="outline"
                 >
-                  {isCreating ? "생성 중..." : "생성"}
+                  {isCreating ? '생성 중...' : '생성'}
                 </Button>
                 <Button
                   onClick={toggleCreateMode}
@@ -416,7 +411,7 @@ export default function BannersDragPage() {
   }
 
   return (
-    <div className="grid-row grid gap-10">
+    <div className="grid-row grid gap-10 p-6">
       {/* 배너 상세 정보 */}
       <Card>
         <CardHeader>
@@ -462,7 +457,7 @@ export default function BannersDragPage() {
                         className="ck-body-1 bg-ck-white text-ck-gray-900 border-1 hover:bg-gray-300"
                       >
                         <Upload />
-                        {isUploading ? "업로드 중..." : "파일 업로드"}
+                        {isUploading ? '업로드 중...' : '파일 업로드'}
                       </Button>
                     )}
                   </div>
@@ -472,7 +467,7 @@ export default function BannersDragPage() {
                     className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                     variant="outline"
                   >
-                    {isCreating ? "생성 중..." : "생성"}
+                    {isCreating ? '생성 중...' : '생성'}
                   </Button>
                   <Button
                     onClick={toggleCreateMode}
@@ -556,11 +551,7 @@ export default function BannersDragPage() {
           </CardContent>
         ) : (
           <div className="flex w-full flex-col gap-4 rounded-xl px-6 py-4">
-            <DndContext
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-              sensors={sensors}
-            >
+            <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
               <SortableContext
                 items={bannerData.map((item) => item.id.toString())}
               >

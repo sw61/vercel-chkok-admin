@@ -1,40 +1,41 @@
-import { useState } from "react";
+import { useState } from 'react';
 import MDEditor, {
   commands,
   type ICommand,
   type TextState,
-} from "@uiw/react-md-editor";
-import "@uiw/react-md-editor/markdown-editor.css";
-import { toast } from "react-toastify";
-import axiosInterceptor from "@/lib/axios-interceptors";
-import axios from "axios";
-import rehypeRaw from "rehype-raw";
-import ReactMarkdown from "react-markdown";
-import { renderToStaticMarkup } from "react-dom/server";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { Card } from "@/components/ui/card";
+} from '@uiw/react-md-editor';
+import '@uiw/react-md-editor/markdown-editor.css';
+import { toast } from 'react-toastify';
+import axiosInterceptor from '@/lib/axios-interceptors';
+import axios from 'axios';
+import rehypeRaw from 'rehype-raw';
+import ReactMarkdown from 'react-markdown';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import { Card } from '@/components/ui/card';
 
 export default function MarkdownCreate() {
-  const [title, setTitle] = useState<string>("");
-  const [content, setContent] = useState<string | undefined>("");
+  const [title, setTitle] = useState<string>('');
+  const [content, setContent] = useState<string | undefined>('');
   const [showImageSizeModal, setShowImageSizeModal] = useState<boolean>(false);
   const [pendingImageData, setPendingImageData] = useState<{
     url: string;
     name: string;
   } | null>(null);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [editorApi, setEditorApi] = useState<any>(null);
   const navigate = useNavigate();
 
   const createMarkdown = async () => {
     if (!title) {
-      toast.error("제목을 입력해주세요.");
+      toast.error('제목을 입력해주세요.');
       return;
     }
     if (!content) {
-      toast.error("내용을 입력해주세요.");
+      toast.error('내용을 입력해주세요.');
       return;
     }
 
@@ -45,43 +46,43 @@ export default function MarkdownCreate() {
     const html = renderToStaticMarkup(markdownComponent);
 
     try {
-      console.log("전송 데이터:", { title, content: html });
-      const response = await axiosInterceptor.post("/api/admin/markdowns", {
+      console.log('전송 데이터:', { title, content: html });
+      const response = await axiosInterceptor.post('/api/admin/markdowns', {
         title,
         content: html,
       });
-      console.log("API 응답:", response);
-      toast.success("문서가 생성되었습니다.");
-      navigate("/documents");
+      console.log('API 응답:', response);
+      toast.success('문서가 생성되었습니다.');
+      navigate('/documents');
     } catch (error) {
-      console.error("문서 생성 오류:", error);
-      toast.error("문서 생성에 실패했습니다.");
+      console.error('문서 생성 오류:', error);
+      toast.error('문서 생성에 실패했습니다.');
     }
   };
 
   // 파일을 직접 받아서 S3 업로드 처리하는 함수
   const uploadImageFile = async (file: File): Promise<string> => {
-    const fileExtension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const fileExtension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
 
     try {
-      toast.info("이미지 업로드 중 입니다...");
+      toast.info('이미지 업로드 중 입니다...');
       const response = await axiosInterceptor.post(
-        "/api/images/banners/presigned-url",
+        '/api/images/banners/presigned-url',
         {
           fileExtension,
-        },
+        }
       );
-      const presignedUrl = response.data.data.presignedUrl.split("?")[0];
+      const presignedUrl = response.data.data.presignedUrl.split('?')[0];
 
-      const contentType = file.type || "image/jpeg";
+      const contentType = file.type || 'image/jpeg';
       await axios.put(presignedUrl, file, {
         headers: {
-          "Content-Type": contentType,
+          'Content-Type': contentType,
         },
       });
       return presignedUrl;
     } catch (error: unknown) {
-      toast.error("이미지 업로드에 실패했습니다.");
+      toast.error('이미지 업로드에 실패했습니다.');
       throw error;
     }
   };
@@ -104,15 +105,15 @@ export default function MarkdownCreate() {
 
     // 모달 닫기 및 상태 초기화
     setShowImageSizeModal(false);
-    toast.success("이미지가 삽입 되었습니다.");
+    toast.success('이미지가 삽입 되었습니다.');
     setPendingImageData(null);
   };
 
   // 커스텀 이미지 업로드 커맨드
   const imageUploadCommand: ICommand = {
-    name: "imageUpload",
-    keyCommand: "imageUpload",
-    buttonProps: { "aria-label": "Add image (ctrl + k)" },
+    name: 'imageUpload',
+    keyCommand: 'imageUpload',
+    buttonProps: { 'aria-label': 'Add image (ctrl + k)' },
     icon: (
       <svg width="13" height="13" viewBox="0 0 20 20">
         <path
@@ -126,9 +127,9 @@ export default function MarkdownCreate() {
       setEditorApi(api);
 
       // 파일 선택 input 생성
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = "image/*";
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
       input.onchange = async () => {
         if (input.files && input.files[0]) {
           const file = input.files[0];
@@ -153,7 +154,7 @@ export default function MarkdownCreate() {
               <div className="ck-body-2 flex flex-col justify-end">제목</div>
               <div className="flex gap-4">
                 <Button
-                  onClick={() => navigate("/documents")}
+                  onClick={() => navigate('/documents')}
                   className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
                   variant="outline"
                 >

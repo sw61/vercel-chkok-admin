@@ -8,9 +8,9 @@ import {
   useReactTable,
   type VisibilityState,
   type ColumnFiltersState,
-} from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+} from '@tanstack/react-table';
+import { ArrowUpDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -18,9 +18,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+} from '@/components/ui/table';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface Campaign {
   id: number;
@@ -47,31 +47,31 @@ interface CampaignDataTableProps {
 
 const columns: ColumnDef<Campaign>[] = [
   {
-    accessorKey: "id",
+    accessorKey: 'id',
     header: ({ column }) => (
       <div>
         <Button
           variant="ghost"
           className="has-[>svg]:px-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           ID
           <ArrowUpDown />
         </Button>
       </div>
     ),
-    cell: ({ row }) => <div>{row.getValue("id")}</div>,
-    meta: { label: "id" } as CustomColumnMeta,
+    cell: ({ row }) => <div>{row.getValue('id')}</div>,
+    meta: { label: 'id' } as CustomColumnMeta,
     size: 50,
   },
   {
-    accessorKey: "title",
+    accessorKey: 'title',
     header: ({ column }) => (
       <div>
         <Button
           variant="ghost"
           className="has-[>svg]:px-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           캠페인 이름
           <ArrowUpDown />
@@ -80,103 +80,103 @@ const columns: ColumnDef<Campaign>[] = [
     ),
     cell: ({ row }) => (
       <div className="overflow-hidden text-ellipsis">
-        {row.getValue("title")}
+        {row.getValue('title')}
       </div>
     ),
-    meta: { label: "캠페인 이름" } as CustomColumnMeta,
+    meta: { label: '캠페인 이름' } as CustomColumnMeta,
     size: 250,
   },
   {
-    accessorKey: "campaignType",
+    accessorKey: 'campaignType',
     header: ({ column }) => (
       <Button
         variant="ghost"
         className="has-[>svg]:px-0"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
         캠페인 유형
         <ArrowUpDown />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("campaignType")}</div>
+      <div className="lowercase">{row.getValue('campaignType')}</div>
     ),
-    meta: { label: "캠페인 유형" } as CustomColumnMeta,
+    meta: { label: '캠페인 유형' } as CustomColumnMeta,
     size: 120,
   },
   {
-    accessorKey: "approvalStatus",
+    accessorKey: 'approvalStatus',
     header: ({ column }) => (
       <Button
         variant="ghost"
         className="has-[>svg]:px-0"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
         처리 상태
         <ArrowUpDown />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("approvalStatus")}</div>
+      <div className="lowercase">{row.getValue('approvalStatus')}</div>
     ),
-    meta: { label: "처리 상태" } as CustomColumnMeta,
+    meta: { label: '처리 상태' } as CustomColumnMeta,
     size: 100,
   },
   {
-    accessorKey: "recruitmentStartDate",
+    accessorKey: 'recruitmentStartDate',
     header: ({ column }) => (
       <Button
         variant="ghost"
         className="has-[>svg]:px-0"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
         모집 시작일
         <ArrowUpDown />
       </Button>
     ),
-    cell: ({ row }) => <div>{row.getValue("recruitmentStartDate")}</div>,
-    meta: { label: "모집 시작일" } as CustomColumnMeta,
+    cell: ({ row }) => <div>{row.getValue('recruitmentStartDate')}</div>,
+    meta: { label: '모집 시작일' } as CustomColumnMeta,
     size: 120,
   },
   {
-    accessorKey: "recruitmentEndDate",
+    accessorKey: 'recruitmentEndDate',
     header: ({ column }) => (
       <Button
         variant="ghost"
         className="has-[>svg]:px-0"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
         모집 마감일
         <ArrowUpDown />
       </Button>
     ),
-    cell: ({ row }) => <div>{row.getValue("recruitmentEndDate")}</div>,
-    meta: { label: "모집 마감일" } as CustomColumnMeta,
+    cell: ({ row }) => <div>{row.getValue('recruitmentEndDate')}</div>,
+    meta: { label: '모집 마감일' } as CustomColumnMeta,
     size: 120,
   },
   {
-    accessorKey: "reviewDeadlineDate",
+    accessorKey: 'reviewDeadlineDate',
     header: ({ column }) => (
       <Button
         variant="ghost"
         className="has-[>svg]:px-0"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
         리뷰 마감일
         <ArrowUpDown />
       </Button>
     ),
-    cell: ({ row }) => <div>{row.getValue("reviewDeadlineDate")}</div>,
-    meta: { label: "리뷰 마감일" } as CustomColumnMeta,
+    cell: ({ row }) => <div>{row.getValue('reviewDeadlineDate')}</div>,
+    meta: { label: '리뷰 마감일' } as CustomColumnMeta,
     size: 120,
   },
   {
-    accessorKey: "productShortInfo",
+    accessorKey: 'productShortInfo',
     header: ({ column }) => (
       <Button
         variant="ghost"
         className="has-[>svg]:px-0"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
         상품 간단 소개
         <ArrowUpDown />
@@ -184,10 +184,10 @@ const columns: ColumnDef<Campaign>[] = [
     ),
     cell: ({ row }) => (
       <div className="overflow-hidden text-ellipsis">
-        {row.getValue("productShortInfo")}
+        {row.getValue('productShortInfo')}
       </div>
     ),
-    meta: { label: "상품 간단 정보" } as CustomColumnMeta,
+    meta: { label: '상품 간단 정보' } as CustomColumnMeta,
     size: 250,
   },
   // {
@@ -233,7 +233,7 @@ const columns: ColumnDef<Campaign>[] = [
 // ColumnDef의 size 합계 계산
 const totalColumnWidth = columns.reduce(
   (sum, column) => sum + (column.size || 100),
-  0,
+  0
 );
 
 export function CampaignTable({
@@ -263,7 +263,7 @@ export function CampaignTable({
       columnVisibility,
       rowSelection,
     },
-    columnResizeMode: "onChange",
+    columnResizeMode: 'onChange',
     enableColumnResizing: false,
   });
 
@@ -287,7 +287,7 @@ export function CampaignTable({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            header.getContext()
                           )}
                     </TableHead>
                   );
@@ -300,7 +300,7 @@ export function CampaignTable({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={row.getIsSelected() && 'selected'}
                   className="cursor-pointer"
                   onClick={() => navigate(`/campaigns/${row.original.id}`)}
                 >
@@ -312,7 +312,7 @@ export function CampaignTable({
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </TableCell>
                   ))}

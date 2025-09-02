@@ -1,22 +1,22 @@
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import axiosInterceptor from "@/lib/axios-interceptors";
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import axiosInterceptor from '@/lib/axios-interceptors';
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import MDEditor, {
   commands,
   type ICommand,
   type TextState,
-} from "@uiw/react-md-editor";
-import "@uiw/react-md-editor/markdown-editor.css";
-import axios from "axios";
-import rehypeRaw from "rehype-raw";
-import ReactMarkdown from "react-markdown";
-import { renderToStaticMarkup } from "react-dom/server";
-import { Button } from "@/components/ui/button";
-import TurndownService from "turndown";
-import MarkdownDetailSkeleton from "../Skeleton/MarkdownDetailSkeleton";
+} from '@uiw/react-md-editor';
+import '@uiw/react-md-editor/markdown-editor.css';
+import axios from 'axios';
+import rehypeRaw from 'rehype-raw';
+import ReactMarkdown from 'react-markdown';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { Button } from '@/components/ui/button';
+import TurndownService from 'turndown';
+import MarkdownDetailSkeleton from '../Skeleton/MarkdownDetailSkeleton';
 
 interface MarkdownData {
   id: number;
@@ -34,22 +34,22 @@ export default function MarkdownDetail() {
   const navigate = useNavigate();
   const [markdownData, setMarkdownData] = useState<MarkdownData | null>(null);
   const [editData, setEditData] = useState<{ title: string; content: string }>({
-    title: "",
-    content: "",
+    title: '',
+    content: '',
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isUploading, setIsUploading] = useState<boolean>(false);
   const [showImageModal, setShowImageModal] = useState<boolean>(false);
   const [pendingImageData, setPendingImageData] = useState<{
     url: string;
     name: string;
   } | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [editorApi, setEditorApi] = useState<any>(null);
 
   // html -> Markdown 변환
   const turndownService = new TurndownService({
-    headingStyle: "atx", // Use # for headings
-    codeBlockStyle: "fenced", // Use ``` for code blocks
+    headingStyle: 'atx',
+    codeBlockStyle: 'fenced',
   });
 
   const getMarkdownDetail = async (id: string) => {
@@ -57,8 +57,6 @@ export default function MarkdownDetail() {
     try {
       const response = await axiosInterceptor.get(`/api/admin/markdowns/${id}`);
       const data = response.data.data;
-
-      // Convert HTML content to Markdown
       const markdownContent = turndownService.turndown(data.content);
 
       setMarkdownData(data);
@@ -66,7 +64,7 @@ export default function MarkdownDetail() {
       console.log(data);
     } catch (error) {
       console.log(error);
-      toast.error("마크다운 문서를 불러오는데 실패했습니다.");
+      toast.error('마크다운 문서를 불러오는데 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
@@ -86,55 +84,52 @@ export default function MarkdownDetail() {
         {
           title: editData.title,
           content: html,
-        },
+        }
       );
-      navigate("/documents");
-      toast.success("문서가 수정되었습니다.");
+      navigate('/documents');
+      toast.success('문서가 수정되었습니다.');
       console.log(response);
       await getMarkdownDetail(markdownId!);
     } catch (error) {
       console.log(error);
-      toast.error("문서 수정에 실패했습니다.");
+      toast.error('문서 수정에 실패했습니다.');
     }
   };
 
   // 마크다운 문서 삭제
   const deleteMarkdown = async (id: number) => {
-    if (window.confirm("문서를 삭제하시겠습니까?")) {
+    if (window.confirm('문서를 삭제하시겠습니까?')) {
       try {
         await axiosInterceptor.delete(`/api/admin/markdowns/${id}`);
-        navigate("/documents");
-        toast.success("문서가 삭제되었습니다.");
+        navigate('/documents');
+        toast.success('문서가 삭제되었습니다.');
       } catch (error) {
         console.log(error);
-        toast.error("문서 삭제에 실패했습니다.");
+        toast.error('문서 삭제에 실패했습니다.');
       }
     }
   };
 
   // S3 이미지 업로드
   const uploadImageFile = async (file: File): Promise<string> => {
-    setIsUploading(true);
-    const fileExtension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const fileExtension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
     try {
-      toast.info("이미지 업로드 중 입니다...");
+      toast.info('이미지 업로드 중 입니다...');
       const response = await axiosInterceptor.post(
-        "/api/images/banners/presigned-url",
+        '/api/images/banners/presigned-url',
         {
           fileExtension,
-        },
+        }
       );
-      const presignedUrl = response.data.data.presignedUrl.split("?")[0];
-      const contentType = file.type || "image/jpeg";
+      const presignedUrl = response.data.data.presignedUrl.split('?')[0];
+      const contentType = file.type || 'image/jpeg';
       await axios.put(presignedUrl, file, {
-        headers: { "Content-Type": contentType },
+        headers: { 'Content-Type': contentType },
       });
       return presignedUrl;
     } catch (error) {
-      toast.error("이미지 업로드에 실패했습니다.");
+      toast.error('이미지 업로드에 실패했습니다.');
       throw error;
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -151,15 +146,15 @@ export default function MarkdownDetail() {
     const markdownImage = `![${name}](${url})`;
     editorApi.replaceSelection(markdownImage);
     setShowImageModal(false);
-    toast.success("이미지가 삽입되었습니다.");
+    toast.success('이미지가 삽입되었습니다.');
     setPendingImageData(null);
   };
 
   // 이미지 업로드 커맨드
   const imageUploadCommand: ICommand = {
-    name: "imageUpload",
-    keyCommand: "imageUpload",
-    buttonProps: { "aria-label": "Add image (ctrl + k)" },
+    name: 'imageUpload',
+    keyCommand: 'imageUpload',
+    buttonProps: { 'aria-label': 'Add image (ctrl + k)' },
     icon: (
       <svg width="13" height="13" viewBox="0 0 20 20">
         <path
@@ -170,9 +165,9 @@ export default function MarkdownDetail() {
     ),
     execute: async (state: TextState, api) => {
       setEditorApi(api);
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = "image/*";
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
       input.onchange = async () => {
         if (input.files && input.files[0]) {
           const file = input.files[0];
@@ -247,7 +242,7 @@ export default function MarkdownDetail() {
             <MDEditor
               value={editData.content}
               onChange={(value) =>
-                setEditData((prev) => ({ ...prev, content: value || "" }))
+                setEditData((prev) => ({ ...prev, content: value || '' }))
               }
               height={500}
               preview="live"

@@ -5,7 +5,13 @@ import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'react-toastify';
-import { ArrowUpNarrowWide, Trash, UserCheck, UserX } from 'lucide-react';
+import {
+  ArrowUpNarrowWide,
+  ChevronLeft,
+  Trash,
+  UserCheck,
+  UserX,
+} from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import UserDetailSkeleton from '@/Skeleton/UserDetailSkeleton';
@@ -146,6 +152,12 @@ export default function UserDetail() {
   return (
     <div className="min-w-[650px]">
       <div className="grid grid-cols-1 gap-6">
+        <div>
+          <ChevronLeft
+            onClick={() => navigate('/users')}
+            className="cursor-pointer"
+          />
+        </div>
         <Card>
           <div className="flex gap-4 px-6">
             <CardTitle className="ck-title">사용자 정보</CardTitle>
