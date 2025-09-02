@@ -150,7 +150,7 @@ export default function UserDetail() {
   }
 
   return (
-    <div className="min-w-[650px]">
+    <div className="min-w-[650px] px-6 py-4">
       <div className="grid grid-cols-1 gap-6">
         <div>
           <ChevronLeft

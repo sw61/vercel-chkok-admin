@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
+import { ChevronLeft } from 'lucide-react';
 
 export default function MarkdownCreate() {
   const [title, setTitle] = useState<string>('');
@@ -67,7 +68,7 @@ export default function MarkdownCreate() {
     try {
       toast.info('이미지 업로드 중 입니다...');
       const response = await axiosInterceptor.post(
-        '/api/images/banners/presigned-url',
+        '/api/images/kokpost/presigned-url',
         {
           fileExtension,
         }
@@ -146,104 +147,112 @@ export default function MarkdownCreate() {
   };
 
   return (
-    <Card>
-      <div className="flex flex-col items-center p-6">
-        <div className="w-full max-w-full" data-color-mode="light">
-          <div className="mb-4">
-            <div className="mb-2 flex justify-between">
-              <div className="ck-body-2 flex flex-col justify-end">제목</div>
-              <div className="flex gap-4">
-                <Button
-                  onClick={() => navigate('/documents')}
-                  className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
-                  variant="outline"
-                >
-                  취소
-                </Button>
-                <Button
-                  onClick={createMarkdown}
-                  className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
-                  variant="outline"
-                >
-                  생성
-                </Button>
-              </div>
-            </div>
-
-            <Input
-              value={title}
-              onChange={(e) => setTitle(() => e.target.value)}
-              placeholder="제목을 입력하세요"
-              className="w-full"
-            />
-          </div>
-          <MDEditor
-            value={content}
-            onChange={setContent}
-            height={700}
-            preview="live"
-            commands={[
-              commands.bold,
-              commands.italic,
-              commands.strikethrough,
-              commands.hr,
-              commands.heading,
-              commands.divider,
-              commands.link,
-              commands.quote,
-              commands.code,
-              commands.codeBlock,
-              commands.comment,
-              commands.divider,
-              imageUploadCommand, // 커스텀 이미지 추가 버튼
-              commands.divider,
-              commands.unorderedListCommand,
-              commands.orderedListCommand,
-              commands.checkedListCommand,
-              commands.divider,
-              commands.help,
-            ]}
-          />
-        </div>
-
-        {/* 이미지 크기 설정 모달 */}
-        {showImageSizeModal && (
-          <div className="absolute inset-0 z-10 flex h-full w-full items-center justify-center backdrop-blur-sm">
-            <div className="w-96 rounded-lg border bg-white p-6">
-              <div className="mb-4">
-                <label className="mb-2 block text-sm font-medium text-gray-700">
-                  이미지 미리보기
-                </label>
-                <div className="rounded-lg border bg-gray-50 p-2">
-                  <img
-                    src={pendingImageData?.url}
-                    alt={pendingImageData?.name}
-                    className="h-auto max-w-full"
-                  />
+    <div className="p-6">
+      <div className="mb-4">
+        <ChevronLeft
+          onClick={() => navigate('/documents')}
+          className="cursor-pointer"
+        />
+      </div>
+      <Card>
+        <div className="flex flex-col items-center px-6">
+          <div className="w-full " data-color-mode="light">
+            <div className="mb-4">
+              <div className="mb-2 flex justify-between items-center">
+                <div className="ck-body-2 flex flex-col justify-end">제목</div>
+                <div className="flex gap-4">
+                  <Button
+                    onClick={() => navigate('/documents')}
+                    className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
+                    variant="outline"
+                  >
+                    취소
+                  </Button>
+                  <Button
+                    onClick={createMarkdown}
+                    className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
+                    variant="outline"
+                  >
+                    생성
+                  </Button>
                 </div>
               </div>
-              <div className="mb-6 grid grid-cols-2 gap-4"></div>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    setShowImageSizeModal(false);
-                    setPendingImageData(null);
-                  }}
-                  className="flex-1 rounded-md bg-gray-200 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-300"
-                >
-                  취소
-                </button>
-                <button
-                  onClick={insertImageWithSize}
-                  className="flex-1 rounded-md bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-700"
-                >
-                  설정
-                </button>
+
+              <Input
+                value={title}
+                onChange={(e) => setTitle(() => e.target.value)}
+                placeholder="제목을 입력하세요"
+                className="w-full"
+              />
+            </div>
+            <MDEditor
+              value={content}
+              onChange={setContent}
+              height={700}
+              preview="live"
+              commands={[
+                commands.bold,
+                commands.italic,
+                commands.strikethrough,
+                commands.hr,
+                commands.heading,
+                commands.divider,
+                commands.link,
+                commands.quote,
+                commands.code,
+                commands.codeBlock,
+                commands.comment,
+                commands.divider,
+                imageUploadCommand, // 커스텀 이미지 추가 버튼
+                commands.divider,
+                commands.unorderedListCommand,
+                commands.orderedListCommand,
+                commands.checkedListCommand,
+                commands.divider,
+                commands.help,
+              ]}
+            />
+          </div>
+
+          {/* 이미지 크기 설정 모달 */}
+          {showImageSizeModal && (
+            <div className="absolute inset-0 z-10 flex h-full w-full items-center justify-center backdrop-blur-sm">
+              <div className="w-96 rounded-lg border bg-white p-6">
+                <div className="mb-4">
+                  <label className="mb-2 block text-sm font-medium text-gray-700">
+                    이미지 미리보기
+                  </label>
+                  <div className="rounded-lg border bg-gray-50 p-2">
+                    <img
+                      src={pendingImageData?.url}
+                      alt={pendingImageData?.name}
+                      className="h-auto max-w-full"
+                    />
+                  </div>
+                </div>
+                <div className="mb-6 grid grid-cols-2 gap-4"></div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setShowImageSizeModal(false);
+                      setPendingImageData(null);
+                    }}
+                    className="flex-1 rounded-md bg-gray-200 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-300"
+                  >
+                    취소
+                  </button>
+                  <button
+                    onClick={insertImageWithSize}
+                    className="flex-1 rounded-md bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+                  >
+                    설정
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
-    </Card>
+          )}
+        </div>
+      </Card>
+    </div>
   );
 }

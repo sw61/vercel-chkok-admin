@@ -250,7 +250,7 @@ export default function CampaignDetail() {
   }
 
   return (
-    <div className="min-w-[810px] p-6">
+    <div className="min-w-[810px] px-6 py-4">
       <div>
         <ChevronLeft
           onClick={() => navigate('/campaigns')}

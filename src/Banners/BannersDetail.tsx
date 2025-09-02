@@ -5,7 +5,7 @@ import PulseLoader from 'react-spinners/PulseLoader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Pencil, Delete } from 'lucide-react';
+import { Pencil, Delete, ChevronLeft } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 interface BannerData {
@@ -214,7 +214,13 @@ export default function BannersDetail() {
     );
   }
   return (
-    <div className="grid-row grid gap-10">
+    <div className="grid-row grid px-6 py-2">
+      <div className="mb-4">
+        <ChevronLeft
+          onClick={() => navigate('/banners')}
+          className="cursor-pointer"
+        />
+      </div>
       {/* 배너 상세 정보 */}
       <Card>
         <CardHeader>

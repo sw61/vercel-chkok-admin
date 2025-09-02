@@ -17,6 +17,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { Button } from '@/components/ui/button';
 import TurndownService from 'turndown';
 import MarkdownDetailSkeleton from '../Skeleton/MarkdownDetailSkeleton';
+import { ChevronLeft } from 'lucide-react';
 
 interface MarkdownData {
   id: number;
@@ -116,7 +117,7 @@ export default function MarkdownDetail() {
     try {
       toast.info('이미지 업로드 중 입니다...');
       const response = await axiosInterceptor.post(
-        '/api/images/banners/presigned-url',
+        '/api/images/kokpost/presigned-url',
         {
           fileExtension,
         }
@@ -193,7 +194,13 @@ export default function MarkdownDetail() {
   }
 
   return (
-    <div className="flex w-full flex-col items-center justify-start p-6">
+    <div className="w-full p-6">
+      <div className="mb-4">
+        <ChevronLeft
+          onClick={() => navigate('/documents')}
+          className="cursor-pointer"
+        />
+      </div>
       <Card className="w-full px-6 py-4">
         <div className="flex items-center justify-between px-6">
           <CardTitle className="ck-title">마크다운 문서</CardTitle>
@@ -216,8 +223,8 @@ export default function MarkdownDetail() {
         </div>
         <CardContent className="ck-body-2 flex justify-end gap-6">
           <p>작성자: {markdownData?.authorName}</p>
-          <p>생성일: {markdownData?.createdAt}</p>
-          <p>수정일: {markdownData?.updatedAt}</p>
+          <p>생성일: {markdownData?.createdAt.split('T')[0]}</p>
+          <p>수정일: {markdownData?.updatedAt.split('T')[0]}</p>
           <p>조회수: {markdownData?.viewCount}</p>
         </CardContent>
 
