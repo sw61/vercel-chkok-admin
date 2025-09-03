@@ -19,21 +19,29 @@ import TurndownService from 'turndown';
 import MarkdownDetailSkeleton from '../Skeleton/MarkdownDetailSkeleton';
 import { ChevronLeft } from 'lucide-react';
 
-interface MarkdownData {
+interface PostData {
   id: number;
-  title: string;
-  content: string;
-  viewCount: number;
+  campaignId: number;
   authorId: number;
+  title: string;
+  viewCount: number;
   authorName: string;
   createdAt: string;
   updatedAt: string;
+  visitInfo: {
+    contactPhone: string;
+    homepage: string;
+    businessAddress: string;
+    businessDetailAddress: string;
+    lat: number;
+    lng: number;
+  };
 }
 
-export default function MarkdownDetail() {
+export default function PostDetail() {
   const { markdownId } = useParams<{ markdownId: string }>();
   const navigate = useNavigate();
-  const [markdownData, setMarkdownData] = useState<MarkdownData | null>(null);
+  const [postData, setPostData] = useState<PostData | null>(null);
   const [editData, setEditData] = useState<{ title: string; content: string }>({
     title: '',
     content: '',
@@ -52,15 +60,15 @@ export default function MarkdownDetail() {
     headingStyle: 'atx',
     codeBlockStyle: 'fenced',
   });
-
-  const getMarkdownDetail = async (id: string) => {
+  // 체험콕 글 상세 정보
+  const getPostDetail = async (id: string) => {
     setIsLoading(true);
     try {
-      const response = await axiosInterceptor.get(`/api/admin/markdowns/${id}`);
+      const response = await axiosInterceptor.get(`/api/admin/posts/${id}`);
       const data = response.data.data;
       const markdownContent = turndownService.turndown(data.content);
 
-      setMarkdownData(data);
+      setPostData(data);
       setEditData({ title: data.title, content: markdownContent });
       console.log(data);
     } catch (error) {
@@ -71,7 +79,7 @@ export default function MarkdownDetail() {
     }
   };
 
-  // 마크다운 문서 수정
+  // 체험콕 글 문서 수정
   const editMarkdown = async (id: number) => {
     try {
       const markdownComponent = (
@@ -80,28 +88,25 @@ export default function MarkdownDetail() {
         </ReactMarkdown>
       );
       const html = renderToStaticMarkup(markdownComponent);
-      const response = await axiosInterceptor.put(
-        `/api/admin/markdowns/${id}`,
-        {
-          title: editData.title,
-          content: html,
-        }
-      );
+      const response = await axiosInterceptor.put(`/api/admin/s/${id}`, {
+        title: editData.title,
+        content: html,
+      });
       navigate('/documents');
       toast.success('문서가 수정되었습니다.');
       console.log(response);
-      await getMarkdownDetail(markdownId!);
+      await getPostDetail(markdownId!);
     } catch (error) {
       console.log(error);
       toast.error('문서 수정에 실패했습니다.');
     }
   };
 
-  // 마크다운 문서 삭제
+  // 체험콕 글 삭제
   const deleteMarkdown = async (id: number) => {
     if (window.confirm('문서를 삭제하시겠습니까?')) {
       try {
-        await axiosInterceptor.delete(`/api/admin/markdowns/${id}`);
+        await axiosInterceptor.delete(`/api/admin/posts/${id}`);
         navigate('/documents');
         toast.success('문서가 삭제되었습니다.');
       } catch (error) {
@@ -182,14 +187,14 @@ export default function MarkdownDetail() {
 
   useEffect(() => {
     if (markdownId) {
-      getMarkdownDetail(markdownId);
+      getPostDetail(markdownId);
     }
   }, [markdownId]);
 
   if (isLoading) {
     return <MarkdownDetailSkeleton />;
   }
-  if (!markdownData) {
+  if (!postData) {
     return <div>데이터 없음</div>;
   }
 
@@ -197,23 +202,23 @@ export default function MarkdownDetail() {
     <div className="w-full p-6">
       <div className="mb-4">
         <ChevronLeft
-          onClick={() => navigate('/documents')}
+          onClick={() => navigate('/posts')}
           className="cursor-pointer"
         />
       </div>
       <Card className="w-full px-6 py-4">
         <div className="flex items-center justify-between px-6">
-          <CardTitle className="ck-title">마크다운 문서</CardTitle>
+          <CardTitle className="ck-title">체험콕 글</CardTitle>
           <div className="flex gap-3">
             <Button
-              onClick={() => deleteMarkdown(markdownData.id)}
+              onClick={() => deleteMarkdown(postData.id)}
               className="hover:bg-ck-red-500 px-4 py-2 hover:text-white"
               variant="outline"
             >
               삭제
             </Button>
             <Button
-              onClick={() => editMarkdown(markdownData.id)}
+              onClick={() => editMarkdown(postData.id)}
               className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
               variant="outline"
             >
@@ -221,11 +226,19 @@ export default function MarkdownDetail() {
             </Button>
           </div>
         </div>
-        <CardContent className="ck-body-2 flex justify-end gap-6">
-          <p>작성자: {markdownData?.authorName}</p>
-          <p>생성일: {markdownData?.createdAt.split('T')[0]}</p>
-          <p>수정일: {markdownData?.updatedAt.split('T')[0]}</p>
-          <p>조회수: {markdownData?.viewCount}</p>
+        <CardContent className="ck-body-2 flex justify-between gap-6 items-center">
+          <div className="flex gap-4">
+            <p>작성자: {postData?.authorName}</p>
+            <p>생성일: {postData?.createdAt.split('T')[0]}</p>
+            <p>수정일: {postData?.updatedAt.split('T')[0]}</p>
+            <p>조회수: {postData?.viewCount}</p>
+          </div>
+          <Button
+            variant="link"
+            onClick={() => navigate(`/campaigns/${postData.campaignId}`)}
+          >
+            캠페인 보러 가기
+          </Button>
         </CardContent>
 
         <CardContent>

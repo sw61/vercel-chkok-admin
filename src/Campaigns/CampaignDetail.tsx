@@ -39,6 +39,7 @@ interface Campaign {
   approvalStatus: string;
   approvalComment: string;
   approvalDate: string;
+  createdAt: string;
   creatorRole: string;
   creatorAccountType: string;
   creator: {
@@ -128,33 +129,6 @@ export default function CampaignDetail() {
       key: 'approvalStatus',
       label: '승인 상태',
       value: campaignData?.approvalStatus ?? '정보 없음',
-    },
-    {
-      key: 'recruitmentStartDate',
-      label: '모집 시작일',
-      value: campaignData?.recruitmentStartDate ?? '정보 없음',
-    },
-    {
-      key: 'recruitmentEndDate',
-      label: '모집 마감일',
-      value: campaignData?.recruitmentEndDate ?? '정보 없음',
-    },
-    {
-      key: 'approvalDate',
-      label: '승인일',
-      value: campaignData?.approvalDate
-        ? campaignData.approvalDate.split('T')[0]
-        : '정보 없음',
-    },
-    {
-      key: 'reviewDeadlineDate',
-      label: '리뷰 마감일',
-      value: campaignData?.reviewDeadlineDate ?? '정보 없음',
-    },
-    {
-      key: 'selectionDate',
-      label: '체험단 선정일',
-      value: campaignData?.selectionDate ?? '정보 없음',
     },
   ];
 
@@ -299,12 +273,7 @@ export default function CampaignDetail() {
           <CardContent className="min-w-[400px] pt-2">
             <div className="flex justify-between pb-4">
               <div className="flex items-center gap-4">
-                <div className="flex flex-col gap-2">
-                  <p className="ck-body-1-bold">{campaignData.title}</p>
-                  <p className="ck-caption-1">
-                    {campaignData.productShortInfo || '간단 소개 정보 없음'}
-                  </p>
-                </div>
+                <p className="ck-sub-title-1">{campaignData.title}</p>
               </div>
             </div>
             <div className="mb-6 grid grid-cols-3 gap-6">
@@ -316,6 +285,25 @@ export default function CampaignDetail() {
               ))}
             </div>
             <div className="flex flex-col gap-4">
+              <div className="flex gap-6">
+                <div className="ck-body-2-bold flex flex-col gap-1">
+                  <p>모집 기간</p>
+                  <p>리뷰 마감일</p>
+                  <p>체험단 선정일</p>
+                  <p>생성일</p>
+                  <p>승인일</p>
+                </div>
+                <div className="ck-body-2 flex flex-col gap-1">
+                  <p>
+                    {campaignData.recruitmentStartDate} ~{' '}
+                    {campaignData.recruitmentEndDate}
+                  </p>
+                  <p>{campaignData.reviewDeadlineDate ?? '상시 모집'}</p>{' '}
+                  <p>{campaignData.selectionDate ?? '상시 모집'}</p>
+                  <p>{campaignData.createdAt.split('T')[0]}</p>
+                  <p>{campaignData.approvalDate.split('T')[0]}</p>
+                </div>
+              </div>
               {/* 간단 소개 */}
               <div className="flex items-center gap-4">
                 <div className="flex flex-col gap-2">
@@ -362,8 +350,8 @@ export default function CampaignDetail() {
                       <p className="ck-body-2-bold">캠페인 생성인</p>
                       <p className="ck-body-2 text-ck-gray-700">
                         {campaignData.creator.nickname} |&nbsp;
-                        {campaignData.creator.email}{' '}
-                        <Badge>{campaignData.creatorRole}</Badge>&nbsp;
+                        {campaignData.creator.email} &nbsp;
+                        <Badge>{campaignData.creatorRole}</Badge>
                       </p>
                     </div>
                   </div>
@@ -373,10 +361,12 @@ export default function CampaignDetail() {
                     <div className="flex flex-col gap-2">
                       <div>
                         <p className="ck-body-2-bold">회사 정보</p>
-                        <div className="ck-body-2 text-ck-gray-700 grid grid-cols-3">
-                          <span>{campaignData.company.companyName}</span>
-                          <span>{campaignData.company.contactPerson}</span>
-                          <span>{campaignData.company.phoneNumber}</span>
+                        <div className="ck-body-2 text-ck-gray-700 ">
+                          <span>
+                            {campaignData.company.companyName} |&nbsp;
+                            {campaignData.company.contactPerson} |&nbsp;
+                            {campaignData.company.phoneNumber}
+                          </span>
                         </div>
                       </div>
                       <div>
@@ -406,10 +396,17 @@ export default function CampaignDetail() {
                     <p>업데이트일</p>
                   </div>
                   <div className="ck-body-2">
-                    <p>
-                      {campaignData.missionInfo.missionStartDate} ~{' '}
-                      {campaignData.missionInfo.missionDeadlineDate}
-                    </p>
+                    <div>
+                      {campaignData.missionInfo.missionStartDate ||
+                      campaignData.missionInfo.missionDeadlineDate ? (
+                        <>
+                          {campaignData.missionInfo.missionStartDate} ~{' '}
+                          {campaignData.missionInfo.missionDeadlineDate}
+                        </>
+                      ) : (
+                        <div>상시</div>
+                      )}
+                    </div>
                     <p>{campaignData.missionInfo.createdAt.split('T')[0]}</p>
                     <p>{campaignData.missionInfo.updatedAt.split('T')[0]}</p>
                   </div>

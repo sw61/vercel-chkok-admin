@@ -1,6 +1,7 @@
 // css
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
+
 // page
 import MainPage from './Pages/MainPage';
 import UserTablePage from './Users/UserTablePage';
@@ -10,152 +11,66 @@ import SideBar from './SideBar/SideBar';
 import UserDetail from './Users/UserDetail';
 import AdminDetail from './AdminAccount/AdminDetail';
 import BannersDragpage from './Banners/BannersDragPage';
-import NotFoundPage from './Pages/NotFoundPage';
-import MarkdownDetail from './Markdown/MarkdownDetail';
-import MarkdownTable from './Markdown/MarkdownTable';
-import MarkdownCreate from './Markdown/MarkdownCreate';
 import BannersDetail from './Banners/BannersDetail';
-import ServerDashBoard from './Server/ServerDashBoard';
+import NotFoundPage from './Pages/NotFoundPage';
+import NoticePage from './Notice/NoticePage';
+import NoticeDetail from './Notice/NoticeDetail';
+import NoticeCreate from './Notice/NoticeCreate';
+import PostPage from './Post/PostPage';
+import PostDetail from './Post/PostDetail';
+import PostCreate from './Post/PostCreate';
 import CompanyTablePage from './Company/CompanyTablePage';
+import ServerDashBoard from './Server/ServerDashBoard';
+
 // ts file
 import { LoginForm } from './auth/login-form';
 import { PrivateComponent } from './auth/tokenCheck';
+
 // library
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
-function App() {
-  return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<SideBar />}>
-            {/* 메인 페이지 */}
+// Route configuration
+const privateRoutes = [
+  { path: '/', element: <MainPage /> },
+  { path: '/users', element: <UserTablePage /> },
+  { path: '/users/:userId', element: <UserDetail /> },
+  { path: '/companies', element: <CompanyTablePage /> },
+  { path: '/campaigns', element: <CampaignTablePage /> },
+  { path: '/campaigns/:campaignId', element: <CampaignDetail /> },
+  { path: '/banners', element: <BannersDragpage /> },
+  { path: '/banners/:bannerId', element: <BannersDetail /> },
+  { path: '/admin', element: <AdminDetail /> },
+  { path: '/server', element: <ServerDashBoard /> },
+  { path: '/notices', element: <NoticePage /> },
+  { path: '/notices/:markdownId', element: <NoticeDetail /> },
+  { path: '/notices/create', element: <NoticeCreate /> },
+  { path: '/posts', element: <PostPage /> },
+  { path: '/posts/:markdownId', element: <PostDetail /> },
+  { path: '/posts/create', element: <PostCreate /> },
+];
+
+const App = () => (
+  <>
+    <BrowserRouter>
+      <Routes>
+        {/* Layout route with SideBar */}
+        <Route element={<SideBar />}>
+          {privateRoutes.map(({ path, element }) => (
             <Route
-              path="/"
-              element={
-                <PrivateComponent>
-                  <MainPage />
-                </PrivateComponent>
-              }
-            ></Route>
-            {/* 사용자 테이블 페이지 */}
-            <Route
-              path="/users"
-              element={
-                <PrivateComponent>
-                  <UserTablePage />
-                </PrivateComponent>
-              }
-            ></Route>
-            {/* 사용자 상세 페이지 */}
-            <Route
-              path="/users/:userId"
-              element={
-                <PrivateComponent>
-                  <UserDetail />
-                </PrivateComponent>
-              }
-            ></Route>
-            {/* 클라이언트 심사 목록 */}
-            <Route
-              path="/companies"
-              element={
-                <PrivateComponent>
-                  <CompanyTablePage />
-                </PrivateComponent>
-              }
-            ></Route>
-            {/* 캠페인 페이지 */}
-            <Route
-              path="/campaigns"
-              element={
-                <PrivateComponent>
-                  <CampaignTablePage />
-                </PrivateComponent>
-              }
-            ></Route>
-            {/* 캠페인 상세 페이지 테스트*/}
-            <Route
-              path="/campaigns/:campaignId"
-              element={
-                <PrivateComponent>
-                  <CampaignDetail />
-                </PrivateComponent>
-              }
-            ></Route>
-            {/* 배너 목록 페이지 */}
-            <Route
-              path="/banners"
-              element={
-                <PrivateComponent>
-                  <BannersDragpage />
-                </PrivateComponent>
-              }
-            ></Route>
-            {/* 배너 상세 페이지 */}
-            <Route
-              path="/banners/:bannerId"
-              element={
-                <PrivateComponent>
-                  <BannersDetail />
-                </PrivateComponent>
-              }
-            ></Route>
-            {/* 관리자 계정 페이지 */}
-            <Route
-              path="/admin"
-              element={
-                <PrivateComponent>
-                  <AdminDetail />
-                </PrivateComponent>
-              }
-            ></Route>
-            {/* 서버 데이터 대시보드 */}
-            <Route
-              path="/server"
-              element={
-                <PrivateComponent>
-                  <ServerDashBoard />
-                </PrivateComponent>
-              }
-            ></Route>
-            {/* 마크다운 문서 목록 */}
-            <Route
-              path="/documents"
-              element={
-                <PrivateComponent>
-                  <MarkdownTable />
-                </PrivateComponent>
-              }
-            ></Route>
-            {/* 마크다운 문서 상세 페이지 */}
-            <Route
-              path="/documents/:markdownId"
-              element={
-                <PrivateComponent>
-                  <MarkdownDetail />
-                </PrivateComponent>
-              }
-            ></Route>
-            {/* 마크다운 문서 상세 페이지 */}
-            <Route
-              path="/documents/create"
-              element={
-                <PrivateComponent>
-                  <MarkdownCreate />
-                </PrivateComponent>
-              }
-            ></Route>
-          </Route>
-          {/* 로그인 페이지 */}
-          <Route path="/login" element={<LoginForm />}></Route>
-          <Route path="/*" element={<NotFoundPage />}></Route>
-        </Routes>
-      </BrowserRouter>
-      <ToastContainer /> {/* react-toast */}
-    </>
-  );
-}
+              key={path}
+              path={path}
+              element={<PrivateComponent>{element}</PrivateComponent>}
+            />
+          ))}
+        </Route>
+        {/* Public routes */}
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/*" element={<NotFoundPage />} />
+      </Routes>
+    </BrowserRouter>
+    <ToastContainer />
+  </>
+);
 
 export default App;

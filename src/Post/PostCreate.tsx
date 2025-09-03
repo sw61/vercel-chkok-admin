@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { ChevronLeft } from 'lucide-react';
 
-export default function MarkdownCreate() {
+export default function PostCreate() {
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string | undefined>('');
   const [showImageSizeModal, setShowImageSizeModal] = useState<boolean>(false);
@@ -25,12 +25,11 @@ export default function MarkdownCreate() {
     url: string;
     name: string;
   } | null>(null);
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [editorApi, setEditorApi] = useState<any>(null);
   const navigate = useNavigate();
 
-  const createMarkdown = async () => {
+  const createPost = async () => {
     if (!title) {
       toast.error('제목을 입력해주세요.');
       return;
@@ -48,13 +47,22 @@ export default function MarkdownCreate() {
 
     try {
       console.log('전송 데이터:', { title, content: html });
-      const response = await axiosInterceptor.post('/api/admin/markdowns', {
+      const response = await axiosInterceptor.post('/api/admin/posts', {
         title,
         content: html,
+        campaignId: 1,
+        visitInfo: {
+          contactPhone: '01012345678',
+          hompage: 'https://chkok.kr',
+          businessAddress: '서울시 강남구 테헤란로',
+          businessDetailAddress: '123-45 건물 2층',
+          lat: 37.5665,
+          lng: 126.978,
+        },
       });
       console.log('API 응답:', response);
       toast.success('문서가 생성되었습니다.');
-      navigate('/documents');
+      navigate('/posts');
     } catch (error) {
       console.error('문서 생성 오류:', error);
       toast.error('문서 생성에 실패했습니다.');
@@ -150,7 +158,7 @@ export default function MarkdownCreate() {
     <div className="p-6">
       <div className="mb-4">
         <ChevronLeft
-          onClick={() => navigate('/documents')}
+          onClick={() => navigate('/posts')}
           className="cursor-pointer"
         />
       </div>
@@ -160,24 +168,14 @@ export default function MarkdownCreate() {
             <div className="mb-4">
               <div className="mb-2 flex justify-between items-center">
                 <div className="ck-body-2 flex flex-col justify-end">제목</div>
-                <div className="flex gap-4">
-                  <Button
-                    onClick={() => navigate('/documents')}
-                    className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
-                    variant="outline"
-                  >
-                    취소
-                  </Button>
-                  <Button
-                    onClick={createMarkdown}
-                    className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
-                    variant="outline"
-                  >
-                    생성
-                  </Button>
-                </div>
+                <Button
+                  onClick={createPost}
+                  className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
+                  variant="outline"
+                >
+                  생성
+                </Button>
               </div>
-
               <Input
                 value={title}
                 onChange={(e) => setTitle(() => e.target.value)}

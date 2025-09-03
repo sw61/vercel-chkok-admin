@@ -9,7 +9,7 @@ import {
   type VisibilityState,
   type ColumnFiltersState,
 } from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown, Search } from 'lucide-react';
+import { ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -19,20 +19,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useState, useEffect, type KeyboardEvent } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInterceptor from '@/lib/axios-interceptors';
-import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
-import MarkdownTableSkeleton from '../Skeleton/MakrdownTableSkeleton';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
-interface MarkdownData {
+interface Post {
   id: number;
   title: string;
   viewCount: number;
@@ -42,11 +32,15 @@ interface MarkdownData {
   updatedAt: string;
 }
 
-interface CustomColumnMeta {
-  label?: string;
+interface PostDataTableProps {
+  postData: Post[];
+  columnFilters: ColumnFiltersState;
+  setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
+  columnVisibility: VisibilityState;
+  setColumnVisibility: React.Dispatch<React.SetStateAction<VisibilityState>>;
 }
 
-const columns: ColumnDef<MarkdownData>[] = [
+const columns: ColumnDef<Post>[] = [
   {
     accessorKey: 'id',
     header: ({ column }) => (
@@ -62,7 +56,6 @@ const columns: ColumnDef<MarkdownData>[] = [
       </div>
     ),
     cell: ({ row }) => <div>{row.getValue('id')}</div>,
-    meta: { label: 'id' } as CustomColumnMeta,
     size: 50,
   },
   {
@@ -74,7 +67,7 @@ const columns: ColumnDef<MarkdownData>[] = [
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          문서 제목
+          제목
           <ArrowUpDown />
         </Button>
       </div>
@@ -84,7 +77,6 @@ const columns: ColumnDef<MarkdownData>[] = [
         {row.getValue('title')}
       </div>
     ),
-    meta: { label: '문서 제목' } as CustomColumnMeta,
     size: 200,
   },
   {
@@ -95,15 +87,30 @@ const columns: ColumnDef<MarkdownData>[] = [
         className="has-[>svg]:px-0"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
-        문서 제작자
+        작성자
         <ArrowUpDown />
       </Button>
     ),
     cell: ({ row }) => (
       <div className="lowercase">{row.getValue('authorName')}</div>
     ),
-    meta: { label: '문서 제작자' } as CustomColumnMeta,
     size: 120,
+  },
+
+  {
+    accessorKey: 'viewCount',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="has-[>svg]:px-0"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        조회수
+        <ArrowUpDown />
+      </Button>
+    ),
+    cell: ({ row }) => <div>{row.getValue('viewCount')}</div>,
+    size: 80,
   },
   {
     accessorKey: 'createdAt',
@@ -122,24 +129,26 @@ const columns: ColumnDef<MarkdownData>[] = [
       const date = fullDate.split('T')[0];
       return <div>{date}</div>;
     },
-    meta: { label: '생성일' } as CustomColumnMeta,
     size: 150,
   },
   {
-    accessorKey: 'viewCount',
+    accessorKey: 'updatedAt',
     header: ({ column }) => (
       <Button
         variant="ghost"
         className="has-[>svg]:px-0"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
-        조회수
+        업데이트일
         <ArrowUpDown />
       </Button>
     ),
-    cell: ({ row }) => <div>{row.getValue('viewCount')}</div>,
-    meta: { label: '조회수' } as CustomColumnMeta,
-    size: 80,
+    cell: ({ row }) => {
+      const fullDate = row.getValue('updatedAt') as string;
+      const date = fullDate.split('T')[0];
+      return <div>{date}</div>;
+    },
+    size: 150,
   },
 ];
 
@@ -149,59 +158,19 @@ const totalColumnWidth = columns.reduce(
   0
 );
 
-export default function MarkdownTable() {
-  const [markdownData, setMarkdownData] = useState<MarkdownData[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+export function PostTable({
+  postData,
+  columnFilters,
+  setColumnFilters,
+  columnVisibility,
+  setColumnVisibility,
+}: PostDataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const [searchKey, setSearchKey] = useState<string>('');
-  const headerMenu = [
-    { id: 'id', label: 'ID' },
-    { id: 'title', label: '문서 제목' },
-    { id: 'authorName', label: '문서 제작자' },
-    { id: 'createdAt', label: '생성일' },
-    { id: 'viewCount', label: '조회수' },
-  ];
   const navigate = useNavigate();
 
-  const getMarkdownData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInterceptor.get('/api/admin/markdowns');
-      const data = response.data.data.markdowns;
-      setMarkdownData(data);
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const handleSearch = async () => {
-    try {
-      const response = await axiosInterceptor.get(
-        `/api/admin/markdowns/search?title=${searchKey}`
-      );
-      const data = response.data.data.markdowns;
-      setMarkdownData(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const handleEnterSearch = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      handleSearch();
-    }
-  };
-
-  useEffect(() => {
-    getMarkdownData();
-  }, []);
-
   const table = useReactTable({
-    data: markdownData,
+    data: postData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -220,66 +189,8 @@ export default function MarkdownTable() {
     enableColumnResizing: false,
   });
 
-  if (isLoading) {
-    return <MarkdownTableSkeleton />;
-  }
-
   return (
-    <Card className="w-full p-6">
-      <div className="mb-2 flex justify-between">
-        <div className="flex gap-4">
-          <div>
-            {/* 테이블 헤더 카테고리 */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto">
-                  항목 <ChevronDown />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {headerMenu.map((column) => (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={columnVisibility[column.id] !== false}
-                    onCheckedChange={(value) =>
-                      setColumnVisibility((prev) => ({
-                        ...prev,
-                        [column.id]: value,
-                      }))
-                    }
-                  >
-                    {column.label}
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          <Button
-            variant="outline"
-            onClick={() => navigate('/documents/create')}
-          >
-            마크다운 문서 생성하러 가기
-          </Button>
-        </div>
-
-        {/* 검색창 */}
-        <div className="ck-caption-1 relative">
-          <Input
-            placeholder="문서 제목 검색"
-            value={searchKey}
-            onChange={(e) => setSearchKey(e.target.value)}
-            className="pr-12"
-            onKeyDown={handleEnterSearch}
-          />
-          <button
-            className="absolute top-0 right-0 h-full w-10 cursor-pointer"
-            onClick={handleSearch}
-          >
-            <Search />
-          </button>
-        </div>
-      </div>
+    <div className="w-full">
       <div className="overflow-x-auto rounded-md border">
         <Table
           className="table-fixed"
@@ -313,7 +224,7 @@ export default function MarkdownTable() {
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   className="cursor-pointer"
-                  onClick={() => navigate(`/documents/${row.original.id}`)}
+                  onClick={() => navigate(`/posts/${row.original.id}`)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
@@ -335,13 +246,13 @@ export default function MarkdownTable() {
                   colSpan={columns.length}
                   className="h-24 text-center whitespace-nowrap"
                 >
-                  데이터가 없습니다.
+                  No results.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-    </Card>
+    </div>
   );
 }

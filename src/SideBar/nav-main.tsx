@@ -1,7 +1,6 @@
 'use client';
 
 import { ChevronRight, type LucideIcon } from 'lucide-react';
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -44,13 +43,13 @@ export function NavMain({
           <Collapsible
             key={item.title}
             asChild
-            defaultOpen={item.url === location.pathname}
+            defaultOpen={location.pathname.startsWith(item.url)}
           >
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
                 tooltip={item.title}
-                isActive={item.url === location.pathname}
+                isActive={location.pathname.startsWith(item.url)}
               >
                 <a href={item.url} className="py-5">
                   <item.icon />
@@ -68,7 +67,7 @@ export function NavMain({
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {item.items?.map((subItem) => (
+                      {item.items.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
                             <a href={subItem.url}>
