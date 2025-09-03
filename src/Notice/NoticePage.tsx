@@ -18,6 +18,7 @@ import UserTableSkeleton from '@/Skeleton/UserTableSkeleton';
 import { PaginationHook } from '@/hooks/PaginationHook';
 import { NoticeTable } from './NoticeTable';
 import { useNavigate } from 'react-router-dom';
+import MarkdownTableSkeleton from '@/Skeleton/MakrdownTableSkeleton';
 
 interface Notice {
   id: number;
@@ -67,7 +68,6 @@ export default function NoticePage() {
       const data = response.data.data;
       setNoticeData(data.notices);
       setPageData(data.pagination);
-      console.log(data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -160,7 +160,7 @@ export default function NoticePage() {
         </div>
 
         {isLoading ? (
-          <UserTableSkeleton />
+          <MarkdownTableSkeleton />
         ) : !noticeData || !pageData ? (
           <div className="text-ck-gray-600 ck-body-2 flex items-center justify-center rounded-md border py-10">
             데이터가 없습니다.

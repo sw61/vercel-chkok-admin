@@ -18,6 +18,17 @@ import { Button } from '@/components/ui/button';
 import TurndownService from 'turndown';
 import MarkdownDetailSkeleton from '../Skeleton/MarkdownDetailSkeleton';
 import { ChevronLeft } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface NoticeData {
   id: number;
@@ -84,7 +95,7 @@ export default function NoticeDetail() {
         title: editData.title,
         content: html,
       });
-      navigate('/documents');
+      navigate('/notices');
       toast.success('문서가 수정되었습니다.');
       console.log(response);
       await getNoticeDetail(markdownId!);
@@ -96,15 +107,13 @@ export default function NoticeDetail() {
 
   // 마크다운 문서 삭제
   const deleteMarkdown = async (id: number) => {
-    if (window.confirm('문서를 삭제하시겠습니까?')) {
-      try {
-        await axiosInterceptor.delete(`/api/admin/notices/${id}`);
-        navigate('/documents');
-        toast.success('문서가 삭제되었습니다.');
-      } catch (error) {
-        console.log(error);
-        toast.error('문서 삭제에 실패했습니다.');
-      }
+    try {
+      await axiosInterceptor.delete(`/api/admin/notices/${id}`);
+      navigate('/notices');
+      toast.success('문서가 삭제되었습니다.');
+    } catch (error) {
+      console.log(error);
+      toast.error('문서 삭제에 실패했습니다.');
     }
   };
 
@@ -202,13 +211,33 @@ export default function NoticeDetail() {
         <div className="flex items-center justify-between px-6">
           <CardTitle className="ck-title">공지사항</CardTitle>
           <div className="flex gap-3">
-            <Button
-              onClick={() => deleteMarkdown(noticeData.id)}
-              className="hover:bg-ck-red-500 px-4 py-2 hover:text-white"
-              variant="outline"
-            >
-              삭제
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  className="hover:bg-ck-red-500 px-4 py-2 hover:text-white"
+                  variant="outline"
+                >
+                  삭제
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="w-[350px]">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>문서를 삭제하시겠습니까?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    이 작업은 되돌릴 수 없습니다
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>취소</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => deleteMarkdown(noticeData.id)}
+                  >
+                    확인
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
             <Button
               onClick={() => editMarkdown(noticeData.id)}
               className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"

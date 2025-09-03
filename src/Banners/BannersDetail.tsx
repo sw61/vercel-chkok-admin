@@ -5,8 +5,19 @@ import PulseLoader from 'react-spinners/PulseLoader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Pencil, Delete, ChevronLeft } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { toast } from 'react-toastify';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface BannerData {
   id: number;
@@ -123,9 +134,7 @@ export default function BannersDetail() {
         position: editBannerData.position,
         displayOrder: editBannerData.displayOrder,
       });
-      console.log('배너 수정 성공:', response);
-      toast.success('배너가 성공적으로 수정되었습니다.');
-
+      toast.success('배너가 수정되었습니다.');
       await getBannerDetail(bannerId!);
     } catch (error) {
       console.error(error);
@@ -137,16 +146,15 @@ export default function BannersDetail() {
 
   // 배너 삭제
   const deleteBanners = async (id: number) => {
-    if (window.confirm('배너를 삭제하시겠습니까?'))
-      try {
-        const response = await axiosInterceptor.delete(`/api/banners/${id}`);
-        console.log('배너 삭제 성공:', response);
-        toast.success('배너가 성공적으로 삭제되었습니다.');
-        navigate('/banners');
-      } catch (error) {
-        console.error(error);
-        toast.error('배너 삭제에 실패했습니다.');
-      }
+    try {
+      const response = await axiosInterceptor.delete(`/api/banners/${id}`);
+      console.log('배너 삭제 성공:', response);
+      toast.success('배너가 성공적으로 삭제되었습니다.');
+      navigate('/banners');
+    } catch (error) {
+      console.error(error);
+      toast.error('배너 삭제에 실패했습니다.');
+    }
   };
 
   // 폼 입력 핸들러
@@ -230,40 +238,77 @@ export default function BannersDetail() {
                 <div className="ck-title flex items-center">배너 수정</div>
                 <div className="flex gap-4">
                   <Button
-                    onClick={() => editBanners(bannerData.id)}
-                    className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
-                    variant="outline"
-                  >
-                    저장
-                  </Button>
-                  <Button
                     onClick={toggleEditMode}
                     className="ck-body-1 hover:bg-ck-gray-600 cursor-pointer hover:text-white"
                     variant="outline"
                   >
                     취소
                   </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
+                        variant="outline"
+                      >
+                        저장
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="w-[350px]">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          배너를 저장하시겠습니까?
+                        </AlertDialogTitle>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>취소</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => editBanners(bannerData.id)}
+                        >
+                          확인
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </>
             ) : (
               <>
                 <div className="ck-title flex items-center">배너 정보</div>
                 <div className="flex gap-4">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        className="ck-body-1 hover:bg-ck-red-500 cursor-pointer hover:text-white"
+                        variant="outline"
+                      >
+                        삭제
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="w-[350px]">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          배너를 삭제하시겠습니까?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          이 작업은 되돌릴 수 없습니다
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>취소</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => deleteBanners(bannerData.id)}
+                        >
+                          확인
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                   <Button
                     onClick={toggleEditMode}
                     className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
                     variant="outline"
                   >
-                    <Pencil />
                     수정
-                  </Button>
-                  <Button
-                    onClick={() => deleteBanners(bannerData.id)}
-                    className="ck-body-1 hover:bg-ck-red-500 cursor-pointer hover:text-white"
-                    variant="outline"
-                  >
-                    <Delete />
-                    삭제
                   </Button>
                 </div>
               </>

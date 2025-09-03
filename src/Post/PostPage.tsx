@@ -18,6 +18,7 @@ import UserTableSkeleton from '@/Skeleton/UserTableSkeleton';
 import { PaginationHook } from '@/hooks/PaginationHook';
 import { PostTable } from './PostTable';
 import { useNavigate } from 'react-router-dom';
+import MarkdownTableSkeleton from '@/Skeleton/MakrdownTableSkeleton';
 
 interface Post {
   id: number;
@@ -164,7 +165,7 @@ export default function PostPage() {
         </div>
 
         {isLoading ? (
-          <UserTableSkeleton />
+          <MarkdownTableSkeleton />
         ) : !postData || !pageData ? (
           <div className="text-ck-gray-600 ck-body-2 flex items-center justify-center rounded-md border py-10">
             데이터가 없습니다.

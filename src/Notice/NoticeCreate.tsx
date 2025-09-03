@@ -57,7 +57,7 @@ export default function NoticeCreate() {
       });
       console.log('API 응답:', response);
       toast.success('문서가 생성되었습니다.');
-      navigate('/posts');
+      navigate('/notices');
     } catch (error) {
       console.error('문서 생성 오류:', error);
       toast.error('문서 생성에 실패했습니다.');

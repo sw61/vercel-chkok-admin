@@ -26,6 +26,9 @@ const badgeVariants = cva(
           'border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90',
         사용자: 'text-green-500 bg-green-100',
         관리자: 'text-ck-red-500 bg-ck-red-100',
+        승인됨: 'bg-ck-blue-500 text-white',
+        대기중: 'bg-yellow-500 text-white',
+        거절됨: 'bg-ck-red-500 text-white',
       },
     },
     defaultVariants: {
