@@ -202,13 +202,7 @@ export default function UserDetail() {
                 {userData.role === '사용자' && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button
-                        className="ck-body-1 flex cursor-pointer items-center border"
-                        variant="outline"
-                      >
-                        <ArrowUpNarrowWide />
-                        권한 승급
-                      </Button>
+                      <Button variant="outline">권한 승급</Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent className="w-[350px]">
                       <AlertDialogHeader>
@@ -240,7 +234,6 @@ export default function UserDetail() {
                       }`}
                       variant="outline"
                     >
-                      {userData.active ? <UserX /> : <UserCheck />}
                       {userData.active ? '비활성화' : '활성화'}
                     </Button>
                   </AlertDialogTrigger>
@@ -267,13 +260,7 @@ export default function UserDetail() {
                 </AlertDialog>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button
-                      className="ck-body-1 hover:bg-ck-red-500 flex cursor-pointer items-center border hover:text-white"
-                      variant="outline"
-                    >
-                      <Trash />
-                      계정 삭제
-                    </Button>
+                    <Button variant="outline">계정 삭제</Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent className="w-[350px]">
                     <AlertDialogHeader>

@@ -246,12 +246,7 @@ export default function BannersDetail() {
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button
-                        className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
-                        variant="outline"
-                      >
-                        저장
-                      </Button>
+                      <Button variant="outline">저장</Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent className="w-[350px]">
                       <AlertDialogHeader>
@@ -277,12 +272,7 @@ export default function BannersDetail() {
                 <div className="flex gap-4">
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button
-                        className="ck-body-1 hover:bg-ck-red-500 cursor-pointer hover:text-white"
-                        variant="outline"
-                      >
-                        삭제
-                      </Button>
+                      <Button variant="outline">삭제</Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent className="w-[350px]">
                       <AlertDialogHeader>
@@ -303,11 +293,7 @@ export default function BannersDetail() {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                  <Button
-                    onClick={toggleEditMode}
-                    className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
-                    variant="outline"
-                  >
+                  <Button onClick={toggleEditMode} variant="outline">
                     수정
                   </Button>
                 </div>

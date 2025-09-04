@@ -229,12 +229,7 @@ export default function CampaignDetail() {
               <>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button
-                      className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
-                      variant="outline"
-                    >
-                      승인
-                    </Button>
+                    <Button variant="outline">승인</Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent className="w-[350px]">
                     <AlertDialogHeader>
@@ -257,12 +252,7 @@ export default function CampaignDetail() {
                 </AlertDialog>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button
-                      className="ck-body-1 hover:bg-ck-red-500 cursor-pointer hover:text-white"
-                      variant="outline"
-                    >
-                      거절
-                    </Button>
+                    <Button variant="outline">거절</Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent className="w-[350px]">
                     <AlertDialogHeader>
@@ -287,12 +277,7 @@ export default function CampaignDetail() {
             )}
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button
-                  className="flex items-center border text-sm hover:bg-red-500 hover:text-white"
-                  variant="outline"
-                >
-                  삭제
-                </Button>
+                <Button variant="outline">삭제</Button>
               </AlertDialogTrigger>
               <AlertDialogContent className="w-[350px]">
                 <AlertDialogHeader>
