@@ -20,6 +20,7 @@ export default function MainPage() {
         <div className="rounded-xl">
           <ServerDashBoard />
         </div>
+      {/* 테스트 */}
       </div>
     </>
   );
