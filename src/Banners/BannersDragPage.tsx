@@ -411,7 +411,7 @@ export default function BannersDragPage() {
   }
 
   return (
-    <div className="grid-row grid gap-10 p-6">
+    <div className="grid-row grid gap-10 p-6 min-w-[800px]">
       {/* 배너 상세 정보 */}
       <Card>
         <CardHeader>
