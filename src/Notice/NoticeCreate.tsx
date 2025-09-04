@@ -159,13 +159,13 @@ export default function NoticeCreate() {
       </div>
       <Card>
         <div className="flex flex-col items-center px-6">
-          <div className="w-full " data-color-mode="light">
+          <div className="w-full" data-color-mode="light">
             <div className="mb-4">
               <div className="mb-2 flex justify-between items-center">
                 <div className="ck-body-2 flex flex-col justify-end">제목</div>
                 <Button
                   onClick={createNotice}
-                  className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
+                  className="px-4 py-2"
                   variant="outline"
                 >
                   생성

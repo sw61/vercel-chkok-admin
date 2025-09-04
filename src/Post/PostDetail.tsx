@@ -29,6 +29,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Label } from '@/components/ui/label';
 
 interface PostData {
   id: number;
@@ -46,7 +52,7 @@ interface PostData {
     businessDetailAddress: string;
     lat: number;
     lng: number;
-  };
+  } | null;
 }
 
 export default function PostDetail() {
@@ -63,14 +69,65 @@ export default function PostDetail() {
     url: string;
     name: string;
   } | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [editorApi, setEditorApi] = useState<any>(null);
+  const [editorApi, setEditorApi] = useState<any>(null); // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [contactPhone, setContactPhone] = useState<string>('');
+  const [contactPhoneError, setContactPhoneError] = useState<string>('');
+  const [homepage, setHomepage] = useState<string>('');
+  const [businessAddress, setBusinessAddress] = useState<string>('');
+  const [businessDetailAddress, setBusinessDetailAddress] =
+    useState<string>('');
+  const [lat, setLat] = useState<number | undefined>(undefined);
+  const [lng, setLng] = useState<number | undefined>(undefined);
 
-  // html -> Markdown 변환
+  // HTML -> Markdown 변환
   const turndownService = new TurndownService({
     headingStyle: 'atx',
     codeBlockStyle: 'fenced',
   });
+
+  // 숫자 입력 핸들러
+  const handleNumberInput = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setter: React.Dispatch<React.SetStateAction<number | undefined>>
+  ) => {
+    const value = e.target.value;
+    setter(value === '' ? undefined : parseFloat(value));
+  };
+
+  // contactPhone 입력 시 오류 제거
+  const handleContactPhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setContactPhone(e.target.value);
+    if (e.target.value.trim()) {
+      setContactPhoneError('');
+    }
+  };
+
+  // 유효성 검사
+  const validateRequiredFields = () => {
+    if (!editData.title) {
+      toast.error('제목을 입력해주세요.');
+      return false;
+    }
+    if (!editData.content) {
+      toast.error('내용을 입력해주세요.');
+      return false;
+    }
+    if (!contactPhone.trim()) {
+      setContactPhoneError('연락처는 필수 입력 항목입니다.');
+      toast.error('연락처를 입력해주세요.');
+      return false;
+    }
+    if (lat !== undefined && isNaN(lat)) {
+      toast.error('위도는 유효한 숫자 형식이어야 합니다.');
+      return false;
+    }
+    if (lng !== undefined && isNaN(lng)) {
+      toast.error('경도는 유효한 숫자 형식이어야 합니다.');
+      return false;
+    }
+    return true;
+  };
+
   // 체험콕 글 상세 정보
   const getPostDetail = async (id: string) => {
     setIsLoading(true);
@@ -81,6 +138,21 @@ export default function PostDetail() {
 
       setPostData(data);
       setEditData({ title: data.title, content: markdownContent });
+      if (data.visitInfo) {
+        setContactPhone(data.visitInfo.contactPhone || '');
+        setHomepage(data.visitInfo.homepage || '');
+        setBusinessAddress(data.visitInfo.businessAddress || '');
+        setBusinessDetailAddress(data.visitInfo.businessDetailAddress || '');
+        setLat(data.visitInfo.lat ?? undefined);
+        setLng(data.visitInfo.lng ?? undefined);
+      } else {
+        setContactPhone('');
+        setHomepage('');
+        setBusinessAddress('');
+        setBusinessDetailAddress('');
+        setLat(undefined);
+        setLng(undefined);
+      }
       console.log(data);
     } catch (error) {
       console.log(error);
@@ -92,6 +164,9 @@ export default function PostDetail() {
 
   // 체험콕 글 문서 수정
   const editMarkdown = async (id: number) => {
+    if (!validateRequiredFields()) {
+      return;
+    }
     try {
       const markdownComponent = (
         <ReactMarkdown rehypePlugins={[rehypeRaw]}>
@@ -99,11 +174,23 @@ export default function PostDetail() {
         </ReactMarkdown>
       );
       const html = renderToStaticMarkup(markdownComponent);
-      const response = await axiosInterceptor.put(`/api/admin/posts/${id}`, {
+      const payload = {
         title: editData.title,
         content: html,
-      });
-      navigate('/posts');
+        visitInfo: {
+          contactPhone: contactPhone || null,
+          homepage: homepage || null,
+          businessAddress: businessAddress || null,
+          businessDetailAddress: businessDetailAddress || null,
+          lat: lat ?? null,
+          lng: lng ?? null,
+        },
+      };
+      console.log('전송 데이터:', payload);
+      const response = await axiosInterceptor.put(
+        `/api/admin/posts/${id}`,
+        payload
+      );
       toast.success('문서가 수정되었습니다.');
       console.log(response);
       await getPostDetail(markdownId!);
@@ -115,15 +202,13 @@ export default function PostDetail() {
 
   // 체험콕 글 삭제
   const deleteMarkdown = async (id: number) => {
-    if (window.confirm('문서를 삭제하시겠습니까?')) {
-      try {
-        await axiosInterceptor.delete(`/api/admin/posts/${id}`);
-        navigate('/posts');
-        toast.success('문서가 삭제되었습니다.');
-      } catch (error) {
-        console.log(error);
-        toast.error('문서 삭제에 실패했습니다.');
-      }
+    try {
+      await axiosInterceptor.delete(`/api/admin/posts/${id}`);
+      navigate('/posts');
+      toast.success('문서가 삭제되었습니다.');
+    } catch (error) {
+      console.log(error);
+      toast.error('문서 삭제에 실패했습니다.');
     }
   };
 
@@ -210,7 +295,7 @@ export default function PostDetail() {
   }
 
   return (
-    <div className="w-full p-6">
+    <div className="min-w-[800px] p-6">
       <div className="mb-4">
         <ChevronLeft
           onClick={() => navigate('/posts')}
@@ -221,12 +306,110 @@ export default function PostDetail() {
         <div className="flex items-center justify-between px-6">
           <CardTitle className="ck-title">체험콕 글</CardTitle>
           <div className="flex gap-3">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline">필드 입력</Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[500px]">
+                <div className="grid gap-4">
+                  <div className="space-y-2">
+                    <h4 className="leading-none font-medium">필드 입력</h4>
+                    <p className="text-muted-foreground text-sm">
+                      글 수정을 위해 필드를 입력해주세요
+                    </p>
+                  </div>
+                  <div className="grid gap-2">
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="contactPhone">
+                        연락처 <span className="text-ck-red-500">*</span> 필수
+                      </Label>
+                      <div className="col-span-2">
+                        <Input
+                          id="contactPhone"
+                          className="h-8"
+                          placeholder="01012345678"
+                          value={contactPhone}
+                          onChange={handleContactPhoneChange}
+                          onBlur={() => {
+                            if (!contactPhone.trim()) {
+                              setContactPhoneError(
+                                '연락처는 필수 입력 항목입니다.'
+                              );
+                            }
+                          }}
+                        />
+                        {contactPhoneError && (
+                          <p className="text-ck-red-500 text-xs mt-1">
+                            {contactPhoneError}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="homepage">홈페이지 주소</Label>
+                      <Input
+                        id="homepage"
+                        className="col-span-2 h-8"
+                        placeholder="https://chkok.kr"
+                        value={homepage}
+                        onChange={(e) => setHomepage(e.target.value)}
+                      />
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="businessAddress">위치 정보</Label>
+                      <Input
+                        id="businessAddress"
+                        className="col-span-2 h-8"
+                        placeholder="위치 정보 입력"
+                        value={businessAddress}
+                        onChange={(e) => setBusinessAddress(e.target.value)}
+                      />
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="businessDetailAddress">
+                        위치 정보 상세
+                      </Label>
+                      <Input
+                        id="businessDetailAddress"
+                        className="col-span-2 h-8"
+                        placeholder="위치 정보 상세 입력"
+                        value={businessDetailAddress}
+                        onChange={(e) =>
+                          setBusinessDetailAddress(e.target.value)
+                        }
+                      />
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="lat">위도</Label>
+                      <Input
+                        id="lat"
+                        type="number"
+                        step="any"
+                        className="col-span-2 h-8"
+                        placeholder="위도를 입력하세요"
+                        value={lat ?? ''}
+                        onChange={(e) => handleNumberInput(e, setLat)}
+                      />
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="lng">경도</Label>
+                      <Input
+                        id="lng"
+                        type="number"
+                        step="any"
+                        className="col-span-2 h-8"
+                        placeholder="경도를 입력하세요"
+                        value={lng ?? ''}
+                        onChange={(e) => handleNumberInput(e, setLng)}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button
-                  className="hover:bg-ck-red-500 px-4 py-2 hover:text-white"
-                  variant="outline"
-                >
+                <Button className=" px-4 py-2 " variant="outline">
                   삭제
                 </Button>
               </AlertDialogTrigger>
@@ -247,13 +430,24 @@ export default function PostDetail() {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-            <Button
-              onClick={() => editMarkdown(postData.id)}
-              className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
-              variant="outline"
-            >
-              수정
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button className=" px-4 py-2" variant="outline">
+                  수정
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="w-[350px]">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>문서를 수정하시겠습니까?</AlertDialogTitle>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>취소</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => editMarkdown(postData.id)}>
+                    확인
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
         <CardContent className="ck-body-2 flex justify-between gap-6 items-center">

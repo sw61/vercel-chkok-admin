@@ -207,16 +207,13 @@ export default function NoticeDetail() {
           className="cursor-pointer"
         />
       </div>
-      <Card className="w-full px-6 py-4">
+      <Card className="min-w-[800px] px-6 py-4">
         <div className="flex items-center justify-between px-6">
           <CardTitle className="ck-title">공지사항</CardTitle>
           <div className="flex gap-3">
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button
-                  className="hover:bg-ck-red-500 px-4 py-2 hover:text-white"
-                  variant="outline"
-                >
+                <Button className="px-4 py-2" variant="outline">
                   삭제
                 </Button>
               </AlertDialogTrigger>
@@ -240,7 +237,7 @@ export default function NoticeDetail() {
 
             <Button
               onClick={() => editMarkdown(noticeData.id)}
-              className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
+              className="px-4 py-2"
               variant="outline"
             >
               수정

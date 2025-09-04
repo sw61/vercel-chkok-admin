@@ -22,7 +22,6 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 
 export default function PostCreate() {
   const [title, setTitle] = useState<string>('');
@@ -33,21 +32,20 @@ export default function PostCreate() {
     name: string;
   } | null>(null);
   const [editorApi, setEditorApi] = useState<any>(null); // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [isVisitInfo, setIsVisitInfo] = useState<boolean>(false); // 방문형 체크박스 상태
-  const [campaignId, setCampaignId] = useState<number | undefined>(undefined); // 숫자 형식
-  const [contactPhone, setContactPhone] = useState<string>(''); // 문자열 유지
-  const [contactPhoneError, setContactPhoneError] = useState<string>(''); // contactPhone 오류
-  const [homepage, setHomepage] = useState<string>(''); // 문자열 유지
-  const [businessAddress, setBusinessAddress] = useState<string>(''); // 문자열 유지
+  const [campaignId, setCampaignId] = useState<number | undefined>(undefined);
+  const [contactPhone, setContactPhone] = useState<string>('');
+  const [contactPhoneError, setContactPhoneError] = useState<string>('');
+  const [homepage, setHomepage] = useState<string>('');
+  const [businessAddress, setBusinessAddress] = useState<string>('');
   const [businessDetailAddress, setBusinessDetailAddress] =
-    useState<string>(''); // 문자열 유지
-  const [lat, setLat] = useState<number | undefined>(undefined); // 숫자 형식
-  const [lng, setLng] = useState<number | undefined>(undefined); // 숫자 형식
+    useState<string>('');
+  const [lat, setLat] = useState<number | undefined>(undefined);
+  const [lng, setLng] = useState<number | undefined>(undefined);
   const navigate = useNavigate();
 
   // 유효성 검사
   const validateRequiredFields = () => {
-    if (!title.trim()) {
+    if (!title) {
       toast.error('제목을 입력해주세요.');
       return false;
     }
@@ -59,16 +57,16 @@ export default function PostCreate() {
       toast.error('캠페인 ID를 입력해주세요.');
       return false;
     }
-    if (isVisitInfo && !contactPhone.trim()) {
+    if (!contactPhone.trim()) {
       setContactPhoneError('연락처는 필수 입력 항목입니다.');
       toast.error('연락처를 입력해주세요.');
       return false;
     }
-    if (isVisitInfo && lat !== undefined && isNaN(lat)) {
+    if (lat !== undefined && isNaN(lat)) {
       toast.error('위도는 유효한 숫자 형식이어야 합니다.');
       return false;
     }
-    if (isVisitInfo && lng !== undefined && isNaN(lng)) {
+    if (lng !== undefined && isNaN(lng)) {
       toast.error('경도는 유효한 숫자 형식이어야 합니다.');
       return false;
     }
@@ -78,7 +76,7 @@ export default function PostCreate() {
   // contactPhone 입력 시 오류 제거
   const handleContactPhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setContactPhone(e.target.value);
-    if (isVisitInfo && e.target.value.trim()) {
+    if (e.target.value.trim()) {
       setContactPhoneError('');
     }
   };
@@ -92,6 +90,7 @@ export default function PostCreate() {
     setter(value === '' ? undefined : parseFloat(value));
   };
 
+  // 포스트 생성
   const createPost = async () => {
     if (!validateRequiredFields()) {
       return;
@@ -108,16 +107,14 @@ export default function PostCreate() {
         title,
         content: html,
         campaignId,
-        visitInfo: isVisitInfo
-          ? {
-              contactPhone: contactPhone || null,
-              homepage: homepage || null,
-              businessAddress: businessAddress || null,
-              businessDetailAddress: businessDetailAddress || null,
-              lat: lat ?? null,
-              lng: lng ?? null,
-            }
-          : null,
+        visitInfo: {
+          contactPhone: contactPhone || null,
+          homepage: homepage || null,
+          businessAddress: businessAddress || null,
+          businessDetailAddress: businessDetailAddress || null,
+          lat: lat ?? null,
+          lng: lng ?? null,
+        },
       };
       console.log('전송 데이터:', payload);
       const response = await axiosInterceptor.post('/api/admin/posts', payload);
@@ -214,7 +211,7 @@ export default function PostCreate() {
         />
       </div>
       <Card>
-        <div className="flex flex-col items-center px-6">
+        <div className="flex flex-col items-center px-6 ">
           <div className="w-full" data-color-mode="light">
             <div className="mb-4">
               <div className="mb-2 flex justify-between items-center">
@@ -255,136 +252,99 @@ export default function PostCreate() {
                               </div>
                             </div>
                             <div className="grid grid-cols-3 items-center gap-4">
-                              <Label htmlFor="visitInfo">방문형 여부</Label>
-                              <div className="col-span-2 flex items-center">
-                                <Checkbox
-                                  id="visitInfo"
-                                  checked={isVisitInfo}
-                                  onCheckedChange={(checked: boolean) => {
-                                    setIsVisitInfo(checked);
-                                    if (!checked) {
-                                      setContactPhone('');
-                                      setContactPhoneError('');
-                                      setHomepage('');
-                                      setBusinessAddress('');
-                                      setBusinessDetailAddress('');
-                                      setLat(undefined);
-                                      setLng(undefined);
+                              <Label htmlFor="contactPhone">
+                                연락처{' '}
+                                <span className="text-ck-red-500">*</span> 필수
+                              </Label>
+                              <div className="col-span-2">
+                                <Input
+                                  id="contactPhone"
+                                  className="h-8"
+                                  type="number"
+                                  placeholder="01012345678"
+                                  value={contactPhone}
+                                  onChange={handleContactPhoneChange}
+                                  onBlur={() => {
+                                    if (!contactPhone.trim()) {
+                                      setContactPhoneError(
+                                        '연락처는 필수 입력 항목입니다.'
+                                      );
                                     }
                                   }}
                                 />
-                                <Label htmlFor="visitInfo" className="ml-2">
-                                  방문형
-                                </Label>
+                                {contactPhoneError && (
+                                  <p className="text-ck-red-500 text-xs mt-1">
+                                    {contactPhoneError}
+                                  </p>
+                                )}
                               </div>
                             </div>
-                            {isVisitInfo && (
-                              <>
-                                <div className="grid grid-cols-3 items-center gap-4">
-                                  <Label htmlFor="contactPhone">
-                                    연락처{' '}
-                                    <span className="text-ck-red-500">*</span>{' '}
-                                    필수
-                                  </Label>
-                                  <div className="col-span-2">
-                                    <Input
-                                      id="contactPhone"
-                                      className="h-8"
-                                      placeholder="01012345678"
-                                      value={contactPhone}
-                                      onChange={handleContactPhoneChange}
-                                      onBlur={() => {
-                                        if (
-                                          isVisitInfo &&
-                                          !contactPhone.trim()
-                                        ) {
-                                          setContactPhoneError(
-                                            '연락처는 필수 입력 항목입니다.'
-                                          );
-                                        }
-                                      }}
-                                    />
-                                    {contactPhoneError && (
-                                      <p className="text-ck-red-500 text-xs mt-1">
-                                        {contactPhoneError}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-                                <div className="grid grid-cols-3 items-center gap-4">
-                                  <Label htmlFor="homepage">
-                                    홈페이지 주소
-                                  </Label>
-                                  <Input
-                                    id="homepage"
-                                    className="col-span-2 h-8"
-                                    placeholder="https://chkok.kr"
-                                    value={homepage}
-                                    onChange={(event) =>
-                                      setHomepage(event.target.value)
-                                    }
-                                  />
-                                </div>
-                                <div className="grid grid-cols-3 items-center gap-4">
-                                  <Label htmlFor="businessAddress">
-                                    위치 정보
-                                  </Label>
-                                  <Input
-                                    id="businessAddress"
-                                    className="col-span-2 h-8"
-                                    placeholder="위치 정보 입력"
-                                    value={businessAddress}
-                                    onChange={(event) =>
-                                      setBusinessAddress(event.target.value)
-                                    }
-                                  />
-                                </div>
-                                <div className="grid grid-cols-3 items-center gap-4">
-                                  <Label htmlFor="businessDetailAddress">
-                                    위치 정보 상세
-                                  </Label>
-                                  <Input
-                                    id="businessDetailAddress"
-                                    className="col-span-2 h-8"
-                                    placeholder="위치 정보 상세 입력"
-                                    value={businessDetailAddress}
-                                    onChange={(event) =>
-                                      setBusinessDetailAddress(
-                                        event.target.value
-                                      )
-                                    }
-                                  />
-                                </div>
-                                <div className="grid grid-cols-3 items-center gap-4">
-                                  <Label htmlFor="lat">위도</Label>
-                                  <Input
-                                    id="lat"
-                                    type="number"
-                                    step="any"
-                                    className="col-span-2 h-8"
-                                    placeholder="위도를 입력하세요"
-                                    value={lat ?? ''}
-                                    onChange={(event) =>
-                                      handleNumberInput(event, setLat)
-                                    }
-                                  />
-                                </div>
-                                <div className="grid grid-cols-3 items-center gap-4">
-                                  <Label htmlFor="lng">경도</Label>
-                                  <Input
-                                    id="lng"
-                                    type="number"
-                                    step="any"
-                                    className="col-span-2 h-8"
-                                    placeholder="경도를 입력하세요"
-                                    value={lng ?? ''}
-                                    onChange={(event) =>
-                                      handleNumberInput(event, setLng)
-                                    }
-                                  />
-                                </div>
-                              </>
-                            )}
+                            <div className="grid grid-cols-3 items-center gap-4">
+                              <Label htmlFor="homepage">홈페이지 주소</Label>
+                              <Input
+                                id="homepage"
+                                className="col-span-2 h-8"
+                                placeholder="https://chkok.kr"
+                                value={homepage}
+                                onChange={(event) =>
+                                  setHomepage(event.target.value)
+                                }
+                              />
+                            </div>
+                            <div className="grid grid-cols-3 items-center gap-4">
+                              <Label htmlFor="businessAddress">위치 정보</Label>
+                              <Input
+                                id="businessAddress"
+                                className="col-span-2 h-8"
+                                placeholder="위치 정보 입력"
+                                value={businessAddress}
+                                onChange={(event) =>
+                                  setBusinessAddress(event.target.value)
+                                }
+                              />
+                            </div>
+                            <div className="grid grid-cols-3 items-center gap-4">
+                              <Label htmlFor="businessDetailAddress">
+                                위치 정보 상세
+                              </Label>
+                              <Input
+                                id="businessDetailAddress"
+                                className="col-span-2 h-8"
+                                placeholder="위치 정보 상세 입력"
+                                value={businessDetailAddress}
+                                onChange={(event) =>
+                                  setBusinessDetailAddress(event.target.value)
+                                }
+                              />
+                            </div>
+                            <div className="grid grid-cols-3 items-center gap-4">
+                              <Label htmlFor="lat">위도</Label>
+                              <Input
+                                id="lat"
+                                type="number"
+                                step="any"
+                                className="col-span-2 h-8"
+                                placeholder="위도를 입력하세요"
+                                value={lat ?? ''}
+                                onChange={(event) =>
+                                  handleNumberInput(event, setLat)
+                                }
+                              />
+                            </div>
+                            <div className="grid grid-cols-3 items-center gap-4">
+                              <Label htmlFor="lng">경도</Label>
+                              <Input
+                                id="lng"
+                                type="number"
+                                step="any"
+                                className="col-span-2 h-8"
+                                placeholder="경도를 입력하세요"
+                                value={lng ?? ''}
+                                onChange={(event) =>
+                                  handleNumberInput(event, setLng)
+                                }
+                              />
+                            </div>
                           </div>
                         </div>
                       </PopoverContent>
@@ -392,7 +352,7 @@ export default function PostCreate() {
                   </div>
                   <Button
                     onClick={createPost}
-                    className="hover:bg-ck-blue-500 px-4 py-2 hover:text-white"
+                    className="px-4 py-2"
                     variant="outline"
                   >
                     생성
