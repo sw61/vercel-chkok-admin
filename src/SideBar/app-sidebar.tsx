@@ -9,6 +9,7 @@ import {
   Earth,
   Server,
   BookOpenText,
+  Megaphone,
 } from 'lucide-react';
 
 import { NavMain } from '@/SideBar/nav-main';
@@ -53,8 +54,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: Server,
       },
       {
-        title: '마크다운 문서',
-        url: '/documents',
+        title: '공지사항 글',
+        url: '/notices',
+        icon: Megaphone,
+      },
+      {
+        title: '체험콕 글',
+        url: '/posts',
         icon: BookOpenText,
       },
     ],

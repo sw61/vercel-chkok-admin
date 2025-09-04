@@ -1,5 +1,5 @@
-import { Map, MapMarker } from "react-kakao-maps-sdk";
-import useKakaoLoader from "../hooks/useKakaoLoader";
+import { Map, MapMarker } from 'react-kakao-maps-sdk';
+import useKakaoLoader from '../hooks/useKakaoLoader';
 
 interface KakaoMapProps {
   latitude: number;
@@ -14,11 +14,11 @@ interface KakaoMapProps {
 export default function KakaoMap({
   latitude,
   longitude,
-  markerTitle = "위치",
-  markerContent = "",
+  markerTitle = '위치',
+  markerContent = '',
   zoomLevel = 3,
   hasCoordinates,
-  className = "w-[400px] h-[250px] rounded-lg overflow-hidden",
+  className = 'w-[400px] h-[250px] rounded-lg overflow-hidden',
 }: KakaoMapProps) {
   useKakaoLoader();
 
@@ -35,7 +35,7 @@ export default function KakaoMap({
       <Map
         id="map"
         center={{ lat: latitude, lng: longitude }}
-        style={{ width: "100%", height: "100%" }}
+        style={{ width: '100%', height: '100%' }}
         level={zoomLevel}
       >
         <MapMarker

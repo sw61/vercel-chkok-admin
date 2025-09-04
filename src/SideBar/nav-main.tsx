@@ -1,12 +1,11 @@
-"use client";
+'use client';
 
-import { ChevronRight, type LucideIcon } from "lucide-react";
-
+import { ChevronRight, type LucideIcon } from 'lucide-react';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+} from '@/components/ui/collapsible';
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -17,8 +16,8 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar";
-import { useLocation } from "react-router-dom";
+} from '@/components/ui/sidebar';
+import { useLocation } from 'react-router-dom';
 
 export function NavMain({
   items,
@@ -44,13 +43,13 @@ export function NavMain({
           <Collapsible
             key={item.title}
             asChild
-            defaultOpen={item.url === location.pathname}
+            defaultOpen={location.pathname.startsWith(item.url)}
           >
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
                 tooltip={item.title}
-                isActive={item.url === location.pathname}
+                isActive={location.pathname.startsWith(item.url)}
               >
                 <a href={item.url} className="py-5">
                   <item.icon />
@@ -68,7 +67,7 @@ export function NavMain({
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {item.items?.map((subItem) => (
+                      {item.items.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
                             <a href={subItem.url}>

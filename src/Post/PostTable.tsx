@@ -22,30 +22,25 @@ import {
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-interface Campaign {
+interface Post {
   id: number;
   title: string;
-  campaignType: string;
-  recruitmentStartDate: string; // 모집 시작일
-  approvalStatus: string;
-  approvalComment: string;
-  approvalDate: string;
+  viewCount: number;
+  authorId: number;
+  authorName: string;
   createdAt: string;
+  updatedAt: string;
 }
 
-interface CustomColumnMeta {
-  label?: string;
-}
-
-interface CampaignDataTableProps {
-  campaignData: Campaign[];
+interface PostDataTableProps {
+  postData: Post[];
   columnFilters: ColumnFiltersState;
   setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
   columnVisibility: VisibilityState;
   setColumnVisibility: React.Dispatch<React.SetStateAction<VisibilityState>>;
 }
 
-const columns: ColumnDef<Campaign>[] = [
+const columns: ColumnDef<Post>[] = [
   {
     accessorKey: 'id',
     header: ({ column }) => (
@@ -61,7 +56,6 @@ const columns: ColumnDef<Campaign>[] = [
       </div>
     ),
     cell: ({ row }) => <div>{row.getValue('id')}</div>,
-    meta: { label: 'id' } as CustomColumnMeta,
     size: 50,
   },
   {
@@ -73,7 +67,7 @@ const columns: ColumnDef<Campaign>[] = [
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          캠페인 이름
+          제목
           <ArrowUpDown />
         </Button>
       </div>
@@ -83,151 +77,79 @@ const columns: ColumnDef<Campaign>[] = [
         {row.getValue('title')}
       </div>
     ),
-    meta: { label: '캠페인 이름' } as CustomColumnMeta,
-    size: 250,
+    size: 200,
   },
   {
-    accessorKey: 'campaignType',
+    accessorKey: 'authorName',
     header: ({ column }) => (
       <Button
         variant="ghost"
         className="has-[>svg]:px-0"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
-        캠페인 유형
+        작성자
         <ArrowUpDown />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="lowercase">{row.getValue('campaignType')}</div>
+      <div className="lowercase">{row.getValue('authorName')}</div>
     ),
-    meta: { label: '캠페인 유형' } as CustomColumnMeta,
     size: 120,
   },
-  {
-    accessorKey: 'approvalStatus',
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        className="has-[>svg]:px-0"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        처리 상태
-        <ArrowUpDown />
-      </Button>
-    ),
-    cell: ({ row }) => (
-      <div className="lowercase">{row.getValue('approvalStatus')}</div>
-    ),
-    meta: { label: '처리 상태' } as CustomColumnMeta,
-    size: 100,
-  },
-  {
-    accessorKey: 'recruitmentStartDate',
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        className="has-[>svg]:px-0"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        모집 시작일
-        <ArrowUpDown />
-      </Button>
-    ),
-    cell: ({ row }) => <div>{row.getValue('recruitmentStartDate')}</div>,
-    meta: { label: '모집 시작일' } as CustomColumnMeta,
-    size: 120,
-  },
-  {
-    accessorKey: 'recruitmentEndDate',
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        className="has-[>svg]:px-0"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        모집 마감일
-        <ArrowUpDown />
-      </Button>
-    ),
-    cell: ({ row }) => <div>{row.getValue('recruitmentEndDate')}</div>,
-    meta: { label: '모집 마감일' } as CustomColumnMeta,
-    size: 120,
-  },
-  {
-    accessorKey: 'reviewDeadlineDate',
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        className="has-[>svg]:px-0"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        리뷰 마감일
-        <ArrowUpDown />
-      </Button>
-    ),
-    cell: ({ row }) => <div>{row.getValue('reviewDeadlineDate')}</div>,
-    meta: { label: '리뷰 마감일' } as CustomColumnMeta,
-    size: 120,
-  },
-  {
-    accessorKey: 'productShortInfo',
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        className="has-[>svg]:px-0"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        상품 간단 소개
-        <ArrowUpDown />
-      </Button>
-    ),
-    cell: ({ row }) => (
-      <div className="overflow-hidden text-ellipsis">
-        {row.getValue('productShortInfo')}
-      </div>
-    ),
-    meta: { label: '상품 간단 정보' } as CustomColumnMeta,
-    size: 250,
-  },
-  // {
-  //   id: "actions",
-  //   enableHiding: false,
-  //   cell: ({ row }) => {
-  //     const campaign = row.original as Campaign;
-  //     const navigate = useNavigate();
 
-  //     return (
-  //       <DropdownMenu>
-  //         <DropdownMenuTrigger asChild>
-  //           <Button variant="ghost" className="h-8 w-8 p-0">
-  //             <span className="sr-only">Open menu</span>
-  //             <MoreHorizontal />
-  //           </Button>
-  //         </DropdownMenuTrigger>
-  //         <DropdownMenuContent align="end">
-  //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-  //           <DropdownMenuSeparator />
-  //           <DropdownMenuItem
-  //             onClick={() =>
-  //               navigator.clipboard.writeText(campaign.title.toString())
-  //             }
-  //           >
-  //             <Copy />
-  //             이름 복사하기
-  //           </DropdownMenuItem>
-  //           <DropdownMenuItem
-  //             onClick={() => navigate(`/campaigns/${campaign.id}`)}
-  //           >
-  //             <Settings />
-  //             캠페인 상세 정보
-  //           </DropdownMenuItem>
-  //         </DropdownMenuContent>
-  //       </DropdownMenu>
-  //     );
-  //   },
-  //   size: 50,
-  // },
+  {
+    accessorKey: 'viewCount',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="has-[>svg]:px-0"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        조회수
+        <ArrowUpDown />
+      </Button>
+    ),
+    cell: ({ row }) => <div>{row.getValue('viewCount')}</div>,
+    size: 80,
+  },
+  {
+    accessorKey: 'createdAt',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="has-[>svg]:px-0"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        생성일
+        <ArrowUpDown />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const fullDate = row.getValue('createdAt') as string;
+      const date = fullDate.split('T')[0];
+      return <div>{date}</div>;
+    },
+    size: 150,
+  },
+  {
+    accessorKey: 'updatedAt',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="has-[>svg]:px-0"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        업데이트일
+        <ArrowUpDown />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const fullDate = row.getValue('updatedAt') as string;
+      const date = fullDate.split('T')[0];
+      return <div>{date}</div>;
+    },
+    size: 150,
+  },
 ];
 
 // ColumnDef의 size 합계 계산
@@ -236,19 +158,19 @@ const totalColumnWidth = columns.reduce(
   0
 );
 
-export function CampaignTable({
-  campaignData,
+export function PostTable({
+  postData,
   columnFilters,
   setColumnFilters,
   columnVisibility,
   setColumnVisibility,
-}: CampaignDataTableProps) {
+}: PostDataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const navigate = useNavigate();
 
   const table = useReactTable({
-    data: campaignData,
+    data: postData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -302,7 +224,7 @@ export function CampaignTable({
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   className="cursor-pointer"
-                  onClick={() => navigate(`/campaigns/${row.original.id}`)}
+                  onClick={() => navigate(`/posts/${row.original.id}`)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell

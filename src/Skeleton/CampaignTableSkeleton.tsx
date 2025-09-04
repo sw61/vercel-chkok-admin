@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   TableHeader,
   TableRow,
@@ -6,7 +6,7 @@ import {
   TableBody,
   TableCell,
   Table,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 
 const CampaignTableSkeleton = () => {
   return (

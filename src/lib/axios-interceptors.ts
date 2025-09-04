@@ -2,10 +2,10 @@ import axios, {
   AxiosError,
   type AxiosRequestConfig,
   type AxiosResponse,
-} from "axios";
+} from 'axios';
 
 const axiosInterceptor = axios.create({
-  baseURL: "https://chkok.kr/admin-api",
+  baseURL: 'https://chkok.kr/admin-api',
 });
 
 // 리프레시 토큰 요청 큐잉
@@ -29,13 +29,13 @@ const processQueue = (error: any, token: string | null = null) => {
 // 요청 인터셉터
 axiosInterceptor.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
-      config.headers["Authorization"] = `Bearer ${accessToken}`;
+      config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
     return config;
   },
-  (error) => Promise.reject(error),
+  (error) => Promise.reject(error)
 );
 
 // 응답 인터셉터
@@ -43,7 +43,7 @@ axiosInterceptor.interceptors.response.use(
   (response: AxiosResponse) => {
     if (response.data && response.data.status >= 400) {
       throw new Error(
-        response.data.message || `서버 오류: ${response.data.status}`,
+        response.data.message || `서버 오류: ${response.data.status}`
       );
     }
     return response;
@@ -61,7 +61,7 @@ axiosInterceptor.interceptors.response.use(
         })
           .then((token) => {
             if (token && originalRequest.headers) {
-              originalRequest.headers["Authorization"] = `Bearer ${token}`;
+              originalRequest.headers['Authorization'] = `Bearer ${token}`;
             }
             return axiosInterceptor(originalRequest);
           })
@@ -72,43 +72,43 @@ axiosInterceptor.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshToken = localStorage.getItem("refreshToken");
+        const refreshToken = localStorage.getItem('refreshToken');
         if (!refreshToken) {
-          throw new Error("리프레시 토큰이 없습니다.");
+          throw new Error('리프레시 토큰이 없습니다.');
         }
 
         const response = await axios.post(
-          "https://chkok.kr/admin-api/auth/refresh",
-          { refreshToken },
+          'https://chkok.kr/admin-api/auth/refresh',
+          { refreshToken }
         );
         const newAccessToken = response.data.data.accessToken;
 
         if (!newAccessToken) {
-          throw new Error("새 액세스 토큰을 받지 못했습니다.");
+          throw new Error('새 액세스 토큰을 받지 못했습니다.');
         }
 
-        localStorage.setItem("accessToken", newAccessToken);
+        localStorage.setItem('accessToken', newAccessToken);
         processQueue(null, newAccessToken);
 
         if (originalRequest.headers) {
-          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+          originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
         }
         return axiosInterceptor(originalRequest);
       } catch (refreshError) {
-        console.error("토큰 갱신 오류:", refreshError);
+        console.error('토큰 갱신 오류:', refreshError);
         processQueue(refreshError);
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        window.location.href = "/login"; // 로그인 페이지로 리다이렉트
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        window.location.href = '/login'; // 로그인 페이지로 리다이렉트
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
     }
 
-    const errorMessage = error.message || "알 수 없는 오류가 발생했습니다.";
+    const errorMessage = error.message || '알 수 없는 오류가 발생했습니다.';
     return Promise.reject(new Error(errorMessage));
-  },
+  }
 );
 
 export default axiosInterceptor;

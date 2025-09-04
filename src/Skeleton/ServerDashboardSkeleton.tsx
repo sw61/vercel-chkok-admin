@@ -1,5 +1,5 @@
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // 스켈레톤 로딩 컴포넌트
 export default function ServerDashboardSkeleton() {
