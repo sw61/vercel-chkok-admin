@@ -1,3 +1,4 @@
+// src/components/ServerDashBoard.tsx
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -14,7 +15,7 @@ import {
   ChartLegend,
 } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
-import axiosInterceptor from '@/lib/axios-interceptors';
+import axios from 'axios';
 import ServerDashboardSkeleton from '@/Skeleton/ServerDashboardSkeleton';
 
 // API 응답 타입 정의
@@ -78,18 +79,24 @@ function StatusIndicator({
 export default function ServerDashBoard() {
   const [serverData, setServerData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const getServerData = async () => {
       try {
         setLoading(true);
-        const response = await axiosInterceptor.get<ApiResponse>(
-          'http://jenkins.chkok.kr:8000/api/monitor?format=json&key=A2F1BFBCF4F802DBA645B5076ACAE2D1FD3EF404CF0DC3F988B93C47239C00B167F4B6F0274AF4E6D4B954CE020B71F99E1264FFB7EE1AD58E3108DE83BBADD0'
-        );
-        const data = response.data;
-        setServerData(data);
-      } catch (error) {
-        console.log(error);
+        setError(null);
+        const response = await axios.get<ApiResponse>('/api/proxy');
+        console.log('Response:', response.data); // 디버깅용
+        if (typeof response.data === 'string') {
+          throw new Error(
+            'Received invalid data format (string instead of JSON)'
+          );
+        }
+        setServerData(response.data);
+      } catch (error: any) {
+        console.error('Error fetching server data:', error.message);
+        setError(error.message || '데이터를 불러올 수 없습니다.');
       } finally {
         setLoading(false);
       }
@@ -101,13 +108,16 @@ export default function ServerDashBoard() {
 
   if (loading) return <ServerDashboardSkeleton />;
 
-  if (!serverData)
+  if (error || !serverData) {
     return (
-      <Alert>
-        <AlertTitle>데이터 없음</AlertTitle>
-        <AlertDescription>데이터를 불러올 수 없습니다.</AlertDescription>
+      <Alert variant="destructive">
+        <AlertTitle>에러</AlertTitle>
+        <AlertDescription>
+          {error || '데이터를 불러올 수 없습니다.'}
+        </AlertDescription>
       </Alert>
     );
+  }
 
   // CPUUtilization 및 CPUCreditUsage 데이터 통합
   const cpuData = [
@@ -153,9 +163,7 @@ export default function ServerDashBoard() {
 
   return (
     <div className="space-y-6">
-      {/* 차트 섹션 */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* CPUUtilization 및 CPUCreditUsage (BarChart) */}
         <Card>
           <CardHeader>
             <CardTitle className="ck-body-1-bold">CPU 메트릭</CardTitle>
@@ -203,7 +211,6 @@ export default function ServerDashBoard() {
           </CardContent>
         </Card>
 
-        {/* NetworkIn/Out (BarChart) */}
         <Card>
           <CardHeader>
             <CardTitle className="ck-body-1-bold">네트워크 트래픽</CardTitle>
@@ -251,7 +258,6 @@ export default function ServerDashBoard() {
           </CardContent>
         </Card>
 
-        {/* NetworkPacketsIn/Out (BarChart) */}
         <Card>
           <CardHeader>
             <CardTitle className="ck-body-1-bold">네트워크 패킷</CardTitle>
@@ -300,9 +306,7 @@ export default function ServerDashBoard() {
         </Card>
       </div>
 
-      {/* 상태 모니터링 섹션 */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {/* CPU 크레딧 잔액 상태 */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="ck-body-1-bold">CPU 크레딧 상태</CardTitle>
@@ -318,7 +322,6 @@ export default function ServerDashBoard() {
           </CardContent>
         </Card>
 
-        {/* 인스턴스 상태 검사 */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="ck-body-1-bold">인스턴스 상태</CardTitle>
@@ -332,7 +335,6 @@ export default function ServerDashBoard() {
           </CardContent>
         </Card>
 
-        {/* 시스템 상태 검사 */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="ck-body-1-bold">시스템 상태</CardTitle>
@@ -346,7 +348,6 @@ export default function ServerDashBoard() {
           </CardContent>
         </Card>
 
-        {/* 메타데이터 토큰 상태 */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="ck-body-1-bold">보안 상태</CardTitle>
