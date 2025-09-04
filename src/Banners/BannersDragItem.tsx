@@ -1,6 +1,6 @@
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { useNavigate } from "react-router-dom";
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { useNavigate } from 'react-router-dom';
 
 interface BannerData {
   id: number;
@@ -37,7 +37,7 @@ const Item = ({ banner }: ItemProps) => {
       {...attributes}
       {...listeners}
       className={`flex w-full cursor-pointer flex-col rounded-xl border bg-white px-4 py-2 ${
-        isDragging ? "opacity-50 shadow-lg" : "opacity-100"
+        isDragging ? 'opacity-50 shadow-lg' : 'opacity-100'
       }`}
       style={{
         transform: CSS.Transform.toString(transform),

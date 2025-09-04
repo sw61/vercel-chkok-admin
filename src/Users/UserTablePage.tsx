@@ -171,99 +171,104 @@ export default function TableView() {
   }, [toggle]);
 
   return (
-    <Card className="px-6 py-4">
-      <div className="mb-2 flex items-center justify-between">
-        <div className="flex gap-2">
-          {!toggle ? (
-            <>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="ml-auto">
-                    항목 <ChevronDown />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {headerMenu.map((column) => (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={columnVisibility[column.id] !== false}
-                      onCheckedChange={(value) =>
-                        setColumnVisibility((prev) => ({
-                          ...prev,
-                          [column.id]: value,
-                        }))
-                      }
-                    >
-                      {column.label}
-                    </DropdownMenuCheckboxItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+    <div className="p-6">
+      <Card className="px-6 py-4">
+        <div className="mb-2 flex items-center justify-between">
+          <div className="flex gap-2">
+            {!toggle ? (
+              <>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="ml-auto">
+                      항목 <ChevronDown />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {headerMenu.map((column) => (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={columnVisibility[column.id] !== false}
+                        onCheckedChange={(value) =>
+                          setColumnVisibility((prev) => ({
+                            ...prev,
+                            [column.id]: value,
+                          }))
+                        }
+                      >
+                        {column.label}
+                      </DropdownMenuCheckboxItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Button
+                  onClick={() => setToggle(true)}
+                  variant={toggle ? 'default' : 'outline'}
+                >
+                  클라이언트 승급 심사
+                </Button>
+              </>
+            ) : (
               <Button
-                onClick={() => setToggle(true)}
-                variant={toggle ? 'default' : 'outline'}
+                onClick={() => setToggle(false)}
+                variant={toggle ? 'outline' : 'default'}
               >
-                클라이언트 승급 심사
+                사용자 목록
               </Button>
-            </>
-          ) : (
-            <Button
-              onClick={() => setToggle(false)}
-              variant={toggle ? 'outline' : 'default'}
-            >
-              사용자 목록
-            </Button>
-          )}
-        </div>
-        {!toggle && (
-          <div className="relative">
-            <Input
-              placeholder="사용자 이름 검색"
-              value={searchKey}
-              onChange={(e) => setSearchKey(e.target.value)}
-              onKeyDown={handleEnterSearch}
-              className="pr-12"
-            />
-            <button
-              className="absolute top-0 right-0 h-full w-10 cursor-pointer"
-              onClick={handleSearch}
-            >
-              <Search />
-            </button>
+            )}
           </div>
-        )}
-      </div>
-
-      {isLoading ? (
-        <UserTableSkeleton />
-      ) : (!toggle && !userData) || (toggle && !companyData) || !pageData ? (
-        <div className="text-ck-gray-600 ck-body-2 flex items-center justify-center rounded-md border py-10">
-          데이터가 없습니다.
-        </div>
-      ) : (
-        <>
-          {toggle ? (
-            <CompanyTable
-              companyData={companyData!}
-              columnFilters={columnFilters}
-              setColumnFilters={setColumnFilters}
-              columnVisibility={columnVisibility}
-              setColumnVisibility={setColumnVisibility}
-            />
-          ) : (
-            <UserTable
-              userData={userData!}
-              columnFilters={columnFilters}
-              setColumnFilters={setColumnFilters}
-              columnVisibility={columnVisibility}
-              setColumnVisibility={setColumnVisibility}
-              handleSortChange={handleSortChange}
-            />
+          {!toggle && (
+            <div className="relative">
+              <Input
+                placeholder="사용자 이름 검색"
+                value={searchKey}
+                onChange={(e) => setSearchKey(e.target.value)}
+                onKeyDown={handleEnterSearch}
+                className="pr-12"
+              />
+              <button
+                className="absolute top-0 right-0 h-full w-10 cursor-pointer"
+                onClick={handleSearch}
+              >
+                <Search />
+              </button>
+            </div>
           )}
-          <PaginationHook pageData={pageData} onPageChange={handlePageChange} />
-        </>
-      )}
-    </Card>
+        </div>
+
+        {isLoading ? (
+          <UserTableSkeleton />
+        ) : (!toggle && !userData) || (toggle && !companyData) || !pageData ? (
+          <div className="text-ck-gray-600 ck-body-2 flex items-center justify-center rounded-md border py-10">
+            데이터가 없습니다.
+          </div>
+        ) : (
+          <>
+            {toggle ? (
+              <CompanyTable
+                companyData={companyData!}
+                columnFilters={columnFilters}
+                setColumnFilters={setColumnFilters}
+                columnVisibility={columnVisibility}
+                setColumnVisibility={setColumnVisibility}
+              />
+            ) : (
+              <UserTable
+                userData={userData!}
+                columnFilters={columnFilters}
+                setColumnFilters={setColumnFilters}
+                columnVisibility={columnVisibility}
+                setColumnVisibility={setColumnVisibility}
+                handleSortChange={handleSortChange}
+              />
+            )}
+            <PaginationHook
+              pageData={pageData}
+              onPageChange={handlePageChange}
+            />
+          </>
+        )}
+      </Card>
+    </div>
   );
 }

@@ -119,93 +119,98 @@ export default function CampaignTablePage() {
   }, [campaignType]);
 
   return (
-    <Card className="px-6 py-4">
-      <div className="mb-2 flex items-center justify-between">
-        <div className="flex gap-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                {typeValues.find((item) => item.type === campaignType)?.label ||
-                  '캠페인 필터'}
-                <ChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {typeValues.map((item) => (
-                <DropdownMenuCheckboxItem
-                  key={item.type}
-                  checked={campaignType === item.type}
-                  onClick={() => handleType(item.type)}
-                >
-                  {item.label}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                항목 <ChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {headerMenu.map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={columnVisibility[column.id] !== false}
-                  onCheckedChange={(value) =>
-                    setColumnVisibility((prev) => ({
-                      ...prev,
-                      [column.id]: value,
-                    }))
-                  }
-                >
-                  {column.label}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+    <div className="p-6">
+      <Card className="px-6 py-4">
+        <div className="mb-2 flex items-center justify-between">
+          <div className="flex gap-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  {typeValues.find((item) => item.type === campaignType)
+                    ?.label || '캠페인 필터'}
+                  <ChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {typeValues.map((item) => (
+                  <DropdownMenuCheckboxItem
+                    key={item.type}
+                    checked={campaignType === item.type}
+                    onClick={() => handleType(item.type)}
+                  >
+                    {item.label}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  항목 <ChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {headerMenu.map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={columnVisibility[column.id] !== false}
+                    onCheckedChange={(value) =>
+                      setColumnVisibility((prev) => ({
+                        ...prev,
+                        [column.id]: value,
+                      }))
+                    }
+                  >
+                    {column.label}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          {/* 검색창 */}
+          <div className="relative">
+            <Input
+              placeholder="캠페인 이름 검색"
+              value={searchKey}
+              onChange={(event) => setSearchKey(event.target.value)}
+              onKeyDown={handleEnterSearch}
+              className="pr-12"
+            />
+            <button
+              className="absolute top-0 right-0 h-full w-10 cursor-pointer"
+              onClick={() => handleSearch(0)}
+            >
+              <Search />
+            </button>
+          </div>
         </div>
-        {/* 검색창 */}
-        <div className="relative">
-          <Input
-            placeholder="캠페인 이름 검색"
-            value={searchKey}
-            onChange={(event) => setSearchKey(event.target.value)}
-            onKeyDown={handleEnterSearch}
-            className="pr-12"
-          />
-          <button
-            className="absolute top-0 right-0 h-full w-10 cursor-pointer"
-            onClick={() => handleSearch(0)}
-          >
-            <Search />
-          </button>
-        </div>
-      </div>
 
-      {isLoading ? (
-        <CampaignTableSkeleton />
-      ) : !campaignData ||
-        !pageData ||
-        campaignData.length === 0 ||
-        pageData.totalElements === 0 ? (
-        <div className="text-ck-gray-600 ck-body-2 flex h-40 items-center justify-center rounded-md border">
-          캠페인 데이터가 없습니다.
-        </div>
-      ) : (
-        <>
-          <CampaignTable
-            campaignData={campaignData}
-            columnFilters={columnFilters}
-            setColumnFilters={setColumnFilters}
-            columnVisibility={columnVisibility}
-            setColumnVisibility={setColumnVisibility}
-          />
-          <PaginationHook pageData={pageData} onPageChange={handlePageChange} />
-        </>
-      )}
-    </Card>
+        {isLoading ? (
+          <CampaignTableSkeleton />
+        ) : !campaignData ||
+          !pageData ||
+          campaignData.length === 0 ||
+          pageData.totalElements === 0 ? (
+          <div className="text-ck-gray-600 ck-body-2 flex h-40 items-center justify-center rounded-md border">
+            캠페인 데이터가 없습니다.
+          </div>
+        ) : (
+          <>
+            <CampaignTable
+              campaignData={campaignData}
+              columnFilters={columnFilters}
+              setColumnFilters={setColumnFilters}
+              columnVisibility={columnVisibility}
+              setColumnVisibility={setColumnVisibility}
+            />
+            <PaginationHook
+              pageData={pageData}
+              onPageChange={handlePageChange}
+            />
+          </>
+        )}
+      </Card>
+    </div>
   );
 }

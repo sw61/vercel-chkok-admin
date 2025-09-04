@@ -1,6 +1,6 @@
-"use client";
-import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+'use client';
+import { BadgeCheck, ChevronsUpDown, LogOut } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,19 +9,19 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar";
-import { useLogout } from "@/auth/useLogout";
-import { useNavigate } from "react-router-dom";
-import axiosInterceptor from "@/lib/axios-interceptors";
-import { Skeleton } from "@/components/ui/skeleton";
-import usericon from "../Image/usericon.png";
-import { useEffect, useState } from "react";
+} from '@/components/ui/sidebar';
+import { useLogout } from '@/auth/useLogout';
+import { useNavigate } from 'react-router-dom';
+import axiosInterceptor from '@/lib/axios-interceptors';
+import { Skeleton } from '@/components/ui/skeleton';
+import usericon from '../Image/usericon.png';
+import { useEffect, useState } from 'react';
 
 interface AdminData {
   id: number;
@@ -42,7 +42,7 @@ export function NavUser() {
   const getAdminData = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInterceptor.get("/auth/me");
+      const response = await axiosInterceptor.get('/auth/me');
       const data = response.data.data;
       setAdminData(data);
     } catch (err) {
@@ -94,7 +94,7 @@ export function NavUser() {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
+            side={isMobile ? 'bottom' : 'right'}
             align="end"
             sideOffset={4}
           >
@@ -119,7 +119,7 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => navigate("/admin")}>
+              <DropdownMenuItem onClick={() => navigate('/admin')}>
                 <BadgeCheck />
                 관리자 계정 설정
               </DropdownMenuItem>

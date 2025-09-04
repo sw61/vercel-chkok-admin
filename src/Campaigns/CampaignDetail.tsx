@@ -1,13 +1,14 @@
-import axiosInterceptor from "@/lib/axios-interceptors";
-import { useState, useEffect, type ChangeEvent } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "react-toastify";
-import { Badge } from "@/components/ui/badge";
-import CampaignDetailSkeleton from "@/Skeleton/CampaignDetailSkeleton";
+import axiosInterceptor from '@/lib/axios-interceptors';
+import { useState, useEffect, type ChangeEvent } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { toast } from 'react-toastify';
+import { Badge } from '@/components/ui/badge';
+import CampaignDetailSkeleton from '@/Skeleton/CampaignDetailSkeleton';
 import {
+  ChevronLeft,
   Image,
   Link,
   MapPin,
@@ -15,18 +16,30 @@ import {
   SquarePlay,
   Star,
   Type,
-} from "lucide-react";
-import KakaoMap from "@/KakaoMap/KakaoMap";
+} from 'lucide-react';
+import KakaoMap from '@/KakaoMap/KakaoMap';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
+import { CustomBadge } from '@/hooks/useBadge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface Campaign {
   id: number;
   title: string;
-  campaignType: string;
+  campaignType: '블로그' | '인스타그램' | '유튜브' | '틱톡';
   thumbnailUrl: string;
   productShortInfo: string;
   maxApplicants: number;
@@ -35,10 +48,11 @@ interface Campaign {
   applicationDeadlineDate: string;
   selectionDate: string;
   reviewDeadlineDate: string;
-  approvalStatus: string;
+  approvalStatus: '승인됨' | '대기중' | '거절됨';
   approvalComment: string;
   approvalDate: string;
-  creatorRole: string;
+  createdAt: string;
+  creatorRole: '클라이언트' | '사용자' | '관리자';
   creatorAccountType: string;
   creator: {
     id: number;
@@ -99,61 +113,25 @@ export default function CampaignDetail() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const dataMap: Record<string, string> = {
-    USER: "사용자",
-    CLIENT: "클라이언트",
-    ADMIN: "관리자",
-    SOCIAL: "소셜",
+    USER: '사용자',
+    CLIENT: '클라이언트',
+    ADMIN: '관리자',
+    SOCIAL: '소셜',
+    LOCAL: '로컬',
   };
 
   const CampaignInfo = (): CampaignInfo[] => [
     {
-      key: "id",
-      label: "캠페인 ID",
-      value: campaignData?.id ?? "정보 없음",
+      key: 'id',
+      label: '캠페인 ID',
+      value: campaignData?.id ?? '정보 없음',
     },
     {
-      key: "campaignType",
-      label: "캠페인 유형",
-      value: campaignData?.campaignType ?? "정보 없음",
-    },
-    {
-      key: "maxApplicants",
-      label: "최대 신청자 수",
+      key: 'maxApplicants',
+      label: '최대 신청자 수',
       value: campaignData?.maxApplicants
         ? `${campaignData.maxApplicants}명`
-        : "정보 없음",
-    },
-    {
-      key: "approvalStatus",
-      label: "승인 상태",
-      value: campaignData?.approvalStatus ?? "정보 없음",
-    },
-    {
-      key: "recruitmentStartDate",
-      label: "모집 시작일",
-      value: campaignData?.recruitmentStartDate ?? "정보 없음",
-    },
-    {
-      key: "recruitmentEndDate",
-      label: "모집 마감일",
-      value: campaignData?.recruitmentEndDate ?? "정보 없음",
-    },
-    {
-      key: "approvalDate",
-      label: "승인일",
-      value: campaignData?.approvalDate
-        ? campaignData.approvalDate.split("T")[0]
-        : "정보 없음",
-    },
-    {
-      key: "reviewDeadlineDate",
-      label: "리뷰 마감일",
-      value: campaignData?.reviewDeadlineDate ?? "정보 없음",
-    },
-    {
-      key: "selectionDate",
-      label: "체험단 선정일",
-      value: campaignData?.selectionDate ?? "정보 없음",
+        : '정보 없음',
     },
   ];
 
@@ -171,7 +149,6 @@ export default function CampaignDetail() {
           dataMap[campaignData.creator.accountType] || campaignData.accountType,
       };
       setCampaignData(mappedData);
-      console.log(mappedData);
     } catch (error) {
       console.log(error);
     } finally {
@@ -180,54 +157,42 @@ export default function CampaignDetail() {
   };
   // 캠페인 삭제
   const deleteCampaign = async (id: number) => {
-    if (window.confirm("캠페인을 삭제하시겠습니까?")) {
-      try {
-        const response = await axiosInterceptor.delete(`/campaigns/${id}`);
-        navigate("/campaigns");
-        toast.success("캠페인이 삭제되었습니다.");
-        console.log(response);
-      } catch (error) {
-        console.log(error);
-        toast.error("캠페인 삭제 중 오류가 발생했습니다.");
-      }
+    try {
+      const response = await axiosInterceptor.delete(`/campaigns/${id}`);
+      navigate('/campaigns');
+      toast.success('캠페인이 삭제되었습니다.');
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+      toast.error('캠페인 삭제 중 오류가 발생했습니다.');
     }
   };
   // 캠페인 승인
   const approveCampaign = async (id: number) => {
-    if (window.confirm("캠페인을 승인하시겠습니까?")) {
-      try {
-        const response = await axiosInterceptor.put(
-          `/campaigns/${id}/approval`,
-          {
-            approvalStatus: "APPROVED",
-            comment: comment ?? "모든 조건을 만족하여 승인합니다.",
-          },
-        );
-        const updatedData = response.data.data;
-        setCampaignData((prev) => ({ ...prev, ...updatedData }));
-        toast.success("캠페인이 승인되었습니다.");
-      } catch (error) {
-        toast.error(`${error}`);
-      }
+    try {
+      const response = await axiosInterceptor.put(`/campaigns/${id}/approval`, {
+        approvalStatus: 'APPROVED',
+        comment: comment ?? '모든 조건을 만족하여 승인합니다.',
+      });
+      const updatedData = response.data.data;
+      setCampaignData((prev) => ({ ...prev, ...updatedData }));
+      toast.success('캠페인이 승인되었습니다.');
+    } catch (error) {
+      toast.error(`${error}`);
     }
   };
   // 캠페인 거절
   const rejectCampaign = async (id: number) => {
-    if (window.confirm("캠페인을 거절하시겠습니까?")) {
-      try {
-        const response = await axiosInterceptor.put(
-          `/campaigns/${id}/approval`,
-          {
-            approvalStatus: "REJECTED",
-            comment: comment ?? "조건을 만족하지 못하여 거절되었습니다.",
-          },
-        );
-        const updatedData = response.data.data;
-        setCampaignData((prev) => ({ ...prev, ...updatedData }));
-        toast.success("캠페인이 거절되었습니다.");
-      } catch (error) {
-        toast.error(`${error}`);
-      }
+    try {
+      const response = await axiosInterceptor.put(`/campaigns/${id}/approval`, {
+        approvalStatus: 'REJECTED',
+        comment: comment ?? '조건을 만족하지 못하여 거절되었습니다.',
+      });
+      const updatedData = response.data.data;
+      setCampaignData((prev) => ({ ...prev, ...updatedData }));
+      toast.success('캠페인이 거절되었습니다.');
+    } catch (error) {
+      toast.error(`${error}`);
     }
   };
 
@@ -249,36 +214,90 @@ export default function CampaignDetail() {
   }
 
   return (
-    <div className="min-w-[810px] p-6">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="min-w-[810px] px-6 py-4">
+      <div>
+        <ChevronLeft
+          onClick={() => navigate('/campaigns')}
+          className="cursor-pointer"
+        />
+      </div>
+      <div className="my-4 flex items-center justify-between">
         <h2 className="text-2xl font-bold">{campaignData.title}</h2>
         <div className="px-4">
           <div className="flex gap-2">
-            {campaignData.approvalStatus === "대기중" && (
+            {campaignData.approvalStatus === '대기중' && (
               <>
-                <Button
-                  className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white"
-                  onClick={() => approveCampaign(campaignData.id)}
-                  variant="outline"
-                >
-                  승인
-                </Button>
-                <Button
-                  className="ck-body-1 hover:bg-ck-red-500 cursor-pointer hover:text-white"
-                  onClick={() => rejectCampaign(campaignData.id)}
-                  variant="outline"
-                >
-                  거절
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline">승인</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="w-[350px]">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        캠페인을 승인하시겠습니까?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        이 작업은 되돌릴 수 없습니다
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>취소</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => approveCampaign(campaignData.id)}
+                      >
+                        확인
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline">거절</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="w-[350px]">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        캠페인을 거절하시겠습니까?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        이 작업은 되돌릴 수 없습니다
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>취소</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => rejectCampaign(campaignData.id)}
+                      >
+                        확인
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </>
             )}
-            <Button
-              className="flex items-center border text-sm hover:bg-red-500 hover:text-white"
-              onClick={() => deleteCampaign(campaignData.id)}
-              variant="outline"
-            >
-              삭제
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline">삭제</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="w-[350px]">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    캠페인을 삭제하시겠습니까?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    이 작업은 되돌릴 수 없습니다
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>취소</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => deleteCampaign(campaignData.id)}
+                  >
+                    확인
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </div>
@@ -289,17 +308,12 @@ export default function CampaignDetail() {
       {/* 상세 정보 부분 */}
       <div className="grid grid-cols-2 items-start gap-6 pt-6">
         <Card>
-          <CardContent className="min-w-[400px] pt-2">
-            <div className="flex justify-between pb-4">
-              <div className="flex items-center gap-4">
-                <div className="flex flex-col gap-2">
-                  <p className="ck-body-1-bold">{campaignData.title}</p>
-                  <p className="ck-caption-1">
-                    {campaignData.productShortInfo || "간단 소개 정보 없음"}
-                  </p>
-                </div>
-              </div>
+          <CardContent className="min-w-[450px]">
+            <div className="flex gap-2 mb-2">
+              <CustomBadge variant={campaignData.campaignType} />
+              <CustomBadge variant={campaignData.approvalStatus} />
             </div>
+            <p className="ck-sub-title-1 mb-4">{campaignData.title}</p>
             <div className="mb-6 grid grid-cols-3 gap-6">
               {CampaignInfo().map((item) => (
                 <div key={item.key}>
@@ -309,19 +323,38 @@ export default function CampaignDetail() {
               ))}
             </div>
             <div className="flex flex-col gap-4">
+              <div className="flex gap-6">
+                <div className="ck-body-2-bold flex flex-col gap-1">
+                  <p>모집 기간</p>
+                  <p>리뷰 마감일</p>
+                  <p>체험단 선정일</p>
+                  <p>생성일</p>
+                  <p>승인일</p>
+                </div>
+                <div className="ck-body-2 flex flex-col gap-1">
+                  <p>
+                    {campaignData.recruitmentStartDate} ~{' '}
+                    {campaignData.recruitmentEndDate}
+                  </p>
+                  <p>{campaignData.reviewDeadlineDate ?? '상시 모집'}</p>{' '}
+                  <p>{campaignData.selectionDate ?? '상시 모집'}</p>
+                  <p>{campaignData.createdAt.split('T')[0]}</p>
+                  <p>{campaignData.approvalDate.split('T')[0]}</p>
+                </div>
+              </div>
               {/* 간단 소개 */}
               <div className="flex items-center gap-4">
                 <div className="flex flex-col gap-2">
                   <p className="ck-body-2-bold">간단 소개</p>
                   <p className="ck-body-2 text-ck-gray-700">
-                    {campaignData.productShortInfo || "간단 소개 정보 없음"}
+                    {campaignData.productShortInfo || '간단 소개 정보 없음'}
                   </p>
                 </div>
               </div>
               {/* 승인 코멘트 */}
               <div className="flex flex-col gap-2">
                 <p className="ck-body-2-bold">승인 코멘트</p>
-                {campaignData.approvalStatus === "대기중" ? (
+                {campaignData.approvalStatus === '대기중' ? (
                   <Input
                     id="comment"
                     name="comment"
@@ -331,7 +364,7 @@ export default function CampaignDetail() {
                   />
                 ) : (
                   <p className="ck-body-2 text-ck-gray-700">
-                    {campaignData.approvalComment ?? "코멘트가 없습니다."}
+                    {campaignData.approvalComment ?? '코멘트가 없습니다.'}
                   </p>
                 )}
               </div>
@@ -355,8 +388,8 @@ export default function CampaignDetail() {
                       <p className="ck-body-2-bold">캠페인 생성인</p>
                       <p className="ck-body-2 text-ck-gray-700">
                         {campaignData.creator.nickname} |&nbsp;
-                        {campaignData.creator.email}{" "}
-                        <Badge>{campaignData.creatorRole}</Badge>&nbsp;
+                        {campaignData.creator.email} &nbsp;
+                        <CustomBadge variant={campaignData.creatorRole} />
                       </p>
                     </div>
                   </div>
@@ -366,17 +399,19 @@ export default function CampaignDetail() {
                     <div className="flex flex-col gap-2">
                       <div>
                         <p className="ck-body-2-bold">회사 정보</p>
-                        <div className="ck-body-2 text-ck-gray-700 grid grid-cols-3">
-                          <span>{campaignData.company.companyName}</span>
-                          <span>{campaignData.company.contactPerson}</span>
-                          <span>{campaignData.company.phoneNumber}</span>
+                        <div className="ck-body-2 text-ck-gray-700 ">
+                          <span>
+                            {campaignData.company.companyName} |&nbsp;
+                            {campaignData.company.contactPerson} |&nbsp;
+                            {campaignData.company.phoneNumber}
+                          </span>
                         </div>
                       </div>
                       <div>
                         <p className="ck-body-2-bold">사업자 등록 번호</p>
                         <div className="ck-body-2 text-ck-gray-700">
                           {campaignData.company.businessRegistrationNumber ??
-                            "사업자 등록 번호 없음"}
+                            '사업자 등록 번호 없음'}
                         </div>
                       </div>
                     </div>
@@ -388,7 +423,7 @@ export default function CampaignDetail() {
           {/* 미션 정보 */}
         </Card>
         {campaignData.missionInfo && (
-          <Card className="min-w-[400px]">
+          <Card className="min-w-[450px]">
             <div className="flex flex-col gap-6">
               <CardContent>
                 <p className="ck-title mb-2">미션 정보</p>
@@ -399,12 +434,19 @@ export default function CampaignDetail() {
                     <p>업데이트일</p>
                   </div>
                   <div className="ck-body-2">
-                    <p>
-                      {campaignData.missionInfo.missionStartDate} ~{" "}
-                      {campaignData.missionInfo.missionDeadlineDate}
-                    </p>
-                    <p>{campaignData.missionInfo.createdAt.split("T")[0]}</p>
-                    <p>{campaignData.missionInfo.updatedAt.split("T")[0]}</p>
+                    <div>
+                      {campaignData.missionInfo.missionStartDate ||
+                      campaignData.missionInfo.missionDeadlineDate ? (
+                        <p>
+                          {campaignData.missionInfo.missionStartDate} ~{' '}
+                          {campaignData.missionInfo.missionDeadlineDate}
+                        </p>
+                      ) : (
+                        <p>상시</p>
+                      )}
+                    </div>
+                    <p>{campaignData.missionInfo.createdAt.split('T')[0]}</p>
+                    <p>{campaignData.missionInfo.updatedAt.split('T')[0]}</p>
                   </div>
                 </div>
               </CardContent>
@@ -443,7 +485,7 @@ export default function CampaignDetail() {
                           <Badge key={index} variant="blue">
                             #{keyword}
                           </Badge>
-                        ),
+                        )
                       )}
                   </div>
                 )}
@@ -458,7 +500,7 @@ export default function CampaignDetail() {
                             <Badge key={index} variant="blue">
                               #{keyword}
                             </Badge>
-                          ),
+                          )
                         )}
                     </div>
                   </div>
@@ -477,7 +519,7 @@ export default function CampaignDetail() {
                       <MapPin size={16} />
                       <p className="ck-body-2">
                         {campaignData.location.businessAddress}
-                        {"  "}
+                        {'  '}
                         {campaignData.location.businessDetailAddress}
                       </p>
                     </div>

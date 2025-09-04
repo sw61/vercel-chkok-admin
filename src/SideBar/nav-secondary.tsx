@@ -1,5 +1,5 @@
-import * as React from "react";
-import { type LucideIcon } from "lucide-react";
+import * as React from 'react';
+import { type LucideIcon } from 'lucide-react';
 
 import {
   SidebarGroup,
@@ -7,8 +7,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { useLocation } from "react-router-dom";
+} from '@/components/ui/sidebar';
+import { useLocation } from 'react-router-dom';
 
 export function NavSecondary({
   items,

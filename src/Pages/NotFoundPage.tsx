@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
-import bannerImg from "../Image/bannerImg.png";
-import { Button } from "@/components/ui/button";
-import { House, ArrowBigLeft } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
+import bannerImg from '../Image/bannerImg.png';
+import { Button } from '@/components/ui/button';
+import { House, ArrowBigLeft } from 'lucide-react';
 
 export default function NotFoundPage() {
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ export default function NotFoundPage() {
         <div className="flex gap-6">
           <Button
             className="ck-headline-1 mt-10 cursor-pointer"
-            onClick={() => navigate("/login")}
+            onClick={() => navigate('/login')}
           >
             <House />
             홈으로

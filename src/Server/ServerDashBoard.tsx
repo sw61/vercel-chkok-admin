@@ -1,21 +1,21 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { CheckCircle2, XCircle } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+} from '@/components/ui/tooltip';
+import { CheckCircle2, XCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
   ChartLegend,
-} from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis } from "recharts";
-import axiosInterceptor from "@/lib/axios-interceptors";
-import ServerDashboardSkeleton from "@/Skeleton/ServerDashboardSkeleton";
+} from '@/components/ui/chart';
+import { BarChart, Bar, XAxis, YAxis } from 'recharts';
+import axiosInterceptor from '@/lib/axios-interceptors';
+import ServerDashboardSkeleton from '@/Skeleton/ServerDashboardSkeleton';
 
 // API 응답 타입 정의
 interface MetricStats {
@@ -44,8 +44,8 @@ interface ApiResponse {
 function StatusIndicator({
   label,
   ok,
-  okLabel = "정상",
-  failLabel = "실패",
+  okLabel = '정상',
+  failLabel = '실패',
   tooltip,
 }: {
   label: string;
@@ -69,7 +69,7 @@ function StatusIndicator({
         </div>
       </TooltipTrigger>
       <TooltipContent>
-        {tooltip || (ok ? "정상 상태" : "문제 감지")}
+        {tooltip || (ok ? '정상 상태' : '문제 감지')}
       </TooltipContent>
     </Tooltip>
   );
@@ -84,7 +84,7 @@ export default function ServerDashBoard() {
       try {
         setLoading(true);
         const response = await axiosInterceptor.get<ApiResponse>(
-          "http://jenkins.chkok.kr:8000/api/monitor?format=json&key=A2F1BFBCF4F802DBA645B5076ACAE2D1FD3EF404CF0DC3F988B93C47239C00B167F4B6F0274AF4E6D4B954CE020B71F99E1264FFB7EE1AD58E3108DE83BBADD0",
+          'http://jenkins.chkok.kr:8000/api/monitor?format=json&key=A2F1BFBCF4F802DBA645B5076ACAE2D1FD3EF404CF0DC3F988B93C47239C00B167F4B6F0274AF4E6D4B954CE020B71F99E1264FFB7EE1AD58E3108DE83BBADD0'
         );
         const data = response.data;
         setServerData(data);
@@ -112,12 +112,12 @@ export default function ServerDashBoard() {
   // CPUUtilization 및 CPUCreditUsage 데이터 통합
   const cpuData = [
     {
-      name: "CPU 사용률",
+      name: 'CPU 사용률',
       Average: serverData.Metrics.CPUUtilization.Average,
       Maximum: serverData.Metrics.CPUUtilization.Maximum,
     },
     {
-      name: "CPU 크레딧 사용량",
+      name: 'CPU 크레딧 사용량',
       Average: serverData.Metrics.CPUCreditUsage.Average * 100,
       Maximum: serverData.Metrics.CPUCreditUsage.Maximum * 100,
     },
@@ -126,12 +126,12 @@ export default function ServerDashBoard() {
   // NetworkIn/Out 데이터
   const networkData = [
     {
-      name: "수신 트래픽",
+      name: '수신 트래픽',
       Average: serverData.Metrics.NetworkIn.Average,
       Maximum: serverData.Metrics.NetworkIn.Maximum,
     },
     {
-      name: "송신 트래픽",
+      name: '송신 트래픽',
       Average: serverData.Metrics.NetworkOut.Average,
       Maximum: serverData.Metrics.NetworkOut.Maximum,
     },
@@ -140,12 +140,12 @@ export default function ServerDashBoard() {
   // NetworkPacketsIn/Out 데이터
   const packetsData = [
     {
-      name: "수신 패킷",
+      name: '수신 패킷',
       Average: serverData.Metrics.NetworkPacketsIn.Average,
       Maximum: serverData.Metrics.NetworkPacketsIn.Maximum,
     },
     {
-      name: "송신 패킷",
+      name: '송신 패킷',
       Average: serverData.Metrics.NetworkPacketsOut.Average,
       Maximum: serverData.Metrics.NetworkPacketsOut.Maximum,
     },
@@ -164,12 +164,12 @@ export default function ServerDashBoard() {
             <ChartContainer
               config={{
                 Average: {
-                  label: "평균",
-                  color: "#3b82f6",
+                  label: '평균',
+                  color: '#3b82f6',
                 },
                 Maximum: {
-                  label: "최대",
-                  color: "#93c5fd",
+                  label: '최대',
+                  color: '#93c5fd',
                 },
               }}
             >
@@ -212,12 +212,12 @@ export default function ServerDashBoard() {
             <ChartContainer
               config={{
                 Average: {
-                  label: "평균",
-                  color: "#3b82f6",
+                  label: '평균',
+                  color: '#3b82f6',
                 },
                 Maximum: {
-                  label: "최대",
-                  color: "#93c5fd",
+                  label: '최대',
+                  color: '#93c5fd',
                 },
               }}
             >
@@ -260,12 +260,12 @@ export default function ServerDashBoard() {
             <ChartContainer
               config={{
                 Average: {
-                  label: "평균",
-                  color: "#6b7280",
+                  label: '평균',
+                  color: '#6b7280',
                 },
                 Maximum: {
-                  label: "최대",
-                  color: "#9ca3af",
+                  label: '최대',
+                  color: '#9ca3af',
                 },
               }}
             >

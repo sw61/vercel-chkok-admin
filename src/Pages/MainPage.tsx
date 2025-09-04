@@ -1,7 +1,7 @@
-import { UserPieChartActive } from "@/Chart/UserPieChartActive";
-import { UserPieChartCount } from "@/Chart/UserPieChartCount";
-import { CamapaignPieChart } from "@/Chart/CampaignPieChart";
-import ServerDashBoard from "@/Server/ServerDashBoard";
+import { UserPieChartActive } from '@/Chart/UserPieChartActive';
+import { UserPieChartCount } from '@/Chart/UserPieChartCount';
+import { CamapaignPieChart } from '@/Chart/CampaignPieChart';
+import ServerDashBoard from '@/Server/ServerDashBoard';
 export default function MainPage() {
   return (
     <>
