@@ -14,7 +14,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import axiosInterceptor from '@/lib/axios-interceptors';
-import UserTableSkeleton from '@/Skeleton/UserTableSkeleton';
 import { PaginationHook } from '@/hooks/PaginationHook';
 import { NoticeTable } from './NoticeTable';
 import { useNavigate } from 'react-router-dom';

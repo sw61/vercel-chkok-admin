@@ -439,6 +439,7 @@ export default function PostDetail() {
               <AlertDialogContent className="w-[350px]">
                 <AlertDialogHeader>
                   <AlertDialogTitle>문서를 수정하시겠습니까?</AlertDialogTitle>
+                  <AlertDialogDescription></AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>취소</AlertDialogCancel>
