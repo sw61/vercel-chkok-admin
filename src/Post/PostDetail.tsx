@@ -305,6 +305,7 @@ export default function PostDetail() {
       <Card className="w-full px-6 py-4">
         <div className="flex items-center justify-between px-6">
           <CardTitle className="ck-title">체험콕 글</CardTitle>
+
           <div className="flex gap-3">
             <Popover>
               <PopoverTrigger asChild>

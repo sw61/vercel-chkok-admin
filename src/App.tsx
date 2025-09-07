@@ -29,6 +29,7 @@ import { PrivateComponent } from './auth/tokenCheck';
 // library
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import MapComponent from './KakaoMap/KakaoSearch';
 
 // Route configuration
 const privateRoutes = [
@@ -48,6 +49,7 @@ const privateRoutes = [
   { path: '/posts', element: <PostPage /> },
   { path: '/posts/:markdownId', element: <PostDetail /> },
   { path: '/posts/create', element: <PostCreate /> },
+  { path: '/test', element: <MapComponent /> },
 ];
 
 const App = () => (
