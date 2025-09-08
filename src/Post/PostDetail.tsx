@@ -35,6 +35,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Label } from '@/components/ui/label';
+import KakaoSearch from '@/KakaoMap/KakaoSearch'; // MapComponent 임포트
 
 interface PostData {
   id: number;
@@ -78,29 +79,13 @@ export default function PostDetail() {
     useState<string>('');
   const [lat, setLat] = useState<number | undefined>(undefined);
   const [lng, setLng] = useState<number | undefined>(undefined);
+  const [showMapModal, setShowMapModal] = useState<boolean>(false); // 지도 모달 상태
 
   // HTML -> Markdown 변환
   const turndownService = new TurndownService({
     headingStyle: 'atx',
     codeBlockStyle: 'fenced',
   });
-
-  // 숫자 입력 핸들러
-  const handleNumberInput = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setter: React.Dispatch<React.SetStateAction<number | undefined>>
-  ) => {
-    const value = e.target.value;
-    setter(value === '' ? undefined : parseFloat(value));
-  };
-
-  // contactPhone 입력 시 오류 제거
-  const handleContactPhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setContactPhone(e.target.value);
-    if (e.target.value.trim()) {
-      setContactPhoneError('');
-    }
-  };
 
   // 유효성 검사
   const validateRequiredFields = () => {
@@ -153,7 +138,6 @@ export default function PostDetail() {
         setLat(undefined);
         setLng(undefined);
       }
-      console.log(data);
     } catch (error) {
       console.log(error);
       toast.error('마크다운 문서를 불러오는데 실패했습니다.');
@@ -186,13 +170,11 @@ export default function PostDetail() {
           lng: lng ?? null,
         },
       };
-      console.log('전송 데이터:', payload);
       const response = await axiosInterceptor.put(
         `/api/admin/posts/${id}`,
         payload
       );
       toast.success('문서가 수정되었습니다.');
-      console.log(response);
       await getPostDetail(markdownId!);
     } catch (error) {
       console.log(error);
@@ -281,6 +263,18 @@ export default function PostDetail() {
     },
   };
 
+  // MapComponent에서 선택된 데이터 처리
+  const handleMapSelect = (data: {
+    roadAddr: string;
+    lat: number;
+    lng: number;
+  }) => {
+    setBusinessAddress(data.roadAddr);
+    setLat(data.lat);
+    setLng(data.lng);
+    setShowMapModal(false);
+  };
+
   useEffect(() => {
     if (markdownId) {
       getPostDetail(markdownId);
@@ -330,20 +324,10 @@ export default function PostDetail() {
                           className="h-8"
                           placeholder="01012345678"
                           value={contactPhone}
-                          onChange={handleContactPhoneChange}
-                          onBlur={() => {
-                            if (!contactPhone.trim()) {
-                              setContactPhoneError(
-                                '연락처는 필수 입력 항목입니다.'
-                              );
-                            }
-                          }}
+                          onChange={(event) =>
+                            setContactPhone(event.target.value)
+                          }
                         />
-                        {contactPhoneError && (
-                          <p className="text-ck-red-500 text-xs mt-1">
-                            {contactPhoneError}
-                          </p>
-                        )}
                       </div>
                     </div>
                     <div className="grid grid-cols-3 items-center gap-4">
@@ -358,13 +342,22 @@ export default function PostDetail() {
                     </div>
                     <div className="grid grid-cols-3 items-center gap-4">
                       <Label htmlFor="businessAddress">위치 정보</Label>
-                      <Input
-                        id="businessAddress"
-                        className="col-span-2 h-8"
-                        placeholder="위치 정보 입력"
-                        value={businessAddress}
-                        onChange={(e) => setBusinessAddress(e.target.value)}
-                      />
+                      <div className="col-span-2 flex gap-2">
+                        <Input
+                          id="businessAddress"
+                          className="h-8 flex-1"
+                          placeholder="위치 정보 입력"
+                          value={businessAddress}
+                          onChange={(e) => setBusinessAddress(e.target.value)}
+                        />
+                        <Button
+                          variant="outline"
+                          className="h-8"
+                          onClick={() => setShowMapModal(true)}
+                        >
+                          위치 검색
+                        </Button>
+                      </div>
                     </div>
                     <div className="grid grid-cols-3 items-center gap-4">
                       <Label htmlFor="businessDetailAddress">
@@ -380,37 +373,13 @@ export default function PostDetail() {
                         }
                       />
                     </div>
-                    <div className="grid grid-cols-3 items-center gap-4">
-                      <Label htmlFor="lat">위도</Label>
-                      <Input
-                        id="lat"
-                        type="number"
-                        step="any"
-                        className="col-span-2 h-8"
-                        placeholder="위도를 입력하세요"
-                        value={lat ?? ''}
-                        onChange={(e) => handleNumberInput(e, setLat)}
-                      />
-                    </div>
-                    <div className="grid grid-cols-3 items-center gap-4">
-                      <Label htmlFor="lng">경도</Label>
-                      <Input
-                        id="lng"
-                        type="number"
-                        step="any"
-                        className="col-span-2 h-8"
-                        placeholder="경도를 입력하세요"
-                        value={lng ?? ''}
-                        onChange={(e) => handleNumberInput(e, setLng)}
-                      />
-                    </div>
                   </div>
                 </div>
               </PopoverContent>
             </Popover>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button className=" px-4 py-2 " variant="outline">
+                <Button className="px-4 py-2" variant="outline">
                   삭제
                 </Button>
               </AlertDialogTrigger>
@@ -433,7 +402,7 @@ export default function PostDetail() {
             </AlertDialog>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button className=" px-4 py-2" variant="outline">
+                <Button className="px-4 py-2" variant="outline">
                   수정
                 </Button>
               </AlertDialogTrigger>
@@ -454,10 +423,10 @@ export default function PostDetail() {
         </div>
         <CardContent className="ck-body-2 flex justify-between gap-6 items-center">
           <div className="flex gap-4">
-            <p>작성자: {postData?.authorName}</p>
-            <p>생성일: {postData?.createdAt.split('T')[0]}</p>
-            <p>수정일: {postData?.updatedAt.split('T')[0]}</p>
-            <p>조회수: {postData?.viewCount}</p>
+            <p>작성자 : {postData?.authorName}</p>
+            <p>생성일 : {postData?.createdAt.split('T')[0]}</p>
+            <p>수정일 : {postData?.updatedAt.split('T')[0]}</p>
+            <p>조회수 : {postData?.viewCount}</p>
           </div>
           <Button
             variant="link"
@@ -518,6 +487,19 @@ export default function PostDetail() {
         </CardContent>
       </Card>
 
+      {/* 지도 모달 */}
+      {showMapModal && (
+        <div className="absolute inset-0 z-10 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg border max-w-2xl min-w-[600px] max-h-[90vh] overflow-y-auto">
+            <h2 className="text-lg font-bold mb-2">위치 검색</h2>
+            <KakaoSearch
+              onSelect={handleMapSelect}
+              onClose={() => setShowMapModal(false)}
+            />
+          </div>
+        </div>
+      )}
+
       {/* 이미지 설정 모달 */}
       {showImageModal && (
         <div className="absolute inset-0 z-10 flex h-full w-full items-center justify-center backdrop-blur-sm">
@@ -534,7 +516,6 @@ export default function PostDetail() {
                 />
               </div>
             </div>
-            <div className="mb-6 grid grid-cols-2 gap-4"></div>
             <div className="flex gap-3">
               <button
                 onClick={() => {
