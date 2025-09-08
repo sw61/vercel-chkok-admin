@@ -49,13 +49,11 @@ export default function NoticeCreate() {
     const html = renderToStaticMarkup(markdownComponent);
 
     try {
-      console.log('전송 데이터:', { title, content: html, isMust });
       const response = await axiosInterceptor.post('/api/admin/notices', {
         title,
         content: html,
         isMust,
       });
-      console.log('API 응답:', response);
       toast.success('문서가 생성되었습니다.');
       navigate('/notices');
     } catch (error) {

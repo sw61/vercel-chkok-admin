@@ -19,7 +19,6 @@ import NoticeCreate from './Notice/NoticeCreate';
 import PostPage from './Post/PostPage';
 import PostDetail from './Post/PostDetail';
 import PostCreate from './Post/PostCreate';
-import CompanyTablePage from './Company/CompanyTablePage';
 import ServerDashBoard from './Server/ServerDashBoard';
 
 // ts file
@@ -33,14 +32,13 @@ import { ToastContainer } from 'react-toastify';
 // Route configuration
 const privateRoutes = [
   { path: '/', element: <MainPage /> },
+  { path: '/admin', element: <AdminDetail /> },
   { path: '/users', element: <UserTablePage /> },
   { path: '/users/:userId', element: <UserDetail /> },
-  { path: '/companies', element: <CompanyTablePage /> },
   { path: '/campaigns', element: <CampaignTablePage /> },
   { path: '/campaigns/:campaignId', element: <CampaignDetail /> },
   { path: '/banners', element: <BannersDragpage /> },
   { path: '/banners/:bannerId', element: <BannersDetail /> },
-  { path: '/admin', element: <AdminDetail /> },
   { path: '/server', element: <ServerDashBoard /> },
   { path: '/notices', element: <NoticePage /> },
   { path: '/notices/:markdownId', element: <NoticeDetail /> },

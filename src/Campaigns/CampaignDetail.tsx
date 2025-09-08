@@ -222,7 +222,7 @@ export default function CampaignDetail() {
         />
       </div>
       <div className="my-4 flex items-center justify-between">
-        <h2 className="text-2xl font-bold">{campaignData.title}</h2>
+        <div className="ck-title">{campaignData.title}</div>
         <div className="px-4">
           <div className="flex gap-2">
             {campaignData.approvalStatus === '대기중' && (
@@ -329,7 +329,7 @@ export default function CampaignDetail() {
                   <p>리뷰 마감일</p>
                   <p>체험단 선정일</p>
                   <p>생성일</p>
-                  <p>승인일</p>
+                  {campaignData.approvalDate && <p>승인일</p>}
                 </div>
                 <div className="ck-body-2 flex flex-col gap-1">
                   <p>
@@ -339,7 +339,9 @@ export default function CampaignDetail() {
                   <p>{campaignData.reviewDeadlineDate ?? '상시 모집'}</p>{' '}
                   <p>{campaignData.selectionDate ?? '상시 모집'}</p>
                   <p>{campaignData.createdAt.split('T')[0]}</p>
-                  <p>{campaignData.approvalDate.split('T')[0]}</p>
+                  {campaignData.approvalDate && (
+                    <p>{campaignData.approvalDate.split('T')[0]}</p>
+                  )}
                 </div>
               </div>
               {/* 간단 소개 */}
@@ -454,19 +456,25 @@ export default function CampaignDetail() {
                 <p className="ck-title mb-2">미션 가이드</p>
                 <div className="ck-body-1 mb-2 flex items-center gap-4">
                   <div className="grid w-14 place-items-center gap-2">
-                    <Type />
+                    <div>
+                      <Type />
+                    </div>
                     <div className="ck-caption-2">
                       {campaignData.missionInfo.numberOfText}자↑
                     </div>
                   </div>
                   <div className="grid w-14 place-items-center gap-2">
-                    <Image />
+                    <div>
+                      <Image />
+                    </div>
                     <div className="ck-caption-2">
                       {campaignData.missionInfo.numberOfImage}장↑
                     </div>
                   </div>
                   <div className="grid w-14 place-items-center gap-2">
-                    <SquarePlay />
+                    <div>
+                      <SquarePlay />
+                    </div>
                     <div className="ck-caption-2">
                       {campaignData.missionInfo.numberOfVideo}개↑
                     </div>
@@ -516,7 +524,9 @@ export default function CampaignDetail() {
                   />
                   <div className="mt-4 flex flex-col gap-2">
                     <div className="flex items-center gap-2">
-                      <MapPin size={16} />
+                      <div>
+                        <MapPin size={16} />
+                      </div>
                       <p className="ck-body-2">
                         {campaignData.location.businessAddress}
                         {'  '}
@@ -524,13 +534,17 @@ export default function CampaignDetail() {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Phone size={16} />
+                      <div>
+                        <Phone size={16} />
+                      </div>
                       <p className="ck-body-2">
                         {campaignData.location.contactPhone}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Link size={16} />
+                      <div>
+                        <Link size={16} />
+                      </div>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <a
@@ -547,7 +561,9 @@ export default function CampaignDetail() {
                       </Tooltip>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Star size={16} />
+                      <div>
+                        <Star size={16} />
+                      </div>
                       <p className="ck-body-2">
                         {campaignData.location.visitAndReservationInfo}
                       </p>

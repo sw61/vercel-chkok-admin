@@ -70,10 +70,8 @@ export default function NoticeDetail() {
       const response = await axiosInterceptor.get(`/api/admin/notices/${id}`);
       const data = response.data.data;
       const markdownContent = turndownService.turndown(data.content);
-
       setNoticeData(data);
       setEditData({ title: data.title, content: markdownContent });
-      console.log(data);
     } catch (error) {
       console.log(error);
       toast.error('마크다운 문서를 불러오는데 실패했습니다.');
@@ -97,7 +95,6 @@ export default function NoticeDetail() {
       });
       navigate('/notices');
       toast.success('문서가 수정되었습니다.');
-      console.log(response);
       await getNoticeDetail(markdownId!);
     } catch (error) {
       console.log(error);
@@ -234,14 +231,27 @@ export default function NoticeDetail() {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-
-            <Button
-              onClick={() => editMarkdown(noticeData.id)}
-              className="px-4 py-2"
-              variant="outline"
-            >
-              수정
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button className="px-4 py-2" variant="outline">
+                  수정
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="w-[350px]">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>문서를 수정하시겠습니까?</AlertDialogTitle>
+                  <AlertDialogDescription></AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>취소</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => editMarkdown(noticeData.id)}
+                  >
+                    확인
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
         <CardContent className="ck-body-2 flex  gap-6">
