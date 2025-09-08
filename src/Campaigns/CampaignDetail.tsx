@@ -222,7 +222,7 @@ export default function CampaignDetail() {
         />
       </div>
       <div className="my-4 flex items-center justify-between">
-        <h2 className="text-2xl font-bold">{campaignData.title}</h2>
+        <div className="ck-title">{campaignData.title}</div>
         <div className="px-4">
           <div className="flex gap-2">
             {campaignData.approvalStatus === '대기중' && (

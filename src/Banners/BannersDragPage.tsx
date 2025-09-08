@@ -98,7 +98,6 @@ export default function BannersDragPage() {
         '/api/images/banners/presigned-url',
         { fileExtension }
       );
-      console.log('Presigned URL 응답:', response);
       const presignedUrl = response.data.data.presignedUrl;
       setPresignedUrl(presignedUrl);
       const contentType = imageFile.type || 'image/jpeg';
@@ -273,70 +272,20 @@ export default function BannersDragPage() {
           <div className="flex gap-4">
             {createMode ? (
               <>
-                <div className="flex items-center gap-2">
-                  {/* 숨겨진 파일 입력 */}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="hidden"
-                    ref={fileInputRef}
-                  />
-                  {/* 파일 선택 버튼 */}
-                  <Button
-                    className="ck-body-1 bg-ck-white text-ck-gray-900 hover:bg-ck-gray-300 border-1"
-                    onClick={handleFileSelect}
-                  >
-                    <FolderInput />
-                    파일 선택
-                  </Button>
-
-                  {/* 선택된 파일 정보 표시 */}
-                  {imageFile && (
-                    <div className="text-sm text-gray-700">
-                      <span className="ck-body-2">
-                        선택된 파일 : {imageFile.name}
-                      </span>
-                      <span className="ck-body-2 ml-2">
-                        ({(imageFile.size / 1024).toFixed(2)} KB)
-                      </span>
-                    </div>
-                  )}
-                  {/* 파일 업로드 버튼 */}
-                  {imageFile && (
-                    <Button
-                      onClick={handleUrlUpload}
-                      disabled={isUploading || !imageFile}
-                      className="ck-body-1 bg-ck-white text-ck-gray-900 border-1 hover:bg-gray-300"
-                    >
-                      <Upload />
-                      {isUploading ? '업로드 중...' : '파일 업로드'}
-                    </Button>
-                  )}
-                </div>
+                <Button onClick={toggleCreateMode} variant="outline">
+                  취소
+                </Button>
                 <Button
                   onClick={() => createBanner()}
                   disabled={!presignedUrl || isCreating}
-                  className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                   variant="outline"
                 >
                   {isCreating ? '생성 중...' : '생성'}
                 </Button>
-                <Button
-                  onClick={toggleCreateMode}
-                  className="ck-body-1 hover:bg-ck-gray-600 cursor-pointer hover:text-white"
-                  variant="outline"
-                >
-                  취소
-                </Button>
               </>
             ) : (
               <>
-                <Button
-                  onClick={toggleCreateMode}
-                  className="ck-body-1 cursor-pointer"
-                  variant="outline"
-                >
+                <Button onClick={toggleCreateMode} variant="outline">
                   배너 추가
                 </Button>
               </>
@@ -444,9 +393,6 @@ export default function BannersDragPage() {
                         <span className="ck-body-2">
                           선택된 파일 : {imageFile.name}
                         </span>
-                        <span className="ck-body-2 ml-2">
-                          ({(imageFile.size / 1024).toFixed(2)} KB)
-                        </span>
                       </div>
                     )}
                     {/* 파일 업로드 버튼 */}
@@ -454,27 +400,22 @@ export default function BannersDragPage() {
                       <Button
                         onClick={handleUrlUpload}
                         disabled={isUploading || !imageFile}
-                        className="ck-body-1 bg-ck-white text-ck-gray-900 border-1 hover:bg-gray-300"
+                        variant="outline"
                       >
-                        <Upload />
                         {isUploading ? '업로드 중...' : '파일 업로드'}
                       </Button>
                     )}
                   </div>
+
+                  <Button onClick={toggleCreateMode} variant="outline">
+                    취소
+                  </Button>
                   <Button
                     onClick={() => createBanner()}
                     disabled={!presignedUrl || isCreating}
-                    className="ck-body-1 hover:bg-ck-blue-500 cursor-pointer hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                     variant="outline"
                   >
                     {isCreating ? '생성 중...' : '생성'}
-                  </Button>
-                  <Button
-                    onClick={toggleCreateMode}
-                    className="ck-body-1 hover:bg-ck-gray-600 cursor-pointer hover:text-white"
-                    variant="outline"
-                  >
-                    취소
                   </Button>
                 </>
               ) : (

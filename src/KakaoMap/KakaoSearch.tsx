@@ -252,16 +252,7 @@ const KakaoSearch: React.FC<MapComponentProps> = ({ onSelect, onClose }) => {
             key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
             position={marker.position}
             onClick={() => handlePlaceClick(marker)}
-          >
-            {info && info.content === marker.content && (
-              <div style={{ color: '#000' }}>
-                {marker.content}
-                {marker.addressInfo && marker.addressInfo.roadAddr && (
-                  <div>도로명 주소: {marker.addressInfo.roadAddr}</div>
-                )}
-              </div>
-            )}
-          </MapMarker>
+          />
         ))}
       </Map>
 
