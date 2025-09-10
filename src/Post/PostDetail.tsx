@@ -72,7 +72,6 @@ export default function PostDetail() {
   } | null>(null);
   const [editorApi, setEditorApi] = useState<any>(null); // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [contactPhone, setContactPhone] = useState<string>('');
-  const [contactPhoneError, setContactPhoneError] = useState<string>('');
   const [homepage, setHomepage] = useState<string>('');
   const [businessAddress, setBusinessAddress] = useState<string>('');
   const [businessDetailAddress, setBusinessDetailAddress] =
@@ -98,16 +97,7 @@ export default function PostDetail() {
       return false;
     }
     if (!contactPhone.trim()) {
-      setContactPhoneError('연락처는 필수 입력 항목입니다.');
       toast.error('연락처를 입력해주세요.');
-      return false;
-    }
-    if (lat !== undefined && isNaN(lat)) {
-      toast.error('위도는 유효한 숫자 형식이어야 합니다.');
-      return false;
-    }
-    if (lng !== undefined && isNaN(lng)) {
-      toast.error('경도는 유효한 숫자 형식이어야 합니다.');
       return false;
     }
     return true;
@@ -140,7 +130,7 @@ export default function PostDetail() {
       }
     } catch (error) {
       console.log(error);
-      toast.error('마크다운 문서를 불러오는데 실패했습니다.');
+      toast.error('아티클을 불러오는데 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
@@ -174,23 +164,23 @@ export default function PostDetail() {
         `/api/admin/posts/${id}`,
         payload
       );
-      toast.success('문서가 수정되었습니다.');
+      toast.success('아티클이 수정되었습니다.');
       await getPostDetail(markdownId!);
     } catch (error) {
       console.log(error);
-      toast.error('문서 수정에 실패했습니다.');
+      toast.error('아티클 수정에 실패했습니다.');
     }
   };
 
-  // 체험콕 글 삭제
+  // 체험콕 아티클 삭제
   const deleteMarkdown = async (id: number) => {
     try {
       await axiosInterceptor.delete(`/api/admin/posts/${id}`);
       navigate('/posts');
-      toast.success('문서가 삭제되었습니다.');
+      toast.success('아티클가 삭제되었습니다.');
     } catch (error) {
       console.log(error);
-      toast.error('문서 삭제에 실패했습니다.');
+      toast.error('아티클 삭제에 실패했습니다.');
     }
   };
 
@@ -385,7 +375,9 @@ export default function PostDetail() {
               </AlertDialogTrigger>
               <AlertDialogContent className="w-[350px]">
                 <AlertDialogHeader>
-                  <AlertDialogTitle>문서를 삭제하시겠습니까?</AlertDialogTitle>
+                  <AlertDialogTitle>
+                    아티클을 삭제하시겠습니까?
+                  </AlertDialogTitle>
                   <AlertDialogDescription>
                     이 작업은 되돌릴 수 없습니다
                   </AlertDialogDescription>
@@ -408,7 +400,9 @@ export default function PostDetail() {
               </AlertDialogTrigger>
               <AlertDialogContent className="w-[350px]">
                 <AlertDialogHeader>
-                  <AlertDialogTitle>문서를 수정하시겠습니까?</AlertDialogTitle>
+                  <AlertDialogTitle>
+                    아티클을 수정하시겠습니까?
+                  </AlertDialogTitle>
                   <AlertDialogDescription></AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

@@ -59,7 +59,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: Megaphone,
       },
       {
-        title: '체험콕 글',
+        title: '체험콕 아티클',
         url: '/posts',
         icon: BookOpenText,
       },

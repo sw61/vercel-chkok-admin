@@ -100,11 +100,11 @@ export default function PostCreate() {
         },
       };
       const response = await axiosInterceptor.post('/api/admin/posts', payload);
-      toast.success('문서가 생성되었습니다.');
+      toast.success('아티클이 생성되었습니다.');
       navigate('/posts');
     } catch (error) {
-      console.error('문서 생성 오류:', error);
-      toast.error('문서 생성에 실패했습니다.');
+      console.error('아티클 생성 오류:', error);
+      toast.error('아티클 생성에 실패했습니다.');
     }
   };
 
@@ -213,7 +213,7 @@ export default function PostCreate() {
                             필드 입력
                           </h4>
                           <p className="text-muted-foreground text-sm">
-                            글 생성을 위해 필드를 입력해주세요
+                            아티클 생성을 위해 필드를 입력해주세요
                           </p>
                         </div>
                         <div className="grid gap-2">
