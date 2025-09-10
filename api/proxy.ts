@@ -11,9 +11,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const jenkinsUrl = `http://jenkins.chkok.kr:8000/api/monitor?format=json&key=${apiKey}`;
 
   try {
-    // axios.get으로 요청
     const response = await axios.get(jenkinsUrl);
-
+    res.setHeader('Access-Control-Allow-Origin', '*'); // CORS 허용
     res.status(200).json(response.data);
   } catch (err: any) {
     console.error('Proxy error:', err.message);
