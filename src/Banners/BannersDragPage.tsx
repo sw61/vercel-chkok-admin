@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
-import { FolderInput, Upload } from 'lucide-react';
+import { FolderInput } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import BannerPageSkeleton from '@/Skeleton/BannerPageSkeleton';
 
@@ -39,7 +39,6 @@ export default function BannersDragPage() {
     title: '',
     description: '',
     position: '',
-    displayOrder: '',
   });
 
   // 배너 이미지 목록 조회
@@ -60,7 +59,6 @@ export default function BannersDragPage() {
         redirectUrl: '',
         description: '',
         position: '',
-        displayOrder: '',
       });
     } catch (error) {
       console.error('배너 목록 조회 중 오류 발생:', error);
@@ -114,7 +112,7 @@ export default function BannersDragPage() {
       setIsUploading(false);
     }
   };
-  // 배너 이미지 생성
+  // 배너 생성
   const createBanner = async () => {
     setIsCreating(true);
     if (!presignedUrl) {
@@ -126,15 +124,9 @@ export default function BannersDragPage() {
       !createBannerData.title ||
       !createBannerData.description ||
       !createBannerData.redirectUrl ||
-      !createBannerData.position ||
-      !createBannerData.displayOrder
+      !createBannerData.position
     ) {
       toast.error('모든 필수 필드를 입력해주세요.');
-      setIsCreating(false);
-      return;
-    }
-    if (isNaN(Number(createBannerData.displayOrder))) {
-      toast.error('배너 순서는 숫자 형식이어야 합니다.');
       setIsCreating(false);
       return;
     }
@@ -145,7 +137,7 @@ export default function BannersDragPage() {
         title: createBannerData.title,
         description: createBannerData.description,
         position: createBannerData.position,
-        displayOrder: Number(createBannerData.displayOrder),
+        displayOrder: bannerData.length + 1,
       });
       toast.success('배너 이미지가 생성되었습니다.');
       await getBannersTable();
@@ -178,7 +170,6 @@ export default function BannersDragPage() {
       redirectUrl: '',
       description: '',
       position: '',
-      displayOrder: '',
     });
   };
 
@@ -191,12 +182,8 @@ export default function BannersDragPage() {
           displayOrder: index + 1, // 1부터 시작
         })),
       };
-      const response = await axiosInterceptor.patch(
-        '/api/banners/order',
-        requestBody
-      );
+      await axiosInterceptor.patch('/api/banners/order', requestBody);
       toast.success('배너 순서 변경이 완료되었습니다.');
-      console.log(response);
     } catch (error) {
       console.log(error);
       toast.error('배너 순서 업데이트 중 오류 발생');
@@ -338,17 +325,6 @@ export default function BannersDragPage() {
                 className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
               />
             </div>
-            <div className="flex flex-col gap-2">
-              <p className="ck-body-2-bold">배너 순서</p>
-              <Input
-                id="displayOrder"
-                name="displayOrder"
-                value={createBannerData.displayOrder}
-                onChange={handleInputChange}
-                placeholder="배너 순서 번호를 입력하세요"
-                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
-              />
-            </div>
           </CardContent>
         ) : (
           <div className="text-ck-gray-600 ck-body-2 flex h-40 items-center justify-center rounded-md border py-10">
@@ -475,17 +451,6 @@ export default function BannersDragPage() {
                 value={createBannerData.position}
                 onChange={handleInputChange}
                 placeholder="배너 위치를 입력하세요"
-                className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <p className="ck-body-2-bold">배너 순서</p>
-              <Input
-                id="displayOrder"
-                name="displayOrder"
-                value={createBannerData.displayOrder}
-                onChange={handleInputChange}
-                placeholder="배너 순서 번호를 입력하세요"
                 className="ck-body-2 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2"
               />
             </div>
