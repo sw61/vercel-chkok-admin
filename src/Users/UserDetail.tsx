@@ -5,13 +5,7 @@ import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'react-toastify';
-import {
-  ArrowUpNarrowWide,
-  ChevronLeft,
-  Trash,
-  UserCheck,
-  UserX,
-} from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import UserDetailSkeleton from '@/Skeleton/UserDetailSkeleton';
 import { CustomBadge } from '@/hooks/useBadge';
@@ -26,6 +20,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import usericon from '@/Image/usericon.png';
 
 interface User {
   id: number;
@@ -179,7 +174,7 @@ export default function UserDetail() {
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
                   <AvatarImage
-                    src={userData.profileImg}
+                    src={userData.profileImg || usericon}
                     alt={userData.nickname}
                   />
                   <AvatarFallback></AvatarFallback>

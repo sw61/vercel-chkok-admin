@@ -14,7 +14,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import axiosInterceptor from '@/lib/axios-interceptors';
-import UserTableSkeleton from '@/Skeleton/UserTableSkeleton';
 import { PaginationHook } from '@/hooks/PaginationHook';
 import { PostTable } from './PostTable';
 import { useNavigate } from 'react-router-dom';
@@ -66,7 +65,7 @@ export default function PostPage() {
     { id: 'updatedAt', label: '업데이트일' },
   ];
 
-  // 체험콕 글 데이터 목록 조회
+  // 체험콕 아티클 데이터 목록 조회
   const getPostTable = async (page: number = 0) => {
     setIsLoading(true);
     try {
@@ -83,7 +82,7 @@ export default function PostPage() {
     }
   };
 
-  // 체험콕 글 제목 검색 기능
+  // 체험콕 아티클 제목 검색 기능
   const handleSearch = async () => {
     try {
       const response = await axiosInterceptor.get(
@@ -143,13 +142,13 @@ export default function PostPage() {
               </DropdownMenuContent>
             </DropdownMenu>
             <Button variant="outline" onClick={() => navigate('/posts/create')}>
-              글 작성
+              아티클 작성
             </Button>
           </div>
 
           <div className="relative">
             <Input
-              placeholder="체험콕 글 검색"
+              placeholder="체험콕 아티클 검색"
               value={searchKey}
               onChange={(e) => setSearchKey(e.target.value)}
               onKeyDown={handleEnterSearch}
