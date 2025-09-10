@@ -1,9 +1,9 @@
-import axiosInterceptor from "@/lib/axios-interceptors";
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import PulseLoader from "react-spinners/PulseLoader";
-import usericon from "../Image/usericon.png";
+import axiosInterceptor from '@/lib/axios-interceptors';
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import PulseLoader from 'react-spinners/PulseLoader';
+import usericon from '../Image/usericon.png';
 
 interface AdminData {
   id: number;
@@ -26,7 +26,7 @@ export default function AdminDetail() {
 
   // 상대 시간 포맷팅 함수
   const formatLastLogin = (lastLoginAt: string | undefined) => {
-    if (!lastLoginAt) return "정보 없음";
+    if (!lastLoginAt) return '정보 없음';
     const loginDate = new Date(lastLoginAt);
     const now = new Date();
     const diffMs = now.getTime() - loginDate.getTime();
@@ -39,20 +39,20 @@ export default function AdminDetail() {
     if (diffMinutes < 60) return `${diffMinutes}분 전`;
     if (diffHours < 24) return `${diffHours}시간 전`;
     if (diffDays < 7) return `${diffDays}일 전`;
-    return loginDate.toLocaleString("ko-KR", {
-      timeZone: "Asia/Seoul",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+    return loginDate.toLocaleString('ko-KR', {
+      timeZone: 'Asia/Seoul',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   };
 
   const AdminAccountInfo = (): AdminAccountInfo[] => [
-    { key: "id", label: "ID", value: adminData?.id ?? "정보 없음" },
+    { key: 'id', label: 'ID', value: adminData?.id ?? '정보 없음' },
     {
-      key: "createdAt",
-      label: "생성일",
-      value: adminData?.createdAt.split("T")[0] ?? "정보 없음",
+      key: 'createdAt',
+      label: '생성일',
+      value: adminData?.createdAt.split('T')[0] ?? '정보 없음',
     },
   ];
 
@@ -76,7 +76,7 @@ export default function AdminDetail() {
   const getUserMe = async () => {
     try {
       setIsLoading(true);
-      const response = await axiosInterceptor.get("/auth/me");
+      const response = await axiosInterceptor.get('/auth/me');
       const data = response.data.data;
       setAdminData(data);
       console.log(data);
@@ -100,40 +100,38 @@ export default function AdminDetail() {
   }
 
   return (
-    <>
-      <div className="grid-row grid gap-10">
-        <div className="flex gap-8">
-          <Avatar className="h-40 w-40">
-            <AvatarImage src={usericon} alt="관리자 프로필" />
-            <AvatarFallback></AvatarFallback>
-          </Avatar>
+    <div className="grid-row grid gap-10 p-6">
+      <div className="flex gap-8">
+        <Avatar className="h-32 w-32">
+          <AvatarImage src={usericon} alt="관리자 프로필" />
+          <AvatarFallback></AvatarFallback>
+        </Avatar>
 
-          <div className="flex flex-col justify-center gap-4">
-            <div className="flex gap-4">
-              <div className="ck-sub-title-1">{adminData?.name}</div>
-              <div className="ck-sub-title-1">{adminData?.email}</div>
-            </div>
-            <div className="text-ck-gray-600 ck-body-2">
-              마지막 로그인 &nbsp;{formatLastLogin(adminData?.lastLoginAt)}
-            </div>
+        <div className="flex flex-col justify-center gap-4">
+          <div className="flex gap-4">
+            <div className="ck-sub-title-1">{adminData?.name}</div>
+            <div className="ck-sub-title-1">{adminData?.email}</div>
+          </div>
+          <div className="text-ck-gray-600 ck-body-2">
+            마지막 로그인 &nbsp;{formatLastLogin(adminData?.lastLoginAt)}
           </div>
         </div>
-        {/* 관리자 계정 정보 */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="ck-sub-title-1 flex items-center">
-              관리자 계정 정보
-            </CardTitle>
-          </CardHeader>
-          {AdminAccountInfo().map((item) => (
-            <AdminInfoComponent
-              key={item.key}
-              label={item.label}
-              value={item.value}
-            />
-          ))}
-        </Card>
       </div>
-    </>
+      {/* 관리자 계정 정보 */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="ck-sub-title-1 flex items-center">
+            관리자 계정 정보
+          </CardTitle>
+        </CardHeader>
+        {AdminAccountInfo().map((item) => (
+          <AdminInfoComponent
+            key={item.key}
+            label={item.label}
+            value={item.value}
+          />
+        ))}
+      </Card>
+    </div>
   );
 }

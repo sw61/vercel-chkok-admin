@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-  BookOpen,
   Frame,
   BadgeCheck,
   Map,
@@ -8,8 +7,9 @@ import {
   UserRound,
   Earth,
   Server,
-  BookOpenText,
   Megaphone,
+  Wallpaper,
+  NotebookPen,
 } from 'lucide-react';
 
 import { NavMain } from '@/SideBar/nav-main';
@@ -46,13 +46,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         title: '배너 목록',
         url: '/banners',
-        icon: BookOpen,
+        icon: Wallpaper,
       },
-      {
-        title: '서버 데이터',
-        url: '/server',
-        icon: Server,
-      },
+
       {
         title: '공지사항 글',
         url: '/notices',
@@ -61,7 +57,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         title: '체험콕 아티클',
         url: '/posts',
-        icon: BookOpenText,
+        icon: NotebookPen,
+      },
+      {
+        title: '서버 데이터',
+        url: '/server',
+        icon: Server,
       },
     ],
     navSecondary: [
@@ -100,7 +101,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="/" className="h-20">
-                <img src={chkokLogo}></img>
+                <img src={chkokLogo} className="object-contain"></img>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
