@@ -154,16 +154,16 @@ export default function ServerDashBoard() {
 
   return (
     <TooltipProvider>
-      <div className="space-y-6 ">
+      <div className="space-y-4">
         {/* 차트 섹션 */}
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1">
           {/* CPUUtilization 및 CPUCreditUsage (BarChart) */}
           <Card className="w-full">
             <CardHeader>
               <CardTitle className="ck-body-1-bold">CPU 메트릭</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="w-full h-80 flex flex-col items-center justify-center overflow-hidden">
+              <div className="w-full h-64 flex items-center justify-center overflow-hidden">
                 <ChartContainer
                   config={{
                     Average: {
@@ -181,7 +181,7 @@ export default function ServerDashBoard() {
                     data={cpuData}
                     width={undefined}
                     height={undefined}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 0 }}
                   >
                     <XAxis dataKey="name" />
                     <YAxis domain={[0, 100]} />
@@ -206,7 +206,7 @@ export default function ServerDashBoard() {
                     />
                     <ChartLegend
                       wrapperStyle={{
-                        paddingTop: '20px',
+                        paddingTop: '10px',
                         textAlign: 'center',
                         width: '100%',
                         display: 'flex',
@@ -227,7 +227,7 @@ export default function ServerDashBoard() {
               <CardTitle className="ck-body-1-bold">네트워크 트래픽</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="w-full h-80 flex flex-col items-center justify-center overflow-hidden">
+              <div className="w-full h-64 flex items-center justify-center overflow-hidden">
                 <ChartContainer
                   config={{
                     Average: {
@@ -245,7 +245,7 @@ export default function ServerDashBoard() {
                     data={networkData}
                     width={undefined}
                     height={undefined}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 0 }}
                   >
                     <XAxis dataKey="name" />
                     <YAxis />
@@ -270,7 +270,7 @@ export default function ServerDashBoard() {
                     />
                     <ChartLegend
                       wrapperStyle={{
-                        paddingTop: '20px',
+                        paddingTop: '10px',
                         textAlign: 'center',
                         width: '100%',
                         display: 'flex',
@@ -291,7 +291,7 @@ export default function ServerDashBoard() {
               <CardTitle className="ck-body-1-bold">네트워크 패킷</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="w-full h-80 flex flex-col items-center justify-center overflow-hidden">
+              <div className="w-full h-64 flex items-center justify-center overflow-hidden">
                 <ChartContainer
                   config={{
                     Average: {
@@ -309,7 +309,7 @@ export default function ServerDashBoard() {
                     data={packetsData}
                     width={undefined}
                     height={undefined}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 0 }}
                   >
                     <XAxis dataKey="name" />
                     <YAxis />
@@ -334,7 +334,7 @@ export default function ServerDashBoard() {
                     />
                     <ChartLegend
                       wrapperStyle={{
-                        paddingTop: '20px',
+                        paddingTop: '10px',
                         textAlign: 'center',
                         width: '100%',
                         display: 'flex',
