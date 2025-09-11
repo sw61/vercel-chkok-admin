@@ -132,14 +132,12 @@ export default function UserDetail() {
     setUserMemo(event.target.value);
   };
   const userToClient = async (id: number) => {
-    if (window.confirm('클라이언트로 승급하시겠습니까?')) {
-      try {
-        await axiosInterceptor.put(`/users/${id}/promote-to-client`);
-        await getUserDetail(id.toString());
-        toast.success('클라이언트로 승급되었습니다.');
-      } catch (error) {
-        console.log(error);
-      }
+    try {
+      await axiosInterceptor.put(`/users/${id}/promote-to-client`);
+      await getUserDetail(id.toString());
+      toast.success('클라이언트로 승급되었습니다.');
+    } catch (error) {
+      console.log(error);
     }
   };
 
