@@ -1,3 +1,10 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }],
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://vercel-chkok-admin-chkok-admin.vercel.app/",
+      "permanent": true
+    }
+  ]
 }
