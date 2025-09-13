@@ -156,7 +156,7 @@ export default function ServerDashBoard() {
     <TooltipProvider>
       <div className="space-y-4">
         {/* 차트 섹션 */}
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-3  md:grid-cols-1">
           {/* CPUUtilization 및 CPUCreditUsage (BarChart) */}
           <Card className="w-full">
             <CardHeader>
@@ -357,7 +357,7 @@ export default function ServerDashBoard() {
             <CardHeader className="pb-3">
               <CardTitle className="ck-body-1-bold">CPU 크레딧 상태</CardTitle>
             </CardHeader>
-            <CardContent className="ck-body-1 pt-0">
+            <CardContent className="ck-body-2 pt-0">
               <StatusIndicator
                 label="CPU 크레딧 잔액"
                 ok={(serverData.Metrics.CPUCreditBalance?.Average || 0) > 0}
@@ -373,7 +373,7 @@ export default function ServerDashBoard() {
             <CardHeader className="pb-3">
               <CardTitle className="ck-body-1-bold">인스턴스 상태</CardTitle>
             </CardHeader>
-            <CardContent className="ck-body-1 pt-0">
+            <CardContent className="ck-body-2 pt-0">
               <StatusIndicator
                 label="인스턴스 상태 검사"
                 ok={
@@ -390,7 +390,7 @@ export default function ServerDashBoard() {
             <CardHeader className="pb-3">
               <CardTitle className="ck-body-1-bold">시스템 상태</CardTitle>
             </CardHeader>
-            <CardContent className="ck-body-1 pt-0">
+            <CardContent className="ck-body-2 pt-0">
               <StatusIndicator
                 label="시스템 상태 검사"
                 ok={
@@ -407,7 +407,7 @@ export default function ServerDashBoard() {
             <CardHeader className="pb-3">
               <CardTitle className="ck-body-1-bold">보안 상태</CardTitle>
             </CardHeader>
-            <CardContent className="ck-body-1 pt-0">
+            <CardContent className="ck-body-2 pt-0">
               <StatusIndicator
                 label="메타데이터 토큰"
                 ok={(serverData.Metrics.MetadataNoToken?.Average || 0) === 0}
