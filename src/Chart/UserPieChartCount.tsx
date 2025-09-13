@@ -71,7 +71,7 @@ export function UserPieChartCount() {
     <>
       <Card className="flex flex-col pb-0">
         <CardHeader className="items-center pb-0">
-          <CardTitle>사용자 권한 통계</CardTitle>
+          <CardTitle className="ck-body-1-bold">사용자 권한 통계</CardTitle>
         </CardHeader>
         <CardContent className="flex-1 pb-0">
           <ChartContainer
