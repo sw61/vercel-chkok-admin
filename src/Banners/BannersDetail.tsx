@@ -22,14 +22,14 @@ import BannerDetailSkeleton from '@/Skeleton/BannerDetailSkeleton';
 
 interface BannerData {
   id: number;
-  title: string; // 배너 제목
-  bannerUrl: string; // 배너 URL
-  redirectUrl: string; // 리다이렉트 URL
-  description: string; // 설명
-  position: string; // 배너 위치
-  createdAt: string; // 생성일
-  updatedAt: string; // 업데이트일
-  displayOrder: number; // 배너 순서 번호
+  title: string;
+  bannerUrl: string;
+  redirectUrl: string;
+  description: string;
+  position: string;
+  createdAt: string;
+  updatedAt: string;
+  displayOrder: number;
 }
 
 export default function BannersDetail() {
@@ -41,7 +41,7 @@ export default function BannersDetail() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [presignedUrl, setPresignedUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  const fileInputRef = useRef<HTMLInputElement>(null); // 파일 입력 참조
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [editBannerData, setEditBannerData] = useState({
     title: '',
     bannerUrl: '',
