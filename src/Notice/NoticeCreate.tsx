@@ -49,7 +49,7 @@ export default function NoticeCreate() {
     const html = renderToStaticMarkup(markdownComponent);
 
     try {
-      const response = await axiosInterceptor.post('/api/admin/notices', {
+      await axiosInterceptor.post('/api/admin/notices', {
         title,
         content: html,
         isMust,

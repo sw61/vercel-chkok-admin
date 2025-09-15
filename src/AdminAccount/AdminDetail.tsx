@@ -79,7 +79,6 @@ export default function AdminDetail() {
       const response = await axiosInterceptor.get('/auth/me');
       const data = response.data.data;
       setAdminData(data);
-      console.log(data);
     } catch (error) {
       console.log(error);
     } finally {

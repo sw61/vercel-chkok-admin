@@ -99,7 +99,7 @@ export default function PostCreate() {
           lng: lng ?? null,
         },
       };
-      const response = await axiosInterceptor.post('/api/admin/posts', payload);
+      await axiosInterceptor.post('/api/admin/posts', payload);
       toast.success('아티클이 생성되었습니다.');
       navigate('/posts');
     } catch (error) {

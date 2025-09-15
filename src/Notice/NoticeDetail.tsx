@@ -89,7 +89,7 @@ export default function NoticeDetail() {
         </ReactMarkdown>
       );
       const html = renderToStaticMarkup(markdownComponent);
-      const response = await axiosInterceptor.put(`/api/admin/notices/${id}`, {
+      await axiosInterceptor.put(`/api/admin/notices/${id}`, {
         title: editData.title,
         content: html,
       });

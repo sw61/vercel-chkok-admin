@@ -160,10 +160,7 @@ export default function PostDetail() {
           lng: lng ?? null,
         },
       };
-      const response = await axiosInterceptor.put(
-        `/api/admin/posts/${id}`,
-        payload
-      );
+      await axiosInterceptor.put(`/api/admin/posts/${id}`, payload);
       toast.success('아티클이 수정되었습니다.');
       await getPostDetail(markdownId!);
     } catch (error) {
