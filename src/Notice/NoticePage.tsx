@@ -17,7 +17,7 @@ import axiosInterceptor from '@/lib/axios-interceptors';
 import { PaginationHook } from '@/hooks/PaginationHook';
 import { NoticeTable } from './NoticeTable';
 import { useNavigate } from 'react-router-dom';
-import MarkdownTableSkeleton from '@/Skeleton/MakrdownTableSkeleton';
+import UserTableSkeleton from '@/Skeleton/UserTableSkeleton';
 
 interface Notice {
   id: number;
@@ -159,7 +159,7 @@ export default function NoticePage() {
         </div>
 
         {isLoading ? (
-          <MarkdownTableSkeleton />
+          <UserTableSkeleton />
         ) : !noticeData || !pageData ? (
           <div className="text-ck-gray-600 ck-body-2 flex items-center justify-center rounded-md border py-10">
             데이터가 없습니다.
