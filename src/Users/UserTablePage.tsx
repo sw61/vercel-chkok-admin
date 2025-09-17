@@ -174,7 +174,7 @@ export default function TableView() {
     <div className="p-6">
       <Card className="px-6 py-4">
         <div className="mb-2 flex items-center justify-between">
-          <div className="flex gap-2">
+          <div className="flex gap-4">
             {!toggle ? (
               <>
                 <DropdownMenu>
