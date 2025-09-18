@@ -27,7 +27,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@tailwindcss/vite": "^4.1.11",
-    "@tanstack/react-query": "^5.85.2",
+    "@tanstack/react-query": "^5.89.0",
     "@tanstack/react-table": "^8.21.3",
     "@uiw/react-md-editor": "^4.0.8",
     "@vercel/node": "^5.3.20",

@@ -3,27 +3,27 @@ import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 // page
-import MainPage from './Pages/MainPage';
-import UserTablePage from './Users/UserTablePage';
-import CampaignTablePage from './Campaigns/CampaignTablePage';
-import CampaignDetail from './Campaigns/CampaignDetail';
-import SideBar from './SideBar/SideBar';
-import UserDetail from './Users/UserDetail';
-import AdminDetail from './AdminAccount/AdminDetail';
-import BannersDragpage from './Banners/BannersDragPage';
-import BannersDetail from './Banners/BannersDetail';
-import NotFoundPage from './Pages/NotFoundPage';
-import NoticePage from './Notice/NoticePage';
-import NoticeDetail from './Notice/NoticeDetail';
-import NoticeCreate from './Notice/NoticeCreate';
-import PostPage from './Post/PostPage';
-import PostDetail from './Post/PostDetail';
-import PostCreate from './Post/PostCreate';
-import ServerDashBoard from './Server/ServerDashBoard';
+import MainPage from './pages/main/components/mainPage';
+import UserTablePage from './pages/users/components/usersTablePage';
+import CampaignTablePage from './pages/campaigns/components/campaignTablePage';
+import CampaignDetail from './pages/campaigns/components/campaignDetail';
+import SideBar from '@/components/sideBar/sideBar';
+import UserDetail from './pages/users/components/usersDetail';
+import AdminDetail from './pages/admin/components/adminDetail';
+import BannersDragpage from '@/pages/banners/components/bannersDragPage';
+import BannersDetail from '@/pages/banners/components/bannersDetail';
+import NotFoundPage from './pages/notFound/components/notFoundPage';
+import NoticePage from './pages/notices/components/noticePage';
+import NoticeDetail from './pages/notices/components/noticeDetail';
+import NoticeCreate from './pages/notices/components/noticeCreate';
+import PostPage from './pages/posts/components/postPage';
+import PostDetail from './pages/posts/components/postDetail';
+import PostCreate from './pages/posts/components/postCreate';
+import ServerDashBoard from './pages/dashboard/components/serverDashBoard';
 
 // ts file
-import { LoginForm } from './auth/login-form';
-import { PrivateComponent } from './auth/tokenCheck';
+import { LoginForm } from './pages/login/components/loginForm';
+import { PrivateComponent } from './services/auth/tokenCheck';
 
 // library
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
