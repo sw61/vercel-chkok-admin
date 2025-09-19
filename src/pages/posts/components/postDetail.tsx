@@ -16,7 +16,7 @@ import ReactMarkdown from 'react-markdown';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Button } from '@/components/ui/button';
 import TurndownService from 'turndown';
-import MarkdownDetailSkeleton from './skeleton/MarkdownDetailSkeleton';
+import MarkdownDetailSkeleton from '@/pages/posts/skeleton/markdownDetailSkeleton';
 import { ChevronLeft } from 'lucide-react';
 import {
   AlertDialog,

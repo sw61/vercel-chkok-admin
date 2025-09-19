@@ -2,25 +2,6 @@
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 
-// page
-import MainPage from './pages/main/components/mainPage';
-import UserTablePage from './pages/users/components/usersTablePage';
-import CampaignTablePage from './pages/campaigns/components/campaignTablePage';
-import CampaignDetail from './pages/campaigns/components/campaignDetail';
-import SideBar from '@/components/sideBar/sideBar';
-import UserDetail from './pages/users/components/usersDetail';
-import AdminDetail from './pages/admin/components/adminDetail';
-import BannersDragpage from '@/pages/banners/components/bannersDragPage';
-import BannersDetail from '@/pages/banners/components/bannersDetail';
-import NotFoundPage from './pages/notFound/components/notFoundPage';
-import NoticePage from './pages/notices/components/noticePage';
-import NoticeDetail from './pages/notices/components/noticeDetail';
-import NoticeCreate from './pages/notices/components/noticeCreate';
-import PostPage from './pages/posts/components/postPage';
-import PostDetail from './pages/posts/components/postDetail';
-import PostCreate from './pages/posts/components/postCreate';
-import ServerDashBoard from './pages/dashboard/components/serverDashBoard';
-
 // ts file
 import { LoginForm } from './pages/login/components/loginForm';
 import { PrivateComponent } from './services/auth/tokenCheck';
@@ -28,18 +9,54 @@ import { PrivateComponent } from './services/auth/tokenCheck';
 // library
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import { lazy } from 'react';
+import SideBar from './components/sideBar/sideBar';
+import NotFoundPage from './pages/notFound/components/notFoundPage';
+
+const MainPage = lazy(() => import('@/pages/main/components/mainPage'));
+const AdminDetail = lazy(() => import('@/pages/admin/components/adminDetail'));
+const UsersTablePage = lazy(
+  () => import('@/pages/users/components/usersTablePage')
+);
+const UsersDetail = lazy(() => import('@/pages/users/components/usersDetail'));
+const CampaignsTablePage = lazy(
+  () => import('@/pages/campaigns/components/campaignsTablePage')
+);
+const CampaignsDetail = lazy(
+  () => import('@/pages/campaigns/components/campaignsDetail')
+);
+const BannersPage = lazy(
+  () => import('@/pages/banners/components/bannersDragPage')
+);
+const BannersDetail = lazy(
+  () => import('@/pages/banners/components/bannersDetail')
+);
+const Dashboard = lazy(
+  () => import('@/pages/dashboard/components/serverDashBoard')
+);
+
+const NoticePage = lazy(() => import('@/pages/notices/components/noticePage'));
+const NoticeDetail = lazy(
+  () => import('@/pages/notices/components/noticeDetail')
+);
+const NoticeCreate = lazy(
+  () => import('@/pages/notices/components/noticeCreate')
+);
+const PostPage = lazy(() => import('@/pages/posts/components/postPage'));
+const PostDetail = lazy(() => import('@/pages/posts/components/postDetail'));
+const PostCreate = lazy(() => import('@/pages/posts/components/postCreate'));
 
 // Route configuration
 const privateRoutes = [
   { path: '/', element: <MainPage /> },
   { path: '/admin', element: <AdminDetail /> },
-  { path: '/users', element: <UserTablePage /> },
-  { path: '/users/:userId', element: <UserDetail /> },
-  { path: '/campaigns', element: <CampaignTablePage /> },
-  { path: '/campaigns/:campaignId', element: <CampaignDetail /> },
-  { path: '/banners', element: <BannersDragpage /> },
+  { path: '/users', element: <UsersTablePage /> },
+  { path: '/users/:userId', element: <UsersDetail /> },
+  { path: '/campaigns', element: <CampaignsTablePage /> },
+  { path: '/campaigns/:campaignId', element: <CampaignsDetail /> },
+  { path: '/banners', element: <BannersPage /> },
   { path: '/banners/:bannerId', element: <BannersDetail /> },
-  { path: '/server', element: <ServerDashBoard /> },
+  { path: '/server', element: <Dashboard /> },
   { path: '/notices', element: <NoticePage /> },
   { path: '/notices/:markdownId', element: <NoticeDetail /> },
   { path: '/notices/create', element: <NoticeCreate /> },

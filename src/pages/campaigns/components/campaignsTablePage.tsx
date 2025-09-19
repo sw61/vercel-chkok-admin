@@ -1,4 +1,4 @@
-import { CampaignTable } from '@/pages/campaigns/components/campaignTable';
+import { CampaignsTable } from '@/pages/campaigns/components/campaignsTable';
 import axiosInterceptor from '@/lib/axiosInterceptors';
 import { useState, useEffect, type KeyboardEvent } from 'react';
 import { Button } from '@/components/ui/button';
@@ -38,7 +38,7 @@ interface PaginationData {
   totalPages: number;
 }
 
-export default function CampaignTablePage() {
+export default function CampaignsTablePage() {
   const [campaignData, setCampaignData] = useState<Campaign[] | null>();
   const [pageData, setPageData] = useState<PaginationData | null>();
   const [searchKey, setSearchKey] = useState<string>('');
@@ -196,7 +196,7 @@ export default function CampaignTablePage() {
           </div>
         ) : (
           <>
-            <CampaignTable
+            <CampaignsTable
               campaignData={campaignData}
               columnFilters={columnFilters}
               setColumnFilters={setColumnFilters}

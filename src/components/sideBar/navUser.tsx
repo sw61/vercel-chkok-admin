@@ -20,7 +20,7 @@ import { useLogout } from '@/services/auth/useLogout';
 import { useNavigate } from 'react-router-dom';
 import axiosInterceptor from '@/lib/axiosInterceptors';
 import { Skeleton } from '@/components/ui/skeleton';
-import usericon from '../Image/usericon.png';
+import usericon from '@/image/usericon.png';
 import { useEffect, useState } from 'react';
 
 interface AdminData {

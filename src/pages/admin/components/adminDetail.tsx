@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import PulseLoader from 'react-spinners/PulseLoader';
-import usericon from '../Image/usericon.png';
+import usericon from '@/image/usericon.png';
 
 interface AdminData {
   id: number;

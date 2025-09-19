@@ -106,7 +106,7 @@ interface CampaignInfo {
   value: string | number | undefined;
 }
 
-export default function CampaignDetail() {
+export default function CampaignsDetail() {
   const { campaignId } = useParams<{ campaignId: string }>();
   const [campaignData, setCampaignData] = useState<Campaign | null>(null);
   const [comment, setComment] = useState<string>();

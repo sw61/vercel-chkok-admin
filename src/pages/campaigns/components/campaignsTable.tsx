@@ -236,7 +236,7 @@ const totalColumnWidth = columns.reduce(
   0
 );
 
-export function CampaignTable({
+export function CampaignsTable({
   campaignData,
   columnFilters,
   setColumnFilters,

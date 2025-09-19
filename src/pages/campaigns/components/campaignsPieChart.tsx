@@ -20,7 +20,7 @@ interface Status {
   expiredCampaigns: number;
 }
 
-export function CamapaignPieChart() {
+export function CamapaignsPieChart() {
   const [campaignStatus, setCampaignStatus] = useState<Status | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const getCampaignStatus = async () => {

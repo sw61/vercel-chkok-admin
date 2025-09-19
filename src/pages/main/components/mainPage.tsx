@@ -1,6 +1,6 @@
 import { UserPieChartActive } from '@/pages/users/components/usersPieChartActive';
 import { UserPieChartCount } from '@/pages/users/components/usersPieChartCount';
-import { CamapaignPieChart } from '@/pages/campaigns/components/campaignPieChart';
+import { CamapaignPieChart } from '@/pages/campaigns/components/campaignsPieChart';
 import ServerDashBoard from '@/pages/dashboard/components/serverDashBoard';
 export default function MainPage() {
   return (
