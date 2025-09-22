@@ -9,9 +9,11 @@ import { Badge } from '@/components/ui/badge';
 import CampaignDetailSkeleton from '@/pages/campaigns/skeleton/campaignDetailSkeleton';
 import {
   ChevronLeft,
+  House,
   Image,
   Link,
   MapPin,
+  Package,
   Phone,
   SquarePlay,
   Star,
@@ -54,6 +56,10 @@ interface Campaign {
   createdAt: string;
   creatorRole: '클라이언트' | '사용자' | '관리자';
   creatorAccountType: string;
+  category: {
+    type: string;
+    name: string;
+  };
   creator: {
     id: number;
     nickname: string;
@@ -149,6 +155,7 @@ export default function CampaignsDetail() {
           dataMap[campaignData.creator.accountType] || campaignData.accountType,
       };
       setCampaignData(mappedData);
+      console.log(mappedData);
     } catch (error) {
       console.log(error);
     } finally {
@@ -310,6 +317,22 @@ export default function CampaignsDetail() {
         <Card>
           <CardContent className="min-w-[450px]">
             <div className="flex gap-2 mb-2">
+              {campaignData.category.type === '방문' ? (
+                <div className="flex px-2 py-1 rounded-md border gap-2 ck-caption-1 items-center">
+                  <div>
+                    <House size={16} />
+                  </div>
+                  <div>방문형</div>
+                </div>
+              ) : (
+                <div className="flex px-2 py-1 rounded-md border gap-2 ck-caption-1 items-center">
+                  <div>
+                    <Package size={16} />
+                  </div>
+                  <div>배송형</div>
+                </div>
+              )}
+              <Badge variant="type">{campaignData.category.name}</Badge>
               <CustomBadge variant={campaignData.campaignType} />
               <CustomBadge variant={campaignData.approvalStatus} />
             </div>
