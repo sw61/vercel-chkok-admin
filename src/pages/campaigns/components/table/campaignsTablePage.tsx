@@ -1,4 +1,4 @@
-import { CampaignsTable } from '@/pages/campaigns/components/campaignsTable';
+import { CampaignsTable } from '@/pages/campaigns/components/table/campaignsTable';
 import axiosInterceptor from '@/lib/axiosInterceptors';
 import { useState, useEffect, type KeyboardEvent } from 'react';
 import { Button } from '@/components/ui/button';
@@ -39,8 +39,8 @@ interface PaginationData {
 }
 
 export default function CampaignsTablePage() {
-  const [campaignData, setCampaignData] = useState<Campaign[] | null>();
-  const [pageData, setPageData] = useState<PaginationData | null>();
+  const [campaignData, setCampaignData] = useState<Campaign[]>();
+  const [pageData, setPageData] = useState<PaginationData>();
   const [searchKey, setSearchKey] = useState<string>('');
   const [campaignType, setCampaignType] = useState<string>('ALL');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -54,6 +54,14 @@ export default function CampaignsTablePage() {
     { id: 'approvalDate', label: '처리일' },
     { id: 'createdAt', label: '생성일' },
     { id: 'approvalComment', label: '처리 코멘트' },
+  ];
+
+  const typeValues = [
+    { type: 'ALL', label: '전체 캠페인' },
+    { type: 'PENDING', label: '승인 대기 캠페인' },
+    { type: 'APPROVED', label: '승인된 캠페인' },
+    { type: 'REJECTED', label: '거절된 캠페인' },
+    { type: 'EXPIRED', label: '만료된 캠페인' },
   ];
   // 캠페인 테이블 조회
   const getCampaignTable = async (
@@ -92,14 +100,6 @@ export default function CampaignsTablePage() {
       setIsLoading(false);
     }
   };
-
-  const typeValues = [
-    { type: 'ALL', label: '전체 캠페인' },
-    { type: 'PENDING', label: '승인 대기 캠페인' },
-    { type: 'APPROVED', label: '승인된 캠페인' },
-    { type: 'REJECTED', label: '거절된 캠페인' },
-    { type: 'EXPIRED', label: '만료된 캠페인' },
-  ];
 
   const handlePageChange = (page: number) => {
     getCampaignTable(page, campaignType);

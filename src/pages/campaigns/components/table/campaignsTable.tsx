@@ -61,7 +61,6 @@ const columns: ColumnDef<Campaign>[] = [
       </div>
     ),
     cell: ({ row }) => <div>{row.getValue('id')}</div>,
-    meta: { label: 'id' } as CustomColumnMeta,
     size: 50,
   },
   {
@@ -83,7 +82,6 @@ const columns: ColumnDef<Campaign>[] = [
         {row.getValue('title')}
       </div>
     ),
-    meta: { label: '캠페인 이름' } as CustomColumnMeta,
     size: 250,
   },
   {
@@ -101,7 +99,6 @@ const columns: ColumnDef<Campaign>[] = [
     cell: ({ row }) => (
       <div className="lowercase">{row.getValue('campaignType')}</div>
     ),
-    meta: { label: '캠페인 유형' } as CustomColumnMeta,
     size: 120,
   },
   {
@@ -119,7 +116,6 @@ const columns: ColumnDef<Campaign>[] = [
     cell: ({ row }) => (
       <div className="lowercase">{row.getValue('approvalStatus')}</div>
     ),
-    meta: { label: '처리 상태' } as CustomColumnMeta,
     size: 100,
   },
   {
@@ -135,7 +131,7 @@ const columns: ColumnDef<Campaign>[] = [
       </Button>
     ),
     cell: ({ row }) => <div>{row.getValue('recruitmentStartDate')}</div>,
-    meta: { label: '모집 시작일' } as CustomColumnMeta,
+
     size: 120,
   },
   {
@@ -151,7 +147,7 @@ const columns: ColumnDef<Campaign>[] = [
       </Button>
     ),
     cell: ({ row }) => <div>{row.getValue('recruitmentEndDate')}</div>,
-    meta: { label: '모집 마감일' } as CustomColumnMeta,
+
     size: 120,
   },
   {
@@ -167,7 +163,7 @@ const columns: ColumnDef<Campaign>[] = [
       </Button>
     ),
     cell: ({ row }) => <div>{row.getValue('reviewDeadlineDate')}</div>,
-    meta: { label: '리뷰 마감일' } as CustomColumnMeta,
+
     size: 120,
   },
   {
@@ -187,7 +183,6 @@ const columns: ColumnDef<Campaign>[] = [
         {row.getValue('productShortInfo')}
       </div>
     ),
-    meta: { label: '상품 간단 정보' } as CustomColumnMeta,
     size: 250,
   },
   // {

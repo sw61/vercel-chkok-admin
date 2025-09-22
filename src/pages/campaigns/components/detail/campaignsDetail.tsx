@@ -37,6 +37,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alertDialog';
+import { ApplicantsTable } from '../applicants/applicantsTable';
+import ApplicantsDataTable from '../applicants/applicantsDataTable';
 
 interface Campaign {
   id: number;
@@ -208,9 +210,7 @@ export default function CampaignsDetail() {
   };
 
   useEffect(() => {
-    if (campaignId) {
-      getCampaignDetail(campaignId);
-    }
+    if (campaignId) getCampaignDetail(campaignId);
   }, [campaignId]);
   // 스켈레톤 ui
   if (isLoading) {
@@ -598,6 +598,7 @@ export default function CampaignsDetail() {
           </Card>
         )}
       </div>
+      <ApplicantsDataTable />
     </div>
   );
 }

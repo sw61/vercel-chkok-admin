@@ -7,10 +7,10 @@ const UsersTablePage = lazy(
 );
 const UsersDetail = lazy(() => import('@/pages/users/components/usersDetail'));
 const CampaignsTablePage = lazy(
-  () => import('@/pages/campaigns/components/campaignsTablePage')
+  () => import('@/pages/campaigns/components/table/campaignsTablePage')
 );
 const CampaignsDetail = lazy(
-  () => import('@/pages/campaigns/components/campaignsDetail')
+  () => import('@/pages/campaigns/components/detail/campaignsDetail')
 );
 const BannersPage = lazy(
   () => import('@/pages/banners/components/bannersDragPage')
