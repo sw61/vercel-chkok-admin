@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdownMenu';
 import axiosInterceptor from '@/lib/axiosInterceptors';
-import { UserTable } from '@/pages/users/components/usersTable';
+import { UserTable } from '@/pages/users/components/table/usersTable';
 import { CompanyTable } from '@/pages/companies/components/companyTable';
 import UserTableSkeleton from '@/pages/users/skeleton/usersTableSkeleton';
 import { PaginationHook } from '@/hooks/paginationHook';

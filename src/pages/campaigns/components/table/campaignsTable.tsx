@@ -26,15 +26,15 @@ interface Campaign {
   id: number;
   title: string;
   campaignType: string;
-  recruitmentStartDate: string; // 모집 시작일
+  recruitmentStartDate: string;
   approvalStatus: string;
   approvalComment: string;
   approvalDate: string;
   createdAt: string;
-}
-
-interface CustomColumnMeta {
-  label?: string;
+  category: {
+    type: string;
+    name: string;
+  };
 }
 
 interface CampaignDataTableProps {
@@ -102,6 +102,40 @@ const columns: ColumnDef<Campaign>[] = [
     size: 120,
   },
   {
+    accessorKey: 'categoryType',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="has-[>svg]:px-0"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        방문/배송
+        <ArrowUpDown />
+      </Button>
+    ),
+    accessorFn: (row) => row.category.type,
+    cell: ({ row }) => <div>{row.getValue('categoryType')}</div>,
+
+    size: 120,
+  },
+  {
+    accessorKey: 'categoryName',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="has-[>svg]:px-0"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        카테고리
+        <ArrowUpDown />
+      </Button>
+    ),
+    accessorFn: (row) => row.category.name,
+    cell: ({ row }) => <div>{row.getValue('categoryName')}</div>,
+
+    size: 120,
+  },
+  {
     accessorKey: 'approvalStatus',
     header: ({ column }) => (
       <Button
@@ -134,38 +168,7 @@ const columns: ColumnDef<Campaign>[] = [
 
     size: 120,
   },
-  {
-    accessorKey: 'recruitmentEndDate',
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        className="has-[>svg]:px-0"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        모집 마감일
-        <ArrowUpDown />
-      </Button>
-    ),
-    cell: ({ row }) => <div>{row.getValue('recruitmentEndDate')}</div>,
 
-    size: 120,
-  },
-  {
-    accessorKey: 'reviewDeadlineDate',
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        className="has-[>svg]:px-0"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        리뷰 마감일
-        <ArrowUpDown />
-      </Button>
-    ),
-    cell: ({ row }) => <div>{row.getValue('reviewDeadlineDate')}</div>,
-
-    size: 120,
-  },
   {
     accessorKey: 'productShortInfo',
     header: ({ column }) => (

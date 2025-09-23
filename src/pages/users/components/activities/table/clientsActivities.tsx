@@ -20,19 +20,25 @@ import {
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-interface Applicants {
+interface Activities {
   id: number;
-  nickname: string;
-  email: string;
-  appliedAt: string;
-  applicationStatus: string;
+  title: string;
+  company: string;
+  type: string;
   statusText: string;
+  createdAt: string;
+  updatedAt: string;
+  campaignType: string;
+  currentApplications: number | null;
+  approvedBy: string | null;
+  approvalDate: string | null;
+  recruitmentPeriod: string | null;
 }
-interface ApplicantsProps {
-  applicantsData: Applicants[];
+interface ActivitiesProps {
+  clientsItems: Activities[];
 }
 
-export function ApplicantsTable({ applicantsData }: ApplicantsProps) {
+export function ClientsActivitiesTable({ clientsItems }: ActivitiesProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const navigate = useNavigate();
@@ -43,7 +49,7 @@ export function ApplicantsTable({ applicantsData }: ApplicantsProps) {
     'statusText',
     'appliedAt',
   ];
-  const columns: ColumnDef<Applicants, unknown>[] = [
+  const columns: ColumnDef<Activities, unknown>[] = [
     {
       accessorKey: 'id',
       header: ({ column }) => (
@@ -80,7 +86,7 @@ export function ApplicantsTable({ applicantsData }: ApplicantsProps) {
           {row.getValue('nickname')}
         </div>
       ),
-      size: 150,
+      size: 250,
     },
     {
       accessorKey: 'email',
@@ -97,7 +103,7 @@ export function ApplicantsTable({ applicantsData }: ApplicantsProps) {
       cell: ({ row }) => (
         <div className="lowercase">{row.getValue('email')}</div>
       ),
-      size: 200,
+      size: 120,
     },
     {
       accessorKey: 'statusText',
@@ -148,7 +154,7 @@ export function ApplicantsTable({ applicantsData }: ApplicantsProps) {
   );
 
   const table = useReactTable({
-    data: applicantsData,
+    data: clientsItems,
     columns,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),

@@ -27,6 +27,10 @@ interface Campaign {
   approvalDate: string;
   createdAt: string;
   recruitmentStartDate: string;
+  category: {
+    type: string;
+    name: string;
+  };
 }
 
 interface PaginationData {
@@ -75,9 +79,10 @@ export default function CampaignsTablePage() {
           ? `/campaigns?page=${page}&size=10`
           : `/campaigns?approvalStatus=${type}&page=${page}&size=10`;
       const response = await axiosInterceptor.get(url);
-      const campaignData = response.data.data;
-      setCampaignData(campaignData.content);
-      setPageData(campaignData.pagination);
+      const data = response.data.data;
+      setCampaignData(data.content);
+      setPageData(data.pagination);
+      console.log(data);
     } catch (error) {
       console.log(error);
     } finally {

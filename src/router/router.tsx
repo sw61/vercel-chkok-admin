@@ -3,9 +3,11 @@ import { lazy } from 'react';
 const MainPage = lazy(() => import('@/pages/main/components/mainPage'));
 const AdminDetail = lazy(() => import('@/pages/admin/components/adminDetail'));
 const UsersTablePage = lazy(
-  () => import('@/pages/users/components/usersTablePage')
+  () => import('@/pages/users/components//table/usersTablePage')
 );
-const UsersDetail = lazy(() => import('@/pages/users/components/usersDetail'));
+const UsersDetail = lazy(
+  () => import('@/pages/users/components/detail/usersDetail')
+);
 const CampaignsTablePage = lazy(
   () => import('@/pages/campaigns/components/table/campaignsTablePage')
 );

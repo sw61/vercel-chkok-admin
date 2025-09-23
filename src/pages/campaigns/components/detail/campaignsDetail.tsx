@@ -310,7 +310,7 @@ export default function CampaignsDetail() {
       </div>
       <img
         src={campaignData.thumbnailUrl}
-        className="max-h-[400px] object-contain"
+        className="max-h-[400px] object-contain rounded-md"
       ></img>
       {/* 상세 정보 부분 */}
       <div className="grid grid-cols-2 items-start gap-6 pt-6">

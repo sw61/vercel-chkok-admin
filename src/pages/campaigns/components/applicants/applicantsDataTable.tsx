@@ -88,10 +88,10 @@ export default function ApplicantsDataTable() {
   }
   return (
     <>
-      <div className="ck-sub-title-1">캠페인 신청 인원 목록</div>
+      <div className="ck-sub-title-1 mb-4">캠페인 신청 인원 목록</div>
       {applicantsData?.length === 0 ? (
         <div className="mt-4 text-ck-gray-600 ck-body-2 flex h-40 items-center justify-center rounded-md border">
-          신청 인원이 없습니다.
+          캠페인 신청 인원이 없습니다.
         </div>
       ) : (
         <>
@@ -99,7 +99,7 @@ export default function ApplicantsDataTable() {
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
                 {statusValues.find((item) => item.type === status)?.label ||
-                  '캠페인 필터'}
+                  '신청인 필터'}
                 <ChevronDown />
               </Button>
             </DropdownMenuTrigger>
@@ -115,7 +115,7 @@ export default function ApplicantsDataTable() {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <div className="mt-4">
+          <div className="mt-4 flex flex-col gap-4">
             <ApplicantsTable applicantsData={applicantsData} />
             <PaginationHook
               pageData={pageData}

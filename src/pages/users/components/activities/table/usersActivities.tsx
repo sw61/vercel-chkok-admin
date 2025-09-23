@@ -20,30 +20,29 @@ import {
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-interface Applicants {
+interface Activities {
   id: number;
-  nickname: string;
-  email: string;
-  appliedAt: string;
-  applicationStatus: string;
+  title: string;
+  company: string;
+  type: string;
   statusText: string;
-}
-interface ApplicantsProps {
-  applicantsData: Applicants[];
+  createdAt: string;
+  updatedAt: string;
+  campaignType: string;
+  campaignId: number;
+  maxApplicants: number;
 }
 
-export function ApplicantsTable({ applicantsData }: ApplicantsProps) {
+interface ActivitiesProps {
+  userItems: Activities[];
+}
+
+export function UsersActivitiesTable({ userItems }: ActivitiesProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const navigate = useNavigate();
-  const sortableColumns = [
-    'id',
-    'nickname',
-    'email',
-    'statusText',
-    'appliedAt',
-  ];
-  const columns: ColumnDef<Applicants, unknown>[] = [
+  const sortableColumns = ['id', 'title', 'type', 'company', 'statusText'];
+  const columns: ColumnDef<Activities, unknown>[] = [
     {
       accessorKey: 'id',
       header: ({ column }) => (
@@ -62,7 +61,7 @@ export function ApplicantsTable({ applicantsData }: ApplicantsProps) {
       size: 50,
     },
     {
-      accessorKey: 'nickname',
+      accessorKey: 'title',
       header: ({ column }) => (
         <div>
           <Button
@@ -70,54 +69,54 @@ export function ApplicantsTable({ applicantsData }: ApplicantsProps) {
             className="has-[>svg]:px-0"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            닉네임
+            타이틀
             <ArrowUpDown />
           </Button>
         </div>
       ),
       cell: ({ row }) => (
         <div className="overflow-hidden text-ellipsis">
-          {row.getValue('nickname')}
+          {row.getValue('title')}
         </div>
       ),
-      size: 150,
+      size: 250,
     },
     {
-      accessorKey: 'email',
+      accessorKey: 'type',
       header: ({ column }) => (
         <Button
           variant="ghost"
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          이메일
+          방문형/배송형
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => (
-        <div className="lowercase">{row.getValue('email')}</div>
+        <div className="lowercase">{row.getValue('type')}</div>
       ),
-      size: 200,
+      size: 120,
     },
     {
-      accessorKey: 'statusText',
+      accessorKey: 'company',
       header: ({ column }) => (
         <Button
           variant="ghost"
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          신청 상태
+          회사
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => (
-        <div className="lowercase">{row.getValue('statusText')}</div>
+        <div className="lowercase">{row.getValue('company')}</div>
       ),
       size: 100,
     },
     {
-      accessorKey: 'appliedAt',
+      accessorKey: 'statusText',
       header: ({ column }) => (
         <div>
           {sortableColumns.includes(column.id) && (
@@ -128,17 +127,15 @@ export function ApplicantsTable({ applicantsData }: ApplicantsProps) {
                 column.toggleSorting(column.getIsSorted() === 'asc')
               }
             >
-              신청일
+              상태
               <ArrowUpDown />
             </Button>
           )}
         </div>
       ),
-      cell: ({ row }) => {
-        const fullDate = row.getValue('appliedAt') as string;
-        const dateOnly = fullDate.split('T')[0];
-        return <div>{dateOnly}</div>;
-      },
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue('statusText')}</div>
+      ),
       size: 100,
     },
   ];
@@ -148,7 +145,7 @@ export function ApplicantsTable({ applicantsData }: ApplicantsProps) {
   );
 
   const table = useReactTable({
-    data: applicantsData,
+    data: userItems,
     columns,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),

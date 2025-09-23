@@ -105,10 +105,8 @@ export default function ServerDashBoard() {
   if (!serverData || !serverData.Metrics) {
     return (
       <Alert>
-        <AlertTitle>데이터 없음</AlertTitle>
-        <AlertDescription>
-          서버 메트릭 데이터를 불러올 수 없습니다.
-        </AlertDescription>
+        <AlertTitle>데이터 요청 실패</AlertTitle>
+        <AlertDescription>서버 데이터를 불러올 수 없습니다.</AlertDescription>
       </Alert>
     );
   }
