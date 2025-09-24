@@ -15,7 +15,7 @@ import {
   type VisibilityState,
 } from '@tanstack/react-table';
 import { Card } from '@/components/ui/card';
-import CampaignTableSkeleton from '@/pages/campaigns/skeleton/campaignTableSkeleton';
+import CampaignTableSkeleton from '@/pages/campaigns/components/table/campaignTableSkeleton';
 import { PaginationHook } from '@/hooks/paginationHook';
 
 interface Campaign {

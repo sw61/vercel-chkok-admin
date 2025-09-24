@@ -29,10 +29,10 @@ interface Activities {
   createdAt: string;
   updatedAt: string;
   campaignType: string;
-  currentApplications: number | null;
-  approvedBy: string | null;
-  approvalDate: string | null;
-  recruitmentPeriod: string | null;
+  currentApplications: number;
+  approvedBy: string;
+  approvalDate: string;
+  recruitmentPeriod: string;
 }
 interface ActivitiesProps {
   clientsItems: Activities[];
@@ -44,10 +44,12 @@ export function ClientsActivitiesTable({ clientsItems }: ActivitiesProps) {
   const navigate = useNavigate();
   const sortableColumns = [
     'id',
-    'nickname',
-    'email',
+    'title',
+    'campaignType',
     'statusText',
-    'appliedAt',
+    'currentApplications',
+    'recruitmentPeriod',
+    'approvedBy',
   ];
   const columns: ColumnDef<Activities, unknown>[] = [
     {
@@ -68,7 +70,7 @@ export function ClientsActivitiesTable({ clientsItems }: ActivitiesProps) {
       size: 50,
     },
     {
-      accessorKey: 'nickname',
+      accessorKey: 'title',
       header: ({ column }) => (
         <div>
           <Button
@@ -76,34 +78,51 @@ export function ClientsActivitiesTable({ clientsItems }: ActivitiesProps) {
             className="has-[>svg]:px-0"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            닉네임
+            캠페인 제목
             <ArrowUpDown />
           </Button>
         </div>
       ),
       cell: ({ row }) => (
         <div className="overflow-hidden text-ellipsis">
-          {row.getValue('nickname')}
+          {row.getValue('title')}
         </div>
       ),
-      size: 250,
+      size: 150,
     },
     {
-      accessorKey: 'email',
+      accessorKey: 'campaignType',
       header: ({ column }) => (
         <Button
           variant="ghost"
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          이메일
+          캠페인 타입
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => (
-        <div className="lowercase">{row.getValue('email')}</div>
+        <div className="lowercase">{row.getValue('campaignType')}</div>
       ),
-      size: 120,
+      size: 100,
+    },
+    {
+      accessorKey: 'company',
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          className="has-[>svg]:px-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          회사명
+          <ArrowUpDown />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue('company')}</div>
+      ),
+      size: 100,
     },
     {
       accessorKey: 'statusText',
@@ -123,28 +142,37 @@ export function ClientsActivitiesTable({ clientsItems }: ActivitiesProps) {
       size: 100,
     },
     {
-      accessorKey: 'appliedAt',
+      accessorKey: 'recruitmentPeriod',
       header: ({ column }) => (
-        <div>
-          {sortableColumns.includes(column.id) && (
-            <Button
-              variant="ghost"
-              className="has-[>svg]:px-0"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === 'asc')
-              }
-            >
-              신청일
-              <ArrowUpDown />
-            </Button>
-          )}
-        </div>
+        <Button
+          variant="ghost"
+          className="has-[>svg]:px-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          모집 기간
+          <ArrowUpDown />
+        </Button>
       ),
-      cell: ({ row }) => {
-        const fullDate = row.getValue('appliedAt') as string;
-        const dateOnly = fullDate.split('T')[0];
-        return <div>{dateOnly}</div>;
-      },
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue('recruitmentPeriod')}</div>
+      ),
+      size: 100,
+    },
+    {
+      accessorKey: 'approvedBy',
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          className="has-[>svg]:px-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          승인자명
+          <ArrowUpDown />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue('approvedBy')}</div>
+      ),
       size: 100,
     },
   ];
@@ -227,7 +255,7 @@ export function ClientsActivitiesTable({ clientsItems }: ActivitiesProps) {
                   colSpan={columns.length}
                   className="h-24 text-center whitespace-nowrap"
                 >
-                  No results.
+                  활동 내역이 없습니다.
                 </TableCell>
               </TableRow>
             )}

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'react-toastify';
 import { Badge } from '@/components/ui/badge';
-import CampaignDetailSkeleton from '@/pages/campaigns/skeleton/campaignDetailSkeleton';
+import CampaignDetailSkeleton from '@/pages/campaigns/components/detail/campaignDetailSkeleton';
 import {
   ChevronLeft,
   House,

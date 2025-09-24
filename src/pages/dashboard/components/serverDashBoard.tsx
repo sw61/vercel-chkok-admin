@@ -17,7 +17,7 @@ import {
   ChartLegend,
 } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
-import ServerDashboardSkeleton from '@/pages/dashboard/skeleton/serverDashboardSkeleton';
+import ServerDashboardSkeleton from '@/pages/dashboard/components/serverDashboardSkeleton';
 import axios from 'axios';
 
 // API 응답 타입 정의

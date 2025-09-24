@@ -18,7 +18,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alertDialog';
 import axios from 'axios';
-import BannerDetailSkeleton from '@/pages/banners/skeleton/bannersDetailSkeleton';
+import BannerDetailSkeleton from '@/pages/banners/components/detail/bannersDetailSkeleton';
 
 interface BannerData {
   id: number;

@@ -16,7 +16,7 @@ import ReactMarkdown from 'react-markdown';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Button } from '@/components/ui/button';
 import TurndownService from 'turndown';
-import MarkdownDetailSkeleton from '@/pages/posts/skeleton/markdownDetailSkeleton';
+import MarkdownDetailSkeleton from '@/pages/posts/components/detail/markdownDetailSkeleton';
 import { ChevronLeft } from 'lucide-react';
 import {
   AlertDialog,
@@ -29,22 +29,37 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alertDialog';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Label } from '@/components/ui/label';
+import KakaoSearch from '@/pages/kakaoMap/kakaoSearch'; // MapComponent 임포트
 
-interface NoticeData {
+interface PostData {
   id: number;
-  title: string;
-  content: string;
-  viewCount: number;
+  campaignId: number;
   authorId: number;
+  title: string;
+  viewCount: number;
   authorName: string;
   createdAt: string;
   updatedAt: string;
+  visitInfo: {
+    contactPhone: string;
+    homepage: string;
+    businessAddress: string;
+    businessDetailAddress: string;
+    lat: number;
+    lng: number;
+  } | null;
 }
 
-export default function NoticeDetail() {
+export default function PostDetail() {
   const { markdownId } = useParams<{ markdownId: string }>();
   const navigate = useNavigate();
-  const [noticeData, setNoticeData] = useState<NoticeData | null>(null);
+  const [postData, setPostData] = useState<PostData | null>(null);
   const [editData, setEditData] = useState<{ title: string; content: string }>({
     title: '',
     content: '',
@@ -55,33 +70,77 @@ export default function NoticeDetail() {
     url: string;
     name: string;
   } | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [editorApi, setEditorApi] = useState<any>(null);
+  const [editorApi, setEditorApi] = useState<any>(null); // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [contactPhone, setContactPhone] = useState<string>('');
+  const [homepage, setHomepage] = useState<string>('');
+  const [businessAddress, setBusinessAddress] = useState<string>('');
+  const [businessDetailAddress, setBusinessDetailAddress] =
+    useState<string>('');
+  const [lat, setLat] = useState<number | undefined>(undefined);
+  const [lng, setLng] = useState<number | undefined>(undefined);
+  const [showMapModal, setShowMapModal] = useState<boolean>(false); // 지도 모달 상태
 
-  // html -> Markdown 변환
+  // HTML -> Markdown 변환
   const turndownService = new TurndownService({
     headingStyle: 'atx',
     codeBlockStyle: 'fenced',
   });
-  // 공지사항 상세 정보
-  const getNoticeDetail = async (id: string) => {
+
+  // 유효성 검사
+  const validateRequiredFields = () => {
+    if (!editData.title) {
+      toast.error('제목을 입력해주세요.');
+      return false;
+    }
+    if (!editData.content) {
+      toast.error('내용을 입력해주세요.');
+      return false;
+    }
+    if (!contactPhone.trim()) {
+      toast.error('연락처를 입력해주세요.');
+      return false;
+    }
+    return true;
+  };
+
+  // 체험콕 글 상세 정보
+  const getPostDetail = async (id: string) => {
     setIsLoading(true);
     try {
-      const response = await axiosInterceptor.get(`/api/admin/notices/${id}`);
+      const response = await axiosInterceptor.get(`/api/admin/posts/${id}`);
       const data = response.data.data;
       const markdownContent = turndownService.turndown(data.content);
-      setNoticeData(data);
+
+      setPostData(data);
       setEditData({ title: data.title, content: markdownContent });
+      if (data.visitInfo) {
+        setContactPhone(data.visitInfo.contactPhone || '');
+        setHomepage(data.visitInfo.homepage || '');
+        setBusinessAddress(data.visitInfo.businessAddress || '');
+        setBusinessDetailAddress(data.visitInfo.businessDetailAddress || '');
+        setLat(data.visitInfo.lat ?? undefined);
+        setLng(data.visitInfo.lng ?? undefined);
+      } else {
+        setContactPhone('');
+        setHomepage('');
+        setBusinessAddress('');
+        setBusinessDetailAddress('');
+        setLat(undefined);
+        setLng(undefined);
+      }
     } catch (error) {
       console.log(error);
-      toast.error('마크다운 문서를 불러오는데 실패했습니다.');
+      toast.error('아티클을 불러오는데 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  // 마크다운 문서 수정
+  // 체험콕 글 문서 수정
   const editMarkdown = async (id: number) => {
+    if (!validateRequiredFields()) {
+      return;
+    }
     try {
       const markdownComponent = (
         <ReactMarkdown rehypePlugins={[rehypeRaw]}>
@@ -89,28 +148,36 @@ export default function NoticeDetail() {
         </ReactMarkdown>
       );
       const html = renderToStaticMarkup(markdownComponent);
-      await axiosInterceptor.put(`/api/admin/notices/${id}`, {
+      const payload = {
         title: editData.title,
         content: html,
-      });
-      navigate('/notices');
-      toast.success('문서가 수정되었습니다.');
-      await getNoticeDetail(markdownId!);
+        visitInfo: {
+          contactPhone: contactPhone || null,
+          homepage: homepage || null,
+          businessAddress: businessAddress || null,
+          businessDetailAddress: businessDetailAddress || null,
+          lat: lat ?? null,
+          lng: lng ?? null,
+        },
+      };
+      await axiosInterceptor.put(`/api/admin/posts/${id}`, payload);
+      toast.success('아티클이 수정되었습니다.');
+      await getPostDetail(markdownId!);
     } catch (error) {
       console.log(error);
-      toast.error('문서 수정에 실패했습니다.');
+      toast.error('아티클 수정에 실패했습니다.');
     }
   };
 
-  // 마크다운 문서 삭제
+  // 체험콕 아티클 삭제
   const deleteMarkdown = async (id: number) => {
     try {
-      await axiosInterceptor.delete(`/api/admin/notices/${id}`);
-      navigate('/notices');
-      toast.success('문서가 삭제되었습니다.');
+      await axiosInterceptor.delete(`/api/admin/posts/${id}`);
+      navigate('/posts');
+      toast.success('아티클가 삭제되었습니다.');
     } catch (error) {
       console.log(error);
-      toast.error('문서 삭제에 실패했습니다.');
+      toast.error('아티클 삭제에 실패했습니다.');
     }
   };
 
@@ -183,31 +250,120 @@ export default function NoticeDetail() {
     },
   };
 
+  // MapComponent에서 선택된 데이터 처리
+  const handleMapSelect = (data: {
+    roadAddr: string;
+    lat: number;
+    lng: number;
+  }) => {
+    setBusinessAddress(data.roadAddr);
+    setLat(data.lat);
+    setLng(data.lng);
+    setShowMapModal(false);
+  };
+
   useEffect(() => {
     if (markdownId) {
-      getNoticeDetail(markdownId);
+      getPostDetail(markdownId);
     }
   }, [markdownId]);
 
   if (isLoading) {
     return <MarkdownDetailSkeleton />;
   }
-  if (!noticeData) {
+  if (!postData) {
     return <div>데이터 없음</div>;
   }
 
   return (
-    <div className="w-full p-6">
+    <div className="min-w-[800px] p-6">
       <div className="mb-4">
         <ChevronLeft
-          onClick={() => navigate('/notices')}
+          onClick={() => navigate('/posts')}
           className="cursor-pointer"
         />
       </div>
-      <Card className="min-w-[800px] px-6 py-4">
+      <Card className="w-full px-6 py-4">
         <div className="flex items-center justify-between px-6">
-          <CardTitle className="ck-title">공지사항</CardTitle>
+          <CardTitle className="ck-title">체험콕 글</CardTitle>
+
           <div className="flex gap-3">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline">필드 입력</Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[500px]">
+                <div className="grid gap-4">
+                  <div className="space-y-2">
+                    <h4 className="leading-none font-medium">필드 입력</h4>
+                    <p className="text-muted-foreground text-sm">
+                      글 수정을 위해 필드를 입력해주세요
+                    </p>
+                  </div>
+                  <div className="grid gap-2">
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="contactPhone">
+                        연락처 <span className="text-ck-red-500">*</span> 필수
+                      </Label>
+                      <div className="col-span-2">
+                        <Input
+                          id="contactPhone"
+                          className="h-8"
+                          placeholder="01012345678"
+                          value={contactPhone}
+                          onChange={(event) =>
+                            setContactPhone(event.target.value)
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="homepage">홈페이지 주소</Label>
+                      <Input
+                        id="homepage"
+                        className="col-span-2 h-8"
+                        placeholder="https://chkok.kr"
+                        value={homepage}
+                        onChange={(e) => setHomepage(e.target.value)}
+                      />
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="businessAddress">위치 정보</Label>
+                      <div className="col-span-2 flex gap-2">
+                        <Input
+                          id="businessAddress"
+                          className="h-8 flex-1"
+                          placeholder="위치 정보 입력"
+                          value={businessAddress}
+                          onChange={(e) => setBusinessAddress(e.target.value)}
+                        />
+                        <Button
+                          variant="outline"
+                          className="h-8"
+                          onClick={() => setShowMapModal(true)}
+                        >
+                          위치 검색
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="businessDetailAddress">
+                        위치 정보 상세
+                      </Label>
+                      <Input
+                        id="businessDetailAddress"
+                        className="col-span-2 h-8"
+                        placeholder="위치 정보 상세 입력"
+                        value={businessDetailAddress}
+                        onChange={(e) =>
+                          setBusinessDetailAddress(e.target.value)
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button className="px-4 py-2" variant="outline">
@@ -216,7 +372,9 @@ export default function NoticeDetail() {
               </AlertDialogTrigger>
               <AlertDialogContent className="w-[350px]">
                 <AlertDialogHeader>
-                  <AlertDialogTitle>문서를 삭제하시겠습니까?</AlertDialogTitle>
+                  <AlertDialogTitle>
+                    아티클을 삭제하시겠습니까?
+                  </AlertDialogTitle>
                   <AlertDialogDescription>
                     이 작업은 되돌릴 수 없습니다
                   </AlertDialogDescription>
@@ -224,7 +382,7 @@ export default function NoticeDetail() {
                 <AlertDialogFooter>
                   <AlertDialogCancel>취소</AlertDialogCancel>
                   <AlertDialogAction
-                    onClick={() => deleteMarkdown(noticeData.id)}
+                    onClick={() => deleteMarkdown(postData.id)}
                   >
                     확인
                   </AlertDialogAction>
@@ -239,14 +397,14 @@ export default function NoticeDetail() {
               </AlertDialogTrigger>
               <AlertDialogContent className="w-[350px]">
                 <AlertDialogHeader>
-                  <AlertDialogTitle>문서를 수정하시겠습니까?</AlertDialogTitle>
+                  <AlertDialogTitle>
+                    아티클을 수정하시겠습니까?
+                  </AlertDialogTitle>
                   <AlertDialogDescription></AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>취소</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => editMarkdown(noticeData.id)}
-                  >
+                  <AlertDialogAction onClick={() => editMarkdown(postData.id)}>
                     확인
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -254,11 +412,19 @@ export default function NoticeDetail() {
             </AlertDialog>
           </div>
         </div>
-        <CardContent className="ck-body-2 flex  gap-6">
-          <p>작성자: {noticeData?.authorName}</p>
-          <p>생성일: {noticeData?.createdAt.split('T')[0]}</p>
-          <p>수정일: {noticeData?.updatedAt.split('T')[0]}</p>
-          <p>조회수: {noticeData?.viewCount}</p>
+        <CardContent className="ck-body-2 flex justify-between gap-6 items-center">
+          <div className="flex gap-4">
+            <p>작성자 : {postData?.authorName}</p>
+            <p>생성일 : {postData?.createdAt.split('T')[0]}</p>
+            <p>수정일 : {postData?.updatedAt.split('T')[0]}</p>
+            <p>조회수 : {postData?.viewCount}</p>
+          </div>
+          <Button
+            variant="link"
+            onClick={() => navigate(`/campaigns/${postData.campaignId}`)}
+          >
+            캠페인 보러 가기
+          </Button>
         </CardContent>
 
         <CardContent>
@@ -312,6 +478,19 @@ export default function NoticeDetail() {
         </CardContent>
       </Card>
 
+      {/* 지도 모달 */}
+      {showMapModal && (
+        <div className="absolute inset-0 z-10 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg border max-w-2xl min-w-[600px] max-h-[90vh] overflow-y-auto">
+            <h2 className="text-lg font-bold mb-2">위치 검색</h2>
+            <KakaoSearch
+              onSelect={handleMapSelect}
+              onClose={() => setShowMapModal(false)}
+            />
+          </div>
+        </div>
+      )}
+
       {/* 이미지 설정 모달 */}
       {showImageModal && (
         <div className="absolute inset-0 z-10 flex h-full w-full items-center justify-center backdrop-blur-sm">
@@ -328,7 +507,6 @@ export default function NoticeDetail() {
                 />
               </div>
             </div>
-            <div className="mb-6 grid grid-cols-2 gap-4"></div>
             <div className="flex gap-3">
               <button
                 onClick={() => {
