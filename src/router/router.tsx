@@ -15,25 +15,31 @@ const CampaignsDetail = lazy(
   () => import('@/pages/campaigns/components/detail/campaignsDetail')
 );
 const BannersPage = lazy(
-  () => import('@/pages/banners/components/bannersDragPage')
+  () => import('@/pages/banners/components/table/bannersDragPage')
 );
 const BannersDetail = lazy(
-  () => import('@/pages/banners/components/bannersDetail')
+  () => import('@/pages/banners/components/detail/bannersDetail')
 );
 const Dashboard = lazy(
   () => import('@/pages/dashboard/components/serverDashBoard')
 );
 
-const NoticePage = lazy(() => import('@/pages/notices/components/noticePage'));
+const NoticePage = lazy(
+  () => import('@/pages/notices/components/table/noticePage')
+);
 const NoticeDetail = lazy(
-  () => import('@/pages/notices/components/noticeDetail')
+  () => import('@/pages/notices/components/detail/noticeDetail')
 );
 const NoticeCreate = lazy(
-  () => import('@/pages/notices/components/noticeCreate')
+  () => import('@/pages/notices/components/create/noticeCreate')
 );
-const PostPage = lazy(() => import('@/pages/posts/components/postPage'));
-const PostDetail = lazy(() => import('@/pages/posts/components/postDetail'));
-const PostCreate = lazy(() => import('@/pages/posts/components/postCreate'));
+const PostPage = lazy(() => import('@/pages/posts/components/table/postPage'));
+const PostDetail = lazy(
+  () => import('@/pages/posts/components/detail/postDetail')
+);
+const PostCreate = lazy(
+  () => import('@/pages/posts/components/create/postCreate')
+);
 
 // Route configuration
 export const privateRoutes = [

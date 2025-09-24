@@ -50,14 +50,14 @@ export default function ApplicantsDataTable() {
   const [status, setStatus] = useState<string>('전체');
 
   const statusValues = [
-    { type: '전체', label: '전체 신청인' },
-    { type: '선정 대기중', label: '선정 대기중' },
-    { type: '선정', label: '선정' },
-    { type: '거절', label: '거절' },
-    { type: '완료', label: '완료' },
+    { status: '전체', label: '전체 신청인' },
+    { status: '선정 대기중', label: '선정 대기중' },
+    { status: '선정', label: '선정' },
+    { status: '거절', label: '거절' },
+    { status: '완료', label: '완료' },
   ];
 
-  const getApplicants = async (page: number = 0, type: typeof status) => {
+  const getApplicants = async (page: number = 0, status: string) => {
     try {
       const url =
         status === '전체'
@@ -77,8 +77,8 @@ export default function ApplicantsDataTable() {
   const handlePageChange = (page: number) => {
     getApplicants(page, status);
   };
-  const handleType = (type: typeof status) => {
-    setStatus(type);
+  const handleStatus = (status: string) => {
+    setStatus(status);
   };
   useEffect(() => {
     getApplicants(0, status);
@@ -98,7 +98,7 @@ export default function ApplicantsDataTable() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
-                {statusValues.find((item) => item.type === status)?.label ||
+                {statusValues.find((item) => item.status === status)?.label ||
                   '신청인 필터'}
                 <ChevronDown />
               </Button>
@@ -106,9 +106,9 @@ export default function ApplicantsDataTable() {
             <DropdownMenuContent align="end">
               {statusValues.map((item) => (
                 <DropdownMenuCheckboxItem
-                  key={item.type}
-                  checked={status === item.type}
-                  onClick={() => handleType(item.type)}
+                  key={item.status}
+                  checked={status === item.status}
+                  onClick={() => handleStatus(item.status)}
                 >
                   {item.label}
                 </DropdownMenuCheckboxItem>

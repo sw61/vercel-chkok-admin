@@ -21,6 +21,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alertDialog';
 import usericon from '@/Image/usericon.png';
+import ActivitiesPage from '../activities/page/activitiesPage';
 
 interface User {
   id: number;
@@ -378,6 +379,7 @@ export default function UserDetail() {
             </div>
           </CardContent>
         </Card>
+        <ActivitiesPage />
       </div>
     </div>
   );

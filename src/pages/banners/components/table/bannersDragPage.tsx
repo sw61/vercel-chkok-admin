@@ -10,7 +10,7 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { FolderInput } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import BannerPageSkeleton from '@/pages/banners/skeleton/bannersPageSkeleton';
+import BannerPageSkeleton from '@/pages/banners/components/table/bannersPageSkeleton';
 
 interface BannerData {
   id: number;

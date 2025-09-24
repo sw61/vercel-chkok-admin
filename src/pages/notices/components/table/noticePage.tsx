@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dropdownMenu';
 import axiosInterceptor from '@/lib/axiosInterceptors';
 import { PaginationHook } from '@/hooks/paginationHook';
-import { NoticeTable } from './noticeTable';
+import { NoticeTable } from '../table/noticeTable';
 import { useNavigate } from 'react-router-dom';
 import UserTableSkeleton from '@/pages/users/skeleton/usersTableSkeleton';
 

@@ -41,7 +41,14 @@ export function UsersActivitiesTable({ userItems }: ActivitiesProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const navigate = useNavigate();
-  const sortableColumns = ['id', 'title', 'type', 'company', 'statusText'];
+  const sortableColumns = [
+    'id',
+    'title',
+    'type',
+    'company',
+    'maxApplicants',
+    'statusText',
+  ];
   const columns: ColumnDef<Activities, unknown>[] = [
     {
       accessorKey: 'id',
@@ -69,7 +76,7 @@ export function UsersActivitiesTable({ userItems }: ActivitiesProps) {
             className="has-[>svg]:px-0"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            타이틀
+            캠페인 제목
             <ArrowUpDown />
           </Button>
         </div>
@@ -79,7 +86,7 @@ export function UsersActivitiesTable({ userItems }: ActivitiesProps) {
           {row.getValue('title')}
         </div>
       ),
-      size: 250,
+      size: 150,
     },
     {
       accessorKey: 'type',
@@ -89,14 +96,14 @@ export function UsersActivitiesTable({ userItems }: ActivitiesProps) {
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          방문형/배송형
+          방문형 / 배송형
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => (
         <div className="lowercase">{row.getValue('type')}</div>
       ),
-      size: 120,
+      size: 150,
     },
     {
       accessorKey: 'company',
@@ -106,15 +113,16 @@ export function UsersActivitiesTable({ userItems }: ActivitiesProps) {
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          회사
+          회사명
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => (
         <div className="lowercase">{row.getValue('company')}</div>
       ),
-      size: 100,
+      size: 150,
     },
+
     {
       accessorKey: 'statusText',
       header: ({ column }) => (
@@ -135,6 +143,23 @@ export function UsersActivitiesTable({ userItems }: ActivitiesProps) {
       ),
       cell: ({ row }) => (
         <div className="lowercase">{row.getValue('statusText')}</div>
+      ),
+      size: 100,
+    },
+    {
+      accessorKey: 'maxApplicants',
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          className="has-[>svg]:px-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          최대 지원자 수
+          <ArrowUpDown />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue('maxApplicants')}</div>
       ),
       size: 100,
     },
@@ -196,7 +221,9 @@ export function UsersActivitiesTable({ userItems }: ActivitiesProps) {
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   className="cursor-pointer"
-                  onClick={() => navigate(`/users/${row.original.id}`)}
+                  onClick={() =>
+                    navigate(`/campaigns/${row.original.campaignId}`)
+                  }
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
@@ -218,7 +245,7 @@ export function UsersActivitiesTable({ userItems }: ActivitiesProps) {
                   colSpan={columns.length}
                   className="h-24 text-center whitespace-nowrap"
                 >
-                  No results.
+                  활동 내역이 없습니다.
                 </TableCell>
               </TableRow>
             )}

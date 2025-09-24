@@ -4,6 +4,14 @@ import { useParams } from 'react-router-dom';
 import { UsersActivitiesTable } from '../table/usersActivities';
 import { ClientsActivitiesTable } from '../table/clientsActivities';
 import { PaginationHook } from '@/hooks/paginationHook';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdownMenu';
+import { Button } from '@/components/ui/button';
+import { ChevronDown } from 'lucide-react';
 
 interface Activities {
   userId: number;
@@ -54,25 +62,36 @@ interface Pagination {
 export default function ActivitiesPage() {
   const { userId } = useParams<{ userId: string }>();
   const [activitiesData, setActivitiesData] = useState<Activities | null>(null);
-  const [status, setStatus] = useState<string | null>(null);
+  const [status, setStatus] = useState<string>('ALL');
   const [pageData, setPageData] = useState<Pagination>();
 
-  const statusValues = [
-    { type: '전체', label: '전체 신청인' },
-    { type: '선정 대기중', label: '선정 대기중' },
-    { type: '선정', label: '선정' },
-    { type: '거절', label: '거절' },
-    { type: '완료', label: '완료' },
+  const usersStatusValues = [
+    { status: 'ALL', label: '전체 신청인' },
+    { status: 'APPLIED', label: '선정' },
+    { status: 'PENDING', label: '대기' },
+    { status: 'SELETED', label: '선택' },
+    { status: 'REJECTED', label: '거절' },
+    { status: 'COMPLETED', label: '완료' },
   ];
 
-  const getActivities = async (page: number = 0, type: typeof status) => {
+  const clientsStatusValues = [
+    { status: 'ALL', label: '전체 신청인' },
+    { status: 'PENDING', label: '대기' },
+    { status: 'APPROVED', label: '승인' },
+    { status: 'REJECTED', label: '거절' },
+    { status: 'EXPIRED', label: '만료' },
+  ];
+  const getActivities = async (page: number = 0, status: string) => {
     try {
-      const response = await axiosInterceptor.get(
-        `/users/${userId}/activities?status=${status}`
-      );
+      const url =
+        status === 'ALL'
+          ? `/users/${userId}/activities`
+          : `/users/${userId}/activities?status=${status}`;
+      const response = await axiosInterceptor.get(url);
       const data = response.data.data;
       setActivitiesData(data);
       setPageData(data.pagination);
+      console.log(data);
     } catch (error) {
       console.log(error);
     }
@@ -82,9 +101,9 @@ export default function ActivitiesPage() {
     getActivities(page, status);
   };
 
-  const handleType = (type: string | null) => {
-    setStatus(type);
-    getActivities(0, type);
+  const handleStatus = (status: string) => {
+    setStatus(status);
+    getActivities(0, status);
   };
 
   useEffect(() => {
@@ -96,15 +115,69 @@ export default function ActivitiesPage() {
   }
 
   return (
-    <>
+    <div className="flex flex-col">
       {activitiesData.userRole === 'USER' ? (
-        <UsersActivitiesTable userItems={activitiesData.items as UserItems[]} />
+        <>
+          <div className="mb-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  {usersStatusValues.find((item) => item.status === status)
+                    ?.label || '상태 필터'}
+                  <ChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {usersStatusValues.map((item) => (
+                  <DropdownMenuCheckboxItem
+                    key={item.status}
+                    checked={status === item.status}
+                    onClick={() => handleStatus(item.status)}
+                  >
+                    {item.label}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          <UsersActivitiesTable
+            userItems={activitiesData.items as UserItems[]}
+          />
+        </>
       ) : (
-        <ClientsActivitiesTable
-          clientsItems={activitiesData.items as ClientsItems[]}
-        />
+        <>
+          <div className="mb-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  {clientsStatusValues.find((item) => item.status === status)
+                    ?.label || '상태 필터'}
+                  <ChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {clientsStatusValues.map((item) => (
+                  <DropdownMenuCheckboxItem
+                    key={item.status}
+                    checked={status === item.status}
+                    onClick={() => handleStatus(item.status)}
+                  >
+                    {item.label}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          <ClientsActivitiesTable
+            clientsItems={activitiesData.items as ClientsItems[]}
+          />
+        </>
       )}
-      <PaginationHook pageData={pageData} onPageChange={handlePageChange} />
-    </>
+      <div className="mt-4">
+        <PaginationHook pageData={pageData} onPageChange={handlePageChange} />
+      </div>
+    </div>
   );
 }
