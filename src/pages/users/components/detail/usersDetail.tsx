@@ -20,7 +20,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alertDialog';
-import usericon from '../../../../../image/usericon.png';
+import usericon from '@/image/usericon.png';
 import ActivitiesPage from '../activities/page/activitiesPage';
 
 interface User {

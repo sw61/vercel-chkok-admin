@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import kogi from '../../../../image/kogi.png';
+import kogi from '@/image/kogi.png';
 import { Button } from '@/components/ui/button';
 import { House, ArrowBigLeft } from 'lucide-react';
 
