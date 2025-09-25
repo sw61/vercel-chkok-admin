@@ -66,7 +66,7 @@ export default function ActivitiesPage() {
   const [pageData, setPageData] = useState<Pagination>();
 
   const usersStatusValues = [
-    { status: 'ALL', label: '전체 신청인' },
+    { status: 'ALL', label: '전체 캠페인' },
     { status: 'APPLIED', label: '선정' },
     { status: 'PENDING', label: '대기' },
     { status: 'SELETED', label: '선택' },
@@ -75,7 +75,7 @@ export default function ActivitiesPage() {
   ];
 
   const clientsStatusValues = [
-    { status: 'ALL', label: '전체 신청인' },
+    { status: 'ALL', label: '전체 캠페인' },
     { status: 'PENDING', label: '대기' },
     { status: 'APPROVED', label: '승인' },
     { status: 'REJECTED', label: '거절' },
@@ -118,7 +118,8 @@ export default function ActivitiesPage() {
     <div className="flex flex-col">
       {activitiesData.userRole === 'USER' ? (
         <>
-          <div className="mb-4">
+          <div className="mb-4 flex justify-between items-center">
+            <div className="ck-sub-title-1 ">사용자 캠페인 활동 내역</div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline">
@@ -147,7 +148,8 @@ export default function ActivitiesPage() {
         </>
       ) : (
         <>
-          <div className="mb-4">
+          <div className="mb-4 flex justify-between items-center">
+            <div className="ck-sub-title-1">클라이언트 캠페인 활동 내역</div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline">

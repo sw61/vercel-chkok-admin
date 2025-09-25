@@ -88,33 +88,36 @@ export default function ApplicantsDataTable() {
   }
   return (
     <>
-      <div className="ck-sub-title-1 mb-4">캠페인 신청 인원 목록</div>
       {applicantsData?.length === 0 ? (
         <div className="mt-4 text-ck-gray-600 ck-body-2 flex h-40 items-center justify-center rounded-md border">
           캠페인 신청 인원이 없습니다.
         </div>
       ) : (
         <>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                {statusValues.find((item) => item.status === status)?.label ||
-                  '신청인 필터'}
-                <ChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {statusValues.map((item) => (
-                <DropdownMenuCheckboxItem
-                  key={item.status}
-                  checked={status === item.status}
-                  onClick={() => handleStatus(item.status)}
-                >
-                  {item.label}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center justify-between mt-6">
+            <div className="ck-sub-title-1 ">캠페인 신청 인원 목록</div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  {statusValues.find((item) => item.status === status)?.label ||
+                    '신청인 필터'}
+                  <ChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {statusValues.map((item) => (
+                  <DropdownMenuCheckboxItem
+                    key={item.status}
+                    checked={status === item.status}
+                    onClick={() => handleStatus(item.status)}
+                  >
+                    {item.label}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
           <div className="mt-4 flex flex-col gap-4">
             <ApplicantsTable applicantsData={applicantsData} />
             <PaginationHook

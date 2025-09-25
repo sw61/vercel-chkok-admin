@@ -89,19 +89,19 @@ export function UsersActivitiesTable({ userItems }: ActivitiesProps) {
       size: 150,
     },
     {
-      accessorKey: 'type',
+      accessorKey: 'campaignType',
       header: ({ column }) => (
         <Button
           variant="ghost"
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          방문형 / 배송형
+          캠페인 유형
           <ArrowUpDown />
         </Button>
       ),
       cell: ({ row }) => (
-        <div className="lowercase">{row.getValue('type')}</div>
+        <div className="lowercase">{row.getValue('campaignType')}</div>
       ),
       size: 150,
     },
@@ -147,21 +147,23 @@ export function UsersActivitiesTable({ userItems }: ActivitiesProps) {
       size: 100,
     },
     {
-      accessorKey: 'maxApplicants',
+      accessorKey: 'createdAt',
       header: ({ column }) => (
         <Button
           variant="ghost"
           className="has-[>svg]:px-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          최대 지원자 수
+          생성일
           <ArrowUpDown />
         </Button>
       ),
-      cell: ({ row }) => (
-        <div className="lowercase">{row.getValue('maxApplicants')}</div>
-      ),
-      size: 100,
+      cell: ({ row }) => {
+        const fullDate = row.getValue('createdAt') as string;
+        const dateOnly = fullDate.split('T')[0];
+        return <div>{dateOnly}</div>;
+      },
+      size: 150,
     },
   ];
   const totalColumnWidth = columns.reduce(

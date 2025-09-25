@@ -233,7 +233,7 @@ export function ClientsActivitiesTable({ clientsItems }: ActivitiesProps) {
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   className="cursor-pointer"
-                  onClick={() => navigate(`/users/${row.original.id}`)}
+                  onClick={() => navigate(`/campaigns/${row.original.id}`)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
