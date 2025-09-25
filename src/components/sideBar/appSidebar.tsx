@@ -17,7 +17,7 @@ import { NavMain } from '@/components/sideBar/navMain';
 // import { NavSecondary } from "@/SideBar/nav-secondary";
 import { NavUser } from '@/components/sideBar/navUser';
 
-import chkokLogo from '../../../image/chkokLogo.png';
+import chkokLogo from '@/image/chkokLogo.png';
 
 import {
   Sidebar,
