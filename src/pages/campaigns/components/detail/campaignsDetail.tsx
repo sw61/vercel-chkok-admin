@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'react-toastify';
 import { Badge } from '@/components/ui/badge';
-import CampaignDetailSkeleton from '@/pages/campaigns/components/detail/campaignDetailSkeleton';
+import CampaignDetailSkeleton from '@/pages/campaigns/components/detail/detailSkeleton';
 import {
   ChevronLeft,
   House,
@@ -37,7 +37,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alertDialog';
-import { ApplicantsTable } from '../applicants/applicantsTable';
 import ApplicantsDataTable from '../applicants/applicantsDataTable';
 
 interface Campaign {

@@ -17,7 +17,7 @@ import axiosInterceptor from '@/lib/axiosInterceptors';
 import { PaginationHook } from '@/hooks/paginationHook';
 import { PostTable } from './postTable';
 import { useNavigate } from 'react-router-dom';
-import UserTableSkeleton from '@/pages/users/skeleton/usersTableSkeleton';
+import UserTableSkeleton from '@/pages/users/components/table/usersTableSkeleton';
 
 interface Post {
   id: number;

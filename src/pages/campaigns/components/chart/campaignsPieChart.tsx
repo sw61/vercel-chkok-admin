@@ -8,9 +8,9 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from '@/components/ui/chart';
-import axiosInterceptor from '@/lib/axiosInterceptors';
-import { useState, useEffect } from 'react';
-import PieChartSkeleton from '@/pages/users/skeleton/PieChartSkeleton';
+import PieChartSkeleton from '@/pages/users/components/chart/PieChartSkeleton';
+import { useQuery } from '@tanstack/react-query';
+import { getCampaignStatus } from '@/services/campaigns/chart/chartApi';
 
 interface Status {
   totalCampaigns: number;
@@ -21,24 +21,12 @@ interface Status {
 }
 
 export function CamapaignsPieChart() {
-  const [campaignStatus, setCampaignStatus] = useState<Status | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const getCampaignStatus = async () => {
-    try {
-      setIsLoading(true);
-      const response = await axiosInterceptor.get(`/campaigns/stats`);
-      const campaignStatus = response.data.data;
-      setCampaignStatus(campaignStatus);
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  useEffect(() => {
-    getCampaignStatus();
-  }, []);
+  const { data: campaignStatus, isPending } = useQuery<Status>({
+    queryKey: ['campaignsStatus'],
+    queryFn: getCampaignStatus,
+  });
 
-  if (isLoading) {
+  if (isPending) {
     return <PieChartSkeleton />;
   }
 

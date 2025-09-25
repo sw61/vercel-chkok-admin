@@ -6,7 +6,7 @@ import {
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import UserTableSkeleton from '@/pages/users/skeleton/usersTableSkeleton';
+import UserTableSkeleton from '@/pages/users/components/table/usersTableSkeleton';
 import { PaginationHook } from '@/hooks/paginationHook';
 import { CompanyTable } from '@/pages/companies/components/companyTable';
 

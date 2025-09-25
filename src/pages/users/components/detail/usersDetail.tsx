@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'react-toastify';
 import { ChevronLeft } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import UserDetailSkeleton from '@/pages/users/skeleton/usersDetailSkeleton';
+import UserDetailSkeleton from '@/pages/users/components/detail/usersDetailSkeleton';
 import { CustomBadge } from '@/hooks/useBadge';
 import {
   AlertDialog,

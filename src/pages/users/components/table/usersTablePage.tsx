@@ -16,7 +16,7 @@ import {
 import axiosInterceptor from '@/lib/axiosInterceptors';
 import { UserTable } from '@/pages/users/components/table/usersTable';
 import { CompanyTable } from '@/pages/companies/components/companyTable';
-import UserTableSkeleton from '@/pages/users/skeleton/usersTableSkeleton';
+import UserTableSkeleton from '@/pages/users/components/table/usersTableSkeleton';
 import { PaginationHook } from '@/hooks/paginationHook';
 
 interface User {

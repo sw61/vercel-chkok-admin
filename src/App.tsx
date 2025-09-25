@@ -14,9 +14,12 @@ import SideBar from './components/sideBar/sideBar';
 import NotFoundPage from './pages/notFound/components/notFoundPage';
 
 import { privateRoutes } from './router/router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 const App = () => (
-  <>
+  <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       <Routes>
         {/* Layout route with SideBar */}
@@ -35,7 +38,7 @@ const App = () => (
       </Routes>
     </BrowserRouter>
     <ToastContainer />
-  </>
+  </QueryClientProvider>
 );
 
 export default App;

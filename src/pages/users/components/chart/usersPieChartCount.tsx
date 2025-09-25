@@ -8,9 +8,9 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from '@/components/ui/chart';
-import axiosInterceptor from '@/lib/axiosInterceptors';
-import { useState, useEffect } from 'react';
-import PieChartSkeleton from '@/pages/users/skeleton/PieChartSkeleton';
+import PieChartSkeleton from '@/pages/users/components/chart/PieChartSkeleton';
+import { getUsersStatus } from '@/services/users/chart/chartApi';
+import { useQuery } from '@tanstack/react-query';
 
 interface Status {
   totalUsers: number; // 등록된 전체 사용자 수
@@ -21,35 +21,27 @@ interface Status {
 }
 
 export function UserPieChartCount() {
-  const [userStatus, setUserStatus] = useState<Status | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    data: usersStatus,
+    isPending,
+    error,
+  } = useQuery<Status>({
+    queryKey: ['usersChart'],
+    queryFn: getUsersStatus,
+  });
 
-  const getUserStatus = async () => {
-    try {
-      setIsLoading(true);
-      const response = await axiosInterceptor.get(`/users/stats`);
-      const userStatus = response.data.data;
-      setUserStatus(userStatus);
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  useEffect(() => {
-    getUserStatus();
-  }, []);
-  if (isLoading) {
+  if (isPending) {
     return <PieChartSkeleton />;
   }
   const chartData = [
     {
       status: 'userCount',
-      visitors: userStatus?.userCount,
+      visitors: usersStatus?.userCount,
       fill: '#2388FF',
     },
     {
       status: 'client',
-      visitors: userStatus?.clientCount,
+      visitors: usersStatus?.clientCount,
       fill: 'oklch(79.5% 0.184 86.047)',
     },
   ];

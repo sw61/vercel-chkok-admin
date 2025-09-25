@@ -48,18 +48,7 @@ export default function BannersDragPage() {
       const response = await axiosInterceptor.get('/api/banners');
       const data = response.data.data;
       // displayOrder 기준으로 정렬
-      setBannerData(
-        data.sort(
-          (a: BannerData, b: BannerData) => a.displayOrder - b.displayOrder
-        )
-      );
-      // 폼 데이터 초기화
-      setCreateBannerData({
-        title: '',
-        redirectUrl: '',
-        description: '',
-        position: '',
-      });
+      setBannerData(data);
     } catch (error) {
       console.error('배너 목록 조회 중 오류 발생:', error);
     } finally {
@@ -97,7 +86,7 @@ export default function BannersDragPage() {
         { fileExtension }
       );
       const presignedUrl = response.data.data.presignedUrl;
-      setPresignedUrl(presignedUrl);
+
       const contentType = imageFile.type || 'image/jpeg';
       await axios.put(presignedUrl, imageFile, {
         headers: {

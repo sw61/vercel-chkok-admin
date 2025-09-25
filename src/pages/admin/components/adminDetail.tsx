@@ -1,9 +1,9 @@
-import axiosInterceptor from '@/lib/axiosInterceptors';
-import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import PulseLoader from 'react-spinners/PulseLoader';
 import usericon from '@/image/usericon.png';
+import { useQuery } from '@tanstack/react-query';
+import { getAdminData } from '@/services/admin/adminApi';
 
 interface AdminData {
   id: number;
@@ -21,8 +21,14 @@ interface AdminAccountInfo {
 }
 
 export default function AdminDetail() {
-  const [adminData, setAdminData] = useState<AdminData>();
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    data: adminData,
+    isPending,
+    error,
+  } = useQuery<AdminData>({
+    queryKey: ['admin'],
+    queryFn: getAdminData,
+  });
 
   // 상대 시간 포맷팅 함수
   const formatLastLogin = (lastLoginAt: string | undefined) => {
@@ -73,29 +79,15 @@ export default function AdminDetail() {
     );
   };
 
-  const getUserMe = async () => {
-    try {
-      setIsLoading(true);
-      const response = await axiosInterceptor.get('/auth/me');
-      const data = response.data.data;
-      setAdminData(data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getUserMe();
-  }, []);
-
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex h-64 items-center justify-center">
         <PulseLoader />
       </div>
     );
+  }
+  if (error) {
+    return <div>데이터를 불러오는데 실패했습니다. {error.message}</div>;
   }
 
   return (
