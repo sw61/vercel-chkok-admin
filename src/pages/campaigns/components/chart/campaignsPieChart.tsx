@@ -1,0 +1,103 @@
+import { Pie, PieChart } from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from '@/components/ui/chart';
+import PieChartSkeleton from '@/pages/users/components/chart/PieChartSkeleton';
+import { useQuery } from '@tanstack/react-query';
+import { getCampaignStatus } from '@/services/campaigns/chart/chartApi';
+
+interface Status {
+  totalCampaigns: number;
+  pendingCampaigns: number;
+  approvedCampaigns: number;
+  rejectedCampaigns: number;
+  expiredCampaigns: number;
+}
+
+export function CamapaignsPieChart() {
+  const { data: campaignStatus, isPending } = useQuery<Status>({
+    queryKey: ['campaignsStatus'],
+    queryFn: getCampaignStatus,
+  });
+
+  if (isPending) {
+    return <PieChartSkeleton />;
+  }
+
+  const chartData = [
+    {
+      status: 'approved',
+      visitors: campaignStatus?.approvedCampaigns,
+      fill: '#2388FF',
+    },
+    {
+      status: 'rejected',
+      visitors: campaignStatus?.rejectedCampaigns,
+      fill: '#FB2C36',
+    },
+    {
+      status: 'pending',
+      visitors: campaignStatus?.pendingCampaigns,
+      fill: '#FBC02D',
+    },
+    {
+      status: 'expired',
+      visitors: campaignStatus?.expiredCampaigns,
+      fill: '#FFA2A2',
+    },
+  ];
+  const chartConfig = {
+    visitors: {
+      label: 'Visitors',
+    },
+    pending: {
+      label: '승인 대기중',
+      color: 'var(--chart-1)',
+    },
+    approved: {
+      label: '승인됨',
+      color: 'var(--chart-2)',
+    },
+    rejected: {
+      label: '승인 거절',
+      color: 'var(--chart-3)',
+    },
+    expired: {
+      label: '종료됨',
+      color: 'var(--chart-4)',
+    },
+  } satisfies ChartConfig;
+
+  return (
+    <>
+      <Card className="flex flex-col pb-0">
+        <CardHeader className="items-center pb-0">
+          <CardTitle className="ck-body-1-bold">캠페인 통계</CardTitle>
+        </CardHeader>
+        <CardContent className="flex-1 pb-0">
+          <ChartContainer
+            config={chartConfig}
+            className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square max-h-[300px] pb-0"
+          >
+            <PieChart>
+              <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+              <Pie data={chartData} dataKey="visitors" label nameKey="status" />
+              <ChartLegend
+                content={<ChartLegendContent nameKey="status" />}
+                className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
+              >
+                <ChartLegendContent nameKey="status" />
+              </ChartLegend>
+            </PieChart>
+          </ChartContainer>
+        </CardContent>
+      </Card>
+    </>
+  );
+}
