@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import PulseLoader from 'react-spinners/PulseLoader';
-import usericon from '../../../image/usericon.png';
+import usericon from '../../../../image/usericon.png';
 import { useQuery } from '@tanstack/react-query';
 import { getAdminData } from '@/services/admin/adminApi';
 
