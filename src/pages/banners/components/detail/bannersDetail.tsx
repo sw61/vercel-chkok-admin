@@ -11,6 +11,17 @@ import BannerDetailSkeleton from '@/pages/banners/components/detail/bannersDetai
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { deleteBanners, getBannersTable } from '@/services/banners/tableApi';
 import { useAlertDialog } from '@/components/alertDialog/useAlertDialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alertDialog';
 
 interface BannerData {
   id: number;
@@ -54,7 +65,7 @@ export default function BannersDetail() {
   });
 
   // 배너 수정
-  const editBanners = async (id: number) => {
+  const editBanners = async (id: string) => {
     if (!editBannerData.title || !editBannerData.position) {
       toast.error('배너 이름과 위치를 입력해주세요.');
       return;
@@ -171,12 +182,12 @@ export default function BannersDetail() {
     onAlert: () => bannerId && deleteMutate(bannerId),
   });
 
-  const { AlertDialogComponent: EditAlertDialog } = useAlertDialog({
-    buttonText: '저장',
-    title: '수정 사항을 저장하시겠습니까?',
-    description: '',
-    onAlert: () => bannerId && editMutate(bannerId),
-  });
+  // const { AlertDialogComponent: EditAlertDialog } = useAlertDialog({
+  //   buttonText: '저장',
+  //   title: '수정 사항을 저장하시겠습니까?',
+  //   description: '',
+  //   onAlert: () => bannerId && editMutate(bannerId),
+  // });
   if (!bannerData) {
     return (
       <div className="flex h-64 items-center justify-center">
@@ -242,7 +253,28 @@ export default function BannersDetail() {
                     >
                       취소
                     </Button>
-                    <EditAlertDialog />
+                    {/* <EditAlertDialog /> */}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline">수정</Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="w-[350px]">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            배너를 수정하시겠습니까?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription></AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>취소</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => bannerId && editBanners(bannerId)}
+                          >
+                            확인
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               </>
