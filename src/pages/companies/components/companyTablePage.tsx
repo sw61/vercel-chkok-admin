@@ -47,7 +47,6 @@ export default function CompanyTablePage() {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-  const pageData = companyData?.pagination;
 
   return (
     <Card className="px-6 py-4">
@@ -57,7 +56,7 @@ export default function CompanyTablePage() {
 
       {isPending ? (
         <UserTableSkeleton />
-      ) : !companyData || !pageData ? (
+      ) : !companyData ? (
         <div className="text-ck-gray-600 ck-body-2 flex items-center justify-center rounded-md border py-10">
           데이터가 없습니다.
         </div>
@@ -70,7 +69,10 @@ export default function CompanyTablePage() {
             columnVisibility={columnVisibility}
             setColumnVisibility={setColumnVisibility}
           />
-          <PaginationHook pageData={pageData} onPageChange={handlePageChange} />
+          <PaginationHook
+            pageData={companyData.pagination}
+            onPageChange={handlePageChange}
+          />
         </>
       )}
     </Card>

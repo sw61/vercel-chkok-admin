@@ -233,7 +233,7 @@ export function CompanyTable({
                   colSpan={columns.length}
                   className="h-24 text-center whitespace-nowrap"
                 >
-                  No results.
+                  신청 인원이 없습니다.
                 </TableCell>
               </TableRow>
             )}
