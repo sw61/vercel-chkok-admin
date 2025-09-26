@@ -1,8 +1,6 @@
-import axiosInterceptor from '@/lib/axiosInterceptors';
-import { useState, useEffect, type ChangeEvent } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'react-toastify';
 import { Badge } from '@/components/ui/badge';
@@ -26,18 +24,15 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { CustomBadge } from '@/hooks/useBadge';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alertDialog';
 import ApplicantsDataTable from '../applicants/applicantsDataTable';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  approveCampaigns,
+  deleteCampaigns,
+  getCampaignDetail,
+  rejectCampaigns,
+} from '@/services/campaigns/detail/detailApi';
+import { useAlertDialog } from '@/components/alertDialog/useAlertDialog';
 
 interface Campaign {
   id: number;
@@ -107,118 +102,78 @@ interface Campaign {
   };
 }
 
-interface CampaignInfo {
-  key: string;
-  label: string;
-  value: string | number | undefined;
-}
-
 export default function CampaignsDetail() {
   const { campaignId } = useParams<{ campaignId: string }>();
-  const [campaignData, setCampaignData] = useState<Campaign | null>(null);
   const [comment, setComment] = useState<string>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
-  const dataMap: Record<string, string> = {
-    USER: '사용자',
-    CLIENT: '클라이언트',
-    ADMIN: '관리자',
-    SOCIAL: '소셜',
-    LOCAL: '로컬',
-  };
+  const queryClient = useQueryClient();
 
-  const CampaignInfo = (): CampaignInfo[] => [
-    {
-      key: 'id',
-      label: '캠페인 ID',
-      value: campaignData?.id ?? '정보 없음',
-    },
-    {
-      key: 'maxApplicants',
-      label: '최대 신청자 수',
-      value: campaignData?.maxApplicants
-        ? `${campaignData.maxApplicants}명`
-        : '정보 없음',
-    },
-  ];
-  const test = async () => {
-    const response = await axiosInterceptor.get(
-      'users?page=0&size=10&sortBy=id&sortDirection=DESC'
-    );
-    console.log(response);
-  };
-  // 캠페인 상세 내용 조회
-  const getCampaignDetail = async (id: string) => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInterceptor.get(`/campaigns/${id}`);
-      const campaignData = response.data.data;
-      const mappedData = {
-        ...campaignData,
-        creatorRole:
-          dataMap[campaignData.creator.role] || campaignData.creator.role,
-        creatorAccountType:
-          dataMap[campaignData.creator.accountType] || campaignData.accountType,
-      };
-      setCampaignData(mappedData);
-      console.log(mappedData);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  // 캠페인 삭제
-  const deleteCampaign = async (id: number) => {
-    try {
-      const response = await axiosInterceptor.delete(`/campaigns/${id}`);
+  const { data: campaignData, isPending } = useQuery({
+    queryKey: ['campaignDetail', campaignId],
+    queryFn: () => getCampaignDetail(campaignId!),
+  });
+  const { mutate: deleteMutate } = useMutation({
+    mutationFn: deleteCampaigns,
+    onSuccess: () => {
       navigate('/campaigns');
       toast.success('캠페인이 삭제되었습니다.');
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-      toast.error('캠페인 삭제 중 오류가 발생했습니다.');
-    }
-  };
-  // 캠페인 승인
-  const approveCampaign = async (id: number) => {
-    try {
-      const response = await axiosInterceptor.put(`/campaigns/${id}/approval`, {
-        approvalStatus: 'APPROVED',
-        comment: comment ?? '모든 조건을 만족하여 승인합니다.',
+      queryClient.invalidateQueries({
+        queryKey: ['campaignsDetail', campaignId],
       });
-      const updatedData = response.data.data;
-      setCampaignData((prev) => ({ ...prev, ...updatedData }));
+    },
+    onError: () => {
+      toast.error('캠페인 삭제를 실패했습니다.');
+    },
+  });
+  const { mutate: approveMutate } = useMutation({
+    mutationFn: approveCampaigns,
+    onSuccess: () => {
       toast.success('캠페인이 승인되었습니다.');
-    } catch (error) {
-      toast.error(`${error}`);
-    }
-  };
-  // 캠페인 거절
-  const rejectCampaign = async (id: number) => {
-    try {
-      const response = await axiosInterceptor.put(`/campaigns/${id}/approval`, {
-        approvalStatus: 'REJECTED',
-        comment: comment ?? '조건을 만족하지 못하여 거절되었습니다.',
+      queryClient.invalidateQueries({
+        queryKey: ['campaignsDetail', campaignId],
       });
-      const updatedData = response.data.data;
-      setCampaignData((prev) => ({ ...prev, ...updatedData }));
+    },
+    onError: () => {
+      toast.error('캠페인 승인을 실패했습니다');
+    },
+  });
+  const { mutate: rejectMutate } = useMutation({
+    mutationFn: rejectCampaigns,
+    onSuccess: () => {
       toast.success('캠페인이 거절되었습니다.');
-    } catch (error) {
-      toast.error(`${error}`);
-    }
-  };
+      queryClient.invalidateQueries({
+        queryKey: ['campaignsDetail', campaignId],
+      });
+    },
+    onError: () => {
+      toast.error('캠페인 거절을 실패했습니다');
+    },
+  });
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value);
   };
+  // Alert Component
+  const { AlertDialogComponent: ApproveAlertDialog } = useAlertDialog({
+    buttonText: '승인',
+    title: '캠페인을 승인하시겠습니까?',
+    description: '이 작업은 되돌릴 수 없습니다.',
+    onAlert: () => campaignData.id && approveMutate(campaignData.id),
+  });
+  const { AlertDialogComponent: RejectAlertDialog } = useAlertDialog({
+    buttonText: '거절',
+    title: '캠페인을 거절하시겠습니까?',
+    description: '이 작업은 되돌릴 수 없습니다.',
+    onAlert: () => campaignData.id && rejectMutate(campaignData.id),
+  });
+  const { AlertDialogComponent: DeleteAlertDialog } = useAlertDialog({
+    buttonText: '삭제',
+    title: '캠페인을 삭제하시겠습니까?',
+    description: '이 작업은 되돌릴 수 없습니다.',
+    onAlert: () => campaignData.id && deleteMutate(campaignData.id),
+  });
 
-  useEffect(() => {
-    if (campaignId) getCampaignDetail(campaignId);
-    test();
-  }, [campaignId]);
-  // 스켈레톤 ui
-  if (isLoading) {
+  if (isPending) {
     return <CampaignDetailSkeleton />;
   }
   if (!campaignData) {
@@ -239,77 +194,11 @@ export default function CampaignsDetail() {
           <div className="flex gap-2">
             {campaignData.approvalStatus === '대기중' && (
               <>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="outline">승인</Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent className="w-[350px]">
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        캠페인을 승인하시겠습니까?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        이 작업은 되돌릴 수 없습니다
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>취소</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => approveCampaign(campaignData.id)}
-                      >
-                        확인
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="outline">거절</Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent className="w-[350px]">
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        캠페인을 거절하시겠습니까?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        이 작업은 되돌릴 수 없습니다
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>취소</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => rejectCampaign(campaignData.id)}
-                      >
-                        확인
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <ApproveAlertDialog />
+                <RejectAlertDialog />
               </>
             )}
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="outline">삭제</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="w-[350px]">
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    캠페인을 삭제하시겠습니까?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    이 작업은 되돌릴 수 없습니다
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>취소</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => deleteCampaign(campaignData.id)}
-                  >
-                    확인
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <DeleteAlertDialog />
           </div>
         </div>
       </div>
@@ -343,12 +232,18 @@ export default function CampaignsDetail() {
             </div>
             <p className="ck-sub-title-1 mb-4">{campaignData.title}</p>
             <div className="mb-6 grid grid-cols-3 gap-6">
-              {CampaignInfo().map((item) => (
-                <div key={item.key}>
-                  <p className="ck-body-2-bold">{item.label}</p>
-                  <p className="ck-body-2 text-ck-gray-700">{item.value}</p>
-                </div>
-              ))}
+              <div>
+                <p className="ck-body-2-bold">캠페인 ID</p>
+                <p className="ck-body-2 text-ck-gray-700">{campaignData.id}</p>
+              </div>
+              <div>
+                <p className="ck-body-2-bold">최대 신청자 수</p>
+                <p className="ck-body-2 text-ck-gray-700">
+                  {campaignData?.maxApplicants
+                    ? `${campaignData.maxApplicants}명`
+                    : '정보 없음'}
+                </p>
+              </div>
             </div>
             <div className="flex flex-col gap-4">
               <div className="flex gap-6">
@@ -517,8 +412,8 @@ export default function CampaignsDetail() {
                     <p className="ck-body-2-bold">제목 키워드</p>
                     {Array.isArray(campaignData.missionInfo.titleKeyWords) &&
                       campaignData.missionInfo.titleKeyWords.map(
-                        (keyword, index) => (
-                          <Badge key={index} variant="blue">
+                        (keyword: string) => (
+                          <Badge key={keyword} variant="blue">
                             #{keyword}
                           </Badge>
                         )
@@ -532,8 +427,8 @@ export default function CampaignsDetail() {
                     <div className="flex gap-2">
                       {Array.isArray(campaignData.missionInfo.bodyKeywords) &&
                         campaignData.missionInfo.bodyKeywords.map(
-                          (keyword, index) => (
-                            <Badge key={index} variant="blue">
+                          (keyword: string) => (
+                            <Badge key={keyword} variant="blue">
                               #{keyword}
                             </Badge>
                           )

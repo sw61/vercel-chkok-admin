@@ -1,0 +1,43 @@
+import axiosInterceptor from '@/lib/axiosInterceptors';
+
+interface CampaginsDetail {
+  id: string;
+  comment?: string;
+}
+export const getCampaignDetail = async (id: string) => {
+  const response = await axiosInterceptor.get(`/campaigns/${id}`);
+  const data = response.data.data;
+  const dataMap: Record<string, string> = {
+    USER: '사용자',
+    CLIENT: '클라이언트',
+    ADMIN: '관리자',
+    SOCIAL: '소셜',
+    LOCAL: '로컬',
+  };
+  const mappedData = {
+    ...data,
+    creatorRole: dataMap[data.creator.role] || data.creator.role,
+    creatorAccountType: dataMap[data.creator.accountType] || data.accountType,
+  };
+  return mappedData;
+};
+
+export const deleteCampaigns = async (id: string) => {
+  const response = await axiosInterceptor.delete(`/campaigns/${id}`);
+  return response.data.data;
+};
+
+export const approveCampaigns = async ({ id, comment }: CampaginsDetail) => {
+  const response = await axiosInterceptor.put(`/campaigns/${id}/approval`, {
+    approvalStatus: 'APPROVED',
+    comment: comment ?? '모든 조건을 만족하여 승인합니다.',
+  });
+  return response.data.data;
+};
+export const rejectCampaigns = async ({ id, comment }: CampaginsDetail) => {
+  const response = await axiosInterceptor.put(`/campaigns/${id}/approval`, {
+    approvalStatus: 'REJECTED',
+    comment: comment ?? '조건을 만족하지 못하여 거절되었습니다.',
+  });
+  return response.data.data;
+};

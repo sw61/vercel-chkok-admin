@@ -148,7 +148,7 @@ export default function TableView() {
           <UserTableSkeleton />
         ) : !userData ? (
           <div className="text-ck-gray-600 ck-body-2 flex items-center justify-center rounded-md border py-10">
-            데이터가 없습니다.
+            사용자 데이터를 불러오는데 실패했습니다.
           </div>
         ) : (
           <>
