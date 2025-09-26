@@ -12,13 +12,7 @@ import {
 } from '@/components/ui/dropdownMenu';
 import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
-
-interface Activities {
-  userId: number;
-  userRole: string;
-  items: (UserItems | ClientsItems)[];
-  pagination: Pagination;
-}
+import { useQuery } from '@tanstack/react-query';
 
 interface UserItems {
   id: number;
@@ -50,20 +44,11 @@ interface ClientsItems {
   recruitmentPeriod: string;
 }
 
-interface Pagination {
-  first: boolean;
-  last: boolean;
-  pageNumber: number;
-  pageSize: number;
-  totalElements: number;
-  totalPages: number;
-}
-
 export default function ActivitiesPage() {
   const { userId } = useParams<{ userId: string }>();
-  const [activitiesData, setActivitiesData] = useState<Activities | null>(null);
+
   const [status, setStatus] = useState<string>('ALL');
-  const [pageData, setPageData] = useState<Pagination>();
+  const [currentPage, setCurrentPage] = useState<number>(0);
 
   const usersStatusValues = [
     { status: 'ALL', label: '전체 캠페인' },
@@ -81,36 +66,29 @@ export default function ActivitiesPage() {
     { status: 'REJECTED', label: '거절' },
     { status: 'EXPIRED', label: '만료' },
   ];
-  const getActivities = async (page: number = 0, status: string) => {
-    try {
+  const { data: activitiesData } = useQuery({
+    queryKey: ['activities', userId, status, currentPage],
+    queryFn: async () => {
       const url =
         status === 'ALL'
-          ? `/users/${userId}/activities`
-          : `/users/${userId}/activities?status=${status}`;
+          ? `/users/${userId}/activities?page=${currentPage}`
+          : `/users/${userId}/activities?status=${status}&page=${currentPage}`;
       const response = await axiosInterceptor.get(url);
       const data = response.data.data;
-      setActivitiesData(data);
-      setPageData(data.pagination);
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+      return data;
+    },
+  });
 
   const handlePageChange = (page: number) => {
-    getActivities(page, status);
+    setCurrentPage(page);
   };
 
   const handleStatus = (status: string) => {
     setStatus(status);
-    getActivities(0, status);
   };
+  const pageData = activitiesData?.pagination;
 
-  useEffect(() => {
-    getActivities(0, status);
-  }, []);
-
-  if (!activitiesData || !pageData) {
+  if (!activitiesData) {
     return <div>데이터를 불러오는데 실패했습니다.</div>;
   }
 

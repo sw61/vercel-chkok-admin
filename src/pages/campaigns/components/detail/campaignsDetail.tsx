@@ -141,7 +141,12 @@ export default function CampaignsDetail() {
         : '정보 없음',
     },
   ];
-
+  const test = async () => {
+    const response = await axiosInterceptor.get(
+      'users?page=0&size=10&sortBy=id&sortDirection=DESC'
+    );
+    console.log(response);
+  };
   // 캠페인 상세 내용 조회
   const getCampaignDetail = async (id: string) => {
     setIsLoading(true);
@@ -210,6 +215,7 @@ export default function CampaignsDetail() {
 
   useEffect(() => {
     if (campaignId) getCampaignDetail(campaignId);
+    test();
   }, [campaignId]);
   // 스켈레톤 ui
   if (isLoading) {

@@ -21,7 +21,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alertDialog';
 import usericon from '@/image/usericon.png';
-import ActivitiesPage from '../activities/page/activitiesPage';
+import ActivitiesPage from '../activities/table/activitiesPage';
 
 interface User {
   id: number;
@@ -62,6 +62,7 @@ export default function UserDetail() {
     FEMALE: '여성',
   };
 
+ 
   // 사용자 상세 정보 호출
   const getUserDetail = async (id: string) => {
     setIsLoading(true);

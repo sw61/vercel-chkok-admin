@@ -39,6 +39,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: UserRound,
       },
       {
+        title: '클라이언트 신청 목록',
+        url: '/companies',
+        icon: UserRound,
+      },
+
+      {
         title: '캠페인 목록',
         url: '/campaigns',
         icon: Earth,
