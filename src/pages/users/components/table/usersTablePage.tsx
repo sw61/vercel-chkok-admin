@@ -13,11 +13,10 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdownMenu';
-
 import { UserTable } from '@/pages/users/components/table/usersTable';
 import UserTableSkeleton from '@/pages/users/components/table/usersTableSkeleton';
 import { PaginationHook } from '@/hooks/paginationHook';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getUserTable, searchUser } from '@/services/users/chart/tableApi';
 import useDebounce from '@/hooks/useDebounce';
 
@@ -49,7 +48,6 @@ export default function TableView() {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [column, setColumn] = useState('id');
   const [direction, setDirection] = useState('ASC');
-  const queryClient = useQueryClient();
 
   const headerMenu = [
     { id: 'id', label: 'ID' },

@@ -9,7 +9,7 @@ import UserTableSkeleton from '@/pages/users/components/table/usersTableSkeleton
 import { PaginationHook } from '@/hooks/paginationHook';
 import { CompanyTable } from '@/pages/companies/components/companyTable';
 import { useQuery } from '@tanstack/react-query';
-import { getCompanyTable } from '@/services/users/chart/tableApi';
+import { getCompanyTable } from '@/services/companies/tableApi';
 
 interface Company {
   companies: [
