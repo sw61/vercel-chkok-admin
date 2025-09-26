@@ -8,6 +8,9 @@ const UsersTablePage = lazy(
 const UsersDetail = lazy(
   () => import('@/pages/users/components/detail/usersDetail')
 );
+const CompanyTablePage = lazy(
+  () => import('@/pages/companies/components/companyTablePage')
+);
 const CampaignsTablePage = lazy(
   () => import('@/pages/campaigns/components/table/campaignsTablePage')
 );
@@ -47,6 +50,7 @@ export const privateRoutes = [
   { path: '/admin', element: <AdminDetail /> },
   { path: '/users', element: <UsersTablePage /> },
   { path: '/users/:userId', element: <UsersDetail /> },
+  { path: '/companies', element: <CompanyTablePage /> },
   { path: '/campaigns', element: <CampaignsTablePage /> },
   { path: '/campaigns/:campaignId', element: <CampaignsDetail /> },
   { path: '/banners', element: <BannersPage /> },

@@ -1,5 +1,4 @@
-import axiosInterceptor from '@/lib/axiosInterceptors';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   type ColumnFiltersState,
   type VisibilityState,
@@ -9,55 +8,46 @@ import { Card } from '@/components/ui/card';
 import UserTableSkeleton from '@/pages/users/components/table/usersTableSkeleton';
 import { PaginationHook } from '@/hooks/paginationHook';
 import { CompanyTable } from '@/pages/companies/components/companyTable';
+import { useQuery } from '@tanstack/react-query';
+import { getCompanyTable } from '@/services/users/chart/tableApi';
 
 interface Company {
-  id: number;
-  userId: number;
-  companyName: string;
-  businessRegistrationNumber: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface PaginationData {
-  first: boolean;
-  last: boolean;
-  pageNumber: number;
-  pageSize: number;
-  totalElements: number;
-  totalPages: number;
+  companies: [
+    {
+      id: number;
+      userId: number;
+      companyName: string;
+      businessRegistrationNumber: string;
+      createdAt: string;
+      updatedAt: string;
+    },
+  ];
+  pagination: {
+    first: boolean;
+    last: boolean;
+    pageNumber: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+  };
 }
 
 export default function CompanyTablePage() {
-  const [companyData, setCompanyData] = useState<Company[]>();
-  const [pageData, setPageData] = useState<PaginationData | null>();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(0);
 
-  // 사용자 테이블 조회
-  const getCompanyTable = async (page: number = 0) => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInterceptor.get(
-        `/api/companies/examine?page=${page}&size=10`
-      );
-      const data = response.data.data;
-      setCompanyData(data.companies);
-      setPageData(data.pagination);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // 데이터 패칭
+  const { data: companyData, isPending } = useQuery<Company>({
+    queryKey: ['companyTable', currentPage],
+    queryFn: () => getCompanyTable({ currentPage }),
+  });
+
   // 페이지네이션
   const handlePageChange = (page: number) => {
-    getCompanyTable(page);
+    setCurrentPage(page);
   };
-  useEffect(() => {
-    getCompanyTable();
-  }, []);
+  const pageData = companyData?.pagination;
 
   return (
     <Card className="px-6 py-4">
@@ -65,7 +55,7 @@ export default function CompanyTablePage() {
         <Button>사용자 목록</Button>
       </div>
 
-      {isLoading ? (
+      {isPending ? (
         <UserTableSkeleton />
       ) : !companyData || !pageData ? (
         <div className="text-ck-gray-600 ck-body-2 flex items-center justify-center rounded-md border py-10">
@@ -74,7 +64,7 @@ export default function CompanyTablePage() {
       ) : (
         <>
           <CompanyTable
-            companyData={companyData}
+            companyData={companyData.companies}
             columnFilters={columnFilters}
             setColumnFilters={setColumnFilters}
             columnVisibility={columnVisibility}

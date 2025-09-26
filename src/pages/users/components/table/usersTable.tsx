@@ -333,7 +333,7 @@ export function UserTable({
                   colSpan={columns.length}
                   className="h-24 text-center whitespace-nowrap"
                 >
-                  No results.
+                  검색한 결과가 없습니다.
                 </TableCell>
               </TableRow>
             )}
