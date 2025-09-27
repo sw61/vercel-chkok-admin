@@ -9,25 +9,23 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alertDialog';
-import { Button } from '../ui/button';
+import type { ReactNode } from 'react';
 
 interface AlertDialogProps {
-  buttonText: string;
+  trigger: ReactNode;
   title: string;
   description: string;
   onAlert: () => void;
 }
 export const useAlertDialog = ({
-  buttonText,
+  trigger,
   title,
   description,
   onAlert,
 }: AlertDialogProps) => {
   const AlertDialogComponent = () => (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant="outline">{buttonText}</Button>
-      </AlertDialogTrigger>
+      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
       <AlertDialogContent className="w-[350px]">
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>

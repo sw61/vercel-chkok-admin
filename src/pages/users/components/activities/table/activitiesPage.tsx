@@ -46,7 +46,6 @@ interface ClientsItems {
 
 export default function ActivitiesPage() {
   const { userId } = useParams<{ userId: string }>();
-
   const [status, setStatus] = useState<string>('ALL');
   const [currentPage, setCurrentPage] = useState<number>(0);
 

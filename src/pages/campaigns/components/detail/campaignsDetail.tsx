@@ -33,6 +33,7 @@ import {
   rejectCampaigns,
 } from '@/services/campaigns/detail/detailApi';
 import { useAlertDialog } from '@/components/alertDialog/useAlertDialog';
+import { Button } from '@/components/ui/button';
 
 interface Campaign {
   id: number;
@@ -153,25 +154,6 @@ export default function CampaignsDetail() {
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value);
   };
-  // Alert Component
-  const { AlertDialogComponent: ApproveAlertDialog } = useAlertDialog({
-    buttonText: '승인',
-    title: '캠페인을 승인하시겠습니까?',
-    description: '이 작업은 되돌릴 수 없습니다.',
-    onAlert: () => campaignData.id && approveMutate(campaignData.id),
-  });
-  const { AlertDialogComponent: RejectAlertDialog } = useAlertDialog({
-    buttonText: '거절',
-    title: '캠페인을 거절하시겠습니까?',
-    description: '이 작업은 되돌릴 수 없습니다.',
-    onAlert: () => campaignData.id && rejectMutate(campaignData.id),
-  });
-  const { AlertDialogComponent: DeleteAlertDialog } = useAlertDialog({
-    buttonText: '삭제',
-    title: '캠페인을 삭제하시겠습니까?',
-    description: '이 작업은 되돌릴 수 없습니다.',
-    onAlert: () => campaignData.id && deleteMutate(campaignData.id),
-  });
 
   if (isPending) {
     return <CampaignDetailSkeleton />;
@@ -179,6 +161,26 @@ export default function CampaignsDetail() {
   if (!campaignData) {
     return <p>데이터가 없습니다.</p>;
   }
+
+  // Alert Component
+  const { AlertDialogComponent: ApproveAlertDialog } = useAlertDialog({
+    trigger: <Button variant="outline">승인</Button>,
+    title: '캠페인을 승인하시겠습니까?',
+    description: '이 작업은 되돌릴 수 없습니다.',
+    onAlert: () => campaignData.id && approveMutate(campaignData.id),
+  });
+  const { AlertDialogComponent: RejectAlertDialog } = useAlertDialog({
+    trigger: <Button variant="outline">거절</Button>,
+    title: '캠페인을 거절하시겠습니까?',
+    description: '이 작업은 되돌릴 수 없습니다.',
+    onAlert: () => campaignData.id && rejectMutate(campaignData.id),
+  });
+  const { AlertDialogComponent: DeleteAlertDialog } = useAlertDialog({
+    trigger: <Button variant="outline">삭제</Button>,
+    title: '캠페인을 삭제하시겠습니까?',
+    description: '이 작업은 되돌릴 수 없습니다.',
+    onAlert: () => campaignData.id && deleteMutate(campaignData.id),
+  });
 
   return (
     <div className="min-w-[810px] px-6 py-4">

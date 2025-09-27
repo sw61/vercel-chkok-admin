@@ -6,7 +6,7 @@ const UsersTablePage = lazy(
   () => import('@/pages/users/components//table/usersTablePage')
 );
 const UsersDetail = lazy(
-  () => import('@/pages/users/components/detail/usersDetail')
+  () => import('@/pages/users/components/detail/userDetail')
 );
 const CompanyTablePage = lazy(
   () => import('@/pages/companies/components/companyTablePage')

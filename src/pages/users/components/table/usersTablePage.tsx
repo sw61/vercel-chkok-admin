@@ -17,7 +17,7 @@ import { UserTable } from '@/pages/users/components/table/usersTable';
 import UserTableSkeleton from '@/pages/users/components/table/usersTableSkeleton';
 import { PaginationHook } from '@/hooks/paginationHook';
 import { useQuery } from '@tanstack/react-query';
-import { getUserTable, searchUser } from '@/services/users/chart/tableApi';
+import { getUserTable, searchUser } from '@/services/users/table/tableApi';
 import useDebounce from '@/hooks/useDebounce';
 
 interface User {
