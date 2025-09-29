@@ -191,7 +191,7 @@ export default function ArticleCreate() {
     <div className="p-6">
       <div className="mb-4">
         <ChevronLeft
-          onClick={() => navigate('/posts')}
+          onClick={() => navigate('/articles')}
           className="cursor-pointer"
         />
       </div>

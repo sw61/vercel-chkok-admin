@@ -279,7 +279,7 @@ export default function ArticleDetail() {
     <div className="min-w-[800px] p-6">
       <div className="mb-4">
         <ChevronLeft
-          onClick={() => navigate('/posts')}
+          onClick={() => navigate('/articles')}
           className="cursor-pointer"
         />
       </div>
