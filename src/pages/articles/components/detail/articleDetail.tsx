@@ -285,7 +285,7 @@ export default function ArticleDetail() {
       </div>
       <Card className="w-full px-6 py-4">
         <div className="flex items-center justify-between px-6">
-          <CardTitle className="ck-title">체험콕 글</CardTitle>
+          <CardTitle className="ck-title">체험콕 아티클</CardTitle>
 
           <div className="flex gap-3">
             <Popover>
@@ -297,7 +297,7 @@ export default function ArticleDetail() {
                   <div className="space-y-2">
                     <h4 className="leading-none font-medium">필드 입력</h4>
                     <p className="text-muted-foreground text-sm">
-                      글 수정을 위해 필드를 입력해주세요
+                      아티클 수정을 위해 필드를 입력해주세요
                     </p>
                   </div>
                   <div className="grid gap-2">

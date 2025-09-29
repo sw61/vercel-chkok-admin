@@ -141,7 +141,10 @@ export default function ArticlePage() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button variant="outline" onClick={() => navigate('/posts/create')}>
+            <Button
+              variant="outline"
+              onClick={() => navigate('/articles/create')}
+            >
               아티클 작성
             </Button>
           </div>

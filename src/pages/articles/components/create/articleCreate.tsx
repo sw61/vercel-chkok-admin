@@ -304,7 +304,10 @@ export default function ArticleCreate() {
                       </div>
                     </PopoverContent>
                   </Popover>
-                  <Button variant="outline" onClick={() => navigate('/posts')}>
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate('/articles')}
+                  >
                     취소
                   </Button>
                   <Button
