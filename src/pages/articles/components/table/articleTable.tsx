@@ -22,7 +22,7 @@ import {
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-interface Post {
+interface Article {
   id: number;
   title: string;
   viewCount: number;
@@ -32,15 +32,15 @@ interface Post {
   updatedAt: string;
 }
 
-interface PostDataTableProps {
-  postData: Post[];
+interface ArticleDataTableProps {
+  articleData: Article[];
   columnFilters: ColumnFiltersState;
   setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
   columnVisibility: VisibilityState;
   setColumnVisibility: React.Dispatch<React.SetStateAction<VisibilityState>>;
 }
 
-const columns: ColumnDef<Post>[] = [
+const columns: ColumnDef<Article>[] = [
   {
     accessorKey: 'id',
     header: ({ column }) => (
@@ -158,19 +158,19 @@ const totalColumnWidth = columns.reduce(
   0
 );
 
-export function PostTable({
-  postData,
+export function ArticleTable({
+  articleData,
   columnFilters,
   setColumnFilters,
   columnVisibility,
   setColumnVisibility,
-}: PostDataTableProps) {
+}: ArticleDataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const navigate = useNavigate();
 
   const table = useReactTable({
-    data: postData,
+    data: articleData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -224,7 +224,7 @@ export function PostTable({
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   className="cursor-pointer"
-                  onClick={() => navigate(`/posts/${row.original.id}`)}
+                  onClick={() => navigate(`/articles/${row.original.id}`)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell

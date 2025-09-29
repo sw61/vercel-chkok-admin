@@ -16,7 +16,7 @@ import ReactMarkdown from 'react-markdown';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Button } from '@/components/ui/button';
 import TurndownService from 'turndown';
-import MarkdownDetailSkeleton from '@/pages/posts/components/detail/markdownDetailSkeleton';
+import MarkdownDetailSkeleton from '@/pages/articles/components/detail/markdownDetailSkeleton';
 import { ChevronLeft } from 'lucide-react';
 import {
   AlertDialog,
@@ -37,7 +37,7 @@ import {
 import { Label } from '@/components/ui/label';
 import KakaoSearch from '@/pages/kakaoMap/kakaoSearch'; // MapComponent 임포트
 
-interface PostData {
+interface ArticleData {
   id: number;
   campaignId: number;
   authorId: number;
@@ -56,10 +56,10 @@ interface PostData {
   } | null;
 }
 
-export default function PostDetail() {
+export default function ArticleDetail() {
   const { markdownId } = useParams<{ markdownId: string }>();
   const navigate = useNavigate();
-  const [postData, setPostData] = useState<PostData | null>(null);
+  const [postData, setPostData] = useState<ArticleData | null>(null);
   const [editData, setEditData] = useState<{ title: string; content: string }>({
     title: '',
     content: '',
@@ -279,13 +279,13 @@ export default function PostDetail() {
     <div className="min-w-[800px] p-6">
       <div className="mb-4">
         <ChevronLeft
-          onClick={() => navigate('/posts')}
+          onClick={() => navigate('/articles')}
           className="cursor-pointer"
         />
       </div>
       <Card className="w-full px-6 py-4">
         <div className="flex items-center justify-between px-6">
-          <CardTitle className="ck-title">체험콕 글</CardTitle>
+          <CardTitle className="ck-title">체험콕 아티클</CardTitle>
 
           <div className="flex gap-3">
             <Popover>
@@ -297,7 +297,7 @@ export default function PostDetail() {
                   <div className="space-y-2">
                     <h4 className="leading-none font-medium">필드 입력</h4>
                     <p className="text-muted-foreground text-sm">
-                      글 수정을 위해 필드를 입력해주세요
+                      아티클 수정을 위해 필드를 입력해주세요
                     </p>
                   </div>
                   <div className="grid gap-2">

@@ -13,12 +13,11 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdownMenu';
-
 import { UserTable } from '@/pages/users/components/table/usersTable';
 import UserTableSkeleton from '@/pages/users/components/table/usersTableSkeleton';
 import { PaginationHook } from '@/hooks/paginationHook';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getUserTable, searchUser } from '@/services/users/chart/tableApi';
+import { useQuery } from '@tanstack/react-query';
+import { getUserTable, searchUser } from '@/services/users/table/tableApi';
 import useDebounce from '@/hooks/useDebounce';
 
 interface User {
@@ -49,7 +48,6 @@ export default function TableView() {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [column, setColumn] = useState('id');
   const [direction, setDirection] = useState('ASC');
-  const queryClient = useQueryClient();
 
   const headerMenu = [
     { id: 'id', label: 'ID' },
@@ -150,7 +148,7 @@ export default function TableView() {
           <UserTableSkeleton />
         ) : !userData ? (
           <div className="text-ck-gray-600 ck-body-2 flex items-center justify-center rounded-md border py-10">
-            데이터가 없습니다.
+            사용자 데이터를 불러오는데 실패했습니다.
           </div>
         ) : (
           <>

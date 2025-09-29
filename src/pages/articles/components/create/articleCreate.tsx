@@ -24,7 +24,7 @@ import {
 import { Label } from '@/components/ui/label';
 import KakaoSearch from '@/pages/kakaoMap/kakaoSearch';
 
-export default function PostCreate() {
+export default function ArticleCreate() {
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string | undefined>('');
   const [showImageSizeModal, setShowImageSizeModal] = useState<boolean>(false);
@@ -191,7 +191,7 @@ export default function PostCreate() {
     <div className="p-6">
       <div className="mb-4">
         <ChevronLeft
-          onClick={() => navigate('/posts')}
+          onClick={() => navigate('/articles')}
           className="cursor-pointer"
         />
       </div>
@@ -304,7 +304,10 @@ export default function PostCreate() {
                       </div>
                     </PopoverContent>
                   </Popover>
-                  <Button variant="outline" onClick={() => navigate('/posts')}>
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate('/articles')}
+                  >
                     취소
                   </Button>
                   <Button

@@ -16,13 +16,21 @@ import NotFoundPage from './pages/notFound/components/notFoundPage';
 import { privateRoutes } from './router/router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  /* ... */
+});
+// tanstack dev tools
+declare global {
+  interface Window {
+    __TANSTACK_QUERY_CLIENT__: import('@tanstack/query-core').QueryClient;
+  }
+}
+window.__TANSTACK_QUERY_CLIENT__ = queryClient;
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       <Routes>
-        {/* Layout route with SideBar */}
         <Route element={<SideBar />}>
           {privateRoutes.map(({ path, element }) => (
             <Route

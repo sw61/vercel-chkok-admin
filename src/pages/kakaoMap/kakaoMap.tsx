@@ -20,8 +20,6 @@ export default function KakaoMap({
   hasCoordinates,
   className = 'w-[400px] h-[250px] rounded-lg overflow-hidden',
 }: KakaoMapProps) {
-  useKakaoLoader();
-
   if (hasCoordinates === false) {
     return (
       <div className="flex h-[250px] w-[400px] items-center justify-center rounded-lg bg-gray-100">

@@ -15,11 +15,11 @@ import {
 } from '@/components/ui/dropdownMenu';
 import axiosInterceptor from '@/lib/axiosInterceptors';
 import { PaginationHook } from '@/hooks/paginationHook';
-import { PostTable } from './postTable';
+import { ArticleTable } from './articleTable';
 import { useNavigate } from 'react-router-dom';
 import UserTableSkeleton from '@/pages/users/components/table/usersTableSkeleton';
 
-interface Post {
+interface Article {
   id: number;
   campaignId: number;
   authorId: number;
@@ -47,8 +47,8 @@ interface PaginationData {
   totalPages: number;
 }
 
-export default function PostPage() {
-  const [postData, setPostData] = useState<Post[] | null>(null);
+export default function ArticlePage() {
+  const [articleData, setPostData] = useState<Article[] | null>(null);
   const [pageData, setPageData] = useState<PaginationData | null>(null);
   const [searchKey, setSearchKey] = useState<string>('');
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -141,7 +141,10 @@ export default function PostPage() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button variant="outline" onClick={() => navigate('/posts/create')}>
+            <Button
+              variant="outline"
+              onClick={() => navigate('/articles/create')}
+            >
               아티클 작성
             </Button>
           </div>
@@ -165,14 +168,14 @@ export default function PostPage() {
 
         {isLoading ? (
           <UserTableSkeleton />
-        ) : !postData || !pageData ? (
+        ) : !articleData || !pageData ? (
           <div className="text-ck-gray-600 ck-body-2 flex items-center justify-center rounded-md border py-10">
             데이터가 없습니다.
           </div>
         ) : (
           <>
-            <PostTable
-              postData={postData}
+            <ArticleTable
+              articleData={articleData}
               columnFilters={columnFilters}
               setColumnFilters={setColumnFilters}
               columnVisibility={columnVisibility}

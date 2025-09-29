@@ -94,9 +94,9 @@ export default function BannersDetail() {
   const { mutate: deleteMutate } = useMutation({
     mutationFn: deleteBanners,
     onSuccess: () => {
+      navigate('/banners');
       toast.success('배너가 성공적으로 삭제되었습니다.');
       queryClient.invalidateQueries({ queryKey: ['bannersDetail', bannerId] });
-      navigate('/banners');
     },
     onError: () => {
       toast.error('배너 삭제에 실패했습니다.');

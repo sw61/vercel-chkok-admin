@@ -84,7 +84,6 @@ const KakaoSearch: React.FC<MapComponentProps> = ({ onSelect, onClose }) => {
   const [error, setError] = useState<string | null>(null);
   const [isSdkLoaded, setIsSdkLoaded] = useState<boolean>(false);
   const [selectedMarker, setSelectedMarker] = useState<Marker | null>(null);
-  useKakaoLoader();
 
   // SDK 로드 체크
   useEffect(() => {
