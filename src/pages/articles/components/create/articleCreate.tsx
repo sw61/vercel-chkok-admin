@@ -24,7 +24,7 @@ import {
 import { Label } from '@/components/ui/label';
 import KakaoSearch from '@/pages/kakaoMap/kakaoSearch';
 
-export default function PostCreate() {
+export default function ArticleCreate() {
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string | undefined>('');
   const [showImageSizeModal, setShowImageSizeModal] = useState<boolean>(false);

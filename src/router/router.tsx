@@ -36,12 +36,14 @@ const NoticeDetail = lazy(
 const NoticeCreate = lazy(
   () => import('@/pages/notices/components/create/noticeCreate')
 );
-const PostPage = lazy(() => import('@/pages/posts/components/table/postPage'));
-const PostDetail = lazy(
-  () => import('@/pages/posts/components/detail/postDetail')
+const ArticlePage = lazy(
+  () => import('@/pages/articles/components/table/articlePage')
 );
-const PostCreate = lazy(
-  () => import('@/pages/posts/components/create/postCreate')
+const ArticleDetail = lazy(
+  () => import('@/pages/articles/components/detail/articleDetail')
+);
+const ArticleCreate = lazy(
+  () => import('@/pages/articles/components/create/articleCreate')
 );
 
 // Route configuration
@@ -59,7 +61,7 @@ export const privateRoutes = [
   { path: '/notices', element: <NoticePage /> },
   { path: '/notices/:markdownId', element: <NoticeDetail /> },
   { path: '/notices/create', element: <NoticeCreate /> },
-  { path: '/posts', element: <PostPage /> },
-  { path: '/posts/:markdownId', element: <PostDetail /> },
-  { path: '/posts/create', element: <PostCreate /> },
+  { path: '/articles', element: <ArticlePage /> },
+  { path: '/articles/:markdownId', element: <ArticleDetail /> },
+  { path: '/articles/create', element: <ArticleCreate /> },
 ];

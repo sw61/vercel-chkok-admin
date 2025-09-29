@@ -16,7 +16,7 @@ import ReactMarkdown from 'react-markdown';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Button } from '@/components/ui/button';
 import TurndownService from 'turndown';
-import MarkdownDetailSkeleton from '@/pages/posts/components/detail/markdownDetailSkeleton';
+import MarkdownDetailSkeleton from '@/pages/articles/components/detail/markdownDetailSkeleton';
 import { ChevronLeft } from 'lucide-react';
 import {
   AlertDialog,
@@ -37,7 +37,7 @@ import {
 import { Label } from '@/components/ui/label';
 import KakaoSearch from '@/pages/kakaoMap/kakaoSearch'; // MapComponent 임포트
 
-interface PostData {
+interface ArticleData {
   id: number;
   campaignId: number;
   authorId: number;
@@ -56,10 +56,10 @@ interface PostData {
   } | null;
 }
 
-export default function PostDetail() {
+export default function ArticleDetail() {
   const { markdownId } = useParams<{ markdownId: string }>();
   const navigate = useNavigate();
-  const [postData, setPostData] = useState<PostData | null>(null);
+  const [postData, setPostData] = useState<ArticleData | null>(null);
   const [editData, setEditData] = useState<{ title: string; content: string }>({
     title: '',
     content: '',
