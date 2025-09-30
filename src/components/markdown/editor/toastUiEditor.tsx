@@ -1,5 +1,8 @@
 import { Editor } from '@toast-ui/react-editor';
 import '@toast-ui/editor/toastui-editor.css';
+import 'tui-color-picker/dist/tui-color-picker.css';
+import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css';
+import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 
 type Props = {
   editorRef: React.RefObject<Editor | null>;
@@ -19,7 +22,7 @@ const toolbar = [
 function TuiEditor({ content, editorRef, imageHandler }: Props) {
   return (
     <Editor
-      initialValue={content ?? ' '}
+      initialValue={content}
       initialEditType="markdown"
       autofocus={false}
       ref={editorRef}
@@ -28,39 +31,7 @@ function TuiEditor({ content, editorRef, imageHandler }: Props) {
       height="700px"
       hooks={{ addImageBlobHook: imageHandler }}
       usageStatistics={false}
-      customHTMLSanitizer={(html: any) => {
-        // <br> 태그를 허용
-        return html;
-      }}
-      markdown={{
-        breaks: true,
-      }}
-      customHTMLRenderer={{
-        htmlInline: {
-          big(node: any) {
-            return [
-              { type: 'openTag', tagName: 'big', outerNewLine: true },
-              { type: 'html', content: node.literal },
-              { type: 'closeTag', tagName: 'big', outerNewLine: true },
-            ];
-          },
-        },
-        htmlBlock: {
-          iframe(node: any) {
-            return [
-              {
-                type: 'openTag',
-                tagName: 'iframe',
-                outerNewLine: true,
-                attributes: node.attrs,
-              },
-              { type: 'html', content: node.childrenHTML },
-              { type: 'closeTag', tagName: 'iframe', outerNewLine: true },
-            ];
-          },
-        },
-      }}
-      viewer={false} 
+      plugins={[colorSyntax]}
     />
   );
 }

@@ -54,6 +54,7 @@ export default function ArticlePage() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [articleType, setArticleType] = useState(null);
   const navigate = useNavigate();
 
   const headerMenu = [
@@ -65,13 +66,21 @@ export default function ArticlePage() {
     { id: 'updatedAt', label: '업데이트일' },
   ];
 
+  const typeValues = [
+    { type: null, label: '전체 아티클' },
+    { type: true, label: '활성화된 아티클' },
+    { type: false, label: '임시저장된 아티클' },
+  ];
+
   // 체험콕 아티클 데이터 목록 조회
   const getPostTable = async (page: number = 0) => {
     setIsLoading(true);
     try {
-      const response = await axiosInterceptor.get(
-        `/api/admin/posts?page=${page}&size=10`
-      );
+      const url =
+        articleType === null
+          ? `/api/admin/posts?page=${page}&size=10`
+          : `/api/admin/posts?page=${page}&size=10&active=${articleType}`;
+      const response = await axiosInterceptor.get(url);
       const data = response.data.data;
       setPostData(data.content);
       setPageData(data.pagination);
@@ -107,16 +116,40 @@ export default function ArticlePage() {
   const handlePageChange = (page: number) => {
     getPostTable(page);
   };
+  // 아티클 필터
+  const handleType = (type: any) => {
+    setArticleType(type);
+  };
 
   useEffect(() => {
     getPostTable();
-  }, []);
+  }, [articleType]);
 
   return (
     <div className="p-6">
       <Card className="px-6 py-4">
         <div className="mb-2 flex items-center justify-between">
           <div className="flex gap-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  {typeValues.find((item) => item.type === articleType)
+                    ?.label || '아티클 필터'}
+                  <ChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {typeValues.map((item) => (
+                  <DropdownMenuCheckboxItem
+                    key={item.label}
+                    checked={articleType === item.type}
+                    onClick={() => handleType(item.type)}
+                  >
+                    {item.label}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="ml-auto">
