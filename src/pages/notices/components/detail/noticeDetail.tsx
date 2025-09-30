@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axiosInterceptor from '@/lib/axiosInterceptors';
-import TurndownService from 'turndown';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -46,25 +45,14 @@ export default function NoticeDetail() {
   const editorRef = useRef<Editor | null>(null);
   const { imageHandler } = useAddImage();
 
-  // HTML -> Markdown 변환
-  const turndownService = new TurndownService({
-    headingStyle: 'atx',
-    codeBlockStyle: 'fenced',
-    bulletListMarker: '-',
-    br: '  \n',
-  });
-
   // 공지사항 상세 정보
   const getNoticeDetail = async (id: string) => {
     setIsLoading(true);
     try {
       const response = await axiosInterceptor.get(`/api/admin/notices/${id}`);
       const data = response.data.data;
-      const markdownContent = turndownService.turndown(data.content);
-      console.log('html->markdown', markdownContent);
-      console.log('서버에서 받은 원본 HTML:', data.content);
       setNoticeData(data);
-      setEditData({ title: data.title, content: markdownContent });
+      setEditData({ title: data.title, content: data.content });
       console.log(data);
     } catch (error) {
       console.error('공지사항 조회 오류:', error);
@@ -86,12 +74,9 @@ export default function NoticeDetail() {
     }
     try {
       const markdown = editorRef.current.getInstance().getMarkdown();
-      const html = editorRef.current.getInstance().getHTML();
-      console.log('🔵 보내기 전 Markdown:', markdown);
-      console.log('🔵 보내기 전 HTML:', html);
       const response = await axiosInterceptor.put(`/api/admin/notices/${id}`, {
         title: editData.title,
-        content: html,
+        content: markdown,
       });
       toast.success('공지사항이 수정되었습니다.');
       await getNoticeDetail(markdownId!);

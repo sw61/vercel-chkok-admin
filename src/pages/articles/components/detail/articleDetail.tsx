@@ -5,7 +5,6 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
-import TurndownService from 'turndown';
 import MarkdownDetailSkeleton from '@/pages/articles/components/detail/markdownDetailSkeleton';
 import { ChevronLeft } from 'lucide-react';
 import {
@@ -39,6 +38,7 @@ interface ArticleData {
   authorName: string;
   createdAt: string;
   updatedAt: string;
+  active: boolean;
   visitInfo: {
     contactPhone: string;
     homepage: string;
@@ -58,6 +58,7 @@ export default function ArticleDetail() {
     content: '',
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [campaignId, setCampaignId] = useState<number>();
   const [contactPhone, setContactPhone] = useState<string>('');
   const [homepage, setHomepage] = useState<string>('');
   const [businessAddress, setBusinessAddress] = useState<string>('');
@@ -65,15 +66,9 @@ export default function ArticleDetail() {
     useState<string>('');
   const [lat, setLat] = useState<number | undefined>(undefined);
   const [lng, setLng] = useState<number | undefined>(undefined);
-  const [showMapModal, setShowMapModal] = useState<boolean>(false); // 지도 모달 상태
-  const editorRef = useRef<Editor | null>(null); // Editor ref 추가
-  const { imageHandler } = useAddImage(); // useAddImage 훅 사용
-
-  // HTML -> Markdown 변환
-  const turndownService = new TurndownService({
-    headingStyle: 'atx',
-    codeBlockStyle: 'fenced',
-  });
+  const [showMapModal, setShowMapModal] = useState<boolean>(false);
+  const editorRef = useRef<Editor | null>(null);
+  const { imageHandler } = useAddImage();
 
   // 유효성 검사
   const validateRequiredFields = () => {
@@ -98,10 +93,8 @@ export default function ArticleDetail() {
     try {
       const response = await axiosInterceptor.get(`/api/admin/posts/${id}`);
       const data = response.data.data;
-      const markdownContent = turndownService.turndown(data.content);
-
       setPostData(data);
-      setEditData({ title: data.title, content: markdownContent });
+      setEditData({ title: data.title, content: data.content });
       console.log(data);
       if (data.visitInfo) {
         setContactPhone(data.visitInfo.contactPhone || '');
@@ -169,7 +162,16 @@ export default function ArticleDetail() {
       toast.error('아티클 삭제에 실패했습니다.');
     }
   };
-
+  const activateArticle = async (id: string) => {
+    try {
+      await axiosInterceptor.post(`/api/admin/posts/${id}/activate`);
+    } catch (error) {
+      toast.error('캠페인 ID가 필요합니다.');
+    }
+  };
+  const deactivateArticle = async (id: string) => {
+    await axiosInterceptor.post(`/api/admin/posts/${id}/deactivate`);
+  };
   // MapComponent에서 선택된 데이터 처리
   const handleMapSelect = (data: {
     roadAddr: string;
@@ -180,6 +182,13 @@ export default function ArticleDetail() {
     setLat(data.lat);
     setLng(data.lng);
     setShowMapModal(false);
+  };
+  const handleNumberInput = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setter: React.Dispatch<React.SetStateAction<number | undefined>>
+  ) => {
+    const value = e.target.value;
+    setter(value === '' ? undefined : parseFloat(value));
   };
 
   useEffect(() => {
@@ -221,12 +230,48 @@ export default function ArticleDetail() {
               <PopoverContent className="w-[500px]">
                 <div className="grid gap-4">
                   <div className="space-y-2">
-                    <h4 className="leading-none font-medium">필드 입력</h4>
-                    <p className="text-muted-foreground text-sm">
+                    <div className="flex itmes-center justify-between">
+                      <div className="ck-body-1-bold flex items-center">
+                        필드 입력
+                      </div>
+                      <div>
+                        {postData.active ? (
+                          <Button
+                            onClick={() => activateArticle(markdownId!)}
+                            variant="outline"
+                          >
+                            아티클 비활성화
+                          </Button>
+                        ) : (
+                          <Button
+                            onClick={() => deactivateArticle(markdownId!)}
+                            variant="outline"
+                          >
+                            아티클 활성화
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+
+                    <p className="text-muted-foreground ck-body-2">
                       아티클 수정을 위해 필드를 입력해주세요
                     </p>
                   </div>
                   <div className="grid gap-2">
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="campaignId">캠페인 ID</Label>
+                      <div className="col-span-2">
+                        <Input
+                          id="campaignId"
+                          className="h-8 w-full"
+                          placeholder="아티클 활성화 시 ID값 필요"
+                          value={campaignId}
+                          onChange={(event) =>
+                            handleNumberInput(event, setCampaignId)
+                          }
+                        />
+                      </div>
+                    </div>
                     <div className="grid grid-cols-3 items-center gap-4">
                       <Label htmlFor="contactPhone">
                         연락처 <span className="text-ck-red-500">*</span> 필수
@@ -234,7 +279,7 @@ export default function ArticleDetail() {
                       <div className="col-span-2">
                         <Input
                           id="contactPhone"
-                          className="h-8"
+                          className="h-8 w-full"
                           placeholder="01012345678"
                           value={contactPhone}
                           onChange={(event) =>
@@ -345,12 +390,14 @@ export default function ArticleDetail() {
             <p>수정일 : {postData?.updatedAt.split('T')[0]}</p>
             <p>조회수 : {postData?.viewCount}</p>
           </div>
-          <Button
-            variant="link"
-            onClick={() => navigate(`/campaigns/${postData.campaignId}`)}
-          >
-            캠페인 보러 가기
-          </Button>
+          {postData.campaignId && (
+            <Button
+              variant="link"
+              onClick={() => navigate(`/campaigns/${postData.campaignId}`)}
+            >
+              캠페인 보러 가기
+            </Button>
+          )}
         </CardContent>
 
         <CardContent>

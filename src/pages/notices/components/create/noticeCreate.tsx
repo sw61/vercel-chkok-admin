@@ -58,13 +58,17 @@ export default function NoticeCreate() {
             <div className="mb-4">
               <div className="mb-2 flex justify-between items-center">
                 <div className="ck-body-2 flex flex-col justify-end">제목</div>
-                <Button
-                  onClick={createNotice}
-                  className="px-4 py-2"
-                  variant="outline"
-                >
-                  생성
-                </Button>
+                <div className="flex gap-4">
+                  <Button
+                    onClick={() => navigate('/notices')}
+                    variant="outline"
+                  >
+                    취소
+                  </Button>
+                  <Button onClick={createNotice} variant="outline">
+                    생성
+                  </Button>
+                </div>
               </div>
               <Input
                 value={title}

@@ -1,4 +1,3 @@
-// src/pages/ArticleCreate.tsx
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import axiosInterceptor from '@/lib/axiosInterceptors';
@@ -17,11 +16,13 @@ import KakaoSearch from '@/pages/kakaoMap/kakaoSearch';
 import TuiEditor from '@/components/markdown/editor/toastUiEditor';
 import { useAddImage } from '@/hooks/useAddImage';
 import { Editor } from '@toast-ui/react-editor';
+import { Switch } from '@/components/ui/switch';
 
 export default function ArticleCreate() {
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string | undefined>('');
   const [campaignId, setCampaignId] = useState<number | undefined>(undefined);
+  const [active, setActive] = useState<boolean>(false);
   const [contactPhone, setContactPhone] = useState<string>('');
   const [homepage, setHomepage] = useState<string>('');
   const [businessAddress, setBusinessAddress] = useState<string>('');
@@ -30,6 +31,7 @@ export default function ArticleCreate() {
   const [lat, setLat] = useState<number | undefined>(undefined);
   const [lng, setLng] = useState<number | undefined>(undefined);
   const [showMapModal, setShowMapModal] = useState<boolean>(false);
+
   const navigate = useNavigate();
   const editorRef = useRef<Editor | null>(null);
 
@@ -44,10 +46,6 @@ export default function ArticleCreate() {
     }
     if (!editorRef.current?.getInstance().getHTML()) {
       toast.error('내용을 입력해주세요.');
-      return false;
-    }
-    if (campaignId === undefined || isNaN(campaignId)) {
-      toast.error('캠페인 ID를 입력해주세요.');
       return false;
     }
     if (!contactPhone.trim()) {
@@ -71,13 +69,12 @@ export default function ArticleCreate() {
     if (!validateRequiredFields()) {
       return;
     }
-
     const html = editorRef.current?.getInstance().getHTML() || '';
-
     try {
       const payload = {
         title,
         content: html,
+        active,
         campaignId,
         visitInfo: {
           contactPhone: contactPhone || null,
@@ -121,7 +118,7 @@ export default function ArticleCreate() {
         <div className="flex flex-col items-center px-6">
           <div className="w-full" data-color-mode="light">
             <div className="mb-4">
-              <div className="mb-2 flex justify-between items-center">
+              <div className="mb-2 flex justify-between items-center mb-4">
                 <div className="ck-body-2 flex flex-col justify-end">제목</div>
                 <div className="flex gap-4">
                   <Popover>
@@ -140,15 +137,19 @@ export default function ArticleCreate() {
                         </div>
                         <div className="grid gap-2">
                           <div className="grid grid-cols-3 items-center gap-4">
-                            <Label htmlFor="campaignId">
-                              캠페인 ID{' '}
-                              <span className="text-ck-red-500">*</span> 필수
-                            </Label>
+                            <Label>아티클 활성화</Label>
+                            <Switch
+                              checked={active}
+                              onCheckedChange={setActive}
+                            />
+                          </div>
+                          <div className="grid grid-cols-3 items-center gap-4">
+                            <Label htmlFor="campaignId">캠페인 ID</Label>
                             <div className="col-span-2">
                               <Input
                                 id="campaignId"
                                 type="number"
-                                className="h-8"
+                                className="h-8 w-full"
                                 placeholder="캠페인 ID 입력하세요"
                                 value={campaignId ?? ''}
                                 onChange={(event) =>
@@ -165,7 +166,7 @@ export default function ArticleCreate() {
                             <div className="col-span-2">
                               <Input
                                 id="contactPhone"
-                                className="h-8"
+                                className="h-8 w-full"
                                 type="number"
                                 placeholder="01012345678"
                                 value={contactPhone}
