@@ -9,8 +9,9 @@ import {
   ChartLegendContent,
 } from '@/components/ui/chart';
 import PieChartSkeleton from '@/pages/users/components/chart/PieChartSkeleton';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { getCampaignStatus } from '@/services/campaigns/chart/chartApi';
+import { Suspense } from 'react';
 
 interface Status {
   totalCampaigns: number;
@@ -21,14 +22,10 @@ interface Status {
 }
 
 export function CamapaignsPieChart() {
-  const { data: campaignStatus, isPending } = useQuery<Status>({
+  const { data: campaignStatus } = useSuspenseQuery<Status>({
     queryKey: ['campaignsStatus'],
     queryFn: getCampaignStatus,
   });
-
-  if (isPending) {
-    return <PieChartSkeleton />;
-  }
 
   const chartData = [
     {
@@ -75,7 +72,7 @@ export function CamapaignsPieChart() {
   } satisfies ChartConfig;
 
   return (
-    <>
+    <Suspense fallback={<PieChartSkeleton />}>
       <Card className="flex flex-col pb-0">
         <CardHeader className="items-center pb-0">
           <CardTitle className="ck-body-1-bold">캠페인 통계</CardTitle>
@@ -98,6 +95,6 @@ export function CamapaignsPieChart() {
           </ChartContainer>
         </CardContent>
       </Card>
-    </>
+    </Suspense>
   );
 }

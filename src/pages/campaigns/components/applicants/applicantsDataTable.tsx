@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { ApplicantsTable } from './applicantsTable';
 import { PaginationHook } from '@/hooks/paginationHook';
 import { useParams } from 'react-router-dom';
@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdownMenu';
 import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { getApplicants } from '@/services/campaigns/applicants/applicantsApi';
 
 interface Campaigns {
@@ -39,7 +39,7 @@ export default function ApplicantsDataTable() {
     { status: '거절', label: '거절됨' },
     { status: '완료', label: '완료됨' },
   ];
-  const { data: applicantsData } = useQuery({
+  const { data: applicantsData } = useSuspenseQuery({
     queryKey: ['applicantsTable', campaignId, status, currentPage],
     queryFn: () =>
       getApplicants({
@@ -60,7 +60,7 @@ export default function ApplicantsDataTable() {
     return <div>데이터를 가져오는데 실패했습니다.</div>;
   }
   return (
-    <>
+    <Suspense fallback={<ApplicantsDataTable />}>
       {applicantsData?.length === 0 ? (
         <div className="mt-4 text-ck-gray-600 ck-body-2 flex h-40 items-center justify-center rounded-md border">
           캠페인 신청 인원이 없습니다.
@@ -100,6 +100,6 @@ export default function ApplicantsDataTable() {
           </div>
         </>
       )}
-    </>
+    </Suspense>
   );
 }

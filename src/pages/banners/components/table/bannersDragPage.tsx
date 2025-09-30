@@ -27,7 +27,7 @@ interface BannerData {
 export default function BannersDragPage() {
   const [bannerData, setBannerData] = useState<BannerData[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [presignedUrl, setPresignedUrl] = useState<string | null>(null);
+  const [presignedUrl, setPresignedUrl] = useState<string>('');
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null); // 파일 입력 참조
   const [createMode, setCreateMode] = useState<boolean>(false);
@@ -40,14 +40,18 @@ export default function BannersDragPage() {
     description: '',
     position: '',
   });
-
+  const isFormValid = () =>
+    createBannerData.title &&
+    createBannerData.description &&
+    createBannerData.redirectUrl &&
+    createBannerData.position &&
+    presignedUrl;
   // 배너 이미지 목록 조회
   const getBannersTable = async () => {
     setIsLoading(true);
     try {
       const response = await axiosInterceptor.get('/api/banners');
       const data = response.data.data;
-      // displayOrder 기준으로 정렬
       setBannerData(data);
     } catch (error) {
       console.error('배너 목록 조회 중 오류 발생:', error);
@@ -85,10 +89,10 @@ export default function BannersDragPage() {
         '/api/images/banners/presigned-url',
         { fileExtension }
       );
-      const presignedUrl = response.data.data.presignedUrl;
-
+      const url = response.data.data.presignedUrl;
+      setPresignedUrl(url);
       const contentType = imageFile.type || 'image/jpeg';
-      await axios.put(presignedUrl, imageFile, {
+      await axios.put(url, imageFile, {
         headers: {
           'Content-Type': contentType,
         },
@@ -131,7 +135,7 @@ export default function BannersDragPage() {
       toast.success('배너 이미지가 생성되었습니다.');
       await getBannersTable();
       setImageFile(null);
-      setPresignedUrl(null);
+      setPresignedUrl('');
     } catch (error) {
       console.error('배너 이미지 생성 중 오류 발생:', error);
     } finally {
@@ -146,14 +150,14 @@ export default function BannersDragPage() {
     // bannerUrl 입력 시 파일 선택 초기화
     if (name === 'bannerUrl' && value) {
       setImageFile(null);
-      setPresignedUrl(null);
+      setPresignedUrl('');
     }
   };
   // 수정 모드 토글
   const toggleCreateMode = () => {
     setCreateMode(!createMode);
     setImageFile(null);
-    setPresignedUrl(null);
+    setPresignedUrl('');
     setCreateBannerData({
       title: '',
       redirectUrl: '',
@@ -253,7 +257,7 @@ export default function BannersDragPage() {
                 </Button>
                 <Button
                   onClick={() => createBanner()}
-                  disabled={!presignedUrl || isCreating}
+                  disabled={!isFormValid || isCreating}
                   variant="outline"
                 >
                   {isCreating ? '생성 중...' : '생성'}

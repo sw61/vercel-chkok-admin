@@ -16,9 +16,8 @@ import NotFoundPage from './pages/notFound/components/notFoundPage';
 import { privateRoutes } from './router/router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const queryClient = new QueryClient({
-  /* ... */
-});
+const queryClient = new QueryClient({});
+
 // tanstack dev tools
 declare global {
   interface Window {

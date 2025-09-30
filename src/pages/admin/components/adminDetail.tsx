@@ -2,8 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import PulseLoader from 'react-spinners/PulseLoader';
 import usericon from '@/image/usericon.png';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { getAdminData } from '@/services/admin/adminApi';
+import { Suspense } from 'react';
 
 interface AdminData {
   id: number;
@@ -21,11 +22,7 @@ interface AdminAccountInfo {
 }
 
 export default function AdminDetail() {
-  const {
-    data: adminData,
-    isPending,
-    error,
-  } = useQuery<AdminData>({
+  const { data: adminData, error } = useSuspenseQuery<AdminData>({
     queryKey: ['admin'],
     queryFn: getAdminData,
   });
@@ -79,50 +76,45 @@ export default function AdminDetail() {
     );
   };
 
-  if (isPending) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <PulseLoader />
-      </div>
-    );
-  }
   if (error) {
     return <div>데이터를 불러오는데 실패했습니다. {error.message}</div>;
   }
 
   return (
-    <div className="grid-row grid gap-10 p-6">
-      <div className="flex gap-8">
-        <Avatar className="h-32 w-32">
-          <AvatarImage src={usericon} alt="관리자 프로필" />
-          <AvatarFallback></AvatarFallback>
-        </Avatar>
+    <Suspense fallback={<PulseLoader />}>
+      <div className="grid-row grid gap-10 p-6">
+        <div className="flex gap-8">
+          <Avatar className="h-32 w-32">
+            <AvatarImage src={usericon} alt="관리자 프로필" />
+            <AvatarFallback></AvatarFallback>
+          </Avatar>
 
-        <div className="flex flex-col justify-center gap-4">
-          <div className="flex gap-4">
-            <div className="ck-sub-title-1">{adminData?.name}</div>
-            <div className="ck-sub-title-1">{adminData?.email}</div>
-          </div>
-          <div className="text-ck-gray-600 ck-body-2">
-            마지막 로그인 &nbsp;{formatLastLogin(adminData?.lastLoginAt)}
+          <div className="flex flex-col justify-center gap-4">
+            <div className="flex gap-4">
+              <div className="ck-sub-title-1">{adminData?.name}</div>
+              <div className="ck-sub-title-1">{adminData?.email}</div>
+            </div>
+            <div className="text-ck-gray-600 ck-body-2">
+              마지막 로그인 &nbsp;{formatLastLogin(adminData?.lastLoginAt)}
+            </div>
           </div>
         </div>
+        {/* 관리자 계정 정보 */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="ck-sub-title-1 flex items-center">
+              관리자 계정 정보
+            </CardTitle>
+          </CardHeader>
+          {AdminAccountInfo().map((item) => (
+            <AdminInfoComponent
+              key={item.key}
+              label={item.label}
+              value={item.value}
+            />
+          ))}
+        </Card>
       </div>
-      {/* 관리자 계정 정보 */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="ck-sub-title-1 flex items-center">
-            관리자 계정 정보
-          </CardTitle>
-        </CardHeader>
-        {AdminAccountInfo().map((item) => (
-          <AdminInfoComponent
-            key={item.key}
-            label={item.label}
-            value={item.value}
-          />
-        ))}
-      </Card>
-    </div>
+    </Suspense>
   );
 }

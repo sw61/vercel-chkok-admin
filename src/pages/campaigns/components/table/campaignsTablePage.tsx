@@ -47,17 +47,36 @@ export default function CampaignsTablePage() {
     { type: 'REJECTED', label: '거절된 캠페인' },
     { type: 'EXPIRED', label: '만료된 캠페인' },
   ];
+
   const { data: campaignData, isPending } = useQuery({
     queryKey: ['campaignTable', currentPage, campaignType],
     queryFn: () => getCampaignTable({ currentPage, campaignType }),
     enabled: !debouncedSearchKey,
+    select: (data) => ({
+      ...data,
+      content: data.content.map((campaign: any) => ({
+        ...campaign,
+        categoryType: campaign.category?.type ?? '',
+        categoryName: campaign.category?.name ?? '',
+      })),
+    }),
   });
 
   const { data: searchData } = useQuery({
-    queryKey: ['searchCampaign', searchKey, currentPage],
-    queryFn: () => searchCampaign({ searchKey, currentPage }),
+    queryKey: ['searchCampaign', debouncedSearchKey, currentPage],
+    queryFn: () =>
+      searchCampaign({ searchKey: debouncedSearchKey, currentPage }),
     enabled: !!debouncedSearchKey,
+    select: (data) => ({
+      ...data,
+      content: data.content.map((campaign: any) => ({
+        ...campaign,
+        categoryType: campaign.category?.type ?? '',
+        categoryName: campaign.category?.name ?? '',
+      })),
+    }),
   });
+
   const isSearchMode = !!searchKey;
   const activeData = isSearchMode ? searchData : campaignData;
   const activePageData = activeData?.pagination ?? {
