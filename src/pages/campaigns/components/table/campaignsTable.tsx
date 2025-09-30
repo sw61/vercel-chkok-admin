@@ -113,9 +113,7 @@ const columns: ColumnDef<Campaign>[] = [
         <ArrowUpDown />
       </Button>
     ),
-    accessorFn: (row) => row.category.type,
     cell: ({ row }) => <div>{row.getValue('categoryType')}</div>,
-
     size: 120,
   },
   {
@@ -130,7 +128,6 @@ const columns: ColumnDef<Campaign>[] = [
         <ArrowUpDown />
       </Button>
     ),
-    accessorFn: (row) => row.category.name,
     cell: ({ row }) => <div>{row.getValue('categoryName')}</div>,
 
     size: 120,
@@ -322,7 +319,7 @@ export function CampaignsTable({
                   colSpan={columns.length}
                   className="h-24 text-center whitespace-nowrap"
                 >
-                  No results.
+                  캠페인이 없습니다.
                 </TableCell>
               </TableRow>
             )}

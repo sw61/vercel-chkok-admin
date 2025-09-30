@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import {
   type ColumnFiltersState,
   type VisibilityState,
@@ -8,8 +8,8 @@ import { Card } from '@/components/ui/card';
 import UserTableSkeleton from '@/pages/users/components/table/usersTableSkeleton';
 import { PaginationHook } from '@/hooks/paginationHook';
 import { CompanyTable } from '@/pages/companies/components/companyTable';
-import { useQuery } from '@tanstack/react-query';
-import { getCompanyTable } from '@/services/users/chart/tableApi';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { getCompanyTable } from '@/services/companies/tableApi';
 
 interface Company {
   companies: [
@@ -38,7 +38,7 @@ export default function CompanyTablePage() {
   const [currentPage, setCurrentPage] = useState<number>(0);
 
   // 데이터 패칭
-  const { data: companyData, isPending } = useQuery<Company>({
+  const { data: companyData } = useSuspenseQuery<Company>({
     queryKey: ['companyTable', currentPage],
     queryFn: () => getCompanyTable({ currentPage }),
   });
@@ -47,22 +47,12 @@ export default function CompanyTablePage() {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-  const pageData = companyData?.pagination;
 
   return (
-    <Card className="px-6 py-4">
-      <div className="mb-2 flex items-center justify-between">
-        <Button>사용자 목록</Button>
-      </div>
-
-      {isPending ? (
-        <UserTableSkeleton />
-      ) : !companyData || !pageData ? (
-        <div className="text-ck-gray-600 ck-body-2 flex items-center justify-center rounded-md border py-10">
-          데이터가 없습니다.
-        </div>
-      ) : (
-        <>
+    <div className="p-6">
+      <Card className="px-6 py-4">
+        <div className="ck-title">클라이언트 신청 목록</div>
+        <Suspense fallback={<UserTableSkeleton />}>
           <CompanyTable
             companyData={companyData.companies}
             columnFilters={columnFilters}
@@ -70,9 +60,12 @@ export default function CompanyTablePage() {
             columnVisibility={columnVisibility}
             setColumnVisibility={setColumnVisibility}
           />
-          <PaginationHook pageData={pageData} onPageChange={handlePageChange} />
-        </>
-      )}
-    </Card>
+          <PaginationHook
+            pageData={companyData.pagination}
+            onPageChange={handlePageChange}
+          />
+        </Suspense>
+      </Card>
+    </div>
   );
 }
