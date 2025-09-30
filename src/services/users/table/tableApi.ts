@@ -6,6 +6,8 @@ interface UserTable {
   direction?: string;
   searchKey?: string;
 }
+
+// 유저 목록 조회
 export const getUserTable = async ({
   currentPage,
   column,
@@ -17,13 +19,7 @@ export const getUserTable = async ({
   return response.data.data;
 };
 
-export const getCompanyTable = async ({ currentPage }: UserTable) => {
-  const response = await axiosInterceptor.get(
-    `/api/companies/examine?page=${currentPage}&size=10`
-  );
-  return response.data.data;
-};
-
+// 사용자 검색
 export const searchUser = async ({ searchKey, currentPage }: UserTable) => {
   const response = await axiosInterceptor.get(
     `/users/search?keyword=${searchKey}&page=${currentPage}&size=10`

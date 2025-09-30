@@ -1,6 +1,5 @@
 import { CampaignsTable } from '@/pages/campaigns/components/table/campaignsTable';
-import axiosInterceptor from '@/lib/axiosInterceptors';
-import { useState, useEffect, type KeyboardEvent } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -17,37 +16,18 @@ import {
 import { Card } from '@/components/ui/card';
 import CampaignTableSkeleton from '@/pages/campaigns/components/table/campaignTableSkeleton';
 import { PaginationHook } from '@/hooks/paginationHook';
-
-interface Campaign {
-  id: number;
-  title: string;
-  campaignType: string;
-  approvalStatus: string;
-  approvalComment: string;
-  approvalDate: string;
-  createdAt: string;
-  recruitmentStartDate: string;
-  category: {
-    type: string;
-    name: string;
-  };
-}
-
-interface PaginationData {
-  first: boolean;
-  last: boolean;
-  pageNumber: number;
-  pageSize: number;
-  totalElements: number;
-  totalPages: number;
-}
+import { useQuery } from '@tanstack/react-query';
+import {
+  getCampaignTable,
+  searchCampaign,
+} from '@/services/campaigns/table/tableApi';
+import useDebounce from '@/hooks/useDebounce';
 
 export default function CampaignsTablePage() {
-  const [campaignData, setCampaignData] = useState<Campaign[]>();
-  const [pageData, setPageData] = useState<PaginationData>();
+  const [currentPage, setCurrentPage] = useState<number>(0);
   const [searchKey, setSearchKey] = useState<string>('');
+  const [debouncedSearchKey] = useDebounce(searchKey, 300);
   const [campaignType, setCampaignType] = useState<string>('ALL');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const headerMenu = [
@@ -67,60 +47,55 @@ export default function CampaignsTablePage() {
     { type: 'REJECTED', label: '거절된 캠페인' },
     { type: 'EXPIRED', label: '만료된 캠페인' },
   ];
-  // 캠페인 테이블 조회
-  const getCampaignTable = async (
-    page: number = 0,
-    type: typeof campaignType
-  ) => {
-    setIsLoading(true);
-    try {
-      const url =
-        type === 'ALL'
-          ? `/campaigns?page=${page}&size=10`
-          : `/campaigns?approvalStatus=${type}&page=${page}&size=10`;
-      const response = await axiosInterceptor.get(url);
-      const data = response.data.data;
-      setCampaignData(data.content);
-      setPageData(data.pagination);
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-    // 캠페인 검색 함수
-  };
-  const handleSearch = async (page: number = 0) => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInterceptor.get(
-        `/campaigns/search?keyword=${searchKey}&page=${page}&size=10`
-      );
-      const campaignData = response.data.data;
-      setCampaignData(campaignData.content);
-      setPageData(campaignData.pagination);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
+  const { data: campaignData, isPending } = useQuery({
+    queryKey: ['campaignTable', currentPage, campaignType],
+    queryFn: () => getCampaignTable({ currentPage, campaignType }),
+    enabled: !debouncedSearchKey,
+    select: (data) => ({
+      ...data,
+      content: data.content.map((campaign: any) => ({
+        ...campaign,
+        categoryType: campaign.category?.type ?? '',
+        categoryName: campaign.category?.name ?? '',
+      })),
+    }),
+  });
+
+  const { data: searchData } = useQuery({
+    queryKey: ['searchCampaign', debouncedSearchKey, currentPage],
+    queryFn: () =>
+      searchCampaign({ searchKey: debouncedSearchKey, currentPage }),
+    enabled: !!debouncedSearchKey,
+    select: (data) => ({
+      ...data,
+      content: data.content.map((campaign: any) => ({
+        ...campaign,
+        categoryType: campaign.category?.type ?? '',
+        categoryName: campaign.category?.name ?? '',
+      })),
+    }),
+  });
+
+  const isSearchMode = !!searchKey;
+  const activeData = isSearchMode ? searchData : campaignData;
+  const activePageData = activeData?.pagination ?? {
+    totalPages: 0,
+    currentPage: 0,
+  };
+  const activeContent = activeData?.content || [];
   const handlePageChange = (page: number) => {
-    getCampaignTable(page, campaignType);
+    setCurrentPage(page);
   };
 
-  const handleType = (type: typeof campaignType) => {
+  const handleType = (type: string) => {
     setCampaignType(type);
   };
-  const handleEnterSearch = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      handleSearch();
-    }
-  };
   useEffect(() => {
-    getCampaignTable(0, campaignType);
-  }, [campaignType]);
+    if (!isSearchMode) {
+      setCurrentPage(0);
+    }
+  }, [isSearchMode]);
 
   return (
     <div className="p-6">
@@ -178,38 +153,31 @@ export default function CampaignsTablePage() {
               placeholder="캠페인 이름 검색"
               value={searchKey}
               onChange={(event) => setSearchKey(event.target.value)}
-              onKeyDown={handleEnterSearch}
               className="pr-12"
             />
-            <button
-              className="absolute top-0 right-0 h-full w-10 cursor-pointer"
-              onClick={() => handleSearch(0)}
-            >
+            <button className="absolute top-0 right-0 h-full w-10">
               <Search />
             </button>
           </div>
         </div>
 
-        {isLoading ? (
+        {isPending ? (
           <CampaignTableSkeleton />
-        ) : !campaignData ||
-          !pageData ||
-          campaignData.length === 0 ||
-          pageData.totalElements === 0 ? (
+        ) : !campaignData ? (
           <div className="text-ck-gray-600 ck-body-2 flex h-40 items-center justify-center rounded-md border">
-            캠페인 데이터가 없습니다.
+            캠페인 데이터를 불러오는데 실패했습니다.
           </div>
         ) : (
           <>
             <CampaignsTable
-              campaignData={campaignData}
+              campaignData={activeContent}
               columnFilters={columnFilters}
               setColumnFilters={setColumnFilters}
               columnVisibility={columnVisibility}
               setColumnVisibility={setColumnVisibility}
             />
             <PaginationHook
-              pageData={pageData}
+              pageData={activePageData}
               onPageChange={handlePageChange}
             />
           </>

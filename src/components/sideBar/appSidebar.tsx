@@ -62,7 +62,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
       {
         title: '체험콕 아티클',
-        url: '/posts',
+        url: '/articles',
         icon: NotebookPen,
       },
       {

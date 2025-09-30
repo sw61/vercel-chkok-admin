@@ -1,22 +1,12 @@
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import axiosInterceptor from '@/lib/axiosInterceptors';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import MDEditor, {
-  commands,
-  type ICommand,
-  type TextState,
-} from '@uiw/react-md-editor';
-import '@uiw/react-md-editor/markdown-editor.css';
-import axios from 'axios';
-import rehypeRaw from 'rehype-raw';
-import ReactMarkdown from 'react-markdown';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { Button } from '@/components/ui/button';
 import TurndownService from 'turndown';
-import MarkdownDetailSkeleton from '@/pages/posts/components/detail/markdownDetailSkeleton';
+import MarkdownDetailSkeleton from '@/pages/articles/components/detail/markdownDetailSkeleton';
 import { ChevronLeft } from 'lucide-react';
 import {
   AlertDialog,
@@ -35,9 +25,12 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Label } from '@/components/ui/label';
-import KakaoSearch from '@/pages/kakaoMap/kakaoSearch'; // MapComponent 임포트
+import KakaoSearch from '@/pages/kakaoMap/kakaoSearch';
+import TuiEditor from '@/components/markdown/editor/toastUiEditor';
+import { useAddImage } from '@/hooks/useAddImage';
+import { Editor } from '@toast-ui/react-editor';
 
-interface PostData {
+interface ArticleData {
   id: number;
   campaignId: number;
   authorId: number;
@@ -56,21 +49,15 @@ interface PostData {
   } | null;
 }
 
-export default function PostDetail() {
+export default function ArticleDetail() {
   const { markdownId } = useParams<{ markdownId: string }>();
   const navigate = useNavigate();
-  const [postData, setPostData] = useState<PostData | null>(null);
+  const [postData, setPostData] = useState<ArticleData | null>(null);
   const [editData, setEditData] = useState<{ title: string; content: string }>({
     title: '',
     content: '',
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showImageModal, setShowImageModal] = useState<boolean>(false);
-  const [pendingImageData, setPendingImageData] = useState<{
-    url: string;
-    name: string;
-  } | null>(null);
-  const [editorApi, setEditorApi] = useState<any>(null); // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [contactPhone, setContactPhone] = useState<string>('');
   const [homepage, setHomepage] = useState<string>('');
   const [businessAddress, setBusinessAddress] = useState<string>('');
@@ -79,6 +66,8 @@ export default function PostDetail() {
   const [lat, setLat] = useState<number | undefined>(undefined);
   const [lng, setLng] = useState<number | undefined>(undefined);
   const [showMapModal, setShowMapModal] = useState<boolean>(false); // 지도 모달 상태
+  const editorRef = useRef<Editor | null>(null); // Editor ref 추가
+  const { imageHandler } = useAddImage(); // useAddImage 훅 사용
 
   // HTML -> Markdown 변환
   const turndownService = new TurndownService({
@@ -92,7 +81,7 @@ export default function PostDetail() {
       toast.error('제목을 입력해주세요.');
       return false;
     }
-    if (!editData.content) {
+    if (!editorRef.current?.getInstance().getMarkdown()) {
       toast.error('내용을 입력해주세요.');
       return false;
     }
@@ -113,6 +102,7 @@ export default function PostDetail() {
 
       setPostData(data);
       setEditData({ title: data.title, content: markdownContent });
+      console.log(data);
       if (data.visitInfo) {
         setContactPhone(data.visitInfo.contactPhone || '');
         setHomepage(data.visitInfo.homepage || '');
@@ -142,12 +132,7 @@ export default function PostDetail() {
       return;
     }
     try {
-      const markdownComponent = (
-        <ReactMarkdown rehypePlugins={[rehypeRaw]}>
-          {editData.content}
-        </ReactMarkdown>
-      );
-      const html = renderToStaticMarkup(markdownComponent);
+      const html = editorRef.current?.getInstance().getHTML() || ''; // TuiEditor에서 HTML 가져오기
       const payload = {
         title: editData.title,
         content: html,
@@ -160,9 +145,13 @@ export default function PostDetail() {
           lng: lng ?? null,
         },
       };
-      await axiosInterceptor.put(`/api/admin/posts/${id}`, payload);
+      const response = await axiosInterceptor.put(
+        `/api/admin/posts/${id}`,
+        payload
+      );
       toast.success('아티클이 수정되었습니다.');
       await getPostDetail(markdownId!);
+      console.log(response);
     } catch (error) {
       console.log(error);
       toast.error('아티클 수정에 실패했습니다.');
@@ -173,81 +162,12 @@ export default function PostDetail() {
   const deleteMarkdown = async (id: number) => {
     try {
       await axiosInterceptor.delete(`/api/admin/posts/${id}`);
-      navigate('/posts');
+      navigate('/articles');
       toast.success('아티클가 삭제되었습니다.');
     } catch (error) {
       console.log(error);
       toast.error('아티클 삭제에 실패했습니다.');
     }
-  };
-
-  // S3 이미지 업로드
-  const uploadImageFile = async (file: File): Promise<string> => {
-    const fileExtension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-    try {
-      toast.info('이미지 업로드 중 입니다...');
-      const response = await axiosInterceptor.post(
-        '/api/images/kokpost/presigned-url',
-        {
-          fileExtension,
-        }
-      );
-      const presignedUrl = response.data.data.presignedUrl.split('?')[0];
-      const contentType = file.type || 'image/jpeg';
-      await axios.put(presignedUrl, file, {
-        headers: { 'Content-Type': contentType },
-      });
-      return presignedUrl;
-    } catch (error) {
-      toast.error('이미지 업로드에 실패했습니다.');
-      throw error;
-    }
-  };
-
-  // 이미지 삽입 모달
-  const openImageModal = (url: string, name: string) => {
-    setPendingImageData({ url, name });
-    setShowImageModal(true);
-  };
-
-  // 이미지 삽입
-  const insertImage = () => {
-    if (!pendingImageData || !editorApi) return;
-    const { url, name } = pendingImageData;
-    const markdownImage = `![${name}](${url})`;
-    editorApi.replaceSelection(markdownImage);
-    setShowImageModal(false);
-    toast.success('이미지가 삽입되었습니다.');
-    setPendingImageData(null);
-  };
-
-  // 이미지 업로드 커맨드
-  const imageUploadCommand: ICommand = {
-    name: 'imageUpload',
-    keyCommand: 'imageUpload',
-    buttonProps: { 'aria-label': 'Add image (ctrl + k)' },
-    icon: (
-      <svg width="13" height="13" viewBox="0 0 20 20">
-        <path
-          fill="currentColor"
-          d="M15 9c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4-7H1c-.55 0-1 .45-1 1v14c0 .55.45 1 1 1h18c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 13l-6-5-2 2-4-5-4 8V4h16v11z"
-        />
-      </svg>
-    ),
-    execute: async (state: TextState, api) => {
-      setEditorApi(api);
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'image/*';
-      input.onchange = async () => {
-        if (input.files && input.files[0]) {
-          const file = input.files[0];
-          const url = await uploadImageFile(file);
-          openImageModal(url, file.name);
-        }
-      };
-      input.click();
-    },
   };
 
   // MapComponent에서 선택된 데이터 처리
@@ -268,6 +188,12 @@ export default function PostDetail() {
     }
   }, [markdownId]);
 
+  useEffect(() => {
+    if (editorRef.current && editData.content) {
+      editorRef.current.getInstance().setMarkdown(editData.content); // 초기 Markdown 설정
+    }
+  }, [editData.content]);
+
   if (isLoading) {
     return <MarkdownDetailSkeleton />;
   }
@@ -279,13 +205,13 @@ export default function PostDetail() {
     <div className="min-w-[800px] p-6">
       <div className="mb-4">
         <ChevronLeft
-          onClick={() => navigate('/posts')}
+          onClick={() => navigate('/articles')}
           className="cursor-pointer"
         />
       </div>
       <Card className="w-full px-6 py-4">
         <div className="flex items-center justify-between px-6">
-          <CardTitle className="ck-title">체험콕 글</CardTitle>
+          <CardTitle className="ck-title">체험콕 아티클</CardTitle>
 
           <div className="flex gap-3">
             <Popover>
@@ -297,7 +223,7 @@ export default function PostDetail() {
                   <div className="space-y-2">
                     <h4 className="leading-none font-medium">필드 입력</h4>
                     <p className="text-muted-foreground text-sm">
-                      글 수정을 위해 필드를 입력해주세요
+                      아티클 수정을 위해 필드를 입력해주세요
                     </p>
                   </div>
                   <div className="grid gap-2">
@@ -445,34 +371,10 @@ export default function PostDetail() {
             <label className="mb-2 block text-sm font-medium text-gray-700">
               내용
             </label>
-            <MDEditor
-              value={editData.content}
-              onChange={(value) =>
-                setEditData((prev) => ({ ...prev, content: value || '' }))
-              }
-              height={500}
-              preview="live"
-              commands={[
-                commands.bold,
-                commands.italic,
-                commands.strikethrough,
-                commands.hr,
-                commands.heading,
-                commands.divider,
-                commands.link,
-                commands.quote,
-                commands.code,
-                commands.codeBlock,
-                commands.comment,
-                commands.divider,
-                imageUploadCommand,
-                commands.divider,
-                commands.unorderedListCommand,
-                commands.orderedListCommand,
-                commands.checkedListCommand,
-                commands.divider,
-                commands.help,
-              ]}
+            <TuiEditor
+              content={editData.content}
+              editorRef={editorRef}
+              imageHandler={imageHandler}
             />
           </div>
         </CardContent>
@@ -487,43 +389,6 @@ export default function PostDetail() {
               onSelect={handleMapSelect}
               onClose={() => setShowMapModal(false)}
             />
-          </div>
-        </div>
-      )}
-
-      {/* 이미지 설정 모달 */}
-      {showImageModal && (
-        <div className="absolute inset-0 z-10 flex h-full w-full items-center justify-center backdrop-blur-sm">
-          <div className="w-96 rounded-lg border bg-white p-6">
-            <div className="mb-4">
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                이미지 미리보기
-              </label>
-              <div className="rounded-lg border bg-gray-50 p-2">
-                <img
-                  src={pendingImageData?.url}
-                  alt={pendingImageData?.name}
-                  className="h-auto max-w-full"
-                />
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setShowImageModal(false);
-                  setPendingImageData(null);
-                }}
-                className="flex-1 rounded-md bg-gray-200 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-300"
-              >
-                취소
-              </button>
-              <button
-                onClick={insertImage}
-                className="flex-1 rounded-md bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-700"
-              >
-                설정
-              </button>
-            </div>
           </div>
         </div>
       )}

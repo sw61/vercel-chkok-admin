@@ -17,9 +17,9 @@ export default function MainPage() {
             <CamapaignsPieChart />
           </div>
         </div>
-        <div className="rounded-xl">
+        {/* <div className="rounded-xl">
           <ServerDashBoard />
-        </div>
+        </div> */}
       </div>
     </>
   );
