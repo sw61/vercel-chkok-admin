@@ -1,4 +1,4 @@
-import { useState, useEffect, type KeyboardEvent } from 'react';
+import { useState, useEffect } from 'react';
 import {
   type ColumnFiltersState,
   type VisibilityState,
@@ -20,27 +20,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getUserTable, searchUser } from '@/services/users/table/tableApi';
 import useDebounce from '@/hooks/useDebounce';
 
-interface User {
-  content: [
-    {
-      id: number;
-      name: string;
-      email: string;
-      active: boolean;
-      nickname: string;
-      createdAt: string;
-      updatedAt: string;
-      userId: number;
-      companyName: string;
-      businessRegistrationNumber: string;
-      role: string;
-      contactPerson: string;
-      phoneNumber: string;
-    },
-  ];
-}
-
-export default function TableView() {
+export default function UserTablePage() {
   const [searchKey, setSearchKey] = useState<string>('');
   const [debouncedSearchKey] = useDebounce(searchKey, 300);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
