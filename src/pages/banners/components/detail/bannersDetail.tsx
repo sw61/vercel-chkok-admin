@@ -17,7 +17,7 @@ import {
   deleteBanners,
   editBanners,
   getBannersDetail,
-} from '@/services/banners/tableApi';
+} from '@/services/banners/detail/detailApi';
 import { useAlertDialog } from '@/components/alertDialog/useAlertDialog';
 
 interface BannerData {
@@ -30,14 +30,6 @@ interface BannerData {
   createdAt: string;
   updatedAt: string;
   displayOrder: number;
-}
-interface EditResponse {
-  id: string;
-  bannerUrl: string;
-  redirectUrl: string;
-  title: string;
-  description: string;
-  position: string;
 }
 
 export default function BannersDetail() {
@@ -56,9 +48,7 @@ export default function BannersDetail() {
     position: '',
   });
   const queryClient = useQueryClient();
-  const submitHandler = (event: { preventDefault: () => void }) => {
-    event.preventDefault();
-  };
+
   const { data: bannerData } = useSuspenseQuery<BannerData>({
     queryKey: ['bannerDetail', bannerId],
     queryFn: () => getBannersDetail(bannerId!),
@@ -75,7 +65,7 @@ export default function BannersDetail() {
     onSuccess: () => {
       navigate('/banners');
       toast.success('배너가 성공적으로 삭제되었습니다.');
-      queryClient.invalidateQueries({ queryKey: ['bannerDetail', bannerId] });
+      queryClient.invalidateQueries({ queryKey: ['bannerDetail'] });
     },
     onError: () => {
       toast.error('배너 삭제에 실패했습니다.');
@@ -97,7 +87,7 @@ export default function BannersDetail() {
       setIsEditing(false);
       setImageFile(null);
       setPresignedUrl(null);
-      queryClient.invalidateQueries({ queryKey: ['bannerDetail', bannerId] });
+      queryClient.invalidateQueries({ queryKey: ['bannerDetail'] });
     },
     onError: () => {
       toast.error('배너 수정에 실패했습니다.');

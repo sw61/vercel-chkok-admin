@@ -1,24 +1,22 @@
 import axiosInterceptor from '@/lib/axiosInterceptors';
-// import axios from 'axios';
-interface EditResponse {
+
+interface ApiResponse {
   bannerUrl: string;
   redirectUrl: string;
   title: string;
   description: string;
   position: string;
+  displayOrder?: number;
 }
-// 배너 이미지 목록 조회
-export const getBannersTable = async () => {
-  const response = await axiosInterceptor.get(`/api/banners`);
-  return response.data.data;
-};
 
+// 배너 상세 정보 조회
 export const getBannersDetail = async (id: string) => {
   const response = await axiosInterceptor.get(`/api/banners/${id}`);
   return response.data.data;
 };
 
-export const editBanners = async (id: string, data: EditResponse) => {
+// 배너 수정
+export const editBanners = async (id: string, data: ApiResponse) => {
   const response = await axiosInterceptor.put(`/api/banners/${id}`, {
     bannerUrl: data.bannerUrl,
     redirectUrl: data.redirectUrl,
@@ -29,6 +27,7 @@ export const editBanners = async (id: string, data: EditResponse) => {
   return response.data.data;
 };
 
+// 배너 삭제
 export const deleteBanners = async (id: string) => {
   const response = await axiosInterceptor.delete(`/api/banners/${id}`);
   return response.data.data;
