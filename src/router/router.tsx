@@ -1,3 +1,4 @@
+import BannersCreatePage from '@/pages/banners/components/create/bannersCreate';
 import { lazy } from 'react';
 
 const MainPage = lazy(() => import('@/pages/main/components/mainPage'));
@@ -22,6 +23,9 @@ const BannersPage = lazy(
 );
 const BannersDetail = lazy(
   () => import('@/pages/banners/components/detail/bannersDetail')
+);
+const BannersCreate = lazy(
+  () => import('@/pages/banners/components/create/bannersCreate')
 );
 const Dashboard = lazy(
   () => import('@/pages/dashboard/components/serverDashBoard')
@@ -56,6 +60,7 @@ export const privateRoutes = [
   { path: '/campaigns', element: <CampaignsTablePage /> },
   { path: '/campaigns/:campaignId', element: <CampaignsDetail /> },
   { path: '/banners', element: <BannersPage /> },
+  { path: '/banners/create', element: <BannersCreatePage /> },
   { path: '/banners/:bannerId', element: <BannersDetail /> },
   { path: '/server', element: <Dashboard /> },
   { path: '/notices', element: <NoticePage /> },
