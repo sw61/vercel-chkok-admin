@@ -20,7 +20,6 @@ import { Switch } from '@/components/ui/switch';
 
 export default function ArticleCreate() {
   const [title, setTitle] = useState<string>('');
-  const [content, setContent] = useState<string | undefined>('');
   const [campaignId, setCampaignId] = useState<number | undefined>(undefined);
   const [active, setActive] = useState<boolean>(false);
   const [contactPhone, setContactPhone] = useState<string>('');
@@ -64,16 +63,17 @@ export default function ArticleCreate() {
     setter(value === '' ? undefined : parseFloat(value));
   };
 
-  // 포스트 생성
-  const createPost = async () => {
+  // 아티클 생성
+  const createArticle = async () => {
     if (!validateRequiredFields()) {
       return;
     }
-    const html = editorRef.current?.getInstance().getHTML() || '';
+    const markdownContent =
+      editorRef.current?.getInstance().getMarkdown() || '';
     try {
       const payload = {
         title,
-        content: html,
+        content: markdownContent,
         active,
         campaignId,
         visitInfo: {
@@ -234,7 +234,7 @@ export default function ArticleCreate() {
                     취소
                   </Button>
                   <Button
-                    onClick={createPost}
+                    onClick={createArticle}
                     className="px-4 py-2"
                     variant="outline"
                   >
@@ -249,11 +249,7 @@ export default function ArticleCreate() {
                 className="w-full"
               />
             </div>
-            <TuiEditor
-              content={content}
-              editorRef={editorRef}
-              imageHandler={imageHandler}
-            />
+            <TuiEditor editorRef={editorRef} imageHandler={imageHandler} />
           </div>
 
           {/* 지도 모달 */}

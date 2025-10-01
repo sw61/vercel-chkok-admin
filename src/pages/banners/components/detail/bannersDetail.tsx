@@ -17,7 +17,7 @@ import {
   deleteBanners,
   editBanners,
   getBannersDetail,
-} from '@/services/banners/tableApi';
+} from '@/services/banners/detail/detailApi';
 import { useAlertDialog } from '@/components/alertDialog/useAlertDialog';
 
 interface BannerData {
@@ -30,14 +30,6 @@ interface BannerData {
   createdAt: string;
   updatedAt: string;
   displayOrder: number;
-}
-interface EditResponse {
-  id: string;
-  bannerUrl: string;
-  redirectUrl: string;
-  title: string;
-  description: string;
-  position: string;
 }
 
 export default function BannersDetail() {
@@ -54,18 +46,24 @@ export default function BannersDetail() {
     redirectUrl: '',
     description: '',
     position: '',
+    displayOrder: 0,
   });
   const queryClient = useQueryClient();
-  const submitHandler = (event: { preventDefault: () => void }) => {
-    event.preventDefault();
-  };
+
   const { data: bannerData } = useSuspenseQuery<BannerData>({
     queryKey: ['bannerDetail', bannerId],
     queryFn: () => getBannersDetail(bannerId!),
   });
   useEffect(() => {
     if (bannerData) {
-      setEditBannerData(bannerData);
+      setEditBannerData({
+        title: bannerData.title,
+        bannerUrl: bannerData.bannerUrl,
+        redirectUrl: bannerData.redirectUrl,
+        description: bannerData.description,
+        position: bannerData.position,
+        displayOrder: bannerData.displayOrder,
+      });
     }
   }, [bannerData]);
 
@@ -75,7 +73,7 @@ export default function BannersDetail() {
     onSuccess: () => {
       navigate('/banners');
       toast.success('배너가 성공적으로 삭제되었습니다.');
-      queryClient.invalidateQueries({ queryKey: ['bannerDetail', bannerId] });
+      queryClient.invalidateQueries({ queryKey: ['bannerDetail'] });
     },
     onError: () => {
       toast.error('배너 삭제에 실패했습니다.');
@@ -86,18 +84,15 @@ export default function BannersDetail() {
   const { mutate: editMutate } = useMutation({
     mutationFn: () =>
       editBanners(bannerId!, {
+        ...editBannerData,
         bannerUrl: presignedUrl?.split('?')[0] || editBannerData.bannerUrl,
-        redirectUrl: editBannerData.redirectUrl,
-        title: editBannerData.title,
-        description: editBannerData.description,
-        position: editBannerData.position,
       }),
     onSuccess: () => {
       toast.success('배너가 수정되었습니다.');
       setIsEditing(false);
       setImageFile(null);
       setPresignedUrl(null);
-      queryClient.invalidateQueries({ queryKey: ['bannerDetail', bannerId] });
+      queryClient.invalidateQueries({ queryKey: ['bannerDetail'] });
     },
     onError: () => {
       toast.error('배너 수정에 실패했습니다.');

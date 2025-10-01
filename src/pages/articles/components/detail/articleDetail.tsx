@@ -28,6 +28,7 @@ import KakaoSearch from '@/pages/kakaoMap/kakaoSearch';
 import TuiEditor from '@/components/markdown/editor/toastUiEditor';
 import { useAddImage } from '@/hooks/useAddImage';
 import { Editor } from '@toast-ui/react-editor';
+import TurndownService from 'turndown';
 
 interface ArticleData {
   id: number;
@@ -70,6 +71,20 @@ export default function ArticleDetail() {
   const editorRef = useRef<Editor | null>(null);
   const { imageHandler } = useAddImage();
 
+  const turndownService = new TurndownService({
+    headingStyle: 'atx',
+    codeBlockStyle: 'fenced',
+    bulletListMarker: '-',
+  });
+  // <span> <br> 태그를 그대로 유지
+  turndownService.keep(['span']);
+  turndownService.addRule('brTag', {
+    filter: 'br',
+    replacement: function () {
+      return '<br>';
+    },
+  });
+
   // 유효성 검사
   const validateRequiredFields = () => {
     if (!editData.title) {
@@ -93,8 +108,9 @@ export default function ArticleDetail() {
     try {
       const response = await axiosInterceptor.get(`/api/admin/posts/${id}`);
       const data = response.data.data;
+      const markdownContent = turndownService.turndown(data.content);
       setPostData(data);
-      setEditData({ title: data.title, content: data.content });
+      setEditData({ title: data.title, content: markdownContent });
       console.log(data);
       if (data.visitInfo) {
         setContactPhone(data.visitInfo.contactPhone || '');
@@ -125,10 +141,11 @@ export default function ArticleDetail() {
       return;
     }
     try {
-      const html = editorRef.current?.getInstance().getHTML() || ''; // TuiEditor에서 HTML 가져오기
+      const markdownContent =
+        editorRef.current?.getInstance().getMarkdown() || ''; // TuiEditor에서 HTML 가져오기
       const payload = {
         title: editData.title,
-        content: html,
+        content: markdownContent,
         visitInfo: {
           contactPhone: contactPhone || null,
           homepage: homepage || null,
