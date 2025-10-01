@@ -10,8 +10,9 @@ import {
 } from '@/components/ui/chart';
 
 import PieChartSkeleton from '@/pages/users/components/chart/PieChartSkeleton';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { getUsersStatus } from '@/services/users/chart/chartApi';
+import { Suspense } from 'react';
 
 interface Status {
   totalUsers: number; // 등록된 전체 사용자 수
@@ -22,18 +23,11 @@ interface Status {
 }
 
 export function UserPieChartActive() {
-  const {
-    data: usersStatus,
-    isPending,
-    error,
-  } = useQuery<Status>({
+  const { data: usersStatus } = useSuspenseQuery<Status>({
     queryKey: ['usersChart'],
     queryFn: getUsersStatus,
   });
 
-  if (isPending) {
-    return <PieChartSkeleton />;
-  }
   const chartData = [
     {
       status: 'active',
@@ -61,11 +55,12 @@ export function UserPieChartActive() {
   } satisfies ChartConfig;
 
   return (
-    <>
+    <Suspense fallback={<PieChartSkeleton />}>
       <Card className="flex flex-col pb-0">
         <CardHeader className="items-center pb-0">
           <CardTitle className="ck-body-1-bold">사용자 계정 통계</CardTitle>
         </CardHeader>
+
         <CardContent className="flex-1 pb-0">
           <ChartContainer
             config={chartConfig}
@@ -82,6 +77,6 @@ export function UserPieChartActive() {
           </ChartContainer>
         </CardContent>
       </Card>
-    </>
+    </Suspense>
   );
 }

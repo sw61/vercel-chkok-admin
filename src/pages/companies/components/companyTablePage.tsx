@@ -3,7 +3,6 @@ import {
   type ColumnFiltersState,
   type VisibilityState,
 } from '@tanstack/react-table';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import UserTableSkeleton from '@/pages/users/components/table/usersTableSkeleton';
 import { PaginationHook } from '@/hooks/paginationHook';

@@ -10,7 +10,8 @@ import {
 } from '@/components/ui/chart';
 import PieChartSkeleton from '@/pages/users/components/chart/PieChartSkeleton';
 import { getUsersStatus } from '@/services/users/chart/chartApi';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Suspense } from 'react';
 
 interface Status {
   totalUsers: number; // 등록된 전체 사용자 수
@@ -21,18 +22,11 @@ interface Status {
 }
 
 export function UserPieChartCount() {
-  const {
-    data: usersStatus,
-    isPending,
-    error,
-  } = useQuery<Status>({
+  const { data: usersStatus } = useSuspenseQuery<Status>({
     queryKey: ['usersChart'],
     queryFn: getUsersStatus,
   });
 
-  if (isPending) {
-    return <PieChartSkeleton />;
-  }
   const chartData = [
     {
       status: 'userCount',
@@ -60,7 +54,7 @@ export function UserPieChartCount() {
   } satisfies ChartConfig;
 
   return (
-    <>
+    <Suspense fallback={<PieChartSkeleton />}>
       <Card className="flex flex-col pb-0">
         <CardHeader className="items-center pb-0">
           <CardTitle className="ck-body-1-bold">사용자 권한 통계</CardTitle>
@@ -81,6 +75,6 @@ export function UserPieChartCount() {
           </ChartContainer>
         </CardContent>
       </Card>
-    </>
+    </Suspense>
   );
 }
