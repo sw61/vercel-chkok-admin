@@ -23,6 +23,7 @@ export const editBanners = async (id: string, data: ApiResponse) => {
     title: data.title,
     description: data.description,
     position: data.position,
+    displayOrder: data.displayOrder,
   });
   return response.data.data;
 };

@@ -46,6 +46,7 @@ export default function BannersDetail() {
     redirectUrl: '',
     description: '',
     position: '',
+    displayOrder: 0,
   });
   const queryClient = useQueryClient();
 
@@ -55,7 +56,14 @@ export default function BannersDetail() {
   });
   useEffect(() => {
     if (bannerData) {
-      setEditBannerData(bannerData);
+      setEditBannerData({
+        title: bannerData.title,
+        bannerUrl: bannerData.bannerUrl,
+        redirectUrl: bannerData.redirectUrl,
+        description: bannerData.description,
+        position: bannerData.position,
+        displayOrder: bannerData.displayOrder,
+      });
     }
   }, [bannerData]);
 
@@ -76,11 +84,8 @@ export default function BannersDetail() {
   const { mutate: editMutate } = useMutation({
     mutationFn: () =>
       editBanners(bannerId!, {
+        ...editBannerData,
         bannerUrl: presignedUrl?.split('?')[0] || editBannerData.bannerUrl,
-        redirectUrl: editBannerData.redirectUrl,
-        title: editBannerData.title,
-        description: editBannerData.description,
-        position: editBannerData.position,
       }),
     onSuccess: () => {
       toast.success('배너가 수정되었습니다.');
