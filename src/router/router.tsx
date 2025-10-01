@@ -1,4 +1,3 @@
-import BannersCreatePage from '@/pages/banners/components/create/bannersCreate';
 import { lazy } from 'react';
 
 const MainPage = lazy(() => import('@/pages/main/components/mainPage'));
@@ -24,7 +23,7 @@ const BannersPage = lazy(
 const BannersDetail = lazy(
   () => import('@/pages/banners/components/detail/bannersDetail')
 );
-const BannersCreate = lazy(
+const BannersCreatePage = lazy(
   () => import('@/pages/banners/components/create/bannersCreate')
 );
 const Dashboard = lazy(
@@ -40,15 +39,9 @@ const NoticeDetail = lazy(
 const NoticeCreate = lazy(
   () => import('@/pages/notices/components/create/noticeCreate')
 );
-const ArticlePage = lazy(
-  () => import('@/pages/articles/components/table/articlePage')
-);
-const ArticleDetail = lazy(
-  () => import('@/pages/articles/components/detail/articleDetail')
-);
-const ArticleCreate = lazy(
-  () => import('@/pages/articles/components/create/articleCreate')
-);
+const ArticlePage = lazy(() => import('@/pages/articles/pages/tablePage'));
+const ArticleDetail = lazy(() => import('@/pages/articles/pages/detailPage'));
+const ArticleCreate = lazy(() => import('@/pages/articles/pages/createPage'));
 
 // Route configuration
 export const privateRoutes = [
@@ -67,6 +60,6 @@ export const privateRoutes = [
   { path: '/notices/:markdownId', element: <NoticeDetail /> },
   { path: '/notices/create', element: <NoticeCreate /> },
   { path: '/articles', element: <ArticlePage /> },
-  { path: '/articles/:markdownId', element: <ArticleDetail /> },
+  { path: '/articles/:articleId', element: <ArticleDetail /> },
   { path: '/articles/create', element: <ArticleCreate /> },
 ];

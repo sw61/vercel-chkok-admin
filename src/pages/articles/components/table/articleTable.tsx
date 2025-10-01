@@ -6,8 +6,6 @@ import {
   getSortedRowModel,
   type SortingState,
   useReactTable,
-  type VisibilityState,
-  type ColumnFiltersState,
 } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -34,10 +32,6 @@ interface Article {
 
 interface ArticleDataTableProps {
   articleData: Article[];
-  columnFilters: ColumnFiltersState;
-  setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
-  columnVisibility: VisibilityState;
-  setColumnVisibility: React.Dispatch<React.SetStateAction<VisibilityState>>;
 }
 
 const columns: ColumnDef<Article>[] = [
@@ -158,31 +152,20 @@ const totalColumnWidth = columns.reduce(
   0
 );
 
-export function ArticleTable({
-  articleData,
-  columnFilters,
-  setColumnFilters,
-  columnVisibility,
-  setColumnVisibility,
-}: ArticleDataTableProps) {
+export function ArticleTable({ articleData }: ArticleDataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const navigate = useNavigate();
-
   const table = useReactTable({
     data: articleData,
     columns,
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     state: {
       sorting,
-      columnFilters,
-      columnVisibility,
       rowSelection,
     },
     columnResizeMode: 'onChange',
@@ -246,7 +229,7 @@ export function ArticleTable({
                   colSpan={columns.length}
                   className="h-24 text-center whitespace-nowrap"
                 >
-                  No results.
+                  아티클이 없습니다.
                 </TableCell>
               </TableRow>
             )}
