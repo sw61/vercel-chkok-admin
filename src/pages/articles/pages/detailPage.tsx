@@ -1,4 +1,4 @@
-import { Card, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { useEffect, useState, useRef, Suspense } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import MarkdownDetailSkeleton from '@/pages/articles/components/detail/markdownDetailSkeleton';
@@ -7,16 +7,18 @@ import { Editor } from '@toast-ui/react-editor';
 import TurndownService from 'turndown';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { getPostDetail } from '@/services/articles/detailApi';
-import ArticleForm from '../components/detail/detailForm';
 import ArticleContent from '../components/detail/detailContent';
 import SearchMapModal from '../components/searchMapModal';
+import DetailForm from '../components/detail/detailForm';
+import TuiEditor from '@/components/markdown/editor/toastUiEditor';
+import { useAddImage } from '@/hooks/useAddImage';
 
 export default function ArticleDetailPage() {
   const { articleId } = useParams<{ articleId: string }>();
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    campaignId: undefined as number | undefined,
+    campaignId: '',
     contactPhone: '',
     homepage: '',
     businessAddress: '',
@@ -25,6 +27,7 @@ export default function ArticleDetailPage() {
     lng: undefined as number | undefined,
   });
   const [showMapModal, setShowMapModal] = useState<boolean>(false);
+  const { imageHandler } = useAddImage();
   const editorRef = useRef<Editor | null>(null);
   const navigate = useNavigate();
 
@@ -80,6 +83,13 @@ export default function ArticleDetailPage() {
       [id]: value,
     }));
   };
+  // 캠페인 ID 폼 필드 변경 핸들러
+  const handleChangeCampaignId = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      campaignId: value,
+    }));
+  };
 
   // 카카오맵 위치 검색에서 선택된 데이터 처리
   const handleMapSelect = (data: {
@@ -117,12 +127,13 @@ export default function ArticleDetailPage() {
       <Card className="w-full px-6 py-4">
         <div className="flex items-center justify-between px-6">
           <CardTitle className="ck-title">체험콕 아티클</CardTitle>
-          <ArticleForm
+          <DetailForm
             articleId={articleId!}
             articleData={articleData}
             formData={formData}
             handleChange={handleChange}
             handleOpenModal={handleOpenModal}
+            handleChangeCampaignId={handleChangeCampaignId}
           />
         </div>
         <Suspense fallback={<MarkdownDetailSkeleton />}>
@@ -131,6 +142,13 @@ export default function ArticleDetailPage() {
             formData={formData}
             handleChange={handleChange}
           />
+          <CardContent>
+            <TuiEditor
+              content={formData.content}
+              editorRef={editorRef}
+              imageHandler={imageHandler}
+            />
+          </CardContent>
         </Suspense>
       </Card>
 

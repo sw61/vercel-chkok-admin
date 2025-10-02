@@ -2,6 +2,7 @@ import axiosInterceptor from '@/lib/axiosInterceptors';
 import type { CreateParams, EditResponse } from './type/articleType';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 // 아티클 생성
 export const createArticle = async (payload: EditResponse) => {
@@ -11,16 +12,18 @@ export const createArticle = async (payload: EditResponse) => {
 
 export const useCreateArticleMutation = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   return useMutation<EditResponse, Error, CreateParams>({
     mutationFn: (payload) => createArticle(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['articleDetail'],
+        queryKey: ['articleTable'],
       });
-      toast.success('아티클이 수정되었습니다.');
+      navigate('/articles');
+      toast.success('아티클이 생성되었습니다.');
     },
     onError: () => {
-      toast.error('아티클 수정에 실패했습니다.');
+      toast.error('아티클 생성에 실패했습니다.');
     },
   });
 };
