@@ -1,9 +1,5 @@
 import axiosInterceptor from '@/lib/axiosInterceptors';
 
-interface CampaginsDetail {
-  id: string;
-  comment?: string;
-}
 export const getCampaignDetail = async (id: string) => {
   const response = await axiosInterceptor.get(`/campaigns/${id}`);
   const data = response.data.data;

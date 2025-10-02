@@ -1,6 +1,6 @@
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { useEffect, useState, useRef, Suspense } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import MarkdownDetailSkeleton from '@/pages/articles/components/detail/markdownDetailSkeleton';
 import { ChevronLeft } from 'lucide-react';
 import { Editor } from '@toast-ui/react-editor';
@@ -14,7 +14,10 @@ import TuiEditor from '@/components/markdown/editor/toastUiEditor';
 import { useAddImage } from '@/hooks/useAddImage';
 
 export default function ArticleDetailPage() {
+  const editorRef = useRef<Editor | null>(null);
   const { articleId } = useParams<{ articleId: string }>();
+  const { imageHandler } = useAddImage();
+  const [showMapModal, setShowMapModal] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -26,10 +29,6 @@ export default function ArticleDetailPage() {
     lat: undefined as number | undefined,
     lng: undefined as number | undefined,
   });
-  const [showMapModal, setShowMapModal] = useState<boolean>(false);
-  const { imageHandler } = useAddImage();
-  const editorRef = useRef<Editor | null>(null);
-  const navigate = useNavigate();
 
   // 체험콕 아티클 상세 정보 조회
   const { data: articleData } = useSuspenseQuery({
@@ -117,10 +116,10 @@ export default function ArticleDetailPage() {
   };
 
   return (
-    <div className="min-w-[800px] p-6">
+    <div className="min-w-[800px] px-6">
       <div className="mb-4">
         <ChevronLeft
-          onClick={() => navigate('/articles')}
+          onClick={() => window.history.back()}
           className="cursor-pointer"
         />
       </div>
@@ -151,7 +150,6 @@ export default function ArticleDetailPage() {
           </CardContent>
         </Suspense>
       </Card>
-
       {/* 지도 모달 */}
       {showMapModal && (
         <SearchMapModal
