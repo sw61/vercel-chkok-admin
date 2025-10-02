@@ -57,7 +57,6 @@ export default function ArticleTablePage() {
             columnVisibility={columnVisibility}
             setColumnVisibility={setColumnVisibility}
           />
-
           <div className="relative">
             <Input
               placeholder="체험콕 아티클 검색"
