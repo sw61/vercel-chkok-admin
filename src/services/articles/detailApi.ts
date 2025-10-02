@@ -35,3 +35,8 @@ export const deactivateArticle = async (id: string) => {
   );
   return response.data;
 };
+// 아티클 필드 입력용 캠페인 리스트
+export const getCampaignList = async () => {
+  const response = await axiosInterceptor.get(`/campaigns/list`);
+  return response.data.data;
+};

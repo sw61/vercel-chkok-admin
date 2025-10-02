@@ -20,6 +20,7 @@ import {
 import { useRef } from 'react';
 import { toast } from 'react-toastify';
 import { Editor } from '@toast-ui/react-editor';
+import { CampaignIdSelect } from '../campaignIdSelect';
 
 interface FormProps {
   articleId: string;
@@ -27,14 +28,16 @@ interface FormProps {
   formData: FormData;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleOpenModal: () => void;
+  handleChangeCampaignId: (value: string) => void;
 }
 
-export default function ArticleForm({
+export default function DetailForm({
   articleId,
   articleData,
   formData,
   handleChange,
   handleOpenModal,
+  handleChangeCampaignId,
 }: FormProps) {
   const editorRef = useRef<Editor | null>(null);
   const { mutate: editMutation } = useEditArticleMutation();
@@ -126,15 +129,10 @@ export default function ArticleForm({
             <div className="grid gap-2">
               <div className="grid grid-cols-3 items-center gap-4">
                 <Label htmlFor="campaignId">캠페인 ID</Label>
-                <div className="col-span-2">
-                  <Input
-                    id="campaignId"
-                    className="h-8 w-full"
-                    placeholder="아티클 활성화 시 ID값 입력 필수"
-                    value={formData.campaignId}
-                    onChange={handleChange}
-                  />
-                </div>
+                <CampaignIdSelect
+                  value={formData.campaignId!}
+                  handleChangeCampaignId={handleChangeCampaignId}
+                />
               </div>
               <div className="grid grid-cols-3 items-center gap-4">
                 <Label htmlFor="contactPhone">

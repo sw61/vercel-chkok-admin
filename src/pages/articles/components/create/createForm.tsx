@@ -1,6 +1,4 @@
-import TuiEditor from '@/components/markdown/editor/toastUiEditor';
 import { Button } from '@/components/ui/button';
-
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -9,28 +7,32 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Switch } from '@/components/ui/switch';
-import { useAddImage } from '@/hooks/useAddImage';
 import { useCreateArticleMutation } from '@/services/articles/createApi';
 import { Editor } from '@toast-ui/react-editor';
 import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import type { FormData } from '@/services/articles/type/articleType';
+import { CampaignIdSelect } from '../campaignIdSelect';
 
 interface FormProps {
   formData: FormData;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleOpenModal: () => void;
   handleActiveChange: (checked: boolean) => void;
+  handleChangeCampaignId: (value: string) => void;
+  resetForm: () => void;
 }
 export default function CreateForm({
   formData,
   handleChange,
   handleOpenModal,
   handleActiveChange,
+  handleChangeCampaignId,
+  resetForm,
 }: FormProps) {
   const editorRef = useRef<Editor | null>(null);
-  const { imageHandler } = useAddImage(); // Editor 이미지 추가 기능
+
   const navigate = useNavigate();
   const { mutate: createMutation } = useCreateArticleMutation();
 
@@ -58,6 +60,8 @@ export default function CreateForm({
     const payload = {
       title: formData.title,
       content: markdownContent,
+      campaignId: formData.campaignId,
+      active: formData.active,
       visitInfo: {
         contactPhone: formData.contactPhone || null,
         homepage: formData.homepage || null,
@@ -67,7 +71,11 @@ export default function CreateForm({
         lng: formData.lng ?? null,
       },
     };
-    createMutation(payload);
+    createMutation(payload, {
+      onSuccess: () => {
+        resetForm();
+      },
+    });
   };
   return (
     <div className="w-full" data-color-mode="light">
@@ -95,18 +103,12 @@ export default function CreateForm({
                         onCheckedChange={handleActiveChange}
                       />
                     </div>
-                    <div className="grid grid-cols-3 items-center gap-4">
+                    <div className="grid grid-cols-3 items-center gap-4 w-full">
                       <Label htmlFor="campaignId">캠페인 ID</Label>
-                      <div className="col-span-2">
-                        <Input
-                          id="campaignId"
-                          type="number"
-                          className="h-8 w-full"
-                          placeholder="아티클 활성화 시 ID값 입력 필수"
-                          value={formData.campaignId ?? ''}
-                          onChange={handleChange}
-                        />
-                      </div>
+                      <CampaignIdSelect
+                        value={formData.campaignId!}
+                        handleChangeCampaignId={handleChangeCampaignId}
+                      />
                     </div>
                     <div className="grid grid-cols-3 items-center gap-4">
                       <Label htmlFor="contactPhone">
@@ -115,7 +117,7 @@ export default function CreateForm({
                       <div className="col-span-2">
                         <Input
                           id="contactPhone"
-                          className="h-8 w-full"
+                          className="w-full"
                           type="number"
                           placeholder="01012345678"
                           value={formData.contactPhone}
@@ -127,7 +129,7 @@ export default function CreateForm({
                       <Label htmlFor="homepage">홈페이지 주소</Label>
                       <Input
                         id="homepage"
-                        className="col-span-2 h-8"
+                        className="col-span-2"
                         placeholder="https://chkok.kr"
                         value={formData.homepage}
                         onChange={handleChange}
@@ -138,14 +140,14 @@ export default function CreateForm({
                       <div className="col-span-2 flex gap-2">
                         <Input
                           id="businessAddress"
-                          className="h-8 flex-1"
+                          className="w-full"
                           placeholder="위치 정보 입력"
                           value={formData.businessAddress}
                           onChange={handleChange}
                         />
                         <Button
                           variant="outline"
-                          className="h-8"
+                          className="h-9"
                           onClick={handleOpenModal}
                         >
                           위치 검색
@@ -158,7 +160,7 @@ export default function CreateForm({
                       </Label>
                       <Input
                         id="businessDetailAddress"
-                        className="col-span-2 h-8"
+                        className="col-span-2"
                         placeholder="위치 정보 상세 입력"
                         value={formData.businessDetailAddress}
                         onChange={handleChange}
@@ -181,14 +183,13 @@ export default function CreateForm({
           </div>
         </div>
         <Input
+          id="title"
           value={formData.title}
           onChange={handleChange}
           placeholder="제목을 입력하세요"
           className="w-full"
         />
       </div>
-      {/* Toast Ui Editor */}
-      <TuiEditor editorRef={editorRef} imageHandler={imageHandler} />
     </div>
   );
 }
