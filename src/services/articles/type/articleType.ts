@@ -2,7 +2,7 @@ export interface FormData {
   title?: string;
   content?: string;
   active?: boolean;
-  campaignId: number | undefined;
+  campaignId?: string;
   contactPhone: string;
   homepage: string;
   businessAddress: string;
@@ -14,7 +14,7 @@ export interface EditResponse {
   title?: string;
   content?: string;
   active?: boolean;
-  campaignId?: number;
+  campaignId?: string;
   visitInfo?: {
     contactPhone: string | null;
     homepage?: string | null;
@@ -45,7 +45,7 @@ export interface DetailResponse {
   title: string;
   content: string;
   viewCount: number;
-  campaignId: number;
+  campaignId: string;
   authorId: number;
   authorName: string;
   active: boolean;

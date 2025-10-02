@@ -117,37 +117,37 @@ export default function CampaignsDetail() {
     queryKey: ['campaignDetail', campaignId],
     queryFn: () => getCampaignDetail(campaignId!),
   });
-  const { mutate: deleteMutate } = useMutation({
-    mutationFn: deleteCampaigns,
+  const { mutate: deleteMutation } = useMutation({
+    mutationFn: () => deleteCampaigns(campaignData.id),
     onSuccess: () => {
       navigate('/campaigns');
       toast.success('캠페인이 삭제되었습니다.');
       queryClient.invalidateQueries({
-        queryKey: ['campaignsDetail', campaignId],
+        queryKey: ['campaignDetail', campaignId],
       });
     },
     onError: () => {
       toast.error('캠페인 삭제를 실패했습니다.');
     },
   });
-  const { mutate: approveMutate } = useMutation({
-    mutationFn: approveCampaigns,
+  const { mutate: approveMutation } = useMutation({
+    mutationFn: () => approveCampaigns(campaignData.id, comment!),
     onSuccess: () => {
       toast.success('캠페인이 승인되었습니다.');
       queryClient.invalidateQueries({
-        queryKey: ['campaignsDetail', campaignId],
+        queryKey: ['campaignDetail', campaignId],
       });
     },
     onError: () => {
       toast.error('캠페인 승인을 실패했습니다');
     },
   });
-  const { mutate: rejectMutate } = useMutation({
-    mutationFn: rejectCampaigns,
+  const { mutate: rejectMutation } = useMutation({
+    mutationFn: () => rejectCampaigns(campaignData.id, comment!),
     onSuccess: () => {
       toast.success('캠페인이 거절되었습니다.');
       queryClient.invalidateQueries({
-        queryKey: ['campaignsDetail', campaignId],
+        queryKey: ['campaignDetail', campaignId],
       });
     },
     onError: () => {
@@ -168,19 +168,19 @@ export default function CampaignsDetail() {
     trigger: <Button variant="outline">승인</Button>,
     title: '캠페인을 승인하시겠습니까?',
     description: '이 작업은 되돌릴 수 없습니다.',
-    onAlert: () => campaignData.id && approveMutate(campaignData.id),
+    onAlert: approveMutation,
   });
   const { AlertDialogComponent: RejectAlertDialog } = useAlertDialog({
     trigger: <Button variant="outline">거절</Button>,
     title: '캠페인을 거절하시겠습니까?',
     description: '이 작업은 되돌릴 수 없습니다.',
-    onAlert: () => campaignData.id && rejectMutate(campaignData.id),
+    onAlert: rejectMutation,
   });
   const { AlertDialogComponent: DeleteAlertDialog } = useAlertDialog({
     trigger: <Button variant="outline">삭제</Button>,
     title: '캠페인을 삭제하시겠습니까?',
     description: '이 작업은 되돌릴 수 없습니다.',
-    onAlert: () => campaignData.id && deleteMutate(campaignData.id),
+    onAlert: () => deleteMutation,
   });
 
   return (
@@ -198,8 +198,8 @@ export default function CampaignsDetail() {
             <div className="flex gap-2">
               {campaignData.approvalStatus === '대기중' && (
                 <>
-                  <ApproveAlertDialog />
                   <RejectAlertDialog />
+                  <ApproveAlertDialog />
                 </>
               )}
               <DeleteAlertDialog />
