@@ -24,7 +24,7 @@ function TuiEditor({ content, editorRef, imageHandler }: Props) {
     <Editor
       initialValue={content}
       initialEditType="markdown"
-      autofocus={false}
+      placeholder="마크다운 형식으로 작성해주세요"
       ref={editorRef}
       toolbarItems={toolbar}
       hideModeSwitch

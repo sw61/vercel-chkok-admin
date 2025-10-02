@@ -50,11 +50,6 @@ export default function DetailContent({
             className="w-full"
           />
         </div>
-        <div className="mb-4">
-          <label className="mb-2 block text-sm font-medium text-gray-700">
-            내용
-          </label>
-        </div>
       </CardContent>
     </>
   );

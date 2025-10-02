@@ -1,5 +1,4 @@
-import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { ChevronLeft } from 'lucide-react';
 import CreateForm from '../components/create/createForm';
@@ -7,6 +6,8 @@ import SearchMapModal from '../components/searchMapModal';
 import TuiEditor from '@/components/markdown/editor/toastUiEditor';
 import { useAddImage } from '@/hooks/useAddImage';
 import type { Editor } from '@toast-ui/react-editor';
+import { useCreateArticleMutation } from '@/services/articles/createApi';
+import { toast } from 'react-toastify';
 
 export default function ArticleCreatePage() {
   const [formData, setFormData] = useState({
@@ -22,9 +23,50 @@ export default function ArticleCreatePage() {
     lng: undefined as number | undefined,
   });
   const [showMapModal, setShowMapModal] = useState<boolean>(false);
-  const navigate = useNavigate();
   const { imageHandler } = useAddImage(); // Editor 이미지 추가 기능
   const editorRef = useRef<Editor | null>(null);
+  const { mutate: createMutation } = useCreateArticleMutation();
+
+  // 아티클 생성 핸들러
+  const handleCreate = () => {
+    if (!editorRef.current) {
+      return;
+    }
+    // 마크다운 컨텐츠
+    const markdownContent = editorRef.current.getInstance().getMarkdown() || '';
+    // 유효성 검사
+    if (!formData.title) {
+      toast.error('제목을 입력해주세요.');
+      return;
+    }
+    if (!markdownContent) {
+      toast.error('내용을 입력해주세요.');
+      return false;
+    }
+    if (!formData.contactPhone.trim()) {
+      toast.error('연락처를 입력해주세요.');
+      return;
+    }
+    const payload = {
+      title: formData.title,
+      content: markdownContent,
+      campaignId: formData.campaignId,
+      active: formData.active,
+      visitInfo: {
+        contactPhone: formData.contactPhone || null,
+        homepage: formData.homepage || null,
+        businessAddress: formData.businessAddress || null,
+        businessDetailAddress: formData.businessDetailAddress || null,
+        lat: formData.lat ?? null,
+        lng: formData.lng ?? null,
+      },
+    };
+    createMutation(payload, {
+      onSuccess: () => {
+        resetForm();
+      },
+    });
+  };
   // 폼 필드 변경 핸들러
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -70,6 +112,7 @@ export default function ArticleCreatePage() {
       active: checked,
     }));
   };
+  // 생성 후 폼 초기화
   const resetForm = () => {
     setFormData({
       title: '',
@@ -83,16 +126,19 @@ export default function ArticleCreatePage() {
       lat: undefined,
       lng: undefined,
     });
-    // 에디터 내용 초기화 (필요시)
+    // 에디터 내용 초기화
     if (editorRef.current) {
       editorRef.current.getInstance().setMarkdown('');
     }
   };
+  useEffect(() => {
+    resetForm();
+  }, []);
   return (
-    <div className="p-6">
+    <div className="px-6">
       <div className="mb-4">
         <ChevronLeft
-          onClick={() => navigate('/articles')}
+          onClick={() => window.history.back()}
           className="cursor-pointer"
         />
       </div>
@@ -105,7 +151,7 @@ export default function ArticleCreatePage() {
             handleOpenModal={handleOpenModal}
             handleActiveChange={handleActiveChange}
             handleChangeCampaignId={handleChangeCampaignId}
-            resetForm={resetForm}
+            handleCreate={handleCreate}
           />
           {/* Toast Ui Editor */}
           <div className="w-full">
