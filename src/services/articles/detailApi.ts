@@ -23,14 +23,14 @@ export const deleteArticle = async (id: string) => {
 };
 // 아티클 활성화
 export const activateArticle = async (id: string) => {
-  const response = await axiosInterceptor.post(
+  const response = await axiosInterceptor.patch(
     `/api/admin/posts/${id}/activate`
   );
   return response.data;
 };
 // 아티클 비활성화
 export const deactivateArticle = async (id: string) => {
-  const response = await axiosInterceptor.post(
+  const response = await axiosInterceptor.patch(
     `/api/admin/posts/${id}/deactivate`
   );
   return response.data;
