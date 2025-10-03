@@ -1,31 +1,33 @@
 import axiosInterceptor from '@/lib/axiosInterceptors';
 
-interface ArticleTable {
-  currentPage: number;
-  articleType: string;
-  searchKey?: string;
-}
 // 체험콕 아티클 데이터 목록 조회
-export const getArticleTable = async ({
-  currentPage,
-  articleType,
-}: ArticleTable) => {
-  const url =
-    articleType === 'all'
-      ? `/api/admin/posts?page=${currentPage}&size=10`
-      : `/api/admin/posts?page=${currentPage}&size=10&active=${articleType}`;
+export const getArticleTable = async (
+  currentPage: number,
+  articleType: string
+) => {
+  const params = new URLSearchParams();
+  params.append('page', `${currentPage}`);
+  if (articleType !== 'null') {
+    params.append('active', articleType);
+  }
+  const url = `/api/admin/posts?${params.toString()}`;
   const response = await axiosInterceptor.get(url);
   return response.data.data;
 };
 
 // 체험콕 아티클 검색
-export const searchArticle = async ({
-  currentPage,
-  searchKey,
-  articleType,
-}: ArticleTable) => {
-  const response = await axiosInterceptor.get(
-    `/api/admin/posts/search?title=${searchKey}&page=${currentPage}&active=${articleType}`
-  );
+export const searchArticle = async (
+  currentPage: number,
+  searchKey: string,
+  articleType: string
+) => {
+  const params = new URLSearchParams();
+  params.append('page', `${currentPage}`);
+  params.append('title', searchKey);
+  if (articleType !== 'null') {
+    params.append('active', articleType);
+  }
+  const url = `/api/admin/posts?${params.toString()}`;
+  const response = await axiosInterceptor.get(url);
   return response.data.data;
 };
