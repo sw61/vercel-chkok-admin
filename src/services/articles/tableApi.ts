@@ -27,7 +27,7 @@ export const searchArticle = async (
   if (articleType !== 'null') {
     params.append('active', articleType);
   }
-  const url = `/api/admin/posts?page=${params.toString()}`;
+  const url = `/api/admin/posts?${params.toString()}`;
   const response = await axiosInterceptor.get(url);
   return response.data.data;
 };
