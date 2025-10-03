@@ -38,19 +38,21 @@ export default function UserTablePage() {
     { id: 'createdAt', label: '생성일' },
     { id: 'updatedAt', label: '갱신일' },
   ];
-
+  // 사용자 전체 목록 조회
   const { data: userData, isPending } = useQuery({
     queryKey: ['usersTable', currentPage, column, direction],
     queryFn: () => getUserTable({ currentPage, column, direction }),
     enabled: !debouncedSearchKey,
   });
-  const { data: searchData } = useQuery({
+
+  // 사용자 검색
+  const { data: searchUserData } = useQuery({
     queryKey: ['searchUser', searchKey, currentPage],
     queryFn: () => searchUser({ searchKey, currentPage }),
     enabled: !!debouncedSearchKey,
   });
   const isSearchMode = !!searchKey;
-  const activeData = isSearchMode ? searchData : userData;
+  const activeData = isSearchMode ? searchUserData : userData;
   const activePageData = activeData?.pagination ?? {
     totalPages: 0,
     currentPage: 0,
