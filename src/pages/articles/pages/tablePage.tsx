@@ -1,4 +1,4 @@
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { type VisibilityState } from '@tanstack/react-table';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -16,22 +16,24 @@ export default function ArticleTablePage() {
   const [searchKey, setSearchKey] = useState<string>('');
   const [debouncedSearchKey] = useDebounce(searchKey, 300);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [articleType, setArticleType] = useState<string>('all');
+  const [articleType, setArticleType] = useState<string>('null');
 
   // 아티클 전체 목록 조회
   const { data: articleData } = useQuery({
     queryKey: ['articleTable', currentPage, articleType],
-    queryFn: () => getArticleTable({ currentPage, articleType }),
+    queryFn: () => getArticleTable(currentPage, articleType),
     enabled: !debouncedSearchKey,
   });
+
   // 아티클 검색
-  const { data: searchData } = useQuery({
-    queryKey: ['searchArticle', searchKey, currentPage],
-    queryFn: () => searchArticle({ currentPage, searchKey, articleType }),
+  const { data: searchArticleData } = useQuery({
+    queryKey: ['searchArticle', searchKey, currentPage, articleType],
+    queryFn: () => searchArticle(currentPage, searchKey, articleType),
     enabled: !!debouncedSearchKey,
   });
+
   const isSearchMode = !!searchKey;
-  const activeData = isSearchMode ? searchData : articleData;
+  const activeData = isSearchMode ? searchArticleData : articleData;
   const activePageData = activeData?.pagination ?? {
     totalPages: 0,
     currentPage: 0,
@@ -46,6 +48,11 @@ export default function ArticleTablePage() {
   const handleType = (type: string) => {
     setArticleType(type);
   };
+  useEffect(() => {
+    if (!isSearchMode) {
+      setCurrentPage(0);
+    }
+  }, [isSearchMode]);
 
   return (
     <div className="p-6">
@@ -61,7 +68,7 @@ export default function ArticleTablePage() {
             <Input
               placeholder="체험콕 아티클 검색"
               value={searchKey}
-              onChange={(e) => setSearchKey(e.target.value)}
+              onChange={(event) => setSearchKey(event.target.value)}
               className="pr-12"
             />
             <button className="absolute top-0 right-0 h-full w-10">
