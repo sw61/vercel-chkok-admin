@@ -32,7 +32,7 @@ export const useDeleteArticleMutation = () => {
     mutationFn: (id) => deleteArticle(id),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['articleDetail'],
+        queryKey: ['articleTable'],
       });
       navigate('/articles');
       toast.success('아티클이 삭제되었습니다.');
@@ -51,7 +51,6 @@ export const useActivateArticleMutation = () => {
       queryClient.invalidateQueries({
         queryKey: ['articleDetail'],
       });
-
       toast.success('아티클이 활성화 되었습니다.');
     },
     onError: () => {

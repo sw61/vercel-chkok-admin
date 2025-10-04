@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import useKakaoLoader from '@/hooks/useKakaoLoader';
 import { useState, useEffect } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
-
+import { ClipLoader } from 'react-spinners';
 // 인터페이스 정의
 interface Position {
   lat: number;
@@ -123,9 +123,7 @@ const KakaoSearch: React.FC<KakaoSearchProps> = ({ onSelect, onClose }) => {
     callback: (addressInfo: AddressInfo) => void
   ) => {
     if (!window.kakao || loading) return;
-
     const geocoder = new window.kakao!.maps.services.Geocoder();
-
     geocoder.coord2Address(lng, lat, (addressResult, addressStatus) => {
       let roadAddr = '';
       if (
@@ -143,11 +141,8 @@ const KakaoSearch: React.FC<KakaoSearchProps> = ({ onSelect, onClose }) => {
     if (!map || !keyword || loading || !window.kakao) {
       return;
     }
-
     setIsSearching(true);
-
     const ps: PlacesService = new window.kakao!.maps.services.Places();
-
     ps.keywordSearch(
       keyword,
       (data: Place[], status: string, _pagination: any) => {
@@ -192,38 +187,38 @@ const KakaoSearch: React.FC<KakaoSearchProps> = ({ onSelect, onClose }) => {
 
   if (loading) {
     return (
-      <div className="text-yellow-500 text-sm">
-        Kakao Maps SDK를 로드하는 중입니다...
+      <div className="flex items-center justify-center">
+        <ClipLoader />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-red-500 text-sm">
+      <div className="text-sm text-red-500">
         지도 로드 오류: {error.message}
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-4">
       <div className="flex gap-2">
         <Input
           type="text"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="검색할 장소를 입력하세요"
-          className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="ck-body-2 w-full border p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
         <Button onClick={handleSearch} disabled={loading}>
           검색
         </Button>
       </div>
 
-      {error && <div className="text-red-500 text-sm">{error}</div>}
+      {error && <div className="text-sm text-red-500">{error}</div>}
 
-      {isSearching && <div className="text-gray-500 text-sm">검색 중...</div>}
+      {isSearching && <div className="text-sm text-gray-500">검색 중...</div>}
 
       <Map
         center={{
@@ -247,13 +242,13 @@ const KakaoSearch: React.FC<KakaoSearchProps> = ({ onSelect, onClose }) => {
       </Map>
 
       {markers.length > 0 && !isSearching && (
-        <div className="max-h-52 overflow-y-auto border rounded-md p-2">
-          <div className="pb-2 border-b">검색 결과 ({markers.length}개)</div>
+        <div className="max-h-52 overflow-y-auto rounded-md border p-2">
+          <div className="border-b pb-2">검색 결과 ({markers.length}개)</div>
           <div className="flex flex-col">
             {markers.map((marker, index) => (
               <div
                 key={index}
-                className="cursor-pointer hover:text-blue-500 py-2 border-b"
+                className="cursor-pointer border-b py-2 hover:text-blue-500"
                 onClick={() => handlePlaceClick(marker)}
               >
                 <div>{marker.content}</div>

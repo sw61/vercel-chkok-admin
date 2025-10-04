@@ -40,7 +40,7 @@ export default function UserTablePage() {
   ];
   // 사용자 전체 목록 조회
   const { data: userData, isPending } = useQuery({
-    queryKey: ['usersTable', currentPage, column, direction],
+    queryKey: ['userTable', currentPage, column, direction],
     queryFn: () => getUserTable({ currentPage, column, direction }),
     enabled: !debouncedSearchKey,
   });
@@ -120,7 +120,7 @@ export default function UserTablePage() {
               onChange={(e) => setSearchKey(e.target.value)}
               className="pr-12"
             />
-            <button className="absolute top-0 right-0 h-full w-10 ">
+            <button className="absolute top-0 right-0 h-full w-10">
               <Search />
             </button>
           </div>

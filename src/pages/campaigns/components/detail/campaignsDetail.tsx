@@ -123,7 +123,7 @@ export default function CampaignsDetail() {
       navigate('/campaigns');
       toast.success('캠페인이 삭제되었습니다.');
       queryClient.invalidateQueries({
-        queryKey: ['campaignDetail', campaignId],
+        queryKey: ['campaignTable', campaignId],
       });
     },
     onError: () => {
@@ -208,22 +208,22 @@ export default function CampaignsDetail() {
         </div>
         <img
           src={campaignData.thumbnailUrl}
-          className="max-h-[400px] object-contain rounded-md"
+          className="max-h-[400px] rounded-md object-contain"
         ></img>
         {/* 상세 정보 부분 */}
         <div className="grid grid-cols-2 items-start gap-6 pt-6">
           <Card>
             <CardContent className="min-w-[450px]">
-              <div className="flex gap-2 mb-2">
+              <div className="mb-2 flex gap-2">
                 {campaignData.category.type === '방문' ? (
-                  <div className="flex px-2 py-1 rounded-md border gap-2 ck-caption-1 items-center">
+                  <div className="ck-caption-1 flex items-center gap-2 rounded-md border px-2 py-1">
                     <div>
                       <House size={16} />
                     </div>
                     <div>방문형</div>
                   </div>
                 ) : (
-                  <div className="flex px-2 py-1 rounded-md border gap-2 ck-caption-1 items-center">
+                  <div className="ck-caption-1 flex items-center gap-2 rounded-md border px-2 py-1">
                     <div>
                       <Package size={16} />
                     </div>
@@ -330,7 +330,7 @@ export default function CampaignsDetail() {
                       <div className="flex flex-col gap-2">
                         <div>
                           <p className="ck-body-2-bold">회사 정보</p>
-                          <div className="ck-body-2 text-ck-gray-700 ">
+                          <div className="ck-body-2 text-ck-gray-700">
                             <span>
                               {campaignData.company.companyName} |&nbsp;
                               {campaignData.company.contactPerson} |&nbsp;

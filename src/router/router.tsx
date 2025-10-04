@@ -29,7 +29,6 @@ const BannersCreatePage = lazy(
 const Dashboard = lazy(
   () => import('@/pages/dashboard/components/serverDashBoard')
 );
-
 const NoticePage = lazy(
   () => import('@/pages/notices/components/table/noticePage')
 );
@@ -42,6 +41,9 @@ const NoticeCreate = lazy(
 const ArticlePage = lazy(() => import('@/pages/articles/pages/tablePage'));
 const ArticleDetail = lazy(() => import('@/pages/articles/pages/detailPage'));
 const ArticleCreate = lazy(() => import('@/pages/articles/pages/createPage'));
+const TestServerDashBoard = lazy(
+  () => import('@/pages/dashboard/components/testServer')
+);
 
 // Route configuration
 export const privateRoutes = [
@@ -62,4 +64,5 @@ export const privateRoutes = [
   { path: '/articles', element: <ArticlePage /> },
   { path: '/articles/:articleId', element: <ArticleDetail /> },
   { path: '/articles/create', element: <ArticleCreate /> },
+  { path: '/test', element: <TestServerDashBoard /> },
 ];

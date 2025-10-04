@@ -23,20 +23,20 @@ interface Status {
 }
 
 export function UserPieChartActive() {
-  const { data: usersStatus } = useSuspenseQuery<Status>({
-    queryKey: ['usersChart'],
+  const { data: usersStatusData } = useSuspenseQuery<Status>({
+    queryKey: ['usersStatus'],
     queryFn: getUsersStatus,
   });
 
   const chartData = [
     {
       status: 'active',
-      visitors: usersStatus?.activeUsers,
+      visitors: usersStatusData?.activeUsers,
       fill: '#2388FF',
     },
     {
       status: 'inactive',
-      visitors: usersStatus?.inactiveUsers,
+      visitors: usersStatusData?.inactiveUsers,
       fill: '#FB2C36',
     },
   ];

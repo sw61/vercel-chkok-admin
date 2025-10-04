@@ -1,39 +1,31 @@
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
-import { useEffect, useState, useRef, Suspense } from 'react';
+import { useState, useRef, Suspense, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import MarkdownDetailSkeleton from '@/pages/articles/components/detail/markdownDetailSkeleton';
 import { ChevronLeft } from 'lucide-react';
 import { Editor } from '@toast-ui/react-editor';
 import TurndownService from 'turndown';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { getPostDetail } from '@/services/articles/detailApi';
+import { getArticleDetail } from '@/services/articles/detailApi';
 import ArticleContent from '../components/detail/detailContent';
 import SearchMapModal from '../components/searchMapModal';
 import DetailForm from '../components/detail/detailForm';
 import TuiEditor from '@/components/markdown/editor/toastUiEditor';
 import { useAddImage } from '@/hooks/useAddImage';
+import { toast } from 'react-toastify';
+import { useEditArticleMutation } from '@/services/articles/detailMutation';
+import { CustomBadge } from '@/hooks/useBadge';
 
 export default function ArticleDetailPage() {
-  const editorRef = useRef<Editor | null>(null);
   const { articleId } = useParams<{ articleId: string }>();
+  const editorRef = useRef<Editor | null>(null);
+
   const { imageHandler } = useAddImage();
   const [showMapModal, setShowMapModal] = useState<boolean>(false);
-  const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-    campaignId: '',
-    contactPhone: '',
-    homepage: '',
-    businessAddress: '',
-    businessDetailAddress: '',
-    lat: undefined as number | undefined,
-    lng: undefined as number | undefined,
-  });
-
   // 체험콕 아티클 상세 정보 조회
   const { data: articleData } = useSuspenseQuery({
     queryKey: ['articleDetail', articleId],
-    queryFn: () => getPostDetail(articleId!),
+    queryFn: () => getArticleDetail(articleId!),
   });
   const turndownService = new TurndownService({
     headingStyle: 'atx',
@@ -48,31 +40,57 @@ export default function ArticleDetailPage() {
       return '<br>';
     },
   });
+  // 초기 폼 데이터 설정
+  const [formData, setFormData] = useState({
+    title: articleData.title,
+    content: turndownService.turndown(articleData.content),
+    campaignId: articleData.campaignId,
+    contactPhone: articleData.visitInfo?.contactPhone || '',
+    homepage: articleData.visitInfo?.homepage || '',
+    businessAddress: articleData.visitInfo?.businessAddress || '',
+    businessDetailAddress: articleData.visitInfo?.businessDetailAddress || '',
+    lat: articleData.visitInfo?.lat ?? undefined,
+    lng: articleData.visitInfo?.lng ?? undefined,
+  });
 
-  useEffect(() => {
-    if (articleData) {
-      const serverMarkdownContent = turndownService.turndown(
-        articleData.content
-      );
-      setFormData({
-        title: articleData.title,
-        content: serverMarkdownContent,
-        campaignId: articleData.campaignId,
-        contactPhone: articleData.visitInfo?.contactPhone || '',
-        homepage: articleData.visitInfo?.homepage || '',
-        businessAddress: articleData.visitInfo?.businessAddress || '',
-        businessDetailAddress:
-          articleData.visitInfo?.businessDetailAddress || '',
-        lat: articleData.visitInfo?.lat ?? undefined,
-        lng: articleData.visitInfo?.lng ?? undefined,
-      });
+  const { mutate: editMutation } = useEditArticleMutation();
+
+  // 아티클 수정 핸들러
+  const handleEdit = () => {
+    if (!editorRef.current) {
+      return;
     }
-  }, [articleData]);
-  useEffect(() => {
-    if (editorRef.current && formData.content) {
-      editorRef.current.getInstance().setMarkdown(formData.content);
+    // 서버에 보낼 마크다운 내용
+    const markdownContent = editorRef.current.getInstance().getMarkdown() || '';
+
+    if (!formData.title) {
+      toast.error('제목을 입력해주세요.');
+      return;
     }
-  }, [formData.content]);
+    if (!markdownContent) {
+      toast.error('내용을 입력해주세요.');
+      return;
+    }
+    if (!formData.contactPhone.trim()) {
+      toast.error('연락처를 입력해주세요.');
+      return;
+    }
+    const id = articleData.id;
+    const payload = {
+      title: formData.title,
+      content: markdownContent,
+      visitInfo: {
+        contactPhone: formData.contactPhone || null,
+        homepage: formData.homepage || null,
+        businessAddress: formData.businessAddress || null,
+        businessDetailAddress: formData.businessDetailAddress || null,
+        lat: formData.lat ?? null,
+        lng: formData.lng ?? null,
+      },
+    };
+
+    editMutation({ id, payload });
+  };
 
   // 폼 필드 변경 핸들러
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,6 +132,9 @@ export default function ArticleDetailPage() {
   const handleCloseModal = () => {
     setShowMapModal(false);
   };
+  useEffect(() => {
+    console.log(articleData);
+  }, [articleData]);
 
   return (
     <div className="min-w-[800px] px-6">
@@ -125,11 +146,17 @@ export default function ArticleDetailPage() {
       </div>
       <Card className="w-full px-6 py-4">
         <div className="flex items-center justify-between px-6">
-          <CardTitle className="ck-title">체험콕 아티클</CardTitle>
+          <CardTitle className="flex gap-4">
+            <div className="ck-title">체험콕 아티클</div>
+            <div>
+              <CustomBadge variant={articleData.active} />
+            </div>
+          </CardTitle>
           <DetailForm
             articleId={articleId!}
             articleData={articleData}
             formData={formData}
+            handleEdit={handleEdit}
             handleChange={handleChange}
             handleOpenModal={handleOpenModal}
             handleChangeCampaignId={handleChangeCampaignId}

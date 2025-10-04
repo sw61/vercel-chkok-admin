@@ -15,20 +15,22 @@ interface CampaignIdList {
   title: string;
 }
 export function CampaignIdSelect({
-  value,
+  value = '',
+  articleId,
   handleChangeCampaignId,
 }: {
-  value: string;
+  value?: string;
+  articleId?: string;
   handleChangeCampaignId: (value: string) => void;
 }) {
   const { data: campaignIdList } = useQuery<CampaignIdList[]>({
-    queryKey: ['campaignIdList'],
+    queryKey: ['campaignIdList', articleId],
     queryFn: getCampaignList,
   });
 
   return (
     <Select value={value} onValueChange={handleChangeCampaignId}>
-      <SelectTrigger className="w-[305.34px] ">
+      <SelectTrigger className="w-full">
         <SelectValue placeholder="캠페인을 선택하세요." />
       </SelectTrigger>
       <SelectContent>

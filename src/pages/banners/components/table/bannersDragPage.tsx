@@ -37,14 +37,14 @@ export default function BannersDragPage() {
 
   // 배너 목록 조회
   const { data: bannerData } = useSuspenseQuery<BannerData[]>({
-    queryKey: ['bannersData'],
+    queryKey: ['bannersTable'],
     queryFn: getBannersTable,
   });
 
   const { mutate: updateMutation } = useMutation({
     mutationFn: updateBannerOrder,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bannersData'] });
+      queryClient.invalidateQueries({ queryKey: ['bannersTable'] });
       toast.success('배너 순서 변경이 완료되었습니다.');
     },
     onError: () => {
@@ -84,7 +84,7 @@ export default function BannersDragPage() {
   };
 
   return (
-    <div className="grid-row grid gap-10 p-6 min-w-[800px]">
+    <div className="grid-row grid min-w-[800px] gap-10 p-6">
       {/* 배너 상세 정보 */}
       <Card>
         <CardHeader>

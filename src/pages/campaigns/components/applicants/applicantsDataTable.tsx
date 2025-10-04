@@ -62,13 +62,13 @@ export default function ApplicantsDataTable() {
   return (
     <Suspense fallback={<ApplicantsDataTable />}>
       {applicantsData?.length === 0 ? (
-        <div className="mt-4 text-ck-gray-600 ck-body-2 flex h-40 items-center justify-center rounded-md border">
+        <div className="text-ck-gray-600 ck-body-2 mt-4 flex h-40 items-center justify-center rounded-md border">
           캠페인 신청 인원이 없습니다.
         </div>
       ) : (
         <>
-          <div className="flex items-center justify-between mt-6">
-            <div className="ck-sub-title-1 ">캠페인 신청 인원 목록</div>
+          <div className="mt-6 flex items-center justify-between">
+            <div className="ck-sub-title-1">캠페인 신청 인원 목록</div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline">
