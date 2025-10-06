@@ -1,28 +1,32 @@
 import axiosInterceptor from '@/lib/axiosInterceptors';
 
-interface CampaignTable {
-  currentPage: number;
-  campaignType?: string;
-  searchKey?: string;
-}
-export const getCampaignTable = async ({
-  currentPage,
-  campaignType,
-}: CampaignTable) => {
-  const url =
-    campaignType === 'ALL'
-      ? `/campaigns?page=${currentPage}&size=10`
-      : `/campaigns?approvalStatus=${campaignType}&page=${currentPage}&size=10`;
+export const getCampaignTable = async (
+  currentPage: number,
+  campaignType: string
+) => {
+  const params = new URLSearchParams();
+  params.append('page', `${currentPage}`);
+  if (campaignType !== 'ALL') {
+    params.append('approvalStatus', campaignType);
+  }
+  const url = `/campaigns?${params.toString()}`;
   const response = await axiosInterceptor.get(url);
   return response.data.data;
 };
 
-export const searchCampaign = async ({
-  searchKey,
-  currentPage,
-}: CampaignTable) => {
+export const searchCampaign = async (
+  searchKey: string,
+  currentPage: number,
+  campaignType: string
+) => {
+  const params = new URLSearchParams();
+  params.append('page', `${currentPage}`);
+  params.append('keyword', searchKey);
+  if (campaignType === 'ALL') {
+    params.append('approvalStatus', campaignType);
+  }
   const response = await axiosInterceptor.get(
-    `/campaigns/search?keyword=${searchKey}&page=${currentPage}&size=10`
+    `/campaigns/search?${params.toString()}`
   );
   return response.data.data;
 };
