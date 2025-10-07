@@ -78,7 +78,7 @@ export default function BannersDragPage() {
       if (activeIndex !== -1 && overIndex !== -1) {
         const updatedBanners = arrayMove(bannerData, activeIndex, overIndex);
 
-        updateMutation(updatedBanners); // 서버에 PATCH 요청
+        updateMutation(updatedBanners);
       }
     }
   };

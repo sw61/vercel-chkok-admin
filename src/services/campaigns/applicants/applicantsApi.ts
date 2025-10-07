@@ -12,7 +12,7 @@ export const getApplicants = async ({
 }: Applicants) => {
   const params = new URLSearchParams();
   params.append('page', `${currentPage}`);
-  if (status === '전체') {
+  if (status !== '전체') {
     params.append('status', status);
   }
   const url = `/campaigns/${campaignId}/applicants?${params.toString()}`;

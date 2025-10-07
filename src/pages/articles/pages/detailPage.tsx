@@ -5,7 +5,7 @@ import MarkdownDetailSkeleton from '@/pages/articles/components/detail/markdownD
 import { ChevronLeft } from 'lucide-react';
 import { Editor } from '@toast-ui/react-editor';
 import TurndownService from 'turndown';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { focusManager, useSuspenseQuery } from '@tanstack/react-query';
 import { getArticleDetail } from '@/services/articles/detailApi';
 import ArticleContent from '../components/detail/detailContent';
 import SearchMapModal from '../components/searchMapModal';
@@ -79,6 +79,7 @@ export default function ArticleDetailPage() {
     const payload = {
       title: formData.title,
       content: markdownContent,
+      campaignId: formData.campaignId,
       visitInfo: {
         contactPhone: formData.contactPhone || null,
         homepage: formData.homepage || null,

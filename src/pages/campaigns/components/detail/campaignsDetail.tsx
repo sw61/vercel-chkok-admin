@@ -117,6 +117,7 @@ export default function CampaignsDetail() {
     queryKey: ['campaignDetail', campaignId],
     queryFn: () => getCampaignDetail(campaignId!),
   });
+
   const { mutate: deleteMutation } = useMutation({
     mutationFn: () => deleteCampaigns(campaignData.id),
     onSuccess: () => {
