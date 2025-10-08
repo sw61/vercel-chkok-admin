@@ -81,9 +81,8 @@ export default function BannersCreatePage() {
     try {
       const urlResponse = await urlUpload(imageFile);
       setPresignedUrl(urlResponse);
-      toast.success('파일이 업로드 되었습니다.');
     } catch (error) {
-      toast.error('파일 업로드에 실패했습니다.');
+      console.log(error);
     } finally {
       setIsUploading(false);
     }
@@ -102,10 +101,10 @@ export default function BannersCreatePage() {
         position: '',
       });
       navigate('/banners');
-      toast.success('배너 이미지가 생성되었습니다.');
+      toast.success('배너가 생성되었습니다.');
     },
     onError: () => {
-      toast.error('배너 이미지 생성에 실패했습니다.');
+      toast.error('배너 생성에 실패했습니다.');
     },
   });
   return (

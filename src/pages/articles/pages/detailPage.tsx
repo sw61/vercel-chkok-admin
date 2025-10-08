@@ -133,9 +133,6 @@ export default function ArticleDetailPage() {
   const handleCloseModal = () => {
     setShowMapModal(false);
   };
-  useEffect(() => {
-    console.log(articleData);
-  }, [articleData]);
 
   return (
     <div className="min-w-[800px] px-6">
