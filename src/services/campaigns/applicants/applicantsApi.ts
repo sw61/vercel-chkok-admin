@@ -10,10 +10,12 @@ export const getApplicants = async ({
   status,
   currentPage,
 }: Applicants) => {
-  const url =
-    status === '전체'
-      ? `/campaigns/${campaignId}/applicants?page=${currentPage}`
-      : `/campaigns/${campaignId}/applicants?page=${currentPage}&status=${status}`;
+  const params = new URLSearchParams();
+  params.append('page', `${currentPage}`);
+  if (status !== '전체') {
+    params.append('status', status);
+  }
+  const url = `/campaigns/${campaignId}/applicants?${params.toString()}`;
   const response = await axiosInterceptor.get(url);
   return response.data.data;
 };

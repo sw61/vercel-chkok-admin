@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import {
   activateArticle,
   deactivateArticle,
@@ -8,6 +7,7 @@ import {
   editArticle,
 } from './detailApi';
 import { type EditParams, type EditResponse } from './type/articleType';
+import { toast } from 'sonner';
 
 export const useEditArticleMutation = () => {
   const queryClient = useQueryClient();
@@ -32,7 +32,7 @@ export const useDeleteArticleMutation = () => {
     mutationFn: (id) => deleteArticle(id),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['articleDetail'],
+        queryKey: ['articleTable'],
       });
       navigate('/articles');
       toast.success('아티클이 삭제되었습니다.');
@@ -51,7 +51,6 @@ export const useActivateArticleMutation = () => {
       queryClient.invalidateQueries({
         queryKey: ['articleDetail'],
       });
-
       toast.success('아티클이 활성화 되었습니다.');
     },
     onError: () => {

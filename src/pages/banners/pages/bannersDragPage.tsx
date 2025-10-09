@@ -1,57 +1,24 @@
 import { Suspense } from 'react';
-import Item from './bannersDragItem';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, arrayMove } from '@dnd-kit/sortable';
 import { useSensors, useSensor, MouseSensor, TouchSensor } from '@dnd-kit/core';
-import { toast } from 'react-toastify';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import BannerPageSkeleton from '@/pages/banners/components/table/bannersPageSkeleton';
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from '@tanstack/react-query';
-import {
-  getBannersTable,
-  updateBannerOrder,
-} from '@/services/banners/dragPage/dragTableApi';
-import { useNavigate } from 'react-router-dom';
-
-interface BannerData {
-  id: number;
-  title: string;
-  bannerUrl: string;
-  redirectUrl: string;
-  description: string;
-  position: string;
-  createdAt: string;
-  updatedAt: string;
-  displayOrder: number;
-}
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { getBannersTable } from '@/services/banners/dragPage/dragTableApi';
+import { useUpdateBannerMutation } from '@/services/banners/dragPage/dragMutation';
+import BannerDragItem from '../components/table/bannersDragItem';
+import { BannerCreateSheet } from '../components/create/bannerCreateSheet';
 
 export default function BannersDragPage() {
-  const navigate = useNavigate();
-
-  const queryClient = useQueryClient();
-
   // 배너 목록 조회
-  const { data: bannerData } = useSuspenseQuery<BannerData[]>({
-    queryKey: ['bannersData'],
+  const { data: bannerData } = useSuspenseQuery({
+    queryKey: ['bannersTable'],
     queryFn: getBannersTable,
   });
+  const { mutate: updateMutation } = useUpdateBannerMutation();
 
-  const { mutate: updateMutation } = useMutation({
-    mutationFn: updateBannerOrder,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bannersData'] });
-      toast.success('배너 순서 변경이 완료되었습니다.');
-    },
-    onError: () => {
-      toast.error('배너 순서 변경을 실패했습니다.');
-    },
-  });
-
+  // 드래그 센서 핸들러
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: {
@@ -76,28 +43,25 @@ export default function BannersDragPage() {
         (item) => item.id === Number(over.id)
       );
       if (activeIndex !== -1 && overIndex !== -1) {
-        const updatedBanners = arrayMove(bannerData, activeIndex, overIndex);
+        const updatedBanners = arrayMove(
+          bannerData,
+          activeIndex,
+          overIndex
+        ).map((item, index) => ({ ...item, displayOrder: index + 1 }));
 
-        updateMutation(updatedBanners); // 서버에 PATCH 요청
+        updateMutation(updatedBanners);
       }
     }
   };
 
   return (
-    <div className="grid-row grid gap-10 p-6 min-w-[800px]">
-      {/* 배너 상세 정보 */}
+    <div className="grid-row grid min-w-[800px] gap-10 p-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex justify-between">
             <div className="ck-title flex items-center">배너 목록</div>
             <div className="flex gap-4">
-              <Button
-                onClick={() => navigate('/banners/create')}
-                className="ck-body-1 cursor-pointer"
-                variant="outline"
-              >
-                배너 추가
-              </Button>
+              <BannerCreateSheet bannerData={bannerData} />
             </div>
           </CardTitle>
         </CardHeader>
@@ -110,8 +74,12 @@ export default function BannersDragPage() {
                 <SortableContext
                   items={bannerData.map((item) => item.id.toString())}
                 >
-                  {bannerData.map((banner) => (
-                    <Item key={banner.id} banner={banner} />
+                  {bannerData.map((bannerData, index) => (
+                    <BannerDragItem
+                      key={bannerData.id}
+                      bannerData={bannerData}
+                      index={index}
+                    />
                   ))}
                 </SortableContext>
               </DndContext>

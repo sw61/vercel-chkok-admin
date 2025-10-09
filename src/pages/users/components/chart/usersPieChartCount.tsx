@@ -22,20 +22,20 @@ interface Status {
 }
 
 export function UserPieChartCount() {
-  const { data: usersStatus } = useSuspenseQuery<Status>({
-    queryKey: ['usersChart'],
+  const { data: usersStatusData } = useSuspenseQuery<Status>({
+    queryKey: ['usersStatus'],
     queryFn: getUsersStatus,
   });
 
   const chartData = [
     {
       status: 'userCount',
-      visitors: usersStatus?.userCount,
+      visitors: usersStatusData?.userCount,
       fill: '#2388FF',
     },
     {
       status: 'client',
-      visitors: usersStatus?.clientCount,
+      visitors: usersStatusData?.clientCount,
       fill: 'oklch(79.5% 0.184 86.047)',
     },
   ];

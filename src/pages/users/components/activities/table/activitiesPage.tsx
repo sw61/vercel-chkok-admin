@@ -1,5 +1,5 @@
 import axiosInterceptor from '@/lib/axiosInterceptors';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { UsersActivitiesTable } from '../table/usersActivities';
 import { ClientsActivitiesTable } from '../table/clientsActivities';
@@ -66,7 +66,7 @@ export default function ActivitiesPage() {
     { status: 'EXPIRED', label: '만료' },
   ];
   const { data: activitiesData } = useQuery({
-    queryKey: ['activities', userId, status, currentPage],
+    queryKey: ['activitiesTable', userId, status, currentPage],
     queryFn: async () => {
       const url =
         status === 'ALL'
@@ -95,8 +95,8 @@ export default function ActivitiesPage() {
     <div className="flex flex-col">
       {activitiesData.userRole === 'USER' ? (
         <>
-          <div className="mb-4 flex justify-between items-center">
-            <div className="ck-sub-title-1 ">사용자 캠페인 활동 내역</div>
+          <div className="mb-4 flex items-center justify-between">
+            <div className="ck-sub-title-1">사용자 캠페인 활동 내역</div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline">
@@ -125,7 +125,7 @@ export default function ActivitiesPage() {
         </>
       ) : (
         <>
-          <div className="mb-4 flex justify-between items-center">
+          <div className="mb-4 flex items-center justify-between">
             <div className="ck-sub-title-1">클라이언트 캠페인 활동 내역</div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

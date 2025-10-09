@@ -22,30 +22,30 @@ interface Status {
 }
 
 export function CamapaignsPieChart() {
-  const { data: campaignStatus } = useSuspenseQuery<Status>({
-    queryKey: ['campaignsStatus'],
+  const { data: campaignStatusData } = useSuspenseQuery<Status>({
+    queryKey: ['campaignStatus'],
     queryFn: getCampaignStatus,
   });
 
   const chartData = [
     {
       status: 'approved',
-      visitors: campaignStatus?.approvedCampaigns,
+      visitors: campaignStatusData?.approvedCampaigns,
       fill: '#2388FF',
     },
     {
       status: 'rejected',
-      visitors: campaignStatus?.rejectedCampaigns,
+      visitors: campaignStatusData?.rejectedCampaigns,
       fill: '#FB2C36',
     },
     {
       status: 'pending',
-      visitors: campaignStatus?.pendingCampaigns,
+      visitors: campaignStatusData?.pendingCampaigns,
       fill: '#FBC02D',
     },
     {
       status: 'expired',
-      visitors: campaignStatus?.expiredCampaigns,
+      visitors: campaignStatusData?.expiredCampaigns,
       fill: '#FFA2A2',
     },
   ];

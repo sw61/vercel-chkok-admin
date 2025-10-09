@@ -19,10 +19,9 @@ export default function DetailContent({
   handleChange,
 }: ContentProps) {
   const navigate = useNavigate();
-
   return (
     <>
-      <CardContent className="ck-body-2 flex justify-between gap-6 items-center">
+      <CardContent className="ck-body-2 flex items-center justify-between gap-6">
         <div className="flex gap-4">
           <p>작성자 : {articleData?.authorName}</p>
           <p>생성일 : {articleData?.createdAt.split('T')[0]}</p>

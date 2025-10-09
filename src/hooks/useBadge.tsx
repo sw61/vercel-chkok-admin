@@ -11,7 +11,9 @@ type ServerPlatform =
   | '관리자'
   | '승인됨'
   | '대기중'
-  | '거절됨';
+  | '거절됨'
+  | 'true'
+  | 'false';
 
 // Badge variant 타입 (shadcn 기본)
 type BadgeVariant =
@@ -24,7 +26,9 @@ type BadgeVariant =
   | '관리자'
   | '승인됨'
   | '대기중'
-  | '거절됨';
+  | '거절됨'
+  | '활성화'
+  | '비활성화';
 
 // 매핑 객체
 const variantMap: Record<ServerPlatform, BadgeVariant> = {
@@ -38,6 +42,8 @@ const variantMap: Record<ServerPlatform, BadgeVariant> = {
   승인됨: '승인됨',
   대기중: '대기중',
   거절됨: '거절됨',
+  true: '활성화',
+  false: '비활성화',
 };
 
 interface Props {
@@ -45,5 +51,5 @@ interface Props {
 }
 
 export function CustomBadge({ variant }: Props) {
-  return <Badge variant={variantMap[variant]}>{variant}</Badge>;
+  return <Badge variant={variantMap[variant]}>{variantMap[variant]}</Badge>;
 }

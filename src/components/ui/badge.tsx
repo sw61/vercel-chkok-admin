@@ -30,6 +30,8 @@ const badgeVariants = cva(
         대기중: 'bg-yellow-500 text-white',
         거절됨: 'bg-ck-red-500 text-white',
         type: 'bg-white text-ck-gray-900 border',
+        활성화: 'bg-ck-blue-500 text-white',
+        비활성화: 'bg-ck-red-500 text-white',
       },
     },
     defaultVariants: {

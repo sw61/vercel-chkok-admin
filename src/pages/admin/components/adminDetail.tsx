@@ -23,7 +23,7 @@ interface AdminAccountInfo {
 
 export default function AdminDetail() {
   const { data: adminData, error } = useSuspenseQuery<AdminData>({
-    queryKey: ['admin'],
+    queryKey: ['adminDetail'],
     queryFn: getAdminData,
   });
 

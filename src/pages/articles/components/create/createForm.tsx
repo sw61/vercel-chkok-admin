@@ -2,14 +2,20 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { useNavigate } from 'react-router-dom';
 import type { FormData } from '@/services/articles/type/articleType';
 import { CampaignIdSelect } from '../campaignIdSelect';
+import { useAlertDialog } from '@/components/alertDialog/useAlertDialog';
 
 interface FormProps {
   formData: FormData;
@@ -28,110 +34,120 @@ export default function CreateForm({
   handleCreate,
 }: FormProps) {
   const navigate = useNavigate();
+  const { AlertDialogComponent: CreateAlertDialog } = useAlertDialog({
+    trigger: <Button variant="outline">생성</Button>,
+    title: '아티클을 생성하시겠습니까?',
+    description: '',
+    onAlert: handleCreate,
+  });
 
   return (
     <div className="w-full" data-color-mode="light">
       <div className="mb-4">
-        <div className="mb-2 flex justify-between items-center mb-4">
+        <div className="mb-2 mb-4 flex items-center justify-between">
           <div className="ck-body-2 flex flex-col justify-end">제목</div>
           <div className="flex gap-4">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline">필드 입력</Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[500px]">
-                <div className="grid gap-4">
-                  <div className="space-y-2">
-                    <h4 className="leading-none font-medium">필드 입력</h4>
-                    <p className="text-muted-foreground text-sm">
-                      아티클 생성을 위해 필드를 입력해주세요
-                    </p>
-                  </div>
-                  <div className="grid gap-2">
-                    <div className="grid grid-cols-3 items-center gap-4">
-                      <Label>아티클 활성화</Label>
+            <Button variant="outline" onClick={() => navigate('/articles')}>
+              취소
+            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline">생성</Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle className="leading-none font-medium">
+                    필드 입력
+                  </DialogTitle>
+                  <DialogDescription className="text-muted-foreground text-sm">
+                    아티클 생성을 위해 필드를 입력해주세요
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-2">
+                  <div className="grid grid-cols-3 items-center gap-4">
+                    <Label>아티클 활성화</Label>
+                    <div className="col-span-2 flex h-[32px] items-center">
                       <Switch
                         checked={formData.active}
                         onCheckedChange={handleActiveChange}
                       />
                     </div>
-                    <div className="grid grid-cols-3 items-center gap-4 w-full">
-                      <Label htmlFor="campaignId">캠페인 ID</Label>
+                  </div>
+                  <div className="grid grid-cols-3 items-center gap-4">
+                    <Label htmlFor="contactPhone">
+                      연락처 <span className="text-ck-red-500">*</span> 필수
+                    </Label>
+                    <div className="col-span-2">
+                      <Input
+                        id="contactPhone"
+                        className="w-full"
+                        type="number"
+                        placeholder="01012345678"
+                        value={formData.contactPhone}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid w-full grid-cols-3 items-center gap-4">
+                    <Label htmlFor="campaignId">캠페인 연결</Label>
+                    <div className="col-span-2">
                       <CampaignIdSelect
                         value={formData.campaignId!}
                         handleChangeCampaignId={handleChangeCampaignId}
                       />
                     </div>
-                    <div className="grid grid-cols-3 items-center gap-4">
-                      <Label htmlFor="contactPhone">
-                        연락처 <span className="text-ck-red-500">*</span> 필수
-                      </Label>
-                      <div className="col-span-2">
-                        <Input
-                          id="contactPhone"
-                          className="w-full"
-                          type="number"
-                          placeholder="01012345678"
-                          value={formData.contactPhone}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 items-center gap-4">
-                      <Label htmlFor="homepage">홈페이지 주소</Label>
+                  </div>
+
+                  <div className="grid grid-cols-3 items-center gap-4">
+                    <Label htmlFor="homepage">홈페이지 주소</Label>
+                    <Input
+                      id="homepage"
+                      className="col-span-2"
+                      placeholder="https://chkok.kr"
+                      value={formData.homepage}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 items-center gap-4">
+                    <Label htmlFor="businessAddress">위치 정보</Label>
+                    <div className="col-span-2 flex gap-2">
                       <Input
-                        id="homepage"
-                        className="col-span-2"
-                        placeholder="https://chkok.kr"
-                        value={formData.homepage}
+                        id="businessAddress"
+                        className="w-full"
+                        placeholder="위치 정보 입력"
+                        value={formData.businessAddress}
                         onChange={handleChange}
                       />
-                    </div>
-                    <div className="grid grid-cols-3 items-center gap-4">
-                      <Label htmlFor="businessAddress">위치 정보</Label>
-                      <div className="col-span-2 flex gap-2">
-                        <Input
-                          id="businessAddress"
-                          className="w-full"
-                          placeholder="위치 정보 입력"
-                          value={formData.businessAddress}
-                          onChange={handleChange}
-                        />
-                        <Button
-                          variant="outline"
-                          className="h-9"
-                          onClick={handleOpenModal}
-                        >
-                          위치 검색
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 items-center gap-4">
-                      <Label htmlFor="businessDetailAddress">
-                        위치 정보 상세
-                      </Label>
-                      <Input
-                        id="businessDetailAddress"
-                        className="col-span-2"
-                        placeholder="위치 정보 상세 입력"
-                        value={formData.businessDetailAddress}
-                        onChange={handleChange}
-                      />
+                      <Button
+                        variant="outline"
+                        className="h-9"
+                        onClick={handleOpenModal}
+                      >
+                        위치 검색
+                      </Button>
                     </div>
                   </div>
+                  <div className="grid grid-cols-3 items-center gap-4">
+                    <Label htmlFor="businessDetailAddress">
+                      위치 정보 상세
+                    </Label>
+                    <Input
+                      id="businessDetailAddress"
+                      className="col-span-2"
+                      placeholder="위치 정보 상세 입력"
+                      value={formData.businessDetailAddress}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
-              </PopoverContent>
-            </Popover>
-            <Button variant="outline" onClick={() => navigate('/articles')}>
-              취소
-            </Button>
-            <Button
-              onClick={handleCreate}
-              className="px-4 py-2"
-              variant="outline"
-            >
-              생성
-            </Button>
+                <DialogFooter>
+                  <DialogClose>
+                    <Button variant="outline">취소</Button>
+                  </DialogClose>
+                  <CreateAlertDialog />
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
         <Input

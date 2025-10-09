@@ -39,7 +39,7 @@ export default function CompanyTablePage() {
   // 데이터 패칭
   const { data: companyData } = useSuspenseQuery<Company>({
     queryKey: ['companyTable', currentPage],
-    queryFn: () => getCompanyTable({ currentPage }),
+    queryFn: () => getCompanyTable(currentPage),
   });
 
   // 페이지네이션
