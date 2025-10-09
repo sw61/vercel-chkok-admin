@@ -1,3 +1,4 @@
+import { useAlertDialog } from '@/components/alertDialog/useAlertDialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,19 +14,33 @@ import {
 } from '@/components/ui/sheet';
 import { Spinner } from '@/components/ui/spinner';
 import { useUrlUploadMutation } from '@/hooks/useImageUrlUpload';
-import { useCreateBannerMutation } from '@/services/banners/create/createApi';
-import type { BannerData } from '@/services/banners/dragPage/dragType';
+import { getBannersDetail } from '@/services/banners/detail/detailApi';
+import { useEditBannerMutation } from '@/services/banners/detail/detailMutation';
+import { useQuery } from '@tanstack/react-query';
 import { FolderInput } from 'lucide-react';
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
-interface BannerCreateProps {
-  bannerData: BannerData[];
-}
-export function BannerCreateSheet({ bannerData }: BannerCreateProps) {
-  // 배너 생성 mutation
-  const { mutate: createMutation, isPending: isCreating } =
-    useCreateBannerMutation();
+export function BannerDetailEditSheet() {
+  const { bannerId } = useParams<{ bannerId: string }>();
+  // 배너 상세 정보 조회
+  const { data: bannerData } = useQuery({
+    queryKey: ['bannerDetail', bannerId],
+    queryFn: () => getBannersDetail(bannerId!),
+  });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [editBannerData, setEditBannerData] = useState({
+    title: bannerData.title,
+    bannerUrl: bannerData.bannerUrl,
+    redirectUrl: bannerData.redirectUrl,
+    description: bannerData.description,
+    position: bannerData.position,
+    displayOrder: bannerData.displayOrder,
+  });
+  // 배너 수정 Mutation
+  const { mutate: editMutation } = useEditBannerMutation();
   // S3 Url Upload Mutation
   const {
     mutate: urlUploadMutation,
@@ -34,33 +49,14 @@ export function BannerCreateSheet({ bannerData }: BannerCreateProps) {
     reset: resetUrlUpload,
   } = useUrlUploadMutation();
 
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [createBannerData, setCreateBannerData] = useState({
-    redirectUrl: '',
-    title: '',
-    description: '',
-    position: '',
-  });
-  const isFormValid = () =>
-    createBannerData.title &&
-    createBannerData.description &&
-    createBannerData.redirectUrl &&
-    createBannerData.position &&
-    presignedUrl;
-
-  // 배너 생성 핸들러
-  const handleCreateBanner = () => {
-    createMutation({
-      ...createBannerData,
-      bannerUrl: presignedUrl,
-      displayOrder: bannerData.length + 1,
-    });
-  };
-  // 폼 입력 핸들러
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setCreateBannerData((prev) => ({ ...prev, [name]: value }));
+  // 배너 수정 핸들러
+  const handleBannerEdit = () => {
+    const id = bannerId!;
+    const payload = {
+      ...editBannerData,
+      bannerUrl: presignedUrl || bannerData.bannerUrl,
+    };
+    editMutation({ id, payload });
   };
 
   // 파일 입력 핸들러
@@ -77,36 +73,43 @@ export function BannerCreateSheet({ bannerData }: BannerCreateProps) {
     }
   };
 
+  // 폼 입력 핸들러
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setEditBannerData((prev) => ({ ...prev, [name]: value }));
+  };
+
   // Sheet 닫을 때 초기화
   const handleSheetClose = (open: boolean) => {
     setIsOpen(open);
     if (!open) {
       setImageFile(null);
-      setCreateBannerData({
-        redirectUrl: '',
-        title: '',
-        description: '',
-        position: '',
-      });
       resetUrlUpload();
     }
   };
 
+  // 수정 Alert Dialog
+  const { AlertDialogComponent: EditAlertDialog } = useAlertDialog({
+    trigger: <Button type="submit">변경 사항 저장</Button>,
+    title: '변경 사항을 저장하시겠습니까?',
+    description: '',
+    onAlert: handleBannerEdit,
+  });
+
   return (
     <Sheet open={isOpen} onOpenChange={handleSheetClose}>
       <SheetTrigger asChild>
-        <Button variant="outline">배너 추가</Button>
+        <Button variant="outline">수정</Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle className="ck-title">배너 추가</SheetTitle>
-          <SheetDescription className="ck-body-2">
-            배너를 추가하기 위해 아래 목록에 기입해주세요.
+          <SheetTitle>배너 수정</SheetTitle>
+          <SheetDescription>
+            수정하고 싶은 부분을 수정해주세요.
             <br />
-            배너 생성 버튼을 눌러 배너를 생성해주세요.
+            수정 후 변경 사항 저장 버튼을 눌러주세요.
           </SheetDescription>
         </SheetHeader>
-
         <div className="grid flex-1 auto-rows-min gap-6 px-4">
           <div className="flex gap-4">
             <div className="flex items-center gap-2">
@@ -152,61 +155,48 @@ export function BannerCreateSheet({ bannerData }: BannerCreateProps) {
             </div>
           </div>
           <div className="grid gap-3">
-            <Label htmlFor="createName">배너 이름</Label>
+            <Label htmlFor="detailName">배너 이름</Label>
             <Input
-              id="createName"
+              id="detailName"
               name="title"
-              value={createBannerData.title}
-              placeholder="배너 이름을 입력하세요"
+              value={editBannerData.title}
               onChange={handleInputChange}
+              placeholder="배너 이름을 입력하세요."
             />
           </div>
           <div className="grid gap-3">
-            <Label htmlFor="createDescription">설명</Label>
+            <Label htmlFor="detailName">설명</Label>
             <Input
-              id="createDescription"
+              id="detailDescription"
               name="description"
-              value={createBannerData.description}
+              value={editBannerData.description}
               onChange={handleInputChange}
-              placeholder="설명을 입력하세요"
+              placeholder="배너 설명을 입력하세요."
             />
           </div>
           <div className="grid gap-3">
-            <Label htmlFor="createRedirectUrl">Redirect URL</Label>
+            <Label htmlFor="detailName">Redirect URL</Label>
             <Input
-              id="createRedirectUrl"
+              id="detailRedirectUrl"
               name="redirectUrl"
-              value={createBannerData.redirectUrl}
+              value={editBannerData.redirectUrl}
               onChange={handleInputChange}
-              placeholder="Redirect URL을 입력하세요"
+              placeholder="Redirect URL을 입력하세요."
             />
           </div>
           <div className="grid gap-3">
-            <Label htmlFor="createPosition">배너 위치</Label>
+            <Label htmlFor="detailName">배너 위치</Label>
             <Input
-              id="createPosition"
+              id="detailPosition"
               name="position"
-              value={createBannerData.position}
+              value={editBannerData.position}
               onChange={handleInputChange}
               placeholder="TOP / MIDDLE / BOTTOM / SIDEBAR"
             />
           </div>
         </div>
         <SheetFooter>
-          <Button
-            type="submit"
-            onClick={handleCreateBanner}
-            disabled={!isFormValid() || isCreating}
-          >
-            {isCreating ? (
-              <>
-                <Spinner />
-                생성 중...
-              </>
-            ) : (
-              '배너 생성'
-            )}
-          </Button>
+          <EditAlertDialog />
           <SheetClose asChild>
             <Button variant="outline">닫기</Button>
           </SheetClose>
