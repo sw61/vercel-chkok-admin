@@ -1,22 +1,15 @@
 import { Suspense } from 'react';
-import Item from './bannersDragItem';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, arrayMove } from '@dnd-kit/sortable';
 import { useSensors, useSensor, MouseSensor, TouchSensor } from '@dnd-kit/core';
-import { toast } from 'react-toastify';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import BannerPageSkeleton from '@/pages/banners/components/table/bannersPageSkeleton';
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from '@tanstack/react-query';
-import {
-  getBannersTable,
-  updateBannerOrder,
-} from '@/services/banners/dragPage/dragTableApi';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { getBannersTable } from '@/services/banners/dragPage/dragTableApi';
 import { useNavigate } from 'react-router-dom';
+import { useUpdateBannerMutation } from '@/services/banners/dragPage/dragMutation';
+import BannerDragItem from '../components/table/bannersDragItem';
 
 interface BannerData {
   id: number;
@@ -33,24 +26,12 @@ interface BannerData {
 export default function BannersDragPage() {
   const navigate = useNavigate();
 
-  const queryClient = useQueryClient();
-
   // 배너 목록 조회
   const { data: bannerData } = useSuspenseQuery<BannerData[]>({
     queryKey: ['bannersTable'],
     queryFn: getBannersTable,
   });
-
-  const { mutate: updateMutation } = useMutation({
-    mutationFn: updateBannerOrder,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bannersTable'] });
-      toast.success('배너 순서 변경이 완료되었습니다.');
-    },
-    onError: () => {
-      toast.error('배너 순서 변경을 실패했습니다.');
-    },
-  });
+  const { mutate: updateMutation } = useUpdateBannerMutation();
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -76,7 +57,11 @@ export default function BannersDragPage() {
         (item) => item.id === Number(over.id)
       );
       if (activeIndex !== -1 && overIndex !== -1) {
-        const updatedBanners = arrayMove(bannerData, activeIndex, overIndex);
+        const updatedBanners = arrayMove(
+          bannerData,
+          activeIndex,
+          overIndex
+        ).map((item, index) => ({ ...item, displayOrder: index + 1 }));
 
         updateMutation(updatedBanners);
       }
@@ -85,7 +70,6 @@ export default function BannersDragPage() {
 
   return (
     <div className="grid-row grid min-w-[800px] gap-10 p-6">
-      {/* 배너 상세 정보 */}
       <Card>
         <CardHeader>
           <CardTitle className="flex justify-between">
@@ -110,8 +94,12 @@ export default function BannersDragPage() {
                 <SortableContext
                   items={bannerData.map((item) => item.id.toString())}
                 >
-                  {bannerData.map((banner) => (
-                    <Item key={banner.id} banner={banner} />
+                  {bannerData.map((bannerData, index) => (
+                    <BannerDragItem
+                      key={bannerData.id}
+                      bannerData={bannerData}
+                      index={index}
+                    />
                   ))}
                 </SortableContext>
               </DndContext>

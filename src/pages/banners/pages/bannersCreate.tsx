@@ -1,18 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import {
-  createBanner,
-  getBannersTable,
-  urlUpload,
-} from '@/services/banners/dragPage/dragTableApi';
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from '@tanstack/react-query';
-import { FolderInput } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useUrlUploadMutation } from '@/hooks/useImageUrlUpload';
+import { useCreateBannerMutation } from '@/services/banners/create/createApi';
+import { getBannersTable } from '@/services/banners/dragPage/dragTableApi';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { CircleCheck, CircleX, FolderInput } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 interface BannerData {
@@ -27,10 +21,22 @@ interface BannerData {
   displayOrder: number;
 }
 export default function BannersCreatePage() {
+  // 배너 목록 조회
+  const { data: bannerData } = useSuspenseQuery<BannerData[]>({
+    queryKey: ['bannersTable'],
+    queryFn: getBannersTable,
+  });
+  // 배너 생성 mutation
+  const { mutate: createMutation, isPending: isCreating } =
+    useCreateBannerMutation();
+  // S3 Url Upload Mutation
+  const {
+    mutate: urlUploadMutation,
+    isPending: isUploading,
+    data: presignedUrl,
+  } = useUrlUploadMutation();
+
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [presignedUrl, setPresignedUrl] = useState<string>('');
-  const [isUploading, setIsUploading] = useState<boolean>(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [createBannerData, setCreateBannerData] = useState({
     redirectUrl: '',
     title: '',
@@ -44,27 +50,13 @@ export default function BannersCreatePage() {
     createBannerData.redirectUrl &&
     createBannerData.position &&
     presignedUrl;
-  const queryClient = useQueryClient();
 
-  // 배너 목록 조회
-  const { data: bannerData } = useSuspenseQuery<BannerData[]>({
-    queryKey: ['bannersData'],
-    queryFn: getBannersTable,
-  });
   // 폼 입력 핸들러
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setCreateBannerData((prev) => ({ ...prev, [name]: value }));
-    // bannerUrl 입력 시 파일 선택 초기화
-    if (name === 'bannerUrl' && value) {
-      setImageFile(null);
-      setPresignedUrl('');
-    }
   };
-  // 파일 선택 버튼 클릭 시 파일 입력 창 띄우기
-  const handleFileSelect = () => {
-    fileInputRef.current?.click();
-  };
+
   // 파일 입력 핸들러
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
@@ -72,41 +64,31 @@ export default function BannersCreatePage() {
       toast.error('이미지 파일만 업로드 가능합니다.');
       return;
     }
-    setImageFile(file);
-    setPresignedUrl('');
-  };
-  // 배너 이미지 업로드 S3
-  const handleUrlUpload = async (imageFile: File) => {
-    setIsUploading(true);
-    try {
-      const urlResponse = await urlUpload(imageFile);
-      setPresignedUrl(urlResponse);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsUploading(false);
+    if (file) {
+      setImageFile(file);
+      // 파일 선택 즉시 업로드 시작
+      urlUploadMutation(file);
     }
   };
-  // 배너 생성
-  const { mutate: createMutation, isPending } = useMutation({
-    mutationFn: createBanner,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bannersData'] });
-      setImageFile(null);
-      setPresignedUrl('');
-      setCreateBannerData({
-        title: '',
-        redirectUrl: '',
-        description: '',
-        position: '',
-      });
-      navigate('/banners');
-      toast.success('배너가 생성되었습니다.');
-    },
-    onError: () => {
-      toast.error('배너 생성에 실패했습니다.');
-    },
-  });
+  // 배너 생성 핸들러
+  const handleCreateBanner = () => {
+    createMutation({
+      ...createBannerData,
+      bannerUrl: presignedUrl,
+      displayOrder: bannerData.length + 1,
+    });
+  };
+
+  useEffect(() => {
+    setImageFile(null);
+    setCreateBannerData({
+      title: '',
+      redirectUrl: '',
+      description: '',
+      position: '',
+    });
+  }, []);
+
   return (
     <div className="p-6">
       <Card className="flex w-full flex-col gap-4 rounded-xl px-6 py-4">
@@ -114,57 +96,57 @@ export default function BannersCreatePage() {
           <div className="ck-title flex items-center">배너 목록</div>
           <div className="flex gap-4">
             <div className="flex items-center gap-2">
-              {/* 숨겨진 파일 입력 */}
               <input
+                id="file-input"
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
                 className="hidden"
-                ref={fileInputRef}
               />
-              {/* 파일 선택 버튼 */}
-              <Button
-                className="ck-body-1 bg-ck-white text-ck-gray-900 hover:bg-ck-gray-300 border-1"
-                onClick={handleFileSelect}
-              >
-                <FolderInput />
-                파일 선택
-              </Button>
-
-              {/* 선택된 파일 정보 표시 */}
-              {imageFile && (
+              <label htmlFor="file-input" className="cursor-pointer">
+                <Button
+                  className="ck-body-1 bg-ck-white text-ck-gray-900 hover:bg-ck-gray-300 border-1"
+                  asChild
+                >
+                  <div className="flex gap-2">
+                    <FolderInput />
+                    파일 선택
+                  </div>
+                </Button>
+              </label>
+              {/* 선택된 파일 이름 및 업로드 상태 표시 */}
+              {isUploading && (
                 <div className="text-sm text-gray-700">
+                  <span className="ck-body-2">업로드 중...</span>
+                </div>
+              )}
+              {!isUploading && imageFile && !presignedUrl && (
+                <div className="text-sm text-red-500">
                   <span className="ck-body-2">
-                    선택된 파일 : {imageFile.name}
+                    선택됨: {imageFile.name} <CircleX />
+                    (업로드 실패)
                   </span>
                 </div>
               )}
-              {/* 파일 업로드 버튼 */}
-              {imageFile && (
-                <Button
-                  onClick={() => handleUrlUpload(imageFile)}
-                  disabled={isUploading || !imageFile}
-                  variant="outline"
-                >
-                  {isUploading ? '업로드 중...' : '파일 업로드'}
-                </Button>
+              {!isUploading && presignedUrl && (
+                <div className="text-sm text-green-600">
+                  <span className="ck-body-2">
+                    {' '}
+                    <CircleCheck />
+                    업로드 완료
+                  </span>
+                </div>
               )}
             </div>
             <Button onClick={() => navigate('/banners')} variant="outline">
               취소
             </Button>
             <Button
-              onClick={() =>
-                createMutation({
-                  ...createBannerData,
-                  bannerUrl: presignedUrl,
-                  displayOrder: bannerData.length + 1,
-                })
-              }
-              disabled={!isFormValid() || isPending}
+              onClick={handleCreateBanner}
+              disabled={!isFormValid() || isCreating}
               variant="outline"
             >
-              {isPending ? '생성 중...' : '생성'}
+              {isCreating ? '생성 중...' : '생성'}
             </Button>
           </div>
         </CardTitle>

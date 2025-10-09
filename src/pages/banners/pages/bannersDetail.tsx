@@ -50,8 +50,7 @@ export default function BannersDetail() {
   const { mutate: editMutation } = useEditBannerMutation();
   const { mutate: deleteMutation } = useDeleteBannerMutation();
 
-  // 배너 삭제
-
+  // 배너 수정 핸들러
   const handleBannerEdit = () => {
     const id = bannerId!;
     const payload = {
@@ -76,7 +75,7 @@ export default function BannersDetail() {
     setImageFile(file);
   };
 
-  // 이미지 파일 선택 + presignedUrl을 통해 S3 이미지 업로드
+  // 배너 이미지 업로드 S3
   const handleUrlUpload = async (imageFile: File) => {
     setIsUploading(true);
     try {

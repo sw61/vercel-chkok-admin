@@ -15,10 +15,11 @@ interface BannerData {
 }
 
 interface ItemProps {
-  banner: BannerData;
+  bannerData: BannerData;
+  index: number;
 }
 
-const Item = ({ banner }: ItemProps) => {
+const BannerDragItem = ({ bannerData, index }: ItemProps) => {
   const {
     attributes,
     listeners,
@@ -27,7 +28,7 @@ const Item = ({ banner }: ItemProps) => {
     transition,
     isDragging,
   } = useSortable({
-    id: banner.id.toString(),
+    id: bannerData.id.toString(),
   });
   const navigate = useNavigate();
 
@@ -44,23 +45,23 @@ const Item = ({ banner }: ItemProps) => {
         transition,
         zIndex: isDragging ? 100 : undefined,
       }}
-      onClick={() => navigate(`/banners/${banner.id}`)}
+      onClick={() => navigate(`/banners/${bannerData.id}`)}
     >
       <div className="flex items-center p-2">
         <img
-          src={banner.bannerUrl}
-          alt={banner.title}
+          src={bannerData.bannerUrl}
+          alt={bannerData.title}
           className="h-36 w-64 rounded-md"
         />
         <div className="flex w-full items-center justify-between p-6">
           <div className="flex flex-col gap-2">
-            <div className="ck-title">{banner.title}</div>
-            <div className="ck-body-2">배너 위치 : {banner.position}</div>
-            <div className="ck-body-2">설명 : {banner.description}</div>
+            <div className="ck-title">{bannerData.title}</div>
+            <div className="ck-body-2">배너 위치 : {bannerData.position}</div>
+            <div className="ck-body-2">설명 : {bannerData.description}</div>
           </div>
           <div className="ck-body-1 flex items-center">
             <span className="bg-ck-blue-500 flex h-10 w-12 items-center justify-center rounded-full text-white">
-              # {banner.displayOrder}
+              # {index + 1}
             </span>
           </div>
         </div>
@@ -69,4 +70,4 @@ const Item = ({ banner }: ItemProps) => {
   );
 };
 
-export default Item;
+export default BannerDragItem;

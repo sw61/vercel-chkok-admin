@@ -1,7 +1,5 @@
 import axiosInterceptor from '@/lib/axiosInterceptors';
 import type { ApiResponse } from './detailType';
-import { toast } from 'react-toastify';
-import axios from 'axios';
 
 // 배너 상세 정보 조회
 export const getBannersDetail = async (id: string) => {

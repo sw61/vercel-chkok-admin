@@ -1,26 +1,7 @@
 import axiosInterceptor from '@/lib/axiosInterceptors';
+import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import type { BannerData, UpdateBannerResponse } from './dragType';
-
-// 배너 이미지 목록 조회
-export const getBannersTable = async (): Promise<BannerData[]> => {
-  const response = await axiosInterceptor.get(`/api/banners`);
-  return response.data.data;
-};
-
-// 배너 순서 일괄 변경 (드래그 & 드롭)
-export const updateBannerOrder = async (
-  updatedBanners: UpdateBannerResponse[]
-) => {
-  const requestBody = {
-    banners: updatedBanners.map((banner, index) => ({
-      id: banner.id,
-      displayOrder: index + 1,
-    })),
-  };
-  await axiosInterceptor.patch('/api/banners/order', requestBody);
-};
 
 // 이미지 파일 선택 + presignedUrl 을 통해 S3 이미지 업로드
 export const urlUpload = async (imageFile: File) => {
@@ -47,4 +28,10 @@ export const urlUpload = async (imageFile: File) => {
     toast.error('이미지 업로드에 실패했습니다.');
     console.error(error);
   }
+};
+
+export const useUrlUploadMutation = () => {
+  return useMutation({
+    mutationFn: (imageFile: File) => urlUpload(imageFile),
+  });
 };

@@ -17,14 +17,12 @@ const CampaignsTablePage = lazy(
 const CampaignsDetail = lazy(
   () => import('@/pages/campaigns/components/detail/campaignsDetail')
 );
-const BannersPage = lazy(
-  () => import('@/pages/banners/components/table/bannersDragPage')
-);
+const BannersPage = lazy(() => import('@/pages/banners/pages/bannersDragPage'));
 const BannersDetail = lazy(
-  () => import('@/pages/banners/components/detail/bannersDetail')
+  () => import('@/pages/banners/pages/bannersDetail')
 );
 const BannersCreatePage = lazy(
-  () => import('@/pages/banners/components/create/bannersCreate')
+  () => import('@/pages/banners/pages/bannersCreate')
 );
 const Dashboard = lazy(
   () => import('@/pages/dashboard/components/serverDashBoard')
