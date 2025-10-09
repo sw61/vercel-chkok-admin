@@ -13,7 +13,7 @@ export default function NotFoundPage() {
     <>
       <div className="flex h-full min-h-screen w-full flex-col items-center justify-center gap-4">
         <div className="ck-headline-0">404 ERROR</div>
-        <div className="flex flex-col item gap-2">
+        <div className="item flex flex-col gap-2">
           <div className="ck-body-1 text-center">
             죄송합니다. 페이지를 찾을 수 없습니다.
           </div>

@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dropdownMenu';
 import axiosInterceptor from '@/lib/axiosInterceptors';
 import { PaginationHook } from '@/hooks/paginationHook';
-import { NoticeTable } from '../table/noticeTable';
+import { NoticeTable } from '../components/table/noticeTable';
 import { useNavigate } from 'react-router-dom';
 import UserTableSkeleton from '@/pages/users/components/table/usersTableSkeleton';
 
@@ -39,7 +39,7 @@ interface PaginationData {
   totalPages: number;
 }
 
-export default function NoticePage() {
+export default function NoticeTablePage() {
   const [noticeData, setNoticeData] = useState<Notice[] | null>(null);
   const [pageData, setPageData] = useState<PaginationData | null>(null);
   const [searchKey, setSearchKey] = useState<string>('');
