@@ -1,7 +1,7 @@
 import axiosInterceptor from '@/lib/axiosInterceptors';
 import axios from 'axios';
-import { toast } from 'react-toastify';
 import type { BannerData, UpdateBannerResponse } from './dragType';
+import { toast } from 'sonner';
 
 // 배너 이미지 목록 조회
 export const getBannersTable = async (): Promise<BannerData[]> => {

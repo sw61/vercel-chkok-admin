@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteBanners, editBanners } from './detailApi';
 import type { ApiResponse, EditBannerParams } from './detailType';
-import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export const useEditBannerMutation = () => {
   const queryClient = useQueryClient();

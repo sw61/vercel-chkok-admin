@@ -3,36 +3,22 @@ import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, arrayMove } from '@dnd-kit/sortable';
 import { useSensors, useSensor, MouseSensor, TouchSensor } from '@dnd-kit/core';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import BannerPageSkeleton from '@/pages/banners/components/table/bannersPageSkeleton';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { getBannersTable } from '@/services/banners/dragPage/dragTableApi';
-import { useNavigate } from 'react-router-dom';
 import { useUpdateBannerMutation } from '@/services/banners/dragPage/dragMutation';
 import BannerDragItem from '../components/table/bannersDragItem';
-
-interface BannerData {
-  id: number;
-  title: string;
-  bannerUrl: string;
-  redirectUrl: string;
-  description: string;
-  position: string;
-  createdAt: string;
-  updatedAt: string;
-  displayOrder: number;
-}
+import { BannerCreateSheet } from '../components/create/bannerCreateSheet';
 
 export default function BannersDragPage() {
-  const navigate = useNavigate();
-
   // 배너 목록 조회
-  const { data: bannerData } = useSuspenseQuery<BannerData[]>({
+  const { data: bannerData } = useSuspenseQuery({
     queryKey: ['bannersTable'],
     queryFn: getBannersTable,
   });
   const { mutate: updateMutation } = useUpdateBannerMutation();
 
+  // 드래그 센서 핸들러
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: {
@@ -75,13 +61,7 @@ export default function BannersDragPage() {
           <CardTitle className="flex justify-between">
             <div className="ck-title flex items-center">배너 목록</div>
             <div className="flex gap-4">
-              <Button
-                onClick={() => navigate('/banners/create')}
-                className="ck-body-1 cursor-pointer"
-                variant="outline"
-              >
-                배너 추가
-              </Button>
+              <BannerCreateSheet bannerData={bannerData} />
             </div>
           </CardTitle>
         </CardHeader>

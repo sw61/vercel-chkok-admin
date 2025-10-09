@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { UpdateBannerResponse } from './dragType';
 import { updateBannerOrder } from './dragTableApi';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 export const useUpdateBannerMutation = () => {
   const queryClient = useQueryClient();

@@ -18,12 +18,7 @@ const CampaignsDetail = lazy(
   () => import('@/pages/campaigns/components/detail/campaignsDetail')
 );
 const BannersPage = lazy(() => import('@/pages/banners/pages/bannersDragPage'));
-const BannersDetail = lazy(
-  () => import('@/pages/banners/pages/bannersDetail')
-);
-const BannersCreatePage = lazy(
-  () => import('@/pages/banners/pages/bannersCreate')
-);
+const BannersDetail = lazy(() => import('@/pages/banners/pages/bannersDetail'));
 const Dashboard = lazy(
   () => import('@/pages/dashboard/components/serverDashBoard')
 );
@@ -53,7 +48,6 @@ export const privateRoutes = [
   { path: '/campaigns', element: <CampaignsTablePage /> },
   { path: '/campaigns/:campaignId', element: <CampaignsDetail /> },
   { path: '/banners', element: <BannersPage /> },
-  { path: '/banners/create', element: <BannersCreatePage /> },
   { path: '/banners/:bannerId', element: <BannersDetail /> },
   { path: '/server', element: <Dashboard /> },
   { path: '/notices', element: <NoticePage /> },

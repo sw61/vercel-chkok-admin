@@ -1,25 +1,24 @@
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
-import { useState, useRef, Suspense, useEffect } from 'react';
+import { useState, useRef, Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import MarkdownDetailSkeleton from '@/pages/articles/components/detail/markdownDetailSkeleton';
 import { ChevronLeft } from 'lucide-react';
 import { Editor } from '@toast-ui/react-editor';
 import TurndownService from 'turndown';
-import { focusManager, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { getArticleDetail } from '@/services/articles/detailApi';
 import ArticleContent from '../components/detail/detailContent';
 import SearchMapModal from '../components/searchMapModal';
 import DetailForm from '../components/detail/detailForm';
 import TuiEditor from '@/components/markdown/editor/toastUiEditor';
 import { useAddImage } from '@/hooks/useAddImage';
-import { toast } from 'react-toastify';
 import { useEditArticleMutation } from '@/services/articles/detailMutation';
 import { CustomBadge } from '@/hooks/useBadge';
+import { toast } from 'sonner';
 
 export default function ArticleDetailPage() {
   const { articleId } = useParams<{ articleId: string }>();
   const editorRef = useRef<Editor | null>(null);
-
   const { imageHandler } = useAddImage();
   const [showMapModal, setShowMapModal] = useState<boolean>(false);
   // 체험콕 아티클 상세 정보 조회

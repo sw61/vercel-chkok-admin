@@ -2,7 +2,6 @@ import { Suspense, useState, type ChangeEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { toast } from 'react-toastify';
 import { Badge } from '@/components/ui/badge';
 import CampaignDetailSkeleton from '@/pages/campaigns/components/detail/detailSkeleton';
 import {
@@ -38,6 +37,7 @@ import {
 } from '@/services/campaigns/detail/detailApi';
 import { useAlertDialog } from '@/components/alertDialog/useAlertDialog';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 interface Campaign {
   id: number;

@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from 'react-toastify';
 import { ChevronLeft } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import UserDetailSkeleton from '@/pages/users/components/detail/usersDetailSkeleton';
@@ -23,6 +22,7 @@ import {
   userToClient,
 } from '@/services/users/detail/detailApi';
 import { useAlertDialog } from '@/components/alertDialog/useAlertDialog';
+import { toast } from 'sonner';
 
 export default function UserDetail() {
   const navigate = useNavigate();
@@ -179,10 +179,10 @@ export default function UserDetail() {
                       {userData.nickname} ({userData.gender || '성별 미공개'},{' '}
                       {userData.age || '나이 미공개'})
                     </p>
-                    <p className="ck-body-2 text-gray-500">
+                    <p className="ck-body-2 text-ck-gray-500">
                       {userData.email || '이메일 없음'}
                     </p>
-                    <p className="ck-body-2 text-gray-500">
+                    <p className="ck-body-2 text-ck-gray-500">
                       {userData.phone || '전화번호 없음'}
                     </p>
                   </div>

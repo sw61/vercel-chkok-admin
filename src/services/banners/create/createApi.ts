@@ -1,8 +1,8 @@
 import axiosInterceptor from '@/lib/axiosInterceptors';
 import type { CreateBannerResponse } from '../dragPage/dragType';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 // 배너 생성
 export const createBanner = async (data: CreateBannerResponse) => {
@@ -21,7 +21,7 @@ export const useCreateBannerMutation = () => {
   return useMutation<void, Error, CreateBannerResponse>({
     mutationFn: (data) => createBanner(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bannersData'] });
+      queryClient.invalidateQueries({ queryKey: ['bannersTable'] });
       navigate('/banners');
       toast.success('배너가 생성되었습니다.');
     },
