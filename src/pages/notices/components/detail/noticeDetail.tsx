@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import axiosInterceptor from '@/lib/axiosInterceptors';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -21,6 +20,7 @@ import TuiEditor from '@/components/markdown/editor/toastUiEditor';
 import { useAddImage } from '@/hooks/useAddImage';
 import { Editor } from '@toast-ui/react-editor';
 import MarkdownDetailSkeleton from '@/pages/articles/components/detail/markdownDetailSkeleton';
+import { toast } from 'sonner';
 
 interface NoticeData {
   id: number;

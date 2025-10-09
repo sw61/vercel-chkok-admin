@@ -1,8 +1,9 @@
 import axiosInterceptor from '@/lib/axiosInterceptors';
 import type { CreateParams, EditResponse } from './type/articleType';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'react-toastify';
+
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 // 아티클 생성
 export const createArticle = async (payload: EditResponse) => {

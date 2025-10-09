@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react';
-import { toast } from 'react-toastify';
 import axiosInterceptor from '@/lib/axiosInterceptors';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -10,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import TuiEditor from '@/components/markdown/editor/toastUiEditor';
 import { useAddImage } from '@/hooks/useAddImage';
 import { Editor } from '@toast-ui/react-editor';
+import { toast } from 'sonner';
 
 export default function NoticeCreate() {
   const [title, setTitle] = useState<string>('');
@@ -56,7 +56,7 @@ export default function NoticeCreate() {
         <div className="flex flex-col items-center px-6">
           <div className="w-full" data-color-mode="light">
             <div className="mb-4">
-              <div className="mb-2 flex justify-between items-center">
+              <div className="mb-2 flex items-center justify-between">
                 <div className="ck-body-2 flex flex-col justify-end">제목</div>
                 <div className="flex gap-4">
                   <Button
@@ -86,7 +86,7 @@ export default function NoticeCreate() {
               />
               <label
                 htmlFor="isMust"
-                className="text-sm font-medium text-ck-gray-700"
+                className="text-ck-gray-700 text-sm font-medium"
               >
                 중요 공지사항
               </label>

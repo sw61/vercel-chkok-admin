@@ -2,7 +2,7 @@ import axiosInterceptor from '@/lib/axiosInterceptors';
 import { type EditResponse } from './type/articleType';
 
 // 체험콕 아티클 상세 정보 조회
-export const getPostDetail = async (id: string) => {
+export const getArticleDetail = async (id: string) => {
   const response = await axiosInterceptor.get(`/api/admin/posts/${id}`);
   return response.data.data;
 };

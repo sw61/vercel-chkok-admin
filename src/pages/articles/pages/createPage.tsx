@@ -7,7 +7,7 @@ import TuiEditor from '@/components/markdown/editor/toastUiEditor';
 import { useAddImage } from '@/hooks/useAddImage';
 import type { Editor } from '@toast-ui/react-editor';
 import { useCreateArticleMutation } from '@/services/articles/createApi';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 export default function ArticleCreatePage() {
   const [formData, setFormData] = useState({

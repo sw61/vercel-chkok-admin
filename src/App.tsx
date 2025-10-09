@@ -4,17 +4,16 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // ts file
 import { LoginForm } from './pages/login/components/loginForm';
+import NotFoundPage from './pages/notFound/components/notFoundPage';
 import { PrivateComponent } from './services/auth/tokenCheck';
 
 // library
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import SideBar from './components/sideBar/sideBar';
-import NotFoundPage from './pages/notFound/components/notFoundPage';
-
 import { privateRoutes } from './router/router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from './components/ui/sonner';
 
 const queryClient = new QueryClient({});
 
@@ -44,7 +43,12 @@ const App = () => (
         <Route path="/*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
-    <ToastContainer />
+    <Toaster position="top-center" />
+    <ReactQueryDevtools
+      initialIsOpen={false}
+      position="right"
+      buttonPosition="bottom-right"
+    />
   </QueryClientProvider>
 );
 

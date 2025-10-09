@@ -1,5 +1,4 @@
 import { Suspense, useEffect, useState } from 'react';
-import { type VisibilityState } from '@tanstack/react-table';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Search } from 'lucide-react';
@@ -15,7 +14,6 @@ export default function ArticleTablePage() {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [searchKey, setSearchKey] = useState<string>('');
   const [debouncedSearchKey] = useDebounce(searchKey, 300);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [articleType, setArticleType] = useState<string>('null');
 
   // 아티클 전체 목록 조회
@@ -61,8 +59,6 @@ export default function ArticleTablePage() {
           <ArticleDropDownMenu
             articleType={articleType}
             handleType={handleType}
-            columnVisibility={columnVisibility}
-            setColumnVisibility={setColumnVisibility}
           />
           <div className="relative">
             <Input

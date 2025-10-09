@@ -1,9 +1,6 @@
 import axiosInterceptor from '@/lib/axiosInterceptors';
 
-interface CurrentPage {
-  currentPage: number;
-}
-export const getCompanyTable = async ({ currentPage }: CurrentPage) => {
+export const getCompanyTable = async (currentPage: number) => {
   const response = await axiosInterceptor.get(
     `/api/companies/examine?page=${currentPage}&size=10`
   );
