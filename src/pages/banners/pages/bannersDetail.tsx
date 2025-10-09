@@ -1,24 +1,19 @@
-import axiosInterceptor from '@/lib/axiosInterceptors';
-import { useState, useRef, Suspense, useEffect } from 'react';
+import { useState, useRef, Suspense } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ChevronLeft, FolderInput } from 'lucide-react';
 import { toast } from 'react-toastify';
-import axios from 'axios';
 import BannerDetailSkeleton from '@/pages/banners/components/detail/bannersDetailSkeleton';
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from '@tanstack/react-query';
-import {
-  deleteBanners,
-  editBanners,
-  getBannersDetail,
-} from '@/services/banners/detail/detailApi';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { getBannersDetail } from '@/services/banners/detail/detailApi';
 import { useAlertDialog } from '@/components/alertDialog/useAlertDialog';
+import {
+  useDeleteBannerMutation,
+  useEditBannerMutation,
+} from '@/services/banners/detail/detailMutation';
+import { urlUpload } from '@/services/banners/dragPage/dragTableApi';
 
 interface BannerData {
   id: number;
@@ -40,64 +35,31 @@ export default function BannersDetail() {
   const [presignedUrl, setPresignedUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [editBannerData, setEditBannerData] = useState({
-    title: '',
-    bannerUrl: '',
-    redirectUrl: '',
-    description: '',
-    position: '',
-    displayOrder: 0,
-  });
-  const queryClient = useQueryClient();
-
   const { data: bannerData } = useSuspenseQuery<BannerData>({
     queryKey: ['bannerDetail', bannerId],
     queryFn: () => getBannersDetail(bannerId!),
   });
-  useEffect(() => {
-    if (bannerData) {
-      setEditBannerData({
-        title: bannerData.title,
-        bannerUrl: bannerData.bannerUrl,
-        redirectUrl: bannerData.redirectUrl,
-        description: bannerData.description,
-        position: bannerData.position,
-        displayOrder: bannerData.displayOrder,
-      });
-    }
-  }, [bannerData]);
-
-  // 배너 삭제
-  const { mutate: deleteMutate } = useMutation({
-    mutationFn: deleteBanners,
-    onSuccess: () => {
-      navigate('/banners');
-      toast.success('배너가 성공적으로 삭제되었습니다.');
-      queryClient.invalidateQueries({ queryKey: ['bannerDetail'] });
-    },
-    onError: () => {
-      toast.error('배너 삭제에 실패했습니다.');
-    },
+  const [editBannerData, setEditBannerData] = useState({
+    title: bannerData.title,
+    bannerUrl: bannerData.bannerUrl,
+    redirectUrl: bannerData.redirectUrl,
+    description: bannerData.description,
+    position: bannerData.position,
+    displayOrder: bannerData.displayOrder,
   });
+  const { mutate: editMutation } = useEditBannerMutation();
+  const { mutate: deleteMutation } = useDeleteBannerMutation();
 
-  // 배너 수정
-  const { mutate: editMutate } = useMutation({
-    mutationFn: () =>
-      editBanners(bannerId!, {
-        ...editBannerData,
-        bannerUrl: presignedUrl?.split('?')[0] || editBannerData.bannerUrl,
-      }),
-    onSuccess: () => {
-      toast.success('배너가 수정되었습니다.');
-      setIsEditing(false);
-      setImageFile(null);
-      setPresignedUrl(null);
-      queryClient.invalidateQueries({ queryKey: ['bannerDetail'] });
-    },
-    onError: () => {
-      toast.error('배너 수정에 실패했습니다.');
-    },
-  });
+  // 배너 수정 핸들러
+  const handleBannerEdit = () => {
+    const id = bannerId!;
+    const payload = {
+      ...editBannerData,
+      bannerUrl: presignedUrl || bannerData.bannerUrl,
+    };
+    editMutation({ id, payload });
+  };
+
   // 파일 선택 버튼 클릭 시 파일 입력 창 띄우기
   const handleFileSelect = () => {
     fileInputRef.current?.click();
@@ -113,33 +75,16 @@ export default function BannersDetail() {
     setImageFile(file);
   };
 
-  // 이미지 파일 선택 + presignedUrl을 통해 S3 이미지 업로드
-  const handleUrlUpload = async () => {
-    if (!imageFile) {
-      toast.error('이미지 파일을 선택해주세요.');
-      return;
-    }
+  // 배너 이미지 업로드 S3
+  const handleUrlUpload = async (imageFile: File) => {
     setIsUploading(true);
-    const fileExtension =
-      imageFile.name.split('.').pop()?.toLowerCase() || 'jpg';
-
     try {
-      const response = await axiosInterceptor.post(
-        '/api/images/banners/presigned-url',
-        { fileExtension }
-      );
-      const presignedUrl = response.data.data.presignedUrl;
-      setPresignedUrl(presignedUrl);
-      const contentType = imageFile.type || 'image/jpeg';
-      await axios.put(presignedUrl, imageFile, {
-        headers: {
-          'Content-Type': contentType,
-        },
-      });
-      toast.success('이미지가 업로드 되었습니다.');
+      const urlResponse = await urlUpload(imageFile);
+      if (urlResponse) {
+        setPresignedUrl(urlResponse);
+      }
     } catch (error) {
-      toast.error('이미지 업로드에 실패했습니다.');
-      console.error(error);
+      console.log(error);
     } finally {
       setIsUploading(false);
     }
@@ -163,20 +108,14 @@ export default function BannersDetail() {
     trigger: <Button variant="outline">삭제</Button>,
     title: '항목을 삭제하시겠습니까?',
     description: '이 작업은 되돌릴 수 없습니다.',
-    onAlert: () => bannerId && deleteMutate(bannerId),
+    onAlert: () => deleteMutation(bannerId!),
   });
 
   const { AlertDialogComponent: EditAlertDialog } = useAlertDialog({
     trigger: <Button variant="outline">수정</Button>,
     title: '수정 사항을 저장하시겠습니까?',
     description: '',
-    onAlert: () => {
-      if (!editBannerData.title || !editBannerData.position) {
-        toast.error('배너 이름과 위치를 입력해주세요.');
-        return;
-      }
-      editMutate();
-    },
+    onAlert: handleBannerEdit,
   });
   if (!bannerData) {
     return (
@@ -224,7 +163,7 @@ export default function BannersDetail() {
                             선택된 파일: {imageFile.name}
                           </span>
                           <Button
-                            onClick={handleUrlUpload}
+                            onClick={() => handleUrlUpload(imageFile)}
                             disabled={isUploading || !imageFile}
                             variant="outline"
                           >
@@ -314,10 +253,10 @@ export default function BannersDetail() {
               <div className="ck-sub-title-1">{bannerData.title}</div>
               <img
                 src={bannerData.bannerUrl}
-                className="w-[500px] aspect-video"
+                className="aspect-video w-[500px]"
               ></img>
               <div className="flex gap-4">
-                <div className="flex flex-col gap-4 ck-body-2 min-w-[100px]">
+                <div className="ck-body-2 flex min-w-[100px] flex-col gap-4">
                   <div>ID</div>
                   <div>배너 위치</div>
                   <div>생성일</div>
@@ -326,7 +265,7 @@ export default function BannersDetail() {
                   <div>리다이렉트 주소</div>
                   <div>배너 주소</div>
                 </div>
-                <div className="flex flex-col gap-4 ck-body-2">
+                <div className="ck-body-2 flex flex-col gap-4">
                   <div>{bannerData.id}</div>
                   <div>{bannerData.position}</div>
                   <div>{bannerData.createdAt.split('T')[0]}</div>

@@ -48,9 +48,14 @@ export default function CampaignsTablePage() {
     { type: 'EXPIRED', label: '만료된 캠페인' },
   ];
 
-  const { data: campaignData, isPending } = useQuery({
+  const {
+    data: campaignData,
+    isPending,
+    error,
+    isError,
+  } = useQuery({
     queryKey: ['campaignTable', currentPage, campaignType],
-    queryFn: () => getCampaignTable({ currentPage, campaignType }),
+    queryFn: () => getCampaignTable(currentPage, campaignType),
     enabled: !debouncedSearchKey,
     select: (data) => ({
       ...data,
@@ -63,10 +68,9 @@ export default function CampaignsTablePage() {
   });
 
   const { data: searchData } = useQuery({
-    queryKey: ['searchCampaign', debouncedSearchKey, currentPage],
-    queryFn: () =>
-      searchCampaign({ searchKey: debouncedSearchKey, currentPage }),
-    enabled: !!debouncedSearchKey,
+    queryKey: ['searchCampaign', searchKey, currentPage, campaignType],
+    queryFn: () => searchCampaign(searchKey, currentPage, campaignType),
+    enabled: !!searchKey,
     select: (data) => ({
       ...data,
       content: data.content.map((campaign: any) => ({
@@ -96,7 +100,9 @@ export default function CampaignsTablePage() {
       setCurrentPage(0);
     }
   }, [isSearchMode]);
-
+  if (isError) {
+    console.log(error);
+  }
   return (
     <div className="p-6">
       <Card className="px-6 py-4">

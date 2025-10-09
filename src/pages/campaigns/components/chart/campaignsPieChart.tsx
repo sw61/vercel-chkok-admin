@@ -23,7 +23,7 @@ interface Status {
 
 export function CamapaignsPieChart() {
   const { data: campaignStatusData } = useSuspenseQuery<Status>({
-    queryKey: ['campaignsStatus'],
+    queryKey: ['campaignStatus'],
     queryFn: getCampaignStatus,
   });
 

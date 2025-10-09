@@ -1,5 +1,5 @@
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
-import { useState, useRef, Suspense, useEffect } from 'react';
+import { useState, useRef, Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import MarkdownDetailSkeleton from '@/pages/articles/components/detail/markdownDetailSkeleton';
 import { ChevronLeft } from 'lucide-react';
@@ -12,14 +12,13 @@ import SearchMapModal from '../components/searchMapModal';
 import DetailForm from '../components/detail/detailForm';
 import TuiEditor from '@/components/markdown/editor/toastUiEditor';
 import { useAddImage } from '@/hooks/useAddImage';
-import { toast } from 'react-toastify';
 import { useEditArticleMutation } from '@/services/articles/detailMutation';
 import { CustomBadge } from '@/hooks/useBadge';
+import { toast } from 'sonner';
 
 export default function ArticleDetailPage() {
   const { articleId } = useParams<{ articleId: string }>();
   const editorRef = useRef<Editor | null>(null);
-
   const { imageHandler } = useAddImage();
   const [showMapModal, setShowMapModal] = useState<boolean>(false);
   // 체험콕 아티클 상세 정보 조회
@@ -79,6 +78,7 @@ export default function ArticleDetailPage() {
     const payload = {
       title: formData.title,
       content: markdownContent,
+      campaignId: formData.campaignId,
       visitInfo: {
         contactPhone: formData.contactPhone || null,
         homepage: formData.homepage || null,
@@ -132,9 +132,6 @@ export default function ArticleDetailPage() {
   const handleCloseModal = () => {
     setShowMapModal(false);
   };
-  useEffect(() => {
-    console.log(articleData);
-  }, [articleData]);
 
   return (
     <div className="min-w-[800px] px-6">

@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import {
   activateArticle,
   deactivateArticle,
@@ -8,6 +7,7 @@ import {
   editArticle,
 } from './detailApi';
 import { type EditParams, type EditResponse } from './type/articleType';
+import { toast } from 'sonner';
 
 export const useEditArticleMutation = () => {
   const queryClient = useQueryClient();
