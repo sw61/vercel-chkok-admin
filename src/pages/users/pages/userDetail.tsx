@@ -8,7 +8,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import UserDetailSkeleton from '@/pages/users/components/detail/usersDetailSkeleton';
 import { CustomBadge } from '@/hooks/useBadge';
 import usericon from '@/image/usericon.png';
-import ActivitiesPage from '../activities/table/activitiesPage';
+import ActivitiesPage from '../components/activities/table/activitiesPage';
 import {
   useMutation,
   useQueryClient,
