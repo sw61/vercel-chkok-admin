@@ -1,3 +1,5 @@
+import type { ChangeEvent } from 'react';
+
 export interface User {
   id: number;
   email: string;
@@ -15,4 +17,21 @@ export interface User {
   createdAt: string;
   updatedAt: string;
   platforms: string;
+}
+
+export interface UpdateUserMemoProps {
+  userId: string;
+  userMemo: string;
+}
+export interface UserDetailHeaderProps {
+  userId: string;
+  userData: User;
+}
+export interface UserDetailContentProps {
+  userId: string;
+  userData: User;
+  hideMemo: boolean;
+  userMemo: string;
+  handleTextAreaChange: (event: ChangeEvent<HTMLTextAreaElement>) => void;
+  handleUpdateHideMemo: () => void;
 }
