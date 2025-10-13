@@ -5,7 +5,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import KakaoMap from '@/pages/kakaoMap/kakaoMap';
+import KakaoMap from '@/components/kakaoMap/kakaoMap';
 import type { DetailMissionProps } from '@/services/campaigns/detail/detailType';
 import {
   MapPin,

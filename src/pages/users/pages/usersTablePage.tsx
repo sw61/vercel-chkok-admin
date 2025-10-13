@@ -28,7 +28,9 @@ export default function UserTablePage() {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [column, setColumn] = useState('id');
   const [direction, setDirection] = useState('ASC');
+  const [role, setRole] = useState<string>('ALL');
 
+  // 항목 필터
   const headerMenu = [
     { id: 'id', label: 'ID' },
     { id: 'nickname', label: '닉네임' },
@@ -38,17 +40,24 @@ export default function UserTablePage() {
     { id: 'createdAt', label: '생성일' },
     { id: 'updatedAt', label: '갱신일' },
   ];
+  // 권한 필터
+  const roleValues = [
+    { role: 'ALL', label: '전체 사용자' },
+    { role: 'USER', label: '사용자 권한' },
+    { role: 'CLIENT', label: '클라이언트 권한' },
+    { role: 'ADMIN', label: '어드민 권한' },
+  ];
   // 사용자 전체 목록 조회
   const { data: userData, isPending } = useQuery({
-    queryKey: ['userTable', currentPage, column, direction],
-    queryFn: () => getUserTable({ currentPage, column, direction }),
+    queryKey: ['userTable', currentPage, column, direction, role],
+    queryFn: () => getUserTable({ currentPage, column, direction, role }),
     enabled: !debouncedSearchKey,
   });
 
   // 사용자 검색
   const { data: searchUserData } = useQuery({
-    queryKey: ['searchUser', searchKey, currentPage],
-    queryFn: () => searchUser({ searchKey, currentPage }),
+    queryKey: ['searchUser', searchKey, currentPage, role],
+    queryFn: () => searchUser({ searchKey, currentPage, role }),
     enabled: !!debouncedSearchKey,
   });
   const isSearchMode = !!searchKey;
@@ -74,6 +83,10 @@ export default function UserTablePage() {
     setDirection(newDirection);
   };
 
+  const handleRole = (role: string) => {
+    setRole(role);
+  };
+
   useEffect(() => {
     if (!isSearchMode) {
       setCurrentPage(0);
@@ -87,6 +100,26 @@ export default function UserTablePage() {
       <Card className="px-6 py-4">
         <div className="mb-2 flex items-center justify-between">
           <div className="flex gap-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  {roleValues.find((item) => item.role === role)?.label ||
+                    '권한 필터'}
+                  <ChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {roleValues.map((item) => (
+                  <DropdownMenuCheckboxItem
+                    key={item.role}
+                    checked={role === item.role}
+                    onClick={() => handleRole(item.role)}
+                  >
+                    {item.label}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="ml-auto">
