@@ -8,7 +8,6 @@ import { PrivateComponent } from './services/auth/tokenCheck';
 
 // library
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import SideBar from './components/sideBar/sideBar';
 import NotFoundPage from './pages/notFound/notFoundPage';
 import { privateRoutes } from './router/router';
@@ -44,11 +43,6 @@ const App = () => (
       </Routes>
     </BrowserRouter>
     <Toaster position="top-center" />
-    <ReactQueryDevtools
-      initialIsOpen={false}
-      position="right"
-      buttonPosition="bottom-right"
-    />
   </QueryClientProvider>
 );
 

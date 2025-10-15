@@ -18,14 +18,14 @@ export default function KakaoMap({
   markerContent = '',
   zoomLevel = 3,
   hasCoordinates,
-  className = 'w-[400px] h-[250px] rounded-lg overflow-hidden',
+  className = 'w-full h-[250px] rounded-lg overflow-hidden',
 }: KakaoMapProps) {
   useKakaoLoader();
 
   if (hasCoordinates === false) {
     return (
-      <div className="flex h-[250px] w-[400px] items-center justify-center rounded-lg bg-gray-100">
-        <p className="text-gray-500">유효한 좌표가 없습니다.</p>
+      <div className="flex h-[250px] w-full items-center justify-center rounded-lg bg-gray-100">
+        <p className="text-ck-gray-600">유효한 좌표가 없습니다.</p>
       </div>
     );
   }
