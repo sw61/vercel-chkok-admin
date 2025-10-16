@@ -42,15 +42,7 @@ export function ClientsActivitiesTable({ clientsItems }: ActivitiesProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const navigate = useNavigate();
-  const sortableColumns = [
-    'id',
-    'title',
-    'campaignType',
-    'statusText',
-    'currentApplications',
-    'recruitmentPeriod',
-    'approvedBy',
-  ];
+
   const columns: ColumnDef<Activities, unknown>[] = [
     {
       accessorKey: 'id',

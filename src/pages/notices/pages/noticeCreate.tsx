@@ -30,10 +30,11 @@ export default function NoticeCreate() {
     }
 
     try {
-      const html = editorRef.current.getInstance().getHTML();
+      const markdownContent =
+        editorRef.current.getInstance().getMarkdown() || '';
       await axiosInterceptor.post('/api/admin/notices', {
         title,
-        content: html,
+        content: markdownContent,
         isMust,
       });
       toast.success('문서가 생성되었습니다.');
@@ -91,12 +92,9 @@ export default function NoticeCreate() {
                 중요 공지사항
               </label>
             </div>
-
-            <TuiEditor
-              content={content}
-              editorRef={editorRef}
-              imageHandler={imageHandler}
-            />
+            <div className="w-full">
+              <TuiEditor editorRef={editorRef} imageHandler={imageHandler} />
+            </div>
           </div>
         </div>
       </Card>

@@ -61,6 +61,7 @@ export default function BannersDetail() {
               <div className="ck-title flex items-center">배너 정보</div>
               <div className="flex gap-4">
                 <DeleteAlertDialog />
+                {/* 배너 수정 Sheet 컴포넌트*/}
                 <BannerDetailEditSheet />
               </div>
             </CardTitle>

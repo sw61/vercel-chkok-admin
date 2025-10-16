@@ -1,5 +1,4 @@
 import { useState, type KeyboardEvent } from 'react';
-
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,8 +6,8 @@ import { Input } from '@/components/ui/input';
 import { useStringInput } from '@/hooks/useStringInput';
 import { login } from '@/services/auth/auth';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
+import { toast } from 'sonner';
 
 export function LoginForm({
   className,

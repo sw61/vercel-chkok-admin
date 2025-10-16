@@ -3,14 +3,13 @@ import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 // ts file
-import { LoginForm } from './pages/login/components/loginForm';
-import NotFoundPage from './pages/notFound/components/notFoundPage';
+import { LoginForm } from './pages/login/loginForm';
 import { PrivateComponent } from './services/auth/tokenCheck';
 
 // library
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import SideBar from './components/sideBar/sideBar';
+import NotFoundPage from './pages/notFound/notFoundPage';
 import { privateRoutes } from './router/router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from './components/ui/sonner';
@@ -44,11 +43,6 @@ const App = () => (
       </Routes>
     </BrowserRouter>
     <Toaster position="top-center" />
-    <ReactQueryDevtools
-      initialIsOpen={false}
-      position="right"
-      buttonPosition="bottom-right"
-    />
   </QueryClientProvider>
 );
 

@@ -65,11 +65,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: '/articles',
         icon: NotebookPen,
       },
-      {
-        title: '서버 데이터',
-        url: '/server',
-        icon: Server,
-      },
+      
     ],
     navSecondary: [
       {

@@ -61,6 +61,7 @@ export default function BannersDragPage() {
           <CardTitle className="flex justify-between">
             <div className="ck-title flex items-center">배너 목록</div>
             <div className="flex gap-4">
+              {/* 배너 생성 Sheet 컴포넌트 */}
               <BannerCreateSheet bannerData={bannerData} />
             </div>
           </CardTitle>

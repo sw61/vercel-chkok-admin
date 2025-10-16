@@ -48,12 +48,7 @@ export default function CampaignsTablePage() {
     { type: 'EXPIRED', label: '만료된 캠페인' },
   ];
 
-  const {
-    data: campaignData,
-    isPending,
-    error,
-    isError,
-  } = useQuery({
+  const { data: campaignData, isPending } = useQuery({
     queryKey: ['campaignTable', currentPage, campaignType],
     queryFn: () => getCampaignTable(currentPage, campaignType),
     enabled: !debouncedSearchKey,
@@ -100,9 +95,7 @@ export default function CampaignsTablePage() {
       setCurrentPage(0);
     }
   }, [isSearchMode]);
-  if (isError) {
-    console.log(error);
-  }
+
   return (
     <div className="p-6">
       <Card className="px-6 py-4">

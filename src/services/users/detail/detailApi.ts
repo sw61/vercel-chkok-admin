@@ -41,13 +41,7 @@ export const deleteUser = async (id: string) => {
   const response = await axiosInterceptor.delete(`/users/${id}`);
   return response.data.data;
 };
-export const putMemoUpdate = async ({
-  id,
-  userMemo,
-}: {
-  id: string | number;
-  userMemo: string;
-}) => {
+export const putMemoUpdate = async (id: string, userMemo: string) => {
   const response = await axiosInterceptor.put(
     `/users/${id}/memo`,
     { userMemo },
