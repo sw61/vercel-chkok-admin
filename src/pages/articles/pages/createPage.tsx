@@ -6,8 +6,8 @@ import SearchMapModal from '../components/searchMapModal';
 import TuiEditor from '@/components/markdown/editor/toastUiEditor';
 import { useAddImage } from '@/hooks/useAddImage';
 import type { Editor } from '@toast-ui/react-editor';
-import { useCreateArticleMutation } from '@/services/articles/createApi';
 import { toast } from 'sonner';
+import { useCreateArticleMutation } from '@/services/articles/create/createApi';
 
 export default function ArticleCreatePage() {
   const [formData, setFormData] = useState({

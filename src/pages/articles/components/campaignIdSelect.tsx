@@ -7,7 +7,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { getCampaignList } from '@/services/articles/detailApi';
+import { getCampaignList } from '@/services/articles/detail/detailApi';
+
 import { useQuery } from '@tanstack/react-query';
 
 interface CampaignIdList {
