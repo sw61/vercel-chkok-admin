@@ -16,7 +16,7 @@ import {
   useActivateArticleMutation,
   useDeactivateArticleMutation,
   useDeleteArticleMutation,
-} from '@/services/articles/detailMutation';
+} from '@/services/articles/detail/detailMutation';
 import {
   type DetailResponse,
   type FormData,

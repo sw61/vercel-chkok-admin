@@ -1,5 +1,5 @@
 import axiosInterceptor from '@/lib/axiosInterceptors';
-import type { CreateParams, EditResponse } from './type/articleType';
+import type { CreateParams, EditResponse } from '../type/articleType';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useNavigate } from 'react-router-dom';

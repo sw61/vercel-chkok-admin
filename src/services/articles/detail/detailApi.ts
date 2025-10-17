@@ -1,5 +1,5 @@
 import axiosInterceptor from '@/lib/axiosInterceptors';
-import { type EditResponse } from './type/articleType';
+import { type EditResponse } from '../type/articleType';
 
 // 체험콕 아티클 상세 정보 조회
 export const getArticleDetail = async (id: string) => {

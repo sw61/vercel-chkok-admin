@@ -6,15 +6,15 @@ import { ChevronLeft } from 'lucide-react';
 import { Editor } from '@toast-ui/react-editor';
 import TurndownService from 'turndown';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { getArticleDetail } from '@/services/articles/detailApi';
 import ArticleContent from '../components/detail/detailContent';
 import SearchMapModal from '../components/searchMapModal';
 import DetailForm from '../components/detail/detailForm';
 import TuiEditor from '@/components/markdown/editor/toastUiEditor';
 import { useAddImage } from '@/hooks/useAddImage';
-import { useEditArticleMutation } from '@/services/articles/detailMutation';
 import { CustomBadge } from '@/hooks/useBadge';
 import { toast } from 'sonner';
+import { getArticleDetail } from '@/services/articles/detail/detailApi';
+import { useEditArticleMutation } from '@/services/articles/detail/detailMutation';
 
 export default function ArticleDetailPage() {
   const { articleId } = useParams<{ articleId: string }>();
