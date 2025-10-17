@@ -6,8 +6,6 @@ import {
   getSortedRowModel,
   type SortingState,
   useReactTable,
-  type VisibilityState,
-  type ColumnFiltersState,
 } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -34,10 +32,6 @@ interface Notice {
 
 interface NoticeDataTableProps {
   noticeData: Notice[];
-  columnFilters: ColumnFiltersState;
-  setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
-  columnVisibility: VisibilityState;
-  setColumnVisibility: React.Dispatch<React.SetStateAction<VisibilityState>>;
 }
 
 const columns: ColumnDef<Notice>[] = [
@@ -158,13 +152,7 @@ const totalColumnWidth = columns.reduce(
   0
 );
 
-export function NoticeTable({
-  noticeData,
-  columnFilters,
-  setColumnFilters,
-  columnVisibility,
-  setColumnVisibility,
-}: NoticeDataTableProps) {
+export function NoticeTable({ noticeData }: NoticeDataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const navigate = useNavigate();
@@ -173,16 +161,12 @@ export function NoticeTable({
     data: noticeData,
     columns,
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     state: {
       sorting,
-      columnFilters,
-      columnVisibility,
       rowSelection,
     },
     columnResizeMode: 'onChange',
@@ -246,7 +230,7 @@ export function NoticeTable({
                   colSpan={columns.length}
                   className="h-24 text-center whitespace-nowrap"
                 >
-                  No results.
+                  공지사항이 없습니다.
                 </TableCell>
               </TableRow>
             )}

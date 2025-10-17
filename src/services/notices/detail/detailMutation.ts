@@ -1,12 +1,15 @@
-import { useMutation } from '@tanstack/react-query';
-import { deleteNotice, editNotice } from './detailAPI';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import type { EditParams } from './detailType';
+import { deleteNotice, editNotice } from './detailApi';
+import { useNavigate } from 'react-router-dom';
 
 export const useEditNoticeMutation = () => {
+  const queryClient = useQueryClient();
   return useMutation<void, Error, EditParams>({
     mutationFn: ({ id, payload }) => editNotice(id, payload),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['noticeDetail'] });
       toast.success('공지사항이 수정되었습니다.');
     },
     onError: () => {
@@ -15,9 +18,13 @@ export const useEditNoticeMutation = () => {
   });
 };
 export const useDeleteNoticeMutation = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   return useMutation({
     mutationFn: (id: string) => deleteNotice(id),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['noticeTable'] });
+      navigate('/notices');
       toast.success('공지사항이 삭제되었습니다.');
     },
     onError: () => {
