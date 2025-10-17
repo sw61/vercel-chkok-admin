@@ -7,19 +7,16 @@ interface CreatePayload {
   content: string;
   isMust: boolean;
 }
-interface CreateParams {
-  id: string;
-  payload: CreatePayload;
-}
-const createNotice = async (id: string, payload: CreatePayload) => {
+
+const createNotice = async (payload: CreatePayload) => {
   const response = await axiosInterceptor.post('/api/admin/notices', {
     payload,
   });
   return response.data.data;
 };
 export const useCreateNoticeMutation = () => {
-  return useMutation<void, Error, CreateParams>({
-    mutationFn: ({ id, payload }) => createNotice(id, payload),
+  return useMutation({
+    mutationFn: (payload: CreatePayload) => createNotice(payload),
     onSuccess: () => {
       toast.success('공지사항이 생성되었습니다.');
     },

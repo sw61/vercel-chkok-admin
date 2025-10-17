@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react';
-import axiosInterceptor from '@/lib/axiosInterceptors';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -10,16 +9,16 @@ import TuiEditor from '@/components/markdown/editor/toastUiEditor';
 import { useAddImage } from '@/hooks/useAddImage';
 import { Editor } from '@toast-ui/react-editor';
 import { toast } from 'sonner';
+import { useCreateNoticeMutation } from '@/services/notices/create/createApi';
 
 export default function NoticeCreate() {
   const [title, setTitle] = useState<string>('');
-  const [content, setContent] = useState<string>('');
   const [isMust, setIsMust] = useState<boolean>(false);
   const navigate = useNavigate();
   const editorRef = useRef<Editor | null>(null);
   const { imageHandler } = useAddImage();
-
-  const createNotice = async () => {
+  const { mutate: createMutation } = useCreateNoticeMutation();
+  const handleCreateNotice = () => {
     if (!title) {
       toast.error('제목을 입력해주세요.');
       return;
@@ -28,21 +27,14 @@ export default function NoticeCreate() {
       toast.error('내용을 입력해주세요.');
       return;
     }
+    const markdownContent = editorRef.current.getInstance().getMarkdown() || '';
+    const payload = {
+      title,
+      content: markdownContent,
+      isMust,
+    };
 
-    try {
-      const markdownContent =
-        editorRef.current.getInstance().getMarkdown() || '';
-      await axiosInterceptor.post('/api/admin/notices', {
-        title,
-        content: markdownContent,
-        isMust,
-      });
-      toast.success('문서가 생성되었습니다.');
-      navigate('/notices');
-    } catch (error) {
-      console.error('문서 생성 오류:', error);
-      toast.error('문서 생성에 실패했습니다.');
-    }
+    createMutation(payload);
   };
 
   return (
@@ -66,7 +58,7 @@ export default function NoticeCreate() {
                   >
                     취소
                   </Button>
-                  <Button onClick={createNotice} variant="outline">
+                  <Button onClick={handleCreateNotice} variant="outline">
                     생성
                   </Button>
                 </div>

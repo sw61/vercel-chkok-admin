@@ -1,14 +1,17 @@
 import axiosInterceptor from '@/lib/axiosInterceptors';
 
-const getNoticeTable = async (currentPage: number = 0) => {
+export const getNoticeTable = async (currentPage: number = 0) => {
   const response = await axiosInterceptor.get(
     `/api/admin/notices?page=${currentPage}`
   );
   return response.data.data;
 };
-const searchNotice = async (searchKey: string) => {
+export const searchNotice = async (
+  currentPage: number = 0,
+  searchKey: string
+) => {
   const response = await axiosInterceptor.get(
-    `/api/admin/notices/search?title=${searchKey}`
+    `/api/admin/notices/search?page=${currentPage}&title=${searchKey}`
   );
   return response.data.data;
 };

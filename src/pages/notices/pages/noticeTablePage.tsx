@@ -1,138 +1,61 @@
-import { useState, useEffect, type KeyboardEvent } from 'react';
-import {
-  type ColumnFiltersState,
-  type VisibilityState,
-} from '@tanstack/react-table';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { Search, ChevronDown } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdownMenu';
-import axiosInterceptor from '@/lib/axiosInterceptors';
+import { Search } from 'lucide-react';
 import { PaginationHook } from '@/hooks/paginationHook';
 import { NoticeTable } from '../components/table/noticeTable';
 import { useNavigate } from 'react-router-dom';
 import UserTableSkeleton from '@/pages/users/components/table/usersTableSkeleton';
-
-interface Notice {
-  id: number;
-  title: string;
-  viewCount: number;
-  isMustRead: boolean;
-  authorId: number;
-  authorName: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface PaginationData {
-  first: boolean;
-  last: boolean;
-  pageNumber: number;
-  pageSize: number;
-  totalElements: number;
-  totalPages: number;
-}
+import { useQuery } from '@tanstack/react-query';
+import {
+  getNoticeTable,
+  searchNotice,
+} from '@/services/notices/table/tableApi';
+import useDebounce from '@/hooks/useDebounce';
 
 export default function NoticeTablePage() {
-  const [noticeData, setNoticeData] = useState<Notice[] | null>(null);
-  const [pageData, setPageData] = useState<PaginationData | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(0);
   const [searchKey, setSearchKey] = useState<string>('');
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [debouncedSearchKey] = useDebounce(searchKey, 300);
   const navigate = useNavigate();
 
-  const headerMenu = [
-    { id: 'id', label: 'ID' },
-    { id: 'title', label: '제목' },
-    { id: 'authorName', label: '작성자' },
-    { id: 'viewCount', label: '조회수' },
-    { id: 'createdAt', label: '생성일' },
-    { id: 'updatedAt', label: '업데이트일' },
-  ];
-
-  // 공지사항 데이터 목록 조회
-  const getNoticeTable = async (page: number = 0) => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInterceptor.get(
-        `/api/admin/notices?page=${page}`
-      );
-      const data = response.data.data;
-      setNoticeData(data.notices);
-      setPageData(data.pagination);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
+  // 공지사항 데이터 테이블 패칭
+  const { data: noticeData, isPending } = useQuery({
+    queryKey: ['noticeTable', currentPage],
+    queryFn: () => getNoticeTable(currentPage),
+    enabled: !debouncedSearchKey,
+  });
+  // 공지사항 키워드 검색 데이터 패칭
+  const { data: searchData } = useQuery({
+    queryKey: ['searchNotice', currentPage, searchKey],
+    queryFn: () => searchNotice(currentPage, searchKey),
+    enabled: !!debouncedSearchKey,
+  });
+  const isSearchMode = !!searchKey;
+  const activeData = isSearchMode ? searchData : noticeData;
+  const activePageData = activeData?.pagination ?? {
+    totalPages: 0,
+    currentPage: 0,
   };
-
-  // 공지사항 제목 검색 기능
-  const handleSearch = async () => {
-    try {
-      const response = await axiosInterceptor.get(
-        `/api/admin/notices/search?title=${searchKey}&size=10`
-      );
-      const data = response.data.data;
-      setNoticeData(data.notices);
-      setPageData(data.pagination);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // Enter 검색 기능
-  const handleEnterSearch = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      handleSearch();
-    }
-  };
+  const activeContent = activeData?.notices || [];
 
   // 페이지네이션
   const handlePageChange = (page: number) => {
-    getNoticeTable(page);
+    setCurrentPage(page);
   };
 
   useEffect(() => {
-    getNoticeTable();
-  }, []);
+    if (!isSearchMode) {
+      setCurrentPage(0);
+    }
+  }, [isSearchMode]);
 
   return (
     <div className="p-6">
       <Card className="px-6 py-4">
         <div className="mb-2 flex items-center justify-between">
           <div className="flex gap-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto">
-                  항목 <ChevronDown />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {headerMenu.map((column) => (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={columnVisibility[column.id] !== false}
-                    onCheckedChange={(value) =>
-                      setColumnVisibility((prev) => ({
-                        ...prev,
-                        [column.id]: value,
-                      }))
-                    }
-                  >
-                    {column.label}
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
             <Button
               variant="outline"
               onClick={() => navigate('/notices/create')}
@@ -146,36 +69,25 @@ export default function NoticeTablePage() {
               placeholder="공지사항 검색"
               value={searchKey}
               onChange={(e) => setSearchKey(e.target.value)}
-              onKeyDown={handleEnterSearch}
               className="pr-12"
             />
-            <button
-              className="absolute top-0 right-0 h-full w-10 cursor-pointer"
-              onClick={handleSearch}
-            >
+            <button className="absolute top-0 right-0 h-full w-10 cursor-pointer">
               <Search />
             </button>
           </div>
         </div>
 
-        {isLoading ? (
+        {isPending ? (
           <UserTableSkeleton />
-        ) : !noticeData || !pageData ? (
+        ) : !noticeData ? (
           <div className="text-ck-gray-600 ck-body-2 flex items-center justify-center rounded-md border py-10">
             데이터가 없습니다.
           </div>
         ) : (
           <>
-            <NoticeTable
-              noticeData={noticeData}
-              columnFilters={columnFilters}
-              setColumnFilters={setColumnFilters}
-              columnVisibility={columnVisibility}
-              setColumnVisibility={setColumnVisibility}
-            />
-
+            <NoticeTable noticeData={activeContent} />
             <PaginationHook
-              pageData={pageData}
+              pageData={activePageData}
               onPageChange={handlePageChange}
             />
           </>

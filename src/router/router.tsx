@@ -41,7 +41,7 @@ export const privateRoutes = [
   { path: '/banners/:bannerId', element: <BannersDetail /> },
   { path: '/server', element: <Dashboard /> },
   { path: '/notices', element: <NoticePage /> },
-  { path: '/notices/:markdownId', element: <NoticeDetail /> },
+  { path: '/notices/:noticeId', element: <NoticeDetail /> },
   { path: '/notices/create', element: <NoticeCreate /> },
   { path: '/articles', element: <ArticlePage /> },
   { path: '/articles/:articleId', element: <ArticleDetail /> },
