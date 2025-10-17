@@ -1,5 +1,5 @@
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
-import useKakaoLoader from '../../hooks/useKakaoLoader';
+import useKakaoLoader from '@/hooks/useKakaoLoader';
 
 interface KakaoMapProps {
   latitude: number;

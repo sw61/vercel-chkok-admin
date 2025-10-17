@@ -97,7 +97,7 @@ export default function CampaignDetailMission({
           {campaignData.missionInfo.bodyKeywords && (
             <div className="flex flex-col gap-2">
               <p className="ck-body-2-bold">내용 키워드</p>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {Array.isArray(campaignData.missionInfo.bodyKeywords) &&
                   campaignData.missionInfo.bodyKeywords.map(
                     (keyword: string) => (
