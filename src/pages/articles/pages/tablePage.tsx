@@ -7,7 +7,7 @@ import { ArticleTable } from '../components/table/articleTable';
 import UserTableSkeleton from '@/pages/users/components/table/usersTableSkeleton';
 import { useQuery } from '@tanstack/react-query';
 import useDebounce from '@/hooks/useDebounce';
-import { getArticleTable, searchArticle } from '@/services/articles/tableApi';
+import { getArticleTable, searchArticle } from '@/services/articles/table/tableApi';
 import ArticleDropDownMenu from '../components/table/dropdownMenu';
 
 export default function ArticleTablePage() {

@@ -6,8 +6,8 @@ import {
   deleteArticle,
   editArticle,
 } from './detailApi';
-import { type EditParams, type EditResponse } from './type/articleType';
 import { toast } from 'sonner';
+import type { EditParams, EditResponse } from '../type/articleType';
 
 export const useEditArticleMutation = () => {
   const queryClient = useQueryClient();
