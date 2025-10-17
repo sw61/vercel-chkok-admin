@@ -74,7 +74,6 @@ export default function ArticleDetailPage() {
       toast.error('연락처를 입력해주세요.');
       return;
     }
-    const id = articleData.id;
     const payload = {
       title: formData.title,
       content: markdownContent,
@@ -89,7 +88,7 @@ export default function ArticleDetailPage() {
       },
     };
 
-    editMutation({ id, payload });
+    editMutation({ id: articleData.id, payload });
   };
 
   // 폼 필드 변경 핸들러

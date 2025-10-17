@@ -13,20 +13,6 @@ import { ChevronDown } from 'lucide-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { getApplicants } from '@/services/campaigns/applicants/applicantsApi';
 
-interface Campaigns {
-  campaignId: number;
-  campaignTitle: string;
-  totalApplicants: number;
-  applicants: {
-    id: number;
-    nickname: string;
-    email: string;
-    appliedAt: string;
-    applicationStatus: string;
-    statusText: string;
-  };
-}
-
 export default function ApplicantsDataTable() {
   const { campaignId } = useParams<{ campaignId: string }>();
   const [currentPage, setCurrentPage] = useState<number>(0);

@@ -22,7 +22,7 @@ export const searchCampaign = async (
   const params = new URLSearchParams();
   params.append('page', `${currentPage}`);
   params.append('keyword', searchKey);
-  if (campaignType === 'ALL') {
+  if (campaignType !== 'ALL') {
     params.append('approvalStatus', campaignType);
   }
   const response = await axiosInterceptor.get(

@@ -1,4 +1,3 @@
-import axiosInterceptor from '@/lib/axiosInterceptors';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { UsersActivitiesTable } from '../table/usersActivities';
@@ -13,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import { getActivitiesTable } from '@/services/users/activities/activitiesApi';
 
 interface UserItems {
   id: number;
@@ -66,16 +66,8 @@ export default function ActivitiesPage() {
     { status: 'EXPIRED', label: '만료' },
   ];
   const { data: activitiesData } = useQuery({
-    queryKey: ['activitiesTable', userId, status, currentPage],
-    queryFn: async () => {
-      const url =
-        status === 'ALL'
-          ? `/users/${userId}/activities?page=${currentPage}`
-          : `/users/${userId}/activities?status=${status}&page=${currentPage}`;
-      const response = await axiosInterceptor.get(url);
-      const data = response.data.data;
-      return data;
-    },
+    queryKey: ['activitiesTable', status, currentPage],
+    queryFn: () => getActivitiesTable(userId!, currentPage, status),
   });
 
   const handlePageChange = (page: number) => {
