@@ -4,7 +4,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import KakaoSearch from '@/components/kakaoMap/kakaoSearch';
+import KakaoSearch from '@/pages/kakaoMap/kakaoSearch';
 
 interface SearchMapModalProps {
   handleMapSelect: (data: {
