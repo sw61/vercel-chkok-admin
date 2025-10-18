@@ -10,6 +10,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import usericon from '@/image/usericon.png';
 import { useAlertDialog } from '@/components/alertDialog/useAlertDialog';
 import type { UserDetailHeaderProps } from '@/services/users/detail/detailType';
+import PlatformLinks from './platformLinks';
 
 export default function UserDetailHeader({
   userId,
@@ -19,6 +20,7 @@ export default function UserDetailHeader({
   const { mutate: statusMutation } = usePutUserStatus();
   const { mutate: deleteMutation } = useDeleteUser();
   const { mutate: userToClientMutation } = useUserToClient();
+  const platformsData = userData.platforms;
   // Alert Dialog
   const { AlertDialogComponent: UserToClientAlertDialog } = useAlertDialog({
     trigger: <Button variant="outline">권한 승급</Button>,
@@ -57,7 +59,7 @@ export default function UserDetailHeader({
     <>
       <div className="flex justify-between gap-4">
         <div className="flex items-center gap-4">
-          <CardTitle className="ck-title">사용자 정보</CardTitle>
+          <CardTitle className="ck-title">사용자 #{userData.id}</CardTitle>
           <CustomBadge variant={userData.role} />
         </div>
 
@@ -70,7 +72,7 @@ export default function UserDetailHeader({
       <div className="pt-2">
         <div className="flex justify-between pb-4">
           <div className="flex items-center gap-4">
-            <Avatar className="h-16 w-16">
+            <Avatar className="h-20 w-20">
               <AvatarImage
                 src={userData.profileImg || usericon}
                 alt={userData.nickname}
@@ -78,10 +80,15 @@ export default function UserDetailHeader({
               <AvatarFallback></AvatarFallback>
             </Avatar>
             <div>
-              <p className="ck-body-2">
-                {userData.nickname} ({userData.gender || '성별 미공개'},{' '}
-                {userData.age || '나이 미공개'})
-              </p>
+              <div className="flex gap-2">
+                <p className="ck-body-2">
+                  {userData.nickname} ({userData.gender || '성별 미공개'},{' '}
+                  {userData.age || '나이 미공개'})
+                </p>
+                {/* 연결된 SNS 링크 */}
+                <PlatformLinks platformsData={platformsData} />
+              </div>
+
               <p className="ck-body-2 text-ck-gray-600">
                 {userData.email || '이메일 없음'}
               </p>

@@ -35,10 +35,6 @@ export default function UserDetailContent({
     <>
       <div className="mb-6 grid grid-cols-3 gap-6">
         <div>
-          <p className="ck-caption-1 text-ck-gray-600">사용자 ID</p>
-          <p className="ck-body-2">{userData.id}</p>
-        </div>
-        <div>
           <p className="ck-caption-1 text-ck-gray-600">계정 상태</p>
           <p className="ck-body-2 text-ck-blue-500">
             {userData.active ? '활성화' : '비활성화'}
@@ -59,10 +55,6 @@ export default function UserDetailContent({
         <div>
           <p className="text-ck-gray-600 ck-caption-1">계정 타입</p>
           <p className="ck-body-2">{userData.accountType}</p>
-        </div>
-        <div>
-          <p className="text-ck-gray-600 ck-caption-1">계정 플랫폼</p>
-          <p className="ck-body-2">{userData.platforms ?? '정보 없음'}</p>
         </div>
         <div>
           <p className="text-ck-gray-600 ck-caption-1">생성일</p>

@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { ChevronLeft } from 'lucide-react';
@@ -19,6 +19,9 @@ export default function UserDetail() {
     queryFn: () => getUserDetail(userId!),
   });
 
+  useEffect(() => {
+    console.log(userData);
+  }, [userData]);
   if (!userData) {
     return <div>데이터가 없습니다.</div>;
   }
