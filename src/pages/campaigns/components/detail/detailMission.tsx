@@ -95,7 +95,7 @@ export default function CampaignDetailMission({
           )}
           {/* 내용 키워드 */}
           {campaignData.missionInfo.bodyKeywords && (
-            <div className="flex flex-col gap-2">
+            <>
               <p className="ck-body-2-bold">내용 키워드</p>
               <div className="flex flex-wrap gap-2">
                 {Array.isArray(campaignData.missionInfo.bodyKeywords) &&
@@ -107,7 +107,7 @@ export default function CampaignDetailMission({
                     )
                   )}
               </div>
-            </div>
+            </>
           )}
         </CardContent>
         {campaignData.missionInfo.isMap && (

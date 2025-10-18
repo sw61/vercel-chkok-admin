@@ -1,4 +1,4 @@
-import { Suspense, useState, type ChangeEvent } from 'react';
+import { Suspense } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { ChevronLeft } from 'lucide-react';
@@ -12,24 +12,12 @@ import UserDetailContent from '../components/detail/detailContent';
 export default function UserDetail() {
   const navigate = useNavigate();
   const { userId } = useParams<{ userId: string }>();
-  const [userMemo, setUserMemo] = useState<string>('');
-  const [hideMemo, setHideMemo] = useState<boolean>(false);
 
   // 사용자 상세 정보 요청
   const { data: userData } = useSuspenseQuery({
     queryKey: ['userDetail', userId],
     queryFn: () => getUserDetail(userId!),
   });
-
-  // 메모 업데이트 핸들러
-  const handleUpdateHideMemo = () => {
-    setHideMemo(!hideMemo);
-  };
-
-  // 사용자 메모 수정 핸들러
-  const handleTextAreaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setUserMemo(event.target.value);
-  };
 
   if (!userData) {
     return <div>데이터가 없습니다.</div>;
@@ -50,14 +38,7 @@ export default function UserDetail() {
               {/* 상세 페이지 헤더 부분 */}
               <UserDetailHeader userId={userId!} userData={userData} />
               {/* 상세 페이지 메인 컨텐츠 부분 */}
-              <UserDetailContent
-                userId={userId!}
-                userData={userData}
-                hideMemo={hideMemo}
-                userMemo={userMemo}
-                handleTextAreaChange={handleTextAreaChange}
-                handleUpdateHideMemo={handleUpdateHideMemo}
-              />
+              <UserDetailContent userId={userId!} userData={userData} />
             </CardContent>
           </Card>
           <ActivitiesPage />

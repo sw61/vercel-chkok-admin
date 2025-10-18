@@ -3,21 +3,33 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useUpdateUserMemo } from '@/services/users/detail/detailMutation';
 import type { UserDetailContentProps } from '@/services/users/detail/detailType';
+import { useState, type ChangeEvent } from 'react';
 
 export default function UserDetailContent({
   userId,
   userData,
-  hideMemo,
-  userMemo,
-  handleTextAreaChange,
-  handleUpdateHideMemo,
 }: UserDetailContentProps) {
+  const [userMemo, setUserMemo] = useState<string>(userData.memo);
+  const [hideMemo, setHideMemo] = useState<boolean>(false);
   const { mutate: updateMemoMutation } = useUpdateUserMemo();
+  const handleUpdateMemo = () => {
+    updateMemoMutation({ userId, userMemo });
+    handleUpdateHideMemo();
+  };
+  // 메모 업데이트 핸들러
+  const handleUpdateHideMemo = () => {
+    setHideMemo(!hideMemo);
+  };
+
+  // 사용자 메모 수정 핸들러
+  const handleTextAreaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setUserMemo(event.target.value);
+  };
   const { AlertDialogComponent: UpdateAlertDialog } = useAlertDialog({
     trigger: <Button variant="outline">저장</Button>,
     title: '메모를 저장하시겠습니까?',
     description: '',
-    onAlert: () => updateMemoMutation({ userId, userMemo }),
+    onAlert: handleUpdateMemo,
   });
   return (
     <>
