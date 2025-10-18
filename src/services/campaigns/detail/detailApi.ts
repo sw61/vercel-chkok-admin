@@ -15,6 +15,7 @@ export const getCampaignDetail = async (id: string) => {
     creatorRole: dataMap[data.creator.role] || data.creator.role,
     creatorAccountType: dataMap[data.creator.accountType] || data.accountType,
   };
+
   return mappedData;
 };
 

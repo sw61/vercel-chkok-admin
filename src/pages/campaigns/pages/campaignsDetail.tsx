@@ -11,7 +11,7 @@ import CampaignDetailHeader from '../components/detail/detailHeader';
 
 export default function CampaignsDetail() {
   const { campaignId } = useParams<{ campaignId: string }>();
-  const [comment, setComment] = useState<string>();
+  const [comment, setComment] = useState<string>('');
 
   // 캠페인 상세 정보 조회
   const { data: campaignData } = useSuspenseQuery<Campaign>({
@@ -23,9 +23,11 @@ export default function CampaignsDetail() {
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value);
   };
-
   if (!campaignData) {
     return <p>데이터가 없습니다.</p>;
+  }
+  if (campaignData) {
+    console.log('Fetched data:', campaignData);
   }
 
   return (

@@ -44,7 +44,7 @@ export const deleteUser = async (id: string) => {
 export const putMemoUpdate = async (id: string, userMemo: string) => {
   const response = await axiosInterceptor.put(
     `/users/${id}/memo`,
-    { userMemo },
+    { memo: userMemo },
     {
       headers: { 'Content-Type': 'application/json' },
     }
