@@ -26,12 +26,12 @@ export default function CampaignDetailMission({
         <CardContent>
           <p className="ck-title mb-2">미션 정보</p>
           <div className="flex gap-6">
-            <div className="ck-body-2-bold">
+            <div className="ck-body-2-bold flex flex-col gap-2">
               <p>미션 기간</p>
               <p>생성일</p>
               <p>업데이트일</p>
             </div>
-            <div className="ck-body-2">
+            <div className="ck-body-2 flex flex-col gap-2">
               <div>
                 {campaignData.missionInfo.missionStartDate ||
                 campaignData.missionInfo.missionDeadlineDate ? (
@@ -79,36 +79,41 @@ export default function CampaignDetailMission({
           <p className="ck-body-2 mb-4 whitespace-pre-line">
             {campaignData.missionInfo.missionGuide}
           </p>
-          {/* 제목 키워드 */}
-          {campaignData.missionInfo.titleKeyWords && (
-            <div className="flex flex-wrap gap-2">
-              <p className="ck-body-2-bold">제목 키워드</p>
-              {Array.isArray(campaignData.missionInfo.titleKeyWords) &&
-                campaignData.missionInfo.titleKeyWords.map(
-                  (keyword: string) => (
-                    <Badge key={keyword} variant="blue">
-                      #{keyword}
-                    </Badge>
-                  )
-                )}
-            </div>
-          )}
-          {/* 내용 키워드 */}
-          {campaignData.missionInfo.bodyKeywords && (
-            <>
-              <p className="ck-body-2-bold">내용 키워드</p>
-              <div className="flex flex-wrap gap-2">
-                {Array.isArray(campaignData.missionInfo.bodyKeywords) &&
-                  campaignData.missionInfo.bodyKeywords.map(
-                    (keyword: string) => (
-                      <Badge key={keyword} variant="blue">
-                        #{keyword}
-                      </Badge>
-                    )
-                  )}
+
+          <div className="flex flex-col gap-4">
+            {/* 제목 키워드 */}
+            {campaignData.missionInfo.titleKeywords && (
+              <div>
+                <p className="ck-body-2-bold mb-2">제목 키워드</p>
+                <div className="flex flex-wrap gap-2">
+                  {Array.isArray(campaignData.missionInfo.titleKeywords) &&
+                    campaignData.missionInfo.titleKeywords.map(
+                      (keyword: string) => (
+                        <Badge key={keyword} variant="blue">
+                          #{keyword}
+                        </Badge>
+                      )
+                    )}
+                </div>
               </div>
-            </>
-          )}
+            )}
+            {/* 내용 키워드 */}
+            {campaignData.missionInfo.bodyKeywords && (
+              <div>
+                <p className="ck-body-2-bold mb-2">내용 키워드</p>
+                <div className="flex flex-wrap gap-2">
+                  {Array.isArray(campaignData.missionInfo.bodyKeywords) &&
+                    campaignData.missionInfo.bodyKeywords.map(
+                      (keyword: string) => (
+                        <Badge key={keyword} variant="blue">
+                          #{keyword}
+                        </Badge>
+                      )
+                    )}
+                </div>
+              </div>
+            )}
+          </div>
         </CardContent>
         {campaignData.missionInfo.isMap && (
           <CardContent>

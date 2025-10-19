@@ -27,14 +27,14 @@ export const deleteCampaigns = async (id: string) => {
 export const approveCampaigns = async (id: string, comment: string) => {
   const response = await axiosInterceptor.put(`/campaigns/${id}/approval`, {
     approvalStatus: 'APPROVED',
-    comment: comment ?? '모든 조건을 만족하여 승인합니다.',
+    comment: comment,
   });
   return response.data.data;
 };
 export const rejectCampaigns = async (id: string, comment: string) => {
   const response = await axiosInterceptor.put(`/campaigns/${id}/approval`, {
     approvalStatus: 'REJECTED',
-    comment: comment ?? '조건을 만족하지 못하여 거절되었습니다.',
+    comment: comment,
   });
   return response.data.data;
 };

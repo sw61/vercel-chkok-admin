@@ -23,6 +23,7 @@ export interface Campaign {
   createdAt: string;
   creatorRole: '클라이언트' | '사용자' | '관리자';
   creatorAccountType: string;
+  selectionCriteria: string;
   category: {
     type: string;
     name: string;
@@ -59,7 +60,7 @@ export interface Campaign {
   };
   missionInfo: {
     id: number;
-    titleKeyWords: string[];
+    titleKeywords: string[];
     bodyKeywords: string[];
     numberOfVideo: number;
     numberOfImage: number;
@@ -77,11 +78,8 @@ export interface DetailMissionProps {
 }
 export interface DetailContentProps {
   campaignData: Campaign;
-  comment: string;
-  handleInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 export interface DetailHeaderProps {
   campaignData: Campaign;
   campaignId: string;
-  comment: string;
 }

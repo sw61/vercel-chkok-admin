@@ -1,18 +1,15 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { CustomBadge } from '@/hooks/useBadge';
 import type { DetailContentProps } from '@/services/campaigns/detail/detailType';
 import { House, Package } from 'lucide-react';
 
 export default function CampaignDetailContent({
   campaignData,
-  comment,
-  handleInputChange,
 }: DetailContentProps) {
   return (
-    <Card>
-      <CardContent className="min-w-[450px]">
+    <Card className="">
+      <CardContent>
         <div className="mb-2 flex gap-2">
           {campaignData.category.type === '방문' ? (
             <div className="ck-caption-1 flex items-center gap-2 rounded-md border px-2 py-1">
@@ -34,36 +31,35 @@ export default function CampaignDetailContent({
           <CustomBadge variant={campaignData.approvalStatus} />
         </div>
         <p className="ck-sub-title-1 mb-4">{campaignData.title}</p>
-        <div className="mb-6 grid grid-cols-3 gap-6">
-          <div>
-            <p className="ck-body-2-bold">캠페인 ID</p>
-            <p className="ck-body-2 text-ck-gray-700">{campaignData.id}</p>
-          </div>
-          <div>
-            <p className="ck-body-2-bold">최대 신청자 수</p>
-            <p className="ck-body-2 text-ck-gray-700">
-              {campaignData?.maxApplicants
-                ? `${campaignData.maxApplicants}명`
-                : '정보 없음'}
-            </p>
-          </div>
-        </div>
+
         <div className="flex flex-col gap-4">
           <div className="flex gap-6">
             <div className="ck-body-2-bold flex flex-col gap-1">
               <p>모집 기간</p>
               <p>리뷰 마감일</p>
               <p>체험단 선정일</p>
+              <p>최대 신청자 수</p>
               <p>생성일</p>
               {campaignData.approvalDate && <p>승인일</p>}
             </div>
             <div className="ck-body-2 flex flex-col gap-1">
               <p>
-                {campaignData.recruitmentStartDate} ~{' '}
-                {campaignData.recruitmentEndDate}
+                {campaignData.recruitmentEndDate ? (
+                  <>
+                    {campaignData.recruitmentStartDate} ~{' '}
+                    {campaignData.recruitmentEndDate}
+                  </>
+                ) : (
+                  '상시 모집'
+                )}
               </p>
               <p>{campaignData.reviewDeadlineDate ?? '상시 모집'}</p>{' '}
               <p>{campaignData.selectionDate ?? '상시 모집'}</p>
+              <p>
+                {campaignData?.maxApplicants
+                  ? `${campaignData.maxApplicants}명`
+                  : '상시 모집'}
+              </p>
               <p>{campaignData.createdAt.split('T')[0]}</p>
               {campaignData.approvalDate && (
                 <p>{campaignData.approvalDate.split('T')[0]}</p>
@@ -79,22 +75,20 @@ export default function CampaignDetailContent({
               </p>
             </div>
           </div>
+          <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-2">
+              <p className="ck-body-2-bold">선정 기준</p>
+              <p className="ck-body-2 text-ck-gray-700">
+                {campaignData.selectionCriteria || '간단 소개 정보 없음'}
+              </p>
+            </div>
+          </div>
           {/* 승인 코멘트 */}
           <div className="flex flex-col gap-2">
             <p className="ck-body-2-bold">승인 코멘트</p>
-            {campaignData.approvalStatus === '대기중' ? (
-              <Input
-                id="comment"
-                name="comment"
-                value={comment}
-                onChange={handleInputChange}
-                placeholder="승인 코멘트를 입력해주세요."
-              />
-            ) : (
-              <p className="ck-body-2 text-ck-gray-700">
-                {campaignData.approvalComment ?? '코멘트가 없습니다.'}
-              </p>
-            )}
+            <p className="ck-body-2 text-ck-gray-700">
+              {campaignData.approvalComment ?? '코멘트가 없습니다.'}
+            </p>
           </div>
           {/* 캠페인 승인인 */}
           <div className="flex flex-col gap-4">
