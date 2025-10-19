@@ -10,7 +10,7 @@ export default function CampaignDetailContent({
   return (
     <Card className="">
       <CardContent>
-        <div className="mb-2 flex gap-2">
+        <div className="mb-4 flex gap-2">
           {campaignData.category.type === '방문' ? (
             <div className="ck-caption-1 flex items-center gap-2 rounded-md border px-2 py-1">
               <div>
@@ -34,7 +34,7 @@ export default function CampaignDetailContent({
 
         <div className="flex flex-col gap-4">
           <div className="flex gap-6">
-            <div className="ck-body-2-bold flex flex-col gap-1">
+            <div className="ck-body-2 text-ck-gray-700 flex flex-col gap-1 font-semibold">
               <p>모집 기간</p>
               <p>리뷰 마감일</p>
               <p>체험단 선정일</p>
@@ -69,34 +69,40 @@ export default function CampaignDetailContent({
           {/* 간단 소개 */}
           <div className="flex items-center gap-4">
             <div className="flex flex-col gap-2">
-              <p className="ck-body-2-bold">간단 소개</p>
-              <p className="ck-body-2 text-ck-gray-700">
+              <p className="ck-body-2 text-ck-gray-700 font-semibold">
+                간단 소개
+              </p>
+              <p className="ck-body-2">
                 {campaignData.productShortInfo || '간단 소개 정보 없음'}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex flex-col gap-2">
-              <p className="ck-body-2-bold">선정 기준</p>
-              <p className="ck-body-2 text-ck-gray-700">
+              <p className="ck-body-2 text-ck-gray-700 font-semibold">
+                선정 기준
+              </p>
+              <p className="ck-body-2">
                 {campaignData.selectionCriteria || '간단 소개 정보 없음'}
               </p>
             </div>
           </div>
           {/* 승인 코멘트 */}
           <div className="flex flex-col gap-2">
-            <p className="ck-body-2-bold">승인 코멘트</p>
-            <p className="ck-body-2 text-ck-gray-700">
-              {campaignData.approvalComment ?? '코멘트가 없습니다.'}
+            <p className="ck-body-2 text-ck-gray-700 font-semibold">
+              승인 코멘트
             </p>
+            <p className="ck-body-2">{campaignData.approvalComment}</p>
           </div>
           {/* 캠페인 승인인 */}
           <div className="flex flex-col gap-4">
             {campaignData.approver && (
               <div className="flex items-center gap-4">
                 <div className="flex flex-col gap-2">
-                  <p className="ck-body-2-bold">캠페인 승인인</p>
-                  <p className="ck-body-2 text-ck-gray-700">
+                  <p className="ck-body-2 text-ck-gray-700 font-semibold">
+                    캠페인 승인인
+                  </p>
+                  <p className="ck-body-2">
                     {campaignData.approver.nickname} |&nbsp;
                     {campaignData.approver.email}
                   </p>
@@ -107,8 +113,10 @@ export default function CampaignDetailContent({
             {campaignData.creator && (
               <div className="flex items-center gap-4">
                 <div className="flex flex-col gap-2">
-                  <p className="ck-body-2-bold">캠페인 생성인</p>
-                  <p className="ck-body-2 text-ck-gray-700">
+                  <p className="ck-body-2-bold text-ck-gray-700">
+                    캠페인 생성인
+                  </p>
+                  <p className="ck-body-2">
                     {campaignData.creator.nickname} |&nbsp;
                     {campaignData.creator.email} &nbsp;
                     <CustomBadge variant={campaignData.creatorRole} />

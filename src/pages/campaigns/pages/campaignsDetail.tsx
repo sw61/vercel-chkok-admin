@@ -21,6 +21,9 @@ export default function CampaignsDetail() {
   if (!campaignData) {
     return <p>데이터가 없습니다.</p>;
   }
+  if (campaignData) {
+    console.log('Fetched data:', campaignData);
+  }
 
   return (
     <Suspense fallback={<CampaignDetailSkeleton />}>

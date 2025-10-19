@@ -26,7 +26,7 @@ export default function CampaignDetailMission({
         <CardContent>
           <p className="ck-title mb-2">미션 정보</p>
           <div className="flex gap-6">
-            <div className="ck-body-2-bold flex flex-col gap-2">
+            <div className="ck-body-2-bold text-ck-gray-700 flex flex-col gap-2">
               <p>미션 기간</p>
               <p>생성일</p>
               <p>업데이트일</p>
