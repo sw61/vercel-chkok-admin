@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDeleteCampaignsMutation } from '@/services/campaigns/detail/detailMutation';
 import { useAlertDialog } from '@/components/alertDialog/useAlertDialog';
 import ApprovalButton from './approveButton';
+import EditCampaignDetailSheet from './editDetailSheet';
 
 export default function CampaignDetailHeader({
   campaignData,
@@ -42,6 +43,7 @@ export default function CampaignDetailHeader({
               </>
             )}
             <DeleteAlertDialog />
+            <EditCampaignDetailSheet />
           </div>
         </div>
       </div>

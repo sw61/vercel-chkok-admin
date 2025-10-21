@@ -1,4 +1,5 @@
 import axiosInterceptor from '@/lib/axiosInterceptors';
+import type { UpdateCampaign } from './detailType';
 
 export const getCampaignDetail = async (id: string) => {
   const response = await axiosInterceptor.get(`/campaigns/${id}`);
@@ -36,5 +37,12 @@ export const rejectCampaigns = async (id: string, comment: string) => {
     approvalStatus: 'REJECTED',
     comment: comment,
   });
+  return response.data.data;
+};
+export const updateCampaigns = async (id: string, payload: UpdateCampaign) => {
+  const response = await axiosInterceptor.put(
+    `/campaigns/${id}/update`,
+    payload
+  );
   return response.data.data;
 };

@@ -1,4 +1,3 @@
-import { useAlertDialog } from '@/components/alertDialog/useAlertDialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -87,14 +86,6 @@ export function BannerDetailEditSheet() {
       resetUrlUpload();
     }
   };
-
-  // 수정 Alert Dialog
-  const { AlertDialogComponent: EditAlertDialog } = useAlertDialog({
-    trigger: <Button type="submit">변경 사항 저장</Button>,
-    title: '변경 사항을 저장하시겠습니까?',
-    description: '',
-    onAlert: handleBannerEdit,
-  });
 
   return (
     <Sheet open={isOpen} onOpenChange={handleSheetClose}>
@@ -196,9 +187,10 @@ export function BannerDetailEditSheet() {
           </div>
         </div>
         <SheetFooter>
-          <EditAlertDialog />
           <SheetClose asChild>
-            <Button variant="outline">닫기</Button>
+            <Button type="submit" onClick={handleBannerEdit}>
+              변경 사항 저장
+            </Button>
           </SheetClose>
         </SheetFooter>
       </SheetContent>

@@ -88,12 +88,17 @@ export default function CampaignDetailContent({
             </div>
           </div>
           {/* 승인 코멘트 */}
-          <div className="flex flex-col gap-2">
-            <p className="ck-body-2 text-ck-gray-700 font-semibold">
-              승인 코멘트
-            </p>
-            <p className="ck-body-2">{campaignData.approvalComment}</p>
-          </div>
+          {campaignData.approvalStatus === '대기중' ? (
+            <></>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <p className="ck-body-2 text-ck-gray-700 font-semibold">
+                승인 코멘트
+              </p>
+              <p className="ck-body-2">{campaignData.approvalComment}</p>
+            </div>
+          )}
+
           {/* 캠페인 승인인 */}
           <div className="flex flex-col gap-4">
             {campaignData.approver && (
