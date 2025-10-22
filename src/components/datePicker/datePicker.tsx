@@ -22,7 +22,7 @@ export function DatePicker({ date, setDate, className }: DatePickerProps) {
 
   return (
     <div className={cn('w-[280px]', className)}>
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={setOpen} modal={true}>
         <PopoverTrigger asChild>
           <Button
             variant={'outline'}

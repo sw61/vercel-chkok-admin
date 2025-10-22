@@ -5,6 +5,7 @@ export interface Campaign {
   campaignType: '블로그' | '인스타그램' | '유튜브' | '틱톡';
   thumbnailUrl: string;
   productShortInfo: string; // 제품 간단 정보
+  productDetails: string; // 제품 상세 정보
   maxApplicants: number; // 최대 신청자 수
   recruitmentStartDate: string; // 모집 시작일
   recruitmentEndDate: string; // 모집 마감일
@@ -18,6 +19,7 @@ export interface Campaign {
   creatorRole: '클라이언트' | '사용자' | '관리자';
   creatorAccountType: string;
   selectionCriteria: string;
+  isAlwaysOpen: boolean;
   category: {
     type: string;
     name: string;
@@ -118,3 +120,12 @@ export interface UpdateCampaign {
     missionDeadlineDate: string;
   };
 }
+export type CampaignFormData = Omit<Campaign, 'missionInfo'> & {
+  missionInfo: Omit<
+    Campaign['missionInfo'],
+    'titleKeywords' | 'bodyKeywords'
+  > & {
+    titleKeywords: string; // 폼은 문자열을 받음
+    bodyKeywords: string; // 폼은 문자열을 받음
+  };
+};
