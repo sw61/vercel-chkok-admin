@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
-=======
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
->>>>>>> Stashed changes
 
 export default function GrafanaDashboard() {
   return (
