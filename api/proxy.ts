@@ -19,8 +19,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).json(cachedData);
   }
 
-  const apiKey = process.env.JENKINS_API_KEY;
-  const jenkinsUrl = `http://jenkins.chkok.kr:8000/api/monitor?format=json&key=${apiKey}`;
+  const apiKey = process.env.SERVER_URL_KEY;
+  const jenkinsUrl = `http://jenkins.chkok.kr:3000/d/rYdddlPWk/node-exporter-full?${apiKey}`;
 
   try {
     const response = await fetch(jenkinsUrl, { method: 'GET' });
