@@ -118,6 +118,7 @@ export default function CampaignFormSection() {
                 <SelectItem value="화장품">화장품</SelectItem>
                 <SelectItem value="생활용품">생활용품</SelectItem>
                 <SelectItem value="패션">패션</SelectItem>
+                <SelectItem value="기타">기타</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />
