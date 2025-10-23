@@ -193,22 +193,21 @@ export function BannerCreateSheet({ bannerData }: BannerCreateProps) {
           </div>
         </div>
         <SheetFooter>
-          <Button
-            type="submit"
-            onClick={handleCreateBanner}
-            disabled={!isFormValid() || isCreating}
-          >
-            {isCreating ? (
-              <>
-                <Spinner />
-                생성 중...
-              </>
-            ) : (
-              '배너 생성'
-            )}
-          </Button>
           <SheetClose asChild>
-            <Button variant="outline">닫기</Button>
+            <Button
+              type="submit"
+              onClick={handleCreateBanner}
+              disabled={!isFormValid() || isCreating}
+            >
+              {isCreating ? (
+                <>
+                  <Spinner />
+                  생성 중...
+                </>
+              ) : (
+                '배너 생성'
+              )}
+            </Button>
           </SheetClose>
         </SheetFooter>
       </SheetContent>

@@ -130,22 +130,14 @@ export default function DetailForm({
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="businessAddress">위치 정보</Label>
-              <div className="col-span-2 flex gap-2">
-                <Input
-                  id="businessAddress"
-                  className="h-8 flex-1"
-                  placeholder="위치 정보 입력"
-                  value={formData.businessAddress}
-                  onChange={handleChange}
-                />
-                <Button
-                  variant="outline"
-                  className="h-8"
-                  onClick={handleOpenModal}
-                >
-                  위치 검색
-                </Button>
-              </div>
+              <Input
+                id="businessAddress"
+                className="col-span-2 h-8"
+                placeholder="클릭하여 위치 정보 입력"
+                value={formData.businessAddress}
+                onClick={handleOpenModal}
+                onChange={handleChange}
+              />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="businessDetailAddress">위치 정보 상세</Label>

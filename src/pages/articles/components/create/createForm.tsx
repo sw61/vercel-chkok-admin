@@ -110,22 +110,15 @@ export default function CreateForm({
                   </div>
                   <div className="grid grid-cols-3 items-center gap-4">
                     <Label htmlFor="businessAddress">위치 정보</Label>
-                    <div className="col-span-2 flex gap-2">
-                      <Input
-                        id="businessAddress"
-                        className="w-full"
-                        placeholder="위치 정보 입력"
-                        value={formData.businessAddress}
-                        onChange={handleChange}
-                      />
-                      <Button
-                        variant="outline"
-                        className="h-9"
-                        onClick={handleOpenModal}
-                      >
-                        위치 검색
-                      </Button>
-                    </div>
+                    <Input
+                      id="businessAddress"
+                      className="col-span-2"
+                      placeholder="클릭하여 위치 정보 입력"
+                      onClick={handleOpenModal}
+                      readOnly
+                      value={formData.businessAddress}
+                      onChange={handleChange}
+                    />
                   </div>
                   <div className="grid grid-cols-3 items-center gap-4">
                     <Label htmlFor="businessDetailAddress">
