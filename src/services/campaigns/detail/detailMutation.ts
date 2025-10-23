@@ -3,12 +3,11 @@ import {
   approveCampaigns,
   deleteCampaigns,
   rejectCampaigns,
+  updateCampaigns,
 } from './detailApi';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import type { ApproveProps } from './detailType';
-
-
+import { type UpdateCampaignProps, type ApproveProps } from './detailType';
 
 // 캠페인 삭제 Mutation
 export const useDeleteCampaignsMutation = () => {
@@ -57,6 +56,21 @@ export const useRejectMutation = () => {
     },
     onError: () => {
       toast.error('캠페인 거절 중 오류가 발생했습니다.');
+    },
+  });
+};
+
+// 캠페인 수정 Mutation
+export const useCampaignUpdateMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation<void, Error, UpdateCampaignProps>({
+    mutationFn: ({ id, payload }) => updateCampaigns(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['campaignDetail'] });
+      toast.success('캠페인이 수정되었습니다.');
+    },
+    onError: () => {
+      toast.error('캠페인 수정을 실패했습니다.');
     },
   });
 };

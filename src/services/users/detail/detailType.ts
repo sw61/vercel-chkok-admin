@@ -14,7 +14,14 @@ export interface User {
   memo: string;
   createdAt: string;
   updatedAt: string;
-  platforms: string;
+  platforms: [
+    {
+      id: number;
+      platformType: string;
+      accountUrl: string;
+      followerCount: number;
+    },
+  ];
 }
 
 export interface UpdateUserMemoProps {
@@ -28,4 +35,15 @@ export interface UserDetailHeaderProps {
 export interface UserDetailContentProps {
   userId: string;
   userData: User;
+}
+
+export interface Platform {
+  id: number;
+  platformType: 'BLOG' | 'INSTAGRAM' | 'YOUTUBE' | string;
+  accountUrl: string;
+  followerCount: number;
+}
+
+export interface PlatformLinksProps {
+  platformsData: Platform[];
 }
