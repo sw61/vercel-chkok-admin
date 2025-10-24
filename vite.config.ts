@@ -1,24 +1,16 @@
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vite';
 import path from 'path';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
-export default defineConfig(({ mode }) => {
-  // 환경 변수 로드
-  const env = loadEnv(mode, process.cwd(), '');
-
+export default defineConfig(() => {
   return {
     server: {
-      port: 3000,
       proxy: {
-        '/api/proxy': {
-          target: 'http://jenkins.chkok.kr:8000',
+        '/grafana': {
+          target: 'http://jenkins.chkok.kr:3000',
           changeOrigin: true,
-          rewrite: (path) =>
-            path.replace(
-              /^\/api\/proxy/,
-              `/api/monitor?format=json&key=${env.VITE_JENKINS_API_KEY}`
-            ),
+          rewrite: (path) => path.replace(/^\/grafana/, ''),
         },
       },
     },

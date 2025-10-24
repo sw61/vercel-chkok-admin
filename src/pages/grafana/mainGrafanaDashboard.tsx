@@ -1,10 +1,14 @@
 import { Card } from '@/components/ui/card';
 
 export default function MainGrafanaDashboard() {
+  const grafanaBaseUrl = '/grafana';
+
+  // 2. Grafana의 내부 경로를 조합합니다.
+  const dashboardUrl = `${grafanaBaseUrl}/d/linux-stats/1-linux-stats-with-node-exporter?orgId=1&kiosk=tv&theme=light`;
   return (
     <Card className="overflow-y-hidden p-0">
       <iframe
-        src="http://jenkins.chkok.kr:3000/d/linux-stats/1-linux-stats-with-node-exporter?orgId=1&kiosk=tv&theme=light"
+        src={dashboardUrl}
         width="100%"
         height="800px"
         frameBorder="0"
