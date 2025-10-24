@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/grafana/:path*",
-      "destination": "https://jenkins.chkok.kr:3000/:path*"
+      "destination": "http://jenkins.chkok.kr:3000/:path*"
     },
     {
       "source": "/(.*)",
