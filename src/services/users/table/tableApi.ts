@@ -19,8 +19,9 @@ export const getUserTable = async ({
   params.append('page', `${currentPage}`);
   params.append('sortBy', column!);
   params.append('sortDirection', direction!);
+  params.append('size', '5');
   if (role !== 'ALL') {
-    params.append('role', role);
+    params.append('role', `${role}`);
   }
   const url = `/users?${params.toString()}`;
   const response = await axiosInterceptor.get(url);

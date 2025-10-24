@@ -12,7 +12,7 @@ export default function SideBar() {
         <div className="flex flex-1">
           <AppSidebar />
           <SidebarInset>
-            <div className="flex-1 px-6 py-4">
+            <div className="px-6 py-4">
               <Outlet />
             </div>
           </SidebarInset>
