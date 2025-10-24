@@ -6,13 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig(() => {
   return {
     server: {
-      proxy: {
-        '/grafana': {
-          target: 'http://jenkins.chkok.kr:3000',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/grafana/, ''),
-        },
-      },
+      port: 3000,
     },
 
     plugins: [react(), tailwindcss()],
