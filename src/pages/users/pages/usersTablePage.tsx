@@ -19,6 +19,7 @@ import { PaginationHook } from '@/hooks/paginationHook';
 import { useQuery } from '@tanstack/react-query';
 import { getUserTable, searchUser } from '@/services/users/table/tableApi';
 import useDebounce from '@/hooks/useDebounce';
+import ChartContent from '@/pages/chart/userChartContent';
 
 export default function UserTablePage() {
   const [searchKey, setSearchKey] = useState<string>('');
@@ -181,6 +182,7 @@ export default function UserTablePage() {
             />
           </>
         )}
+        <ChartContent />
       </Card>
     </div>
   );

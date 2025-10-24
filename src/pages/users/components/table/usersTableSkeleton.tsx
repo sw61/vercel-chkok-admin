@@ -22,7 +22,7 @@ const UserTableSkeleton = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {Array.from({ length: 10 }).map((_, rowIdx) => (
+          {Array.from({ length: 5 }).map((_, rowIdx) => (
             <TableRow key={rowIdx}>
               {[80, 150, 200, 100, 120, 150, 150].map((width, colIdx) => (
                 <TableCell
