@@ -8,5 +8,15 @@
       "source": "/(.*)",
       "destination": "/"
     }
+  ],
+  "headers": [
+    {
+      "source": "/grafana/(.*)",
+      "headers": [
+        { "key": "X-Forwarded-Proto", "value": "https" },
+
+        { "key": "Host", "value": "jenkins.chkok.kr:3000" }
+      ]
+    }
   ]
 }
