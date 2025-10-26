@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from 'react';
+import { Suspense } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { ChevronLeft } from 'lucide-react';
@@ -19,13 +19,6 @@ export default function UserDetail() {
     queryFn: () => getUserDetail(userId!),
   });
 
-  useEffect(() => {
-    console.log(userData);
-  }, [userData]);
-  if (!userData) {
-    return <div>데이터가 없습니다.</div>;
-  }
-
   return (
     <Suspense fallback={<UserDetailSkeleton />}>
       <div className="min-w-[650px] px-6 py-4">
@@ -44,7 +37,7 @@ export default function UserDetail() {
               <UserDetailContent userId={userId!} userData={userData} />
             </CardContent>
           </Card>
-          <ActivitiesPage />
+          {userData.role === '관리자' ? <></> : <ActivitiesPage />}
         </div>
       </div>
     </Suspense>
