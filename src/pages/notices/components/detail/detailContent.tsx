@@ -34,7 +34,7 @@ export default function NoticeDetailContent({
   const { mutate: deleteNoticeMutation } = useDeleteNoticeMutation();
   // Alert Component
   const { AlertDialogComponent: EditAlertDialog } = useAlertDialog({
-    trigger: <Button variant="outline">삭제</Button>,
+    trigger: <Button variant="outline">수정</Button>,
     title: '공지사항을 수정하시겠습니까?',
     description: '',
     onAlert: handleEditNotice,
@@ -43,7 +43,7 @@ export default function NoticeDetailContent({
     trigger: <Button variant="outline">삭제</Button>,
     title: '공지사항을 삭제하시겠습니까?',
     description: '이 작업은 되돌릴 수 없습니다.',
-    onAlert: () => () => deleteNoticeMutation(noticeId!),
+    onAlert: () => deleteNoticeMutation(noticeId!),
   });
   return (
     <>

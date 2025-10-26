@@ -29,9 +29,9 @@ export default function NoticeCreate() {
     }
     const markdownContent = editorRef.current.getInstance().getMarkdown() || '';
     const payload = {
-      title,
+      title: title,
       content: markdownContent,
-      isMust,
+      isMustRead: isMust,
     };
 
     createMutation(payload);
