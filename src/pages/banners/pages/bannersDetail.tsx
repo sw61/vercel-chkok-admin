@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
@@ -23,7 +23,6 @@ interface BannerData {
 }
 
 export default function BannersDetail() {
-  const navigate = useNavigate();
   const { bannerId } = useParams<{ bannerId: string }>();
   const { data: bannerData } = useSuspenseQuery<BannerData>({
     queryKey: ['bannerDetail', bannerId],
@@ -51,7 +50,7 @@ export default function BannersDetail() {
       <div className="grid-row grid px-6 py-2">
         <div className="mb-4">
           <ChevronLeft
-            onClick={() => navigate('/banners')}
+            onClick={() => window.history.back()}
             className="cursor-pointer"
           />
         </div>

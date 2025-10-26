@@ -41,7 +41,7 @@ export default function NoticeCreate() {
     <div className="p-6">
       <div className="mb-4">
         <ChevronLeft
-          onClick={() => navigate('/notices')}
+          onClick={() => window.history.back()}
           className="cursor-pointer"
         />
       </div>

@@ -1,5 +1,5 @@
 import { useState, useRef, Suspense } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { ChevronLeft } from 'lucide-react';
 import TuiEditor from '@/components/markdown/editor/toastUiEditor';
@@ -20,7 +20,6 @@ export default function NoticeDetail() {
 
   const editorRef = useRef<Editor | null>(null);
 
-  const navigate = useNavigate();
   const { data: noticeData } = useSuspenseQuery({
     queryKey: ['noticeDetail', noticeId],
     queryFn: () => getNoticeDetail(noticeId!),
@@ -74,7 +73,7 @@ export default function NoticeDetail() {
       <div className="w-full p-6">
         <div className="mb-4">
           <ChevronLeft
-            onClick={() => navigate('/notices')}
+            onClick={() => window.history.back()}
             className="cursor-pointer"
           />
         </div>
