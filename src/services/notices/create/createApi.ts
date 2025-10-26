@@ -1,23 +1,26 @@
 import axiosInterceptor from '@/lib/axiosInterceptors';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 interface CreatePayload {
   title: string;
   content: string;
-  isMust: boolean;
+  isMustRead: boolean;
 }
 
 const createNotice = async (payload: CreatePayload) => {
-  const response = await axiosInterceptor.post('/api/admin/notices', {
-    payload,
-  });
+  const response = await axiosInterceptor.post('/api/admin/notices', payload);
   return response.data.data;
 };
 export const useCreateNoticeMutation = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   return useMutation({
     mutationFn: (payload: CreatePayload) => createNotice(payload),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['noticeTable'] });
+      navigate('/notices');
       toast.success('공지사항이 생성되었습니다.');
     },
     onError: () => {

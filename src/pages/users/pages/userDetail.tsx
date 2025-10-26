@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { ChevronLeft } from 'lucide-react';
 import UserDetailSkeleton from '@/pages/users/components/detail/usersDetailSkeleton';
@@ -10,7 +10,6 @@ import UserDetailHeader from '../components/detail/detailHeader';
 import UserDetailContent from '../components/detail/detailContent';
 
 export default function UserDetail() {
-  const navigate = useNavigate();
   const { userId } = useParams<{ userId: string }>();
 
   // 사용자 상세 정보 요청
@@ -25,7 +24,7 @@ export default function UserDetail() {
         <div className="grid grid-cols-1 gap-6">
           <div>
             <ChevronLeft
-              onClick={() => navigate('/users')}
+              onClick={() => window.history.back()}
               className="cursor-pointer"
             />
           </div>

@@ -29,9 +29,9 @@ export default function NoticeCreate() {
     }
     const markdownContent = editorRef.current.getInstance().getMarkdown() || '';
     const payload = {
-      title,
+      title: title,
       content: markdownContent,
-      isMust,
+      isMustRead: isMust,
     };
 
     createMutation(payload);
@@ -41,7 +41,7 @@ export default function NoticeCreate() {
     <div className="p-6">
       <div className="mb-4">
         <ChevronLeft
-          onClick={() => navigate('/notices')}
+          onClick={() => window.history.back()}
           className="cursor-pointer"
         />
       </div>

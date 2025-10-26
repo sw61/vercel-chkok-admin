@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
 import type { DetailHeaderProps } from '@/services/campaigns/detail/detailType';
 import { ChevronLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { useDeleteCampaignsMutation } from '@/services/campaigns/detail/detailMutation';
 import { useAlertDialog } from '@/components/alertDialog/useAlertDialog';
 import ApprovalButton from './approveButton';
@@ -11,7 +10,6 @@ export default function CampaignDetailHeader({
   campaignData,
   campaignId,
 }: DetailHeaderProps) {
-  const navigate = useNavigate();
   // Mutation Hook
   const { mutate: deleteMutation } = useDeleteCampaignsMutation();
 
@@ -26,7 +24,7 @@ export default function CampaignDetailHeader({
     <>
       <div>
         <ChevronLeft
-          onClick={() => navigate('/campaigns')}
+          onClick={() => window.history.back()}
           className="cursor-pointer"
         />
       </div>

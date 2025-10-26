@@ -6,6 +6,7 @@ export const getCampaignTable = async (
 ) => {
   const params = new URLSearchParams();
   params.append('page', `${currentPage}`);
+  params.append('size', '5');
   if (campaignType !== 'ALL') {
     params.append('approvalStatus', campaignType);
   }
@@ -22,6 +23,7 @@ export const searchCampaign = async (
   const params = new URLSearchParams();
   params.append('page', `${currentPage}`);
   params.append('keyword', searchKey);
+  params.append('size', '5');
   if (campaignType !== 'ALL') {
     params.append('approvalStatus', campaignType);
   }
