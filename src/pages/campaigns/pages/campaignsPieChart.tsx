@@ -21,7 +21,7 @@ interface Status {
   expiredCampaigns: number;
 }
 
-export function CamapaignsPieChart() {
+export default function CamapaignsPieChart() {
   const { data: campaignStatusData } = useSuspenseQuery<Status>({
     queryKey: ['campaignStatus'],
     queryFn: getCampaignStatus,
@@ -73,7 +73,7 @@ export function CamapaignsPieChart() {
 
   return (
     <Suspense fallback={<PieChartSkeleton />}>
-      <Card className="flex flex-col pb-0">
+      <Card className="mt-4 flex flex-col pb-0">
         <CardHeader className="items-center pb-0">
           <CardTitle className="ck-body-1-bold">캠페인 통계</CardTitle>
         </CardHeader>

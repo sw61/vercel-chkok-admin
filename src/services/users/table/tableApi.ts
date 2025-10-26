@@ -37,6 +37,7 @@ export const searchUser = async ({
   const params = new URLSearchParams();
   params.append('keyword', searchKey!);
   params.append('page', `${currentPage}`);
+  params.append('size', '5');
   if (role !== 'ALL') {
     params.append('role', role);
   }

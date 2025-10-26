@@ -22,6 +22,8 @@ import {
   searchCampaign,
 } from '@/services/campaigns/table/tableApi';
 import useDebounce from '@/hooks/useDebounce';
+import type { Campaign } from '@/services/campaigns/detail/detailType';
+import CamapaignsPieChart from './campaignsPieChart';
 
 export default function CampaignsTablePage() {
   const [currentPage, setCurrentPage] = useState<number>(0);
@@ -54,7 +56,7 @@ export default function CampaignsTablePage() {
     enabled: !debouncedSearchKey,
     select: (data) => ({
       ...data,
-      content: data.content.map((campaign: any) => ({
+      content: data.content.map((campaign: Campaign) => ({
         ...campaign,
         categoryType: campaign.category?.type ?? '',
         categoryName: campaign.category?.name ?? '',
@@ -68,7 +70,7 @@ export default function CampaignsTablePage() {
     enabled: !!searchKey,
     select: (data) => ({
       ...data,
-      content: data.content.map((campaign: any) => ({
+      content: data.content.map((campaign: Campaign) => ({
         ...campaign,
         categoryType: campaign.category?.type ?? '',
         categoryName: campaign.category?.name ?? '',
@@ -179,6 +181,7 @@ export default function CampaignsTablePage() {
               pageData={activePageData}
               onPageChange={handlePageChange}
             />
+            <CamapaignsPieChart />
           </>
         )}
       </Card>
