@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/grafana/:path*",
-      "destination": "http://jenkins.chkok.kr:3000/:path*"
+      "destination": "http://grafana.chkok.kr/grafana/:path*"
     },
     {
       "source": "/(.*)",
@@ -14,8 +14,7 @@
       "source": "/grafana/(.*)",
       "headers": [
         { "key": "X-Forwarded-Proto", "value": "https" },
-
-        { "key": "Host", "value": "jenkins.chkok.kr:3000" }
+        { "key": "Host", "value": "grafana.chkok.kr" }
       ]
     }
   ]
