@@ -1,8 +1,0 @@
-{
-  "rewrites": [
-    {
-      "source": "/grafana/:path*",
-      "destination": "http://grafana.chkok.kr/grafana/:path*"
-    }
-  ]
-}
