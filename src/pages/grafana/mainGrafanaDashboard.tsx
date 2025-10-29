@@ -5,7 +5,7 @@ export default function MainGrafanaDashboard() {
   const grafanaPath = `/grafana/d/linux-stats/1-linux-stats-with-node-exporter?orgId=1&kiosk=tv&theme=light`;
 
   // 💡 URL 인코딩을 통해 모든 특수 문자가 안전하게 전달되도록 합니다.
-  const proxyUrl = `/api/grafana-proxy${encodeURIComponent(grafanaPath)}`;
+  const proxyUrl = `/api/grafana-proxy?path=${encodeURIComponent(grafanaPath)}`;
 
   return (
     <Card className="overflow-y-hidden p-0">
