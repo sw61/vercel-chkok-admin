@@ -2,7 +2,7 @@ import { Card } from '@/components/ui/card';
 
 export default function GrafanaDashboard() {
   const grafanaPath =
-    '/d/rYdddlPWk/node-exporter-full?orgId=1&kiosk=tv&theme=light';
+    '/grafana/d/rYdddlPWk/node-exporter-full?orgId=1&kiosk=tv&theme=light';
 
   const proxyUrl = `/api/grafana-proxy?path=${encodeURIComponent(grafanaPath)}`;
 
