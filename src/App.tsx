@@ -8,7 +8,7 @@ import { PrivateComponent } from './services/auth/tokenCheck';
 
 // library
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import SideBar from './components/sideBar/sideBar';
+import SideBar from './layout/sideBar/sideBar';
 import NotFoundPage from './pages/notFound/notFoundPage';
 import { privateRoutes } from './router/router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
