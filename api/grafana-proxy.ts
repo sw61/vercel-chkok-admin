@@ -4,7 +4,7 @@ export const config = {
 };
 
 // Grafana 서버 기본 URL
-const GRAFANA_BASE_URL = 'https://grafana.chkok.kr';
+const GRAFANA_BASE_URL = 'https://grafana.chkok.kr/grafana';
 const CUSTOM_SECURITY_HEADER = 'true;';
 
 export default async function handler(req, res) {
