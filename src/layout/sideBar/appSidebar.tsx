@@ -12,10 +12,10 @@ import {
   NotebookPen,
 } from 'lucide-react';
 
-import { NavMain } from '@/components/sideBar/navMain';
+import { NavMain } from '@/layout/sideBar/navMain';
 // import { NavProjects } from "@/SideBar/nav-projects";
 // import { NavSecondary } from "@/SideBar/nav-secondary";
-import { NavUser } from '@/components/sideBar/navUser';
+import { NavUser } from '@/layout/sideBar/navUser';
 
 import chkokLogo from '@/image/chkokLogo.png';
 

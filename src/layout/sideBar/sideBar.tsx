@@ -1,5 +1,5 @@
-import { AppSidebar } from '@/components/sideBar/appSidebar';
-import { SiteHeader } from '@/components/sideBar/siteHeader';
+import { AppSidebar } from '@/layout/sideBar/appSidebar';
+import { SiteHeader } from '@/layout/sideBar/siteHeader';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Outlet } from 'react-router-dom';
 export const iframeHeight = '800px';
