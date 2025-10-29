@@ -4,11 +4,12 @@ export const config = {
 };
 
 // Grafana 서버 기본 URL
-const GRAFANA_BASE_URL = 'https://grafana.chkok.kr/grafana';
+const GRAFANA_BASE_URL = 'https://grafana.chkok.kr';
 const CUSTOM_SECURITY_HEADER = 'true;';
 
 export default async function handler(req, res) {
   try {
+    // 예: /api/grafanaProxy?path=/grafana/d/abc123/...
     const pathParamIndex = req.url.indexOf('?path=');
     if (pathParamIndex === -1) {
       res.status(400).end('Missing path parameter.');

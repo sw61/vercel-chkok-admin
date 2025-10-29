@@ -39,7 +39,7 @@ const App = () => (
         </Route>
         {/* Public routes */}
         <Route path="/login" element={<LoginForm />} />
-        {/* <Route path="/*" element={<NotFoundPage />} /> */}
+        <Route path="/*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
     <Toaster position="top-center" />
