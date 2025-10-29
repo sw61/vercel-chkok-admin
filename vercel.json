@@ -3,19 +3,6 @@
     {
       "source": "/grafana/:path*",
       "destination": "http://grafana.chkok.kr/grafana/:path*"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/grafana/(.*)",
-      "headers": [
-        { "key": "X-Forwarded-Proto", "value": "https" },
-        { "key": "Host", "value": "grafana.chkok.kr" }
-      ]
     }
   ]
 }
