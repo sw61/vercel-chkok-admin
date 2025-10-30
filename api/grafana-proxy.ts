@@ -1,54 +1,31 @@
 // api/grafanaProxy.js
 
 const GRAFANA_BASE_URL = 'https://grafana.chkok.kr';
-const CUSTOM_SECURITY_HEADER = 'true';
 
 export default async function handler(req, res) {
   try {
-    // 1️⃣ URL 파라미터 파싱
-    const { searchParams } = new URL(req.url, `http://${req.headers.host}`);
-    const fullGrafanaPath = searchParams.get('path');
+    // 원본 요청의 경로를 Grafana로 그대로 전달
+    const targetUrl = `${GRAFANA_BASE_URL}${req.url.replace('/api/grafana-proxy', '')}`;
 
-    if (!fullGrafanaPath) {
-      res.status(400).end('Missing "path" parameter.');
-      return;
-    }
-
-    const finalGrafanaUrl = `${GRAFANA_BASE_URL}${decodeURIComponent(fullGrafanaPath)}`;
-
-    // 2️⃣ Grafana로 요청 (⭐ 헤더만 전달 ⭐)
-    const grafanaResponse = await fetch(finalGrafanaUrl, {
+    // Grafana로 요청을 보낼 때 헤더 추가
+    const grafanaResponse = await fetch(targetUrl, {
+      method: req.method,
       headers: {
-        'chkok-admin-security': CUSTOM_SECURITY_HEADER,
+        ...req.headers,
+        'chkok-admin-security': 'true', // 서버에서 요구하는 헤더
       },
+      body: req.method !== 'GET' ? req.body : undefined,
     });
 
-    // 3️⃣ Grafana 응답 헤더 복사 (iframe 차단 헤더 제거)
+    // Grafana 응답 내용을 그대로 반환
+    const data = await grafanaResponse.arrayBuffer();
     res.status(grafanaResponse.status);
-    grafanaResponse.headers.forEach((value, name) => {
-      const lower = name.toLowerCase();
-      if (
-        lower !== 'x-frame-options' &&
-        lower !== 'content-security-policy' &&
-        lower !== 'content-length'
-      ) {
-        res.setHeader(name, value);
-      }
+    grafanaResponse.headers.forEach((value, key) => {
+      res.setHeader(key, value);
     });
-
-    // 4️⃣ 응답 본문 전달
-    const contentBuffer = await grafanaResponse.arrayBuffer();
-    res.end(Buffer.from(contentBuffer));
+    res.send(Buffer.from(data));
   } catch (error) {
-    console.error('Grafana Proxy Error:', error);
-    res
-      .status(500)
-      .setHeader('Content-Type', 'text/plain')
-      .end('Grafana proxy failed.');
+    console.error('Proxy error:', error);
+    res.status(500).json({ error: 'Proxy request failed' });
   }
 }
-
-// --- ⚙️ Vercel 런타임 설정 ---
-export const config = {
-  runtime: 'nodejs',
-};
