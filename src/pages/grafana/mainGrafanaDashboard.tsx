@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card';
 
 export default function MainGrafanaDashboard() {
-  const grafanaPath = `/d/linux-stats/1-linux-stats-with-node-exporter?orgId=1&kiosk=tv&theme=light`;
+  const grafanaPath = `/public-dashboards/c194255582cf42d0ac712b5df9c47778?orgId=1&kiosk=tv&theme=light`;
 
   const proxyUrl = `/api/grafana-proxy?path=${encodeURIComponent(grafanaPath)}`;
 
