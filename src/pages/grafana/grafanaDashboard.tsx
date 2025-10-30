@@ -2,9 +2,7 @@ import { Card } from '@/components/ui/card';
 
 export default function GrafanaDashboard() {
   const grafanaPath =
-    'https://grafana.chkok.kr/public-dashboards/5b8e97ac2c4141788e8004d18179923b?orgId=1&kiosk=tv&theme=light';
-
-  // const proxyUrl = `/api/grafana-proxy?path=${encodeURIComponent(grafanaPath)}`;
+    'https://grafana.chkok.kr/d/rYdddlPWk/node-exporter-full?orgId=1&kiosk=tv&theme=light';
 
   return (
     <Card className="overflow-y-hidden p-0">
