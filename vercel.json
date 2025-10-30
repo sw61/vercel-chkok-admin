@@ -1,10 +1,6 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    },
-    {
       "source": "/public/build/:path*",
       "destination": "/api/grafana-proxy?path=/public/build/:path*"
     },
@@ -20,9 +16,10 @@
       "source": "/plugins/:path*",
       "destination": "/api/grafana-proxy?path=/plugins/:path*"
     },
+
     {
-      "source": "/:path((?!api|public|d|plugins).)*",
-      "destination": "/"
+      "source": "/:path*",
+      "destination": "/index.html"
     }
   ]
 }
