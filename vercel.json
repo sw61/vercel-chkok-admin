@@ -8,19 +8,20 @@
       "source": "/public/build/:path*",
       "destination": "/api/grafana-proxy?path=/public/build/:path*"
     },
-
     {
-      "source": "/api/datasources/:path*",
-      "destination": "/api/grafana-proxy?path=/api/datasources/:path*"
+      "source": "/api/:path*",
+      "destination": "/api/grafana-proxy?path=/api/:path*"
     },
-
     {
       "source": "/d/:path*",
       "destination": "/api/grafana-proxy?path=/d/:path*"
     },
-
     {
-      "source": "/:path((?!api|public).*)*",
+      "source": "/plugins/:path*",
+      "destination": "/api/grafana-proxy?path=/plugins/:path*"
+    },
+    {
+      "source": "/:path((?!api|public|d|plugins).)*",
       "destination": "/"
     }
   ]
