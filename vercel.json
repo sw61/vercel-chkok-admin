@@ -6,17 +6,17 @@
     },
     {
       "source": "/public/build/:path*",
-      "destination": "/api/grafanaProxy?path=/public/build/:path*"
+      "destination": "/api/grafana-proxy?path=/public/build/:path*"
     },
 
     {
       "source": "/api/datasources/:path*",
-      "destination": "/api/grafanaProxy?path=/api/datasources/:path*"
+      "destination": "/api/grafana-proxy?path=/api/datasources/:path*"
     },
 
     {
       "source": "/d/:path*",
-      "destination": "/api/grafanaProxy?path=/d/:path*"
+      "destination": "/api/grafana-proxy?path=/d/:path*"
     },
 
     {
