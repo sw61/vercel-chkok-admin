@@ -1,7 +1,3 @@
-export const config = {
-  runtime: 'nodejs',
-};
-
 // Grafana 서버 기본 URL
 const GRAFANA_BASE_URL = 'https://grafana.chkok.kr';
 const CUSTOM_SECURITY_HEADER = 'true';
