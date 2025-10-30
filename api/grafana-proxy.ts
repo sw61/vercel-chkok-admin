@@ -1,4 +1,3 @@
-// ✅ Node.js 런타임 강제 (Edge 환경에서는 커스텀 헤더 누락됨)
 export const config = {
   runtime: 'nodejs',
 };
