@@ -13,6 +13,14 @@
       "destination": "/api/grafana-proxy?path=/d/:path*"
     },
     {
+      "source": "/api/live/:path*",
+      "destination": "https://grafana.chkok.kr/api/live/:path*"
+    },
+    {
+      "source": "/api/frontend-metrics",
+      "destination": "/api/grafana-proxy?path=/api/frontend-metrics"
+    },
+    {
       "source": "/:path*",
       "destination": "/index.html"
     }
