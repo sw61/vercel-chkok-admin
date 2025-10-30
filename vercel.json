@@ -3,6 +3,14 @@
     {
       "source": "/(.*)",
       "destination": "/index.html"
+    },
+    {
+      "source": "/grafana/:path*",
+      "destination": "/api/grafanaProxy?path=/grafana/:path*"
+    },
+    {
+      "source": "/public/build/:path*",
+      "destination": "/api/grafanaProxy?path=/public/build/:path*"
     }
   ]
 }
