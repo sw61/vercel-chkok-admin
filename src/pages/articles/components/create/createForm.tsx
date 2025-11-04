@@ -15,7 +15,6 @@ import { Switch } from '@/components/ui/switch';
 import { useNavigate } from 'react-router-dom';
 import type { FormData } from '@/services/articles/type/articleType';
 import { CampaignIdSelect } from '../campaignIdSelect';
-import { useAlertDialog } from '@/components/alertDialog/useAlertDialog';
 
 interface FormProps {
   formData: FormData;
@@ -34,12 +33,6 @@ export default function CreateForm({
   handleCreate,
 }: FormProps) {
   const navigate = useNavigate();
-  const { AlertDialogComponent: CreateAlertDialog } = useAlertDialog({
-    trigger: <Button variant="outline">생성</Button>,
-    title: '아티클을 생성하시겠습니까?',
-    description: '',
-    onAlert: handleCreate,
-  });
 
   return (
     <div className="w-full" data-color-mode="light">
@@ -135,9 +128,14 @@ export default function CreateForm({
                 </div>
                 <DialogFooter>
                   <DialogClose>
-                    <Button variant="outline">취소</Button>
+                    <Button
+                      variant="outline"
+                      type="submit"
+                      onClick={handleCreate}
+                    >
+                      생성
+                    </Button>
                   </DialogClose>
-                  <CreateAlertDialog />
                 </DialogFooter>
               </DialogContent>
             </Dialog>
