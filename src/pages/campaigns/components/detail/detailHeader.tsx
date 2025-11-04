@@ -15,7 +15,11 @@ export default function CampaignDetailHeader({
 
   // Alert Component
   const { AlertDialogComponent: DeleteAlertDialog } = useAlertDialog({
-    trigger: <Button variant="outline">삭제</Button>,
+    trigger: (
+      <Button variant="outline" disabled={true}>
+        삭제
+      </Button>
+    ),
     title: '캠페인을 삭제하시겠습니까?',
     description: '이 작업은 되돌릴 수 없습니다.',
     onAlert: () => deleteMutation(campaignId!),

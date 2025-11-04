@@ -66,6 +66,7 @@ export default function NoticeDetailContent({
             제목
           </label>
           <Input
+            id="title"
             value={editData.title}
             onChange={handleChangeEditData}
             placeholder="제목을 입력하세요"
