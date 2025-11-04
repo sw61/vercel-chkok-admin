@@ -43,6 +43,7 @@ export default function DetailContent({
             제목
           </label>
           <Input
+            id="title"
             value={formData.title}
             onChange={handleChange}
             placeholder="제목을 입력하세요"

@@ -64,6 +64,7 @@ export default function NoticeCreate() {
                 </div>
               </div>
               <Input
+                id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="제목을 입력하세요"
