@@ -52,12 +52,7 @@ export default function DetailForm({
     description: '이 작업은 되돌릴 수 없습니다.',
     onAlert: () => deleteMutation(articleData.id),
   });
-  const { AlertDialogComponent: EditAlertDialog } = useAlertDialog({
-    trigger: <Button variant="outline">수정</Button>,
-    title: '아티클을 수정하시겠습니까?',
-    description: '',
-    onAlert: handleEdit,
-  });
+
   const { AlertDialogComponent: ActivateAlertDialog } = useAlertDialog({
     trigger: <Button variant="outline">아티클 활성화</Button>,
     title: '아티클을 활성화하시겠습니까?',
@@ -152,9 +147,10 @@ export default function DetailForm({
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">취소</Button>
+              <Button variant="outline" type="submit" onClick={handleEdit}>
+                수정
+              </Button>
             </DialogClose>
-            <EditAlertDialog />
           </DialogFooter>
         </DialogContent>
       </Dialog>

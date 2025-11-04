@@ -12,9 +12,10 @@ export const getNoticeDetail = async (id: string) => {
   }
 };
 export const editNotice = async (id: string, payload: EditPayload) => {
-  const response = await axiosInterceptor.put(`/api/admin/notices/${id}`, {
-    payload,
-  });
+  const response = await axiosInterceptor.put(
+    `/api/admin/notices/${id}`,
+    payload
+  );
   return response.data.data;
 };
 export const deleteNotice = async (id: string) => {
