@@ -30,11 +30,7 @@ export default function UserDetailHeader({
   });
 
   const { AlertDialogComponent: DeleteAlertDialog } = useAlertDialog({
-    trigger: (
-      <Button variant="outline" disabled={true}>
-        사용자 삭제
-      </Button>
-    ),
+    trigger: <Button variant="outline">사용자 삭제</Button>,
     title: '사용자를 삭제시겠습니까?',
     description: '이 작업은 되돌릴 수 없습니다.',
     onAlert: () => deleteMutation(userId!),
