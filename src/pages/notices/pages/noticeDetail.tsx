@@ -52,7 +52,11 @@ export default function NoticeDetail() {
       toast.error('내용을 입력해주세요.');
       return;
     }
-    const payload = { title: editData.title, content: editData.content };
+    const markdownContent = editorRef.current.getInstance().getMarkdown() || '';
+    const payload = {
+      title: editData.title,
+      content: markdownContent,
+    };
     editNoticeMutation({ id: noticeData.id, payload });
   };
   // 폼 필드 변경 핸들러
